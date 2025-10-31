@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && vite build",
+    "build:analyze": "tsc -b && ANALYZE=true vite build",
+    "analyze": "npm run build:analyze && npx vite-bundle-visualizer",
     "lint:ci": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "start:dev": "vite",
@@ -17,6 +19,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
+    "test:a11y": "playwright test e2e/accessibility.spec.ts",
+    "test:a11y:ui": "playwright test e2e/accessibility.spec.ts --ui",
+    "test:a11y:debug": "playwright test e2e/accessibility.spec.ts --debug",
+    "test:a11y:report": "playwright test e2e/accessibility.spec.ts --reporter=html",
     "prepare": "husky"
   },
   "dependencies": {
@@ -25,6 +31,7 @@
     "react-helmet-async": "^2.0.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.0",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@eslint/js": "^9.36.0",
@@ -41,6 +48,7 @@
     "@vitest/ui": "^4.0.5",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.22",
@@ -55,7 +63,10 @@
     "vitest": "^4.0.5"
   },
   "overrides": {
-    "vite": "npm:rolldown-vite@7.1.14"
+    "vite": "npm:rolldown-vite@7.1.14",
+    "react-helmet-async": {
+      "react": "^19.1.1"
+    }
   },
   "lint-staged": {
     "*.{ts,tsx}": [

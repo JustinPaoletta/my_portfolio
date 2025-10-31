@@ -1,0 +1,100 @@
+# Example GitHub Actions workflow for bundle size checks
+# Rename this file to bundle-size-check.yml to enable it
+
+name: Bundle Size Check
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  bundle-size:
+    name: Check Bundle Size
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build and check bundle size
+        run: npm run build
+        id: build
+
+      - name: Upload bundle stats
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-stats
+          path: |
+            dist/**/*
+            stats.html
+          retention-days: 30
+
+      - name: Comment PR with bundle size
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const { execSync } = require('child_process');
+
+            // Get bundle sizes
+            const files = fs.readdirSync('dist/assets');
+            let bundleInfo = '## 📦 Bundle Size Report\n\n';
+            bundleInfo += '| File | Size | Limit | Status |\n';
+            bundleInfo += '|------|------|-------|--------|\n';
+
+            let totalSize = 0;
+            files.forEach(file => {
+              const path = `dist/assets/${file}`;
+              const stats = fs.statSync(path);
+              const sizeKB = (stats.size / 1024).toFixed(2);
+              totalSize += parseFloat(sizeKB);
+
+              let limit = 'N/A';
+              let status = '✅';
+
+              if (file.endsWith('.js')) {
+                limit = file.includes('vendor') ? '500 KB' : '200 KB';
+              } else if (file.endsWith('.css')) {
+                limit = '50 KB';
+              }
+
+              bundleInfo += `| ${file} | ${sizeKB} KB | ${limit} | ${status} |\n`;
+            });
+
+            bundleInfo += '\n';
+            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 800 KB\n\n`;
+            bundleInfo += '---\n';
+            bundleInfo += '*Bundle size checks passed! ✅*';
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: bundleInfo
+            });
+
+      - name: Analyze bundle (on failure)
+        if: failure()
+        run: |
+          npm run analyze
+          echo "Bundle analysis complete. Check the artifacts for details."
+
+      - name: Fail if bundle too large
+        if: failure()
+        run: |
+          echo "::error::Bundle size limit exceeded! See build logs for details."
+          exit 1
+

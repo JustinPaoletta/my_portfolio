@@ -38,5 +38,12 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: #666; /* 5.74:1 contrast ratio on white background (WCAG AA compliant) */
+}
+
+/* Ensure proper contrast in dark mode */
+@media (prefers-color-scheme: dark) {
+  .read-the-docs {
+    color: #aaa; /* 7.14:1 contrast ratio on #242424 background */
+  }
 }
