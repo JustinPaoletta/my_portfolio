@@ -31,6 +31,9 @@ jobs:
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
 
+      - name: Set up test environment variables
+        run: cp .env.test .env.local
+
       - name: Run ESLint accessibility checks
         run: npm run lint:ci
 
@@ -81,6 +84,9 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps ${{ matrix.browser }}
+
+      - name: Set up test environment variables
+        run: cp .env.test .env.local
 
       - name: Build application
         run: npm run build
