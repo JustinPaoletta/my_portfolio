@@ -1,0 +1,82 @@
+# Dependabot Configuration
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+updates:
+  # Maintain npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    # Group updates by type for cleaner PRs
+    groups:
+      # Production dependencies
+      react:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-*"
+      # Development dependencies
+      vite:
+        patterns:
+          - "vite"
+          - "@vitejs/*"
+          - "rolldown-vite"
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "@playwright/test"
+          - "jsdom"
+      linting:
+        patterns:
+          - "eslint"
+          - "eslint-*"
+          - "@eslint/*"
+          - "prettier"
+          - "typescript-eslint"
+      typescript:
+        patterns:
+          - "typescript"
+          - "@types/*"
+      commitlint:
+        patterns:
+          - "@commitlint/*"
+          - "husky"
+          - "lint-staged"
+    # Add labels to PRs
+    labels:
+      - "dependencies"
+      - "dependabot"
+    # Open PRs with these settings
+    open-pull-requests-limit: 10
+    # Commit message prefix for conventional commits
+    commit-message:
+      prefix: "chore"
+      prefix-development: "chore"
+      include: "scope"
+    # Reviewers (add your GitHub username or team)
+    reviewers:
+      - "JustinPaoletta"
+    assignees:
+      - "JustinPaoletta"
+
+  # Maintain GitHub Actions (if you add any workflows in the future)
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/New_York"
+    labels:
+      - "dependencies"
+      - "github-actions"
+    commit-message:
+      prefix: "ci"
+      include: "scope"
+
