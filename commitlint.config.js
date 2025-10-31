@@ -45,5 +45,7 @@ export default {
     'footer-leading-blank': [1, 'always'],
     // Header must not be longer than 100 characters
     'header-max-length': [2, 'always', 100],
+    // Allow longer body lines (default is 100)
+    'body-max-line-length': [0, 'always', Infinity],
   },
 };
