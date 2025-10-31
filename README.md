@@ -1,73 +1,185 @@
-# React + TypeScript + Vite
+# My Portfolio
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, performant portfolio website showcasing my projects and skills. Built with production-grade tooling including comprehensive testing, accessibility compliance, error monitoring, and analytics integration.
 
-Currently, two official plugins are available:
+## 🌐 Live Site
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+**[View Portfolio](https://yourname.vercel.app)** ← _Deploy to Vercel and update this URL_
 
-## React Compiler
+**Ready to deploy?** See [Vercel Deployment Guide](docs/VERCEL_DEPLOYMENT.md)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## ✨ Features
 
-## Expanding the ESLint configuration
+- **Progressive Web App (PWA)** - Installable, works offline, auto-updates
+- **Responsive Design** - Mobile-first, works seamlessly on all devices
+- **Accessibility First** - WCAG 2.1 Level AA compliant with automated testing
+- **SEO Optimized** - Dynamic meta tags, automated sitemap generation, robots.txt
+- **Privacy-Friendly Analytics** - Umami integration for visitor tracking
+- **Error Monitoring** - Sentry integration for real-time error tracking
+- **Type-Safe** - Full TypeScript coverage for robust development
+- **Comprehensive Testing** - Unit, E2E, and accessibility tests included
+- **Performance Optimized** - Strict bundle size budgets with smart caching
+- **Modern Tooling** - ESLint, Prettier, Husky git hooks, and conventional commits
+- **Production Ready** - Optimized for Vercel deployment with auto-deploy
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Setup Instructions
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Prerequisites
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js (v18 or higher recommended)
+- npm or yarn
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+### Installation
+
+1. **Clone the repository**
+
+```bash
+git clone <your-repo-url>
+cd my-portfolio
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+2. **Install dependencies**
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
+```bash
+npm install
 ```
+
+3. **Set up environment variables** (optional)
+   - See [ENV.md](docs/ENV.md) for configuration details
+   - Configure Sentry, Umami analytics, etc.
+
+4. **Start the development server**
+
+```bash
+npm run start:dev
+```
+
+5. **Generate PWA icons** (required for full PWA functionality)
+   - See [PWA Icons Quickstart](docs/PWA_ICONS_QUICKSTART.md)
+   - Or use: https://favicon.io/favicon-converter/
+   - Place `pwa-192x192.png` and `pwa-512x512.png` in `public/` folder
+
+6. **Open your browser**
+   - Navigate to `http://localhost:5173`
+
+### Build for Production
+
+```bash
+npm run build
+npm run start:prod  # Preview production build
+```
+
+### Run Tests
+
+```bash
+npm test                  # Unit tests (watch mode)
+npm run test:unit         # Unit tests (run once)
+npm run test:coverage     # Tests with coverage report
+npm run test:e2e          # End-to-end tests
+npm run test:a11y         # Accessibility tests
+```
+
+### Code Quality
+
+```bash
+npm run lint:fix          # Fix linting and formatting issues
+npm run analyze           # Analyze bundle size
+```
+
+### Releases & Versioning
+
+```bash
+npm run release           # Create a new release (auto-determines version)
+npm run release:patch     # Patch release (0.0.X)
+npm run release:minor     # Minor release (0.X.0)
+npm run release:major     # Major release (X.0.0)
+npm run release:dry-run   # Preview release without changes
+```
+
+See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.md](docs/CHANGELOG_GUIDE.md) for details.
+
+## 🛠️ Tech Stack
+
+### Core
+
+- **React 19** - UI library with latest features
+- **TypeScript** - Type-safe JavaScript
+- **Vite (Rolldown)** - Lightning-fast build tool
+
+### Testing
+
+- **Vitest** - Unit testing framework
+- **Playwright** - End-to-end testing
+- **Testing Library** - React component testing
+- **axe-core** - Accessibility testing
+
+### Code Quality & Workflow
+
+- **ESLint** - JavaScript/TypeScript linting
+- **Prettier** - Code formatting
+- **Husky** - Git hooks
+- **lint-staged** - Run linters on staged files
+- **Commitlint** - Conventional commit enforcement
+- **standard-version** - Automated changelog and versioning
+
+### PWA & Performance
+
+- **vite-plugin-pwa** - Progressive Web App support
+- **Workbox** - Service worker and offline caching
+- **Smart Caching** - Cache-first for static, network-first for dynamic content
+
+### Developer Experience
+
+- **React Helmet Async** - Dynamic SEO meta tags
+- **Sentry** - Error monitoring and performance tracking
+- **Umami** - Privacy-friendly analytics
+- **VS Code Debugging** - Integrated debugging configurations
+
+### Accessibility
+
+- **eslint-plugin-jsx-a11y** - JSX accessibility linting
+- **@axe-core/playwright** - Automated a11y testing
+
+## 📚 Additional Documentation
+
+### Development Guides
+
+- **[Quick Reference](docs/QUICK_REFERENCE.md)** - ⭐ Common commands and quick tips
+- **[VS Code Debugging Guide](docs/VSCODE_DEBUGGING.md)** - Debug configurations and workflows
+- **[Git Hooks Guide](docs/GIT_HOOKS.md)** - Pre-commit, pre-push, and other hooks
+- **[Environment Variables](docs/ENV.md)** - Environment setup with Zod validation
+- **[Environment Validation](docs/ENV_VALIDATION.md)** - Runtime validation details
+- **[Commit Conventions](docs/COMMIT_CONVENTION.md)** - Git commit guidelines
+- **[Changelog & Releases](docs/CHANGELOG_GUIDE.md)** - Version management with standard-version
+- **[Workspace Info](docs/WORKSPACE.md)** - Project structure
+- **[Dependabot Setup](docs/DEPENDABOT.md)** - Automated dependency updates
+
+### Deployment
+
+- **[Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)** - ⭐ Deploy your portfolio to Vercel
+
+### Integrations & Services
+
+- **[PWA Setup](docs/PWA_SETUP.md)** - Progressive Web App configuration & offline support
+- **[PWA Icons Quickstart](docs/PWA_ICONS_QUICKSTART.md)** - Quick icon generation guide
+- **[Sentry Setup](docs/SENTRY_SETUP.md)** - Error monitoring integration
+- **[Analytics Setup](docs/ANALYTICS_SETUP.md)** - Umami integration guide
+- **[Analytics Quickstart](docs/ANALYTICS_QUICKSTART.md)** - Quick analytics setup
+- **[SEO Guide](docs/SEO.md)** - SEO configuration
+
+### Accessibility
+
+- **[Accessibility Testing](docs/ACCESSIBILITY_TESTING.md)** - A11y testing strategies
+- **[Accessibility Quick Reference](docs/ACCESSIBILITY_QUICK_REFERENCE.md)** - A11y best practices
+- **[A11y Setup Summary](docs/A11Y_SETUP_SUMMARY.md)** - Accessibility setup overview
+- **[Accessibility Fixes](docs/ACCESSIBILITY_FIXES.md)** - A11y implementation details
+
+### Performance & Monitoring
+
+- **[Performance Budget](docs/PERFORMANCE_BUDGET.md)** - Bundle size limits
+- **[Bundle Size Testing](docs/BUNDLE_SIZE_TEST.md)** - Performance monitoring
+- **[Umami Implementation Summary](docs/UMAMI_IMPLEMENTATION_SUMMARY.md)** - Analytics implementation details
+
+## 📄 License
+
+Private project

@@ -1,51 +1,164 @@
 /**
- * Environment configuration
- * Access environment variables in a type-safe way
+ * Environment configuration with runtime validation using Zod
+ * Access environment variables in a type-safe, validated way
  */
 
-// Helper function to get required environment variables
-function getEnvVar(key: keyof ImportMetaEnv): string {
-  const value = import.meta.env[key];
-  if (value === undefined) {
-    throw new Error(`Missing required environment variable: ${key}`);
+import { z } from 'zod';
+
+/**
+ * Environment variable schema with validation rules
+ * This validates format, type, and constraints at runtime
+ */
+const envSchema = z.object({
+  // App Configuration (Required)
+  VITE_APP_TITLE: z
+    .string()
+    .min(1, 'App title is required and cannot be empty')
+    .max(100, 'App title must be less than 100 characters'),
+
+  VITE_APP_DESCRIPTION: z
+    .string()
+    .min(1, 'App description is required and cannot be empty')
+    .max(500, 'App description must be less than 500 characters'),
+
+  // API Configuration (Required)
+  VITE_API_URL: z
+    .string()
+    .url('API URL must be a valid URL (e.g., https://api.example.com)')
+    .refine(
+      (url) => url.startsWith('http://') || url.startsWith('https://'),
+      'API URL must start with http:// or https://'
+    ),
+
+  VITE_API_TIMEOUT: z
+    .string()
+    .optional()
+    .default('5000')
+    .transform((val) => parseInt(val, 10))
+    .pipe(
+      z
+        .number()
+        .min(1000, 'API timeout must be at least 1000ms (1 second)')
+        .max(60000, 'API timeout must not exceed 60000ms (60 seconds)')
+    ),
+
+  // Feature Flags
+  VITE_ENABLE_ANALYTICS: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((val) => val === 'true' || val === '1')
+    .pipe(z.boolean()),
+
+  VITE_ENABLE_DEBUG: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((val) => val === 'true' || val === '1')
+    .pipe(z.boolean()),
+
+  // Third-party Services (Optional)
+  VITE_GOOGLE_ANALYTICS_ID: z
+    .string()
+    .regex(
+      /^(G-[A-Z0-9]+|UA-\d+-\d+)?$/,
+      'Google Analytics ID must be in format G-XXXXXXXXXX or UA-XXXXXX-X'
+    )
+    .optional(),
+
+  VITE_SENTRY_DSN: z
+    .string()
+    .url('Sentry DSN must be a valid URL')
+    .refine(
+      (url) => !url || url.includes('sentry.io') || url.includes('ingest'),
+      'Sentry DSN should contain sentry.io or ingest domain'
+    )
+    .optional()
+    .or(z.literal('')),
+
+  VITE_MAPBOX_TOKEN: z
+    .string()
+    .min(1, 'Mapbox token cannot be empty if provided')
+    .optional()
+    .or(z.literal('')),
+
+  // Umami Analytics (Optional)
+  VITE_UMAMI_WEBSITE_ID: z
+    .string()
+    .uuid('Umami website ID must be a valid UUID')
+    .optional()
+    .or(z.literal('')),
+
+  VITE_UMAMI_SRC: z
+    .string()
+    .url('Umami script source must be a valid URL')
+    .optional()
+    .default('https://cloud.umami.is/script.js'),
+
+  // Social Links (Required)
+  VITE_GITHUB_URL: z
+    .string()
+    .url('GitHub URL must be a valid URL')
+    .refine(
+      (url) => url.includes('github.com'),
+      'GitHub URL must be a github.com URL'
+    ),
+
+  VITE_LINKEDIN_URL: z
+    .string()
+    .url('LinkedIn URL must be a valid URL')
+    .refine(
+      (url) => url.includes('linkedin.com'),
+      'LinkedIn URL must be a linkedin.com URL'
+    ),
+
+  VITE_EMAIL: z
+    .string()
+    .email(
+      'Email must be a valid email address (e.g., your.email@example.com)'
+    ),
+});
+
+/**
+ * Validate and parse environment variables
+ * Throws detailed error if validation fails
+ */
+function validateEnv() {
+  const parsed = envSchema.safeParse(import.meta.env);
+
+  if (!parsed.success) {
+    // Format validation errors in a readable way
+    const errors = parsed.error.issues
+      .map((issue) => {
+        const path = issue.path.join('.');
+        return `  ❌ ${path}: ${issue.message}`;
+      })
+      .join('\n');
+
+    console.error('❌ Invalid environment variables:\n' + errors);
+
+    throw new Error(
+      `Environment validation failed:\n${errors}\n\n` +
+        `Please check your .env file and fix the errors above.\n` +
+        `See docs/ENV.md for configuration details.`
+    );
   }
-  return value;
+
+  return parsed.data;
 }
 
-// Helper function to get optional environment variables
-function getOptionalEnvVar(
-  key: keyof ImportMetaEnv,
-  defaultValue = ''
-): string {
-  return import.meta.env[key] ?? defaultValue;
-}
-
-// Helper to parse boolean environment variables
-function getEnvBoolean(
-  key: keyof ImportMetaEnv,
-  defaultValue = false
-): boolean {
-  const value = import.meta.env[key];
-  if (value === undefined) return defaultValue;
-  return value === 'true' || value === '1';
-}
-
-// Helper to parse number environment variables
-function getEnvNumber(key: keyof ImportMetaEnv, defaultValue = 0): number {
-  const value = import.meta.env[key];
-  if (value === undefined) return defaultValue;
-  const parsed = Number(value);
-  return isNaN(parsed) ? defaultValue : parsed;
-}
+// Validate and export environment variables
+const validatedEnv = validateEnv();
 
 /**
  * Application environment configuration
+ * All values are validated at runtime for type safety and correctness
  */
 export const env = {
   // App Configuration
   app: {
-    title: getEnvVar('VITE_APP_TITLE'),
-    description: getEnvVar('VITE_APP_DESCRIPTION'),
+    title: validatedEnv.VITE_APP_TITLE,
+    description: validatedEnv.VITE_APP_DESCRIPTION,
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,
     mode: import.meta.env.MODE,
@@ -53,30 +166,41 @@ export const env = {
 
   // API Configuration
   api: {
-    url: getEnvVar('VITE_API_URL'),
-    timeout: getEnvNumber('VITE_API_TIMEOUT', 5000),
+    url: validatedEnv.VITE_API_URL,
+    timeout: validatedEnv.VITE_API_TIMEOUT,
   },
 
   // Feature Flags
   features: {
-    analytics: getEnvBoolean('VITE_ENABLE_ANALYTICS'),
-    debug: getEnvBoolean('VITE_ENABLE_DEBUG'),
+    analytics: validatedEnv.VITE_ENABLE_ANALYTICS,
+    debug: validatedEnv.VITE_ENABLE_DEBUG,
   },
 
   // Third-party Services
   services: {
-    googleAnalyticsId: getOptionalEnvVar('VITE_GOOGLE_ANALYTICS_ID'),
-    sentryDsn: getOptionalEnvVar('VITE_SENTRY_DSN'),
-    mapboxToken: getOptionalEnvVar('VITE_MAPBOX_TOKEN'),
+    googleAnalyticsId: validatedEnv.VITE_GOOGLE_ANALYTICS_ID || undefined,
+    sentryDsn: validatedEnv.VITE_SENTRY_DSN || undefined,
+    mapboxToken: validatedEnv.VITE_MAPBOX_TOKEN || undefined,
+  },
+
+  // Analytics
+  analytics: {
+    umami: {
+      websiteId: validatedEnv.VITE_UMAMI_WEBSITE_ID || undefined,
+      src: validatedEnv.VITE_UMAMI_SRC,
+    },
   },
 
   // Social Links
   social: {
-    github: getEnvVar('VITE_GITHUB_URL'),
-    linkedin: getEnvVar('VITE_LINKEDIN_URL'),
-    email: getEnvVar('VITE_EMAIL'),
+    github: validatedEnv.VITE_GITHUB_URL,
+    linkedin: validatedEnv.VITE_LINKEDIN_URL,
+    email: validatedEnv.VITE_EMAIL,
   },
 } as const;
 
 // Export type for use in other files
 export type Env = typeof env;
+
+// Export the Zod schema type for reference
+export type ValidatedEnv = z.infer<typeof envSchema>;

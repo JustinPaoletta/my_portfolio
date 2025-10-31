@@ -4,79 +4,78 @@
 version: 2
 updates:
   # Maintain npm dependencies
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "America/New_York"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/New_York'
     # Group updates by type for cleaner PRs
     groups:
       # Production dependencies
       react:
         patterns:
-          - "react"
-          - "react-dom"
-          - "react-*"
+          - 'react'
+          - 'react-dom'
+          - 'react-*'
       # Development dependencies
       vite:
         patterns:
-          - "vite"
-          - "@vitejs/*"
-          - "rolldown-vite"
+          - 'vite'
+          - '@vitejs/*'
+          - 'rolldown-vite'
       testing:
         patterns:
-          - "vitest"
-          - "@vitest/*"
-          - "@testing-library/*"
-          - "@playwright/test"
-          - "jsdom"
+          - 'vitest'
+          - '@vitest/*'
+          - '@testing-library/*'
+          - '@playwright/test'
+          - 'jsdom'
       linting:
         patterns:
-          - "eslint"
-          - "eslint-*"
-          - "@eslint/*"
-          - "prettier"
-          - "typescript-eslint"
+          - 'eslint'
+          - 'eslint-*'
+          - '@eslint/*'
+          - 'prettier'
+          - 'typescript-eslint'
       typescript:
         patterns:
-          - "typescript"
-          - "@types/*"
+          - 'typescript'
+          - '@types/*'
       commitlint:
         patterns:
-          - "@commitlint/*"
-          - "husky"
-          - "lint-staged"
+          - '@commitlint/*'
+          - 'husky'
+          - 'lint-staged'
     # Add labels to PRs
     labels:
-      - "dependencies"
-      - "dependabot"
+      - 'dependencies'
+      - 'dependabot'
     # Open PRs with these settings
     open-pull-requests-limit: 10
     # Commit message prefix for conventional commits
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
-      include: "scope"
+      prefix: 'chore'
+      prefix-development: 'chore'
+      include: 'scope'
     # Reviewers (add your GitHub username or team)
     reviewers:
-      - "JustinPaoletta"
+      - 'JustinPaoletta'
     assignees:
-      - "JustinPaoletta"
+      - 'JustinPaoletta'
 
   # Maintain GitHub Actions (if you add any workflows in the future)
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "09:00"
-      timezone: "America/New_York"
+      interval: 'weekly'
+      day: 'monday'
+      time: '09:00'
+      timezone: 'America/New_York'
     labels:
-      - "dependencies"
-      - "github-actions"
+      - 'dependencies'
+      - 'github-actions'
     commit-message:
-      prefix: "ci"
-      include: "scope"
-
+      prefix: 'ci'
+      include: 'scope'

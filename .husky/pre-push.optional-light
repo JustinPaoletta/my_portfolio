@@ -1,0 +1,20 @@
+#!/usr/bin/env sh
+# Lighter pre-push hook - faster but skips E2E tests
+# To use: mv .husky/pre-push .husky/pre-push.full && mv .husky/pre-push.optional-light .husky/pre-push
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 Running TypeScript type checking..."
+tsc -b || {
+  echo "❌ TypeScript compilation failed. Fix type errors before pushing."
+  exit 1
+}
+
+echo "🧪 Running unit tests..."
+npm run test:unit || {
+  echo "❌ Unit tests failed. Fix the tests before pushing."
+  exit 1
+}
+
+echo "✅ Quick checks passed! (E2E tests skipped for speed)"
+echo "💡 Remember to run 'npm run test:e2e' before creating a PR"
+

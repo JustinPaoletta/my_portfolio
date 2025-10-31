@@ -1,7 +1,10 @@
 import { defineConfig, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 import fs from 'fs';
+import { sitemapPlugin } from './scripts/vite-plugin-sitemap';
+import { pwaConfig } from './src/pwa-config';
 
 // Bundle size limits in KB
 const BUNDLE_SIZE_LIMITS = {
@@ -111,7 +114,7 @@ function bundleSizeLimit(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), bundleSizeLimit()],
+  plugins: [react(), VitePWA(pwaConfig), bundleSizeLimit(), sitemapPlugin()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
