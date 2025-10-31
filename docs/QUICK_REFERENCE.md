@@ -145,6 +145,7 @@ git commit -m "docs: update setup instructions"
    - Update name, colors, description
 
 3. **Test:**
+
    ```bash
    npm run build
    npm run start:prod
