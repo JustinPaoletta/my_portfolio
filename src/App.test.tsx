@@ -7,7 +7,7 @@ describe('App', () => {
   it('renders the heading', () => {
     render(<App />);
     expect(
-      screen.getByRole('heading', { name: /vite \+ react/i })
+      screen.getByRole('heading', { name: /my portfolio/i })
     ).toBeInTheDocument();
   });
 
