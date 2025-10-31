@@ -7,6 +7,12 @@ tsc -b || {
   exit 1
 }
 
+echo "🧹 Running linter on all committed files..."
+npm run lint:fix || {
+  echo "❌ Linting failed. Fix linting errors before pushing."
+  exit 1
+}
+
 echo "🧪 Running unit tests..."
 npm run test:unit || {
   echo "❌ Unit tests failed. Fix the tests before pushing."
