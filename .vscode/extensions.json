@@ -1,0 +1,33 @@
+{
+  "recommendations": [
+    // Essential for this project
+    "esbenp.prettier-vscode",
+    "dbaeumer.vscode-eslint",
+
+    // TypeScript
+    "ms-vscode.vscode-typescript-next",
+
+    // Testing
+    "vitest.explorer",
+    "ms-playwright.playwright",
+
+    // Git
+    "vivaxy.vscode-conventional-commits",
+
+    // Productivity
+    "usernamehw.errorlens",
+    "christian-kohler.path-intellisense",
+    "zignd.html-css-class-completion",
+
+    // React
+    "dsznajder.es7-react-js-snippets",
+
+    // Markdown
+    "yzhang.markdown-all-in-one",
+
+    // Utilities
+    "streetsidesoftware.code-spell-checker",
+    "mikestead.dotenv"
+  ],
+  "unwantedRecommendations": []
+}
