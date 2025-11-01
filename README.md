@@ -1,6 +1,6 @@
 # My Portfolio
 
-A modern, performant portfolio website showcasing my projects and skills. Built with production-grade tooling including comprehensive testing, accessibility compliance, error monitoring, and analytics integration.
+A modern, performant portfolio website showcasing my projects and skills. Built with production-grade tooling including comprehensive testing, accessibility compliance, and analytics integration.
 
 ## 🌐 Live Site
 
@@ -13,7 +13,7 @@ A modern, performant portfolio website showcasing my projects and skills. Built 
 - **Accessibility First** - WCAG 2.1 Level AA compliant with automated testing
 - **SEO Optimized** - Dynamic meta tags, automated sitemap generation, robots.txt
 - **Privacy-Friendly Analytics** - Umami integration for visitor tracking
-- **Error Monitoring** - Sentry integration for real-time error tracking
+- **Error Monitoring** - New Relic integration for real-time error tracking and performance monitoring
 - **Type-Safe** - Full TypeScript coverage for robust development
 - **Comprehensive Testing** - Unit, E2E, and accessibility tests included
 - **Performance Optimized** - Strict bundle size budgets with smart caching
@@ -44,7 +44,7 @@ npm install
 
 3. **Set up environment variables** (optional)
    - See [ENV.md](docs/ENV.md) for configuration details
-   - Configure Sentry, Umami analytics, etc.
+   - Configure Umami analytics, etc.
 
 4. **Start the development server**
 
@@ -123,8 +123,8 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 ### Developer Experience
 
 - **React Helmet Async** - Dynamic SEO meta tags
-- **Sentry** - Error monitoring and performance tracking
 - **Umami** - Privacy-friendly analytics
+- **New Relic Browser** - Real-time error and performance monitoring
 - **VS Code Debugging** - Integrated debugging configurations
 
 ### Accessibility
@@ -147,8 +147,8 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 ### Integrations & Services
 
 - **[PWA Setup](docs/PWA_SETUP.md)** - Progressive Web App configuration & offline support
-- **[Sentry Setup](docs/SENTRY_SETUP.md)** - Error monitoring integration
 - **[Analytics Setup](docs/ANALYTICS_SETUP.md)** - Umami integration guide
+- **[New Relic Setup](docs/NEWRELIC.md)** - Error monitoring and performance tracking
 - **[SEO Guide](docs/SEO.md)** - SEO configuration
 
 ### Accessibility

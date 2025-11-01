@@ -29,7 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Comprehensive testing setup (Vitest, Playwright, axe-core)
 - Accessibility compliance (WCAG 2.1 Level AA)
 - SEO optimization with React Helmet Async
-- Error monitoring with Sentry
 - Privacy-friendly analytics with Umami
 - ESLint and Prettier configuration
 - Git hooks with Husky

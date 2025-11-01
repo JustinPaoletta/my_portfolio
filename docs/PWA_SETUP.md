@@ -265,6 +265,94 @@ When you deploy a new version:
 - Set `skipWaiting: true` in workbox config
 - Clear all caches: DevTools → Application → Clear Storage
 
+### CSP Violation for Vercel Live Scripts
+
+**Issue:** Console error: "Refused to load the script 'https://vercel.live/_next-live/feedback/feedback.js' because it violates the following Content Security Policy directive"
+
+**Cause:** Vercel's preview deployments inject feedback scripts, but the Content Security Policy blocks external scripts.
+
+**Solution:**
+
+Add `https://vercel.live` to your CSP in `vercel.json`:
+
+```json
+{
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "Content-Security-Policy",
+          "value": "script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live; connect-src 'self' https://vercel.live;"
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Note:** This only affects Vercel preview deployments, not production.
+
+### Manifest 401 Unauthorized Error
+
+**Issue:** Console error: "GET /manifest.webmanifest 401 (Unauthorized)"
+
+**Cause:** The manifest file might not be properly configured for Vercel deployment or CSP headers are blocking it.
+
+**Solutions:**
+
+1. **Add explicit manifest configuration in `vercel.json`:**
+
+```json
+{
+  "rewrites": [
+    {
+      "source": "/manifest.webmanifest",
+      "destination": "/manifest.webmanifest"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/manifest.webmanifest",
+      "headers": [
+        {
+          "key": "Content-Type",
+          "value": "application/manifest+json"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    }
+  ]
+}
+```
+
+2. **Add `manifest-src` to CSP:**
+
+```
+Content-Security-Policy: manifest-src 'self';
+```
+
+3. **Verify manifest is generated:**
+
+```bash
+npm run build
+ls -la dist/manifest.webmanifest
+```
+
+4. **Check PWA config:**
+
+Ensure `manifestFilename` is set in `src/pwa-config.ts`:
+
+```typescript
+export const pwaConfig: Partial<VitePWAOptions> = {
+  manifestFilename: 'manifest.webmanifest',
+  // ... rest of config
+};
+```
+
 ## 📊 Monitoring PWA Performance
 
 ### Key Metrics to Track

@@ -57,6 +57,13 @@ const envSchema = z.object({
     .transform((val) => val === 'true' || val === '1')
     .pipe(z.boolean()),
 
+  VITE_ENABLE_ERROR_MONITORING: z
+    .string()
+    .optional()
+    .default('false')
+    .transform((val) => val === 'true' || val === '1')
+    .pipe(z.boolean()),
+
   // Third-party Services (Optional)
   VITE_GOOGLE_ANALYTICS_ID: z
     .string()
@@ -65,16 +72,6 @@ const envSchema = z.object({
       'Google Analytics ID must be in format G-XXXXXXXXXX or UA-XXXXXX-X'
     )
     .optional(),
-
-  VITE_SENTRY_DSN: z
-    .string()
-    .url('Sentry DSN must be a valid URL')
-    .refine(
-      (url) => !url || url.includes('sentry.io') || url.includes('ingest'),
-      'Sentry DSN should contain sentry.io or ingest domain'
-    )
-    .optional()
-    .or(z.literal('')),
 
   VITE_MAPBOX_TOKEN: z
     .string()
@@ -94,6 +91,53 @@ const envSchema = z.object({
     .url('Umami script source must be a valid URL')
     .optional()
     .default('https://cloud.umami.is/script.js'),
+
+  // New Relic Configuration (Optional)
+  VITE_NEWRELIC_ACCOUNT_ID: z
+    .string()
+    .regex(/^\d+$/, 'New Relic Account ID must be a number')
+    .optional()
+    .or(z.literal('')),
+
+  VITE_NEWRELIC_TRUST_KEY: z
+    .string()
+    .regex(/^\d+$/, 'New Relic Trust Key must be a number')
+    .optional()
+    .or(z.literal('')),
+
+  VITE_NEWRELIC_AGENT_ID: z
+    .string()
+    .regex(/^\d+$/, 'New Relic Agent ID must be a number')
+    .optional()
+    .or(z.literal('')),
+
+  VITE_NEWRELIC_LICENSE_KEY: z
+    .string()
+    .min(1, 'New Relic License Key cannot be empty if provided')
+    .optional()
+    .or(z.literal('')),
+
+  VITE_NEWRELIC_APPLICATION_ID: z
+    .string()
+    .regex(/^\d+$/, 'New Relic Application ID must be a number')
+    .optional()
+    .or(z.literal('')),
+
+  VITE_NEWRELIC_AJAX_DENY_LIST: z
+    .string()
+    .optional()
+    .default('')
+    .transform((val) => (val ? val.split(',').map((s) => s.trim()) : [])),
+
+  // App Version (Optional)
+  VITE_APP_VERSION: z
+    .string()
+    .regex(
+      /^\d+\.\d+\.\d+$/,
+      'App version must be in semver format (e.g., 1.0.0)'
+    )
+    .optional()
+    .default('1.0.0'),
 
   // Social Links (Required)
   VITE_GITHUB_URL: z
@@ -159,6 +203,7 @@ export const env = {
   app: {
     title: validatedEnv.VITE_APP_TITLE,
     description: validatedEnv.VITE_APP_DESCRIPTION,
+    version: validatedEnv.VITE_APP_VERSION,
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,
     mode: import.meta.env.MODE,
@@ -174,12 +219,12 @@ export const env = {
   features: {
     analytics: validatedEnv.VITE_ENABLE_ANALYTICS,
     debug: validatedEnv.VITE_ENABLE_DEBUG,
+    errorMonitoring: validatedEnv.VITE_ENABLE_ERROR_MONITORING,
   },
 
   // Third-party Services
   services: {
     googleAnalyticsId: validatedEnv.VITE_GOOGLE_ANALYTICS_ID || undefined,
-    sentryDsn: validatedEnv.VITE_SENTRY_DSN || undefined,
     mapboxToken: validatedEnv.VITE_MAPBOX_TOKEN || undefined,
   },
 
@@ -188,6 +233,18 @@ export const env = {
     umami: {
       websiteId: validatedEnv.VITE_UMAMI_WEBSITE_ID || undefined,
       src: validatedEnv.VITE_UMAMI_SRC,
+    },
+  },
+
+  // Error Monitoring
+  monitoring: {
+    newrelic: {
+      accountId: validatedEnv.VITE_NEWRELIC_ACCOUNT_ID || undefined,
+      trustKey: validatedEnv.VITE_NEWRELIC_TRUST_KEY || undefined,
+      agentId: validatedEnv.VITE_NEWRELIC_AGENT_ID || undefined,
+      licenseKey: validatedEnv.VITE_NEWRELIC_LICENSE_KEY || undefined,
+      applicationId: validatedEnv.VITE_NEWRELIC_APPLICATION_ID || undefined,
+      ajaxDenyList: validatedEnv.VITE_NEWRELIC_AJAX_DENY_LIST,
     },
   },
 

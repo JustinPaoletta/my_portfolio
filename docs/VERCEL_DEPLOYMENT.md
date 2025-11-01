@@ -103,9 +103,6 @@ true
 
 VITE_UMAMI_WEBSITE_ID
 (your Umami website ID - if using)
-
-VITE_SENTRY_DSN
-(your Sentry DSN - if using)
 ```
 
 💡 **Tip:** You can add these later in Settings → Environment Variables
@@ -472,12 +469,7 @@ Vercel automatically sets:
    - Track visitor behavior
    - Monitor performance
 
-3. **Set Up Error Monitoring**
-   - Configure Sentry (optional)
-   - Get notified of bugs
-   - See [SENTRY_SETUP.md](SENTRY_SETUP.md)
-
-4. **Submit to Search Engines**
+3. **Submit to Search Engines**
 
    ```
    Google Search Console: https://search.google.com/search-console
@@ -486,7 +478,7 @@ Vercel automatically sets:
    Submit: https://your-site.vercel.app/sitemap.xml
    ```
 
-5. **Share Your Portfolio!** 🎉
+4. **Share Your Portfolio!** 🎉
    - Add to LinkedIn
    - Update GitHub profile
    - Share on Twitter

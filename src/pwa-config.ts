@@ -9,6 +9,7 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
   includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml'],
+  manifestFilename: 'manifest.webmanifest',
 
   manifest: {
     name: 'My Portfolio',

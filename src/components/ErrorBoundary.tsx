@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/react';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
+import { reportError } from '@/utils/newrelic';
 
 interface Props {
   children: ReactNode;
@@ -12,7 +12,7 @@ interface State {
 }
 
 /**
- * Error Boundary component that catches React errors and reports them to Sentry
+ * Error Boundary component that catches React errors
  * Provides a fallback UI when errors occur
  */
 class ErrorBoundary extends Component<Props, State> {
@@ -33,19 +33,21 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error to Sentry
-    Sentry.captureException(error, {
-      contexts: {
-        react: {
-          componentStack: errorInfo.componentStack,
-        },
-      },
-    });
-
-    // Log to console in development
+    // Log error to console in development
     if (import.meta.env.DEV) {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
     }
+
+    // In production, log to console for browser error tracking
+    console.error('Error:', error);
+    console.error('Component Stack:', errorInfo.componentStack);
+
+    // Report error to New Relic with component stack
+    reportError(error, {
+      errorBoundary: true,
+      componentStack: errorInfo.componentStack || 'unknown',
+      source: 'React ErrorBoundary',
+    });
   }
 
   handleReset = (): void => {
@@ -105,8 +107,7 @@ class ErrorBoundary extends Component<Props, State> {
                 lineHeight: '1.6',
               }}
             >
-              We're sorry, but something unexpected happened. The error has been
-              reported and we'll look into it.
+              We're sorry, but something unexpected happened. Please try again.
             </p>
             {import.meta.env.DEV && this.state.error && (
               <details
@@ -215,40 +216,4 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Export the Sentry-wrapped version for production use
-const SentryErrorBoundary = Sentry.withErrorBoundary(ErrorBoundary, {
-  fallback: (
-    <div
-      style={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '2rem',
-        fontFamily: 'system-ui, -apple-system, sans-serif',
-      }}
-    >
-      <div style={{ textAlign: 'center' }}>
-        <h1 style={{ color: '#dc2626', marginBottom: '1rem' }}>
-          Something went wrong
-        </h1>
-        <button
-          onClick={() => window.location.reload()}
-          style={{
-            padding: '0.5rem 1rem',
-            backgroundColor: '#3b82f6',
-            color: 'white',
-            border: 'none',
-            borderRadius: '0.375rem',
-            cursor: 'pointer',
-          }}
-        >
-          Reload Page
-        </button>
-      </div>
-    </div>
-  ),
-  showDialog: false,
-});
-
-export default SentryErrorBoundary;
+export default ErrorBoundary;
