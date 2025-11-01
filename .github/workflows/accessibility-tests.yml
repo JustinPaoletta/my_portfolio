@@ -25,8 +25,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Get installed Playwright version
+        run: |
+          echo "Playwright version:"
+          npm list @playwright/test
+          
+      - name: Install Playwright Browsers
+        run: |
+          echo "Installing Playwright browsers with system dependencies..."
+          # Use the local installation to ensure version match
+          node_modules/.bin/playwright install --with-deps chromium firefox webkit
+          
+      - name: Verify browser installation
+        run: |
+          echo "Checking installed browsers..."
+          ls -la ~/.cache/ms-playwright/ || echo "ERROR: Browser cache directory not found!"
+          if [ -d ~/.cache/ms-playwright/chromium-* ]; then echo "✓ Chromium installed"; else echo "✗ Chromium NOT installed"; fi
+          if [ -d ~/.cache/ms-playwright/firefox-* ]; then echo "✓ Firefox installed"; else echo "✗ Firefox NOT installed"; fi
+          if [ -d ~/.cache/ms-playwright/webkit-* ]; then echo "✓ WebKit installed"; else echo "✗ WebKit NOT installed"; fi
 
       - name: Set up test environment variables
         run: cp .env.test .env.local
