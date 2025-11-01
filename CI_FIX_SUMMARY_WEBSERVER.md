@@ -1,10 +1,42 @@
-# Accessibility Tests CI Fix - Web Server Issue
+# Accessibility Tests CI Fix - Complete Solution
 
 ## Problem
 
-The accessibility tests in PR #3 were still failing after fixing the browser installation issue. The check "Accessibility Tests / Run Accessibility Tests (pull_request)" was failing after 2 minutes.
+The accessibility tests in PR #3 were failing with two issues:
 
-## Root Cause
+1. Missing browser executables: `Error: browserType.launch: Executable doesn't exist at /home/runner/.cache/ms-playwright/webkit-2215/pw_run.sh`
+2. Web server configuration conflict
+
+## Root Causes
+
+### Issue 1: Flawed Browser Caching Logic
+
+The workflow had complex conditional caching that was causing browser installation failures:
+
+```yaml
+- name: Cache Playwright browsers
+  uses: actions/cache@v4
+  id: playwright-cache
+  with:
+    path: ~/.cache/ms-playwright
+    key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+- name: Install Playwright browsers
+  if: steps.playwright-cache.outputs.cache-hit != 'true' # Only if cache MISS
+  run: npx playwright install --with-deps chromium firefox webkit
+
+- name: Install Playwright system dependencies
+  if: steps.playwright-cache.outputs.cache-hit == 'true' # Only if cache HIT
+  run: npx playwright install-deps chromium firefox webkit
+```
+
+**The Problem:**
+
+- On cache HIT: Only system dependencies were installed, assuming cached browsers were complete
+- Cached browsers could be incomplete, corrupted, or from a different Playwright version
+- This caused missing executable errors for WebKit, Firefox, and sometimes Chromium
+
+### Issue 2: Web Server Conflict
 
 The workflow had a configuration conflict:
 
