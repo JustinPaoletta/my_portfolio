@@ -8,6 +8,11 @@ on:
   push:
     branches: [main, master]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
 jobs:
   bundle-size:
     name: Check Bundle Size
@@ -32,7 +37,7 @@ jobs:
 
       - name: Upload bundle stats
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: bundle-stats
           path: |
