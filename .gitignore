@@ -14,8 +14,9 @@ dev-dist
 *.local
 
 # Environment variables
-.env
-.env*.local
+# Ignore all .env files
+.env*
+# Except example templates and CI/CD files
 !.env.example
 !.env.test
 
