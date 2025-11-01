@@ -46,17 +46,15 @@ export function usePWA() {
  * Hook for detecting if app is running as PWA
  */
 export function useIsStandalone(): boolean {
-  const [isStandalone, setIsStandalone] = useState(false);
-
-  useEffect(() => {
+  // Initialize state directly instead of in an effect
+  const [isStandalone] = useState(() => {
     // Check if app is running in standalone mode (installed PWA)
-    const standalone =
+    return (
       window.matchMedia('(display-mode: standalone)').matches ||
       (window.navigator as Navigator & { standalone?: boolean }).standalone ||
-      document.referrer.includes('android-app://');
-
-    setIsStandalone(standalone);
-  }, []);
+      document.referrer.includes('android-app://')
+    );
+  });
 
   return isStandalone;
 }
