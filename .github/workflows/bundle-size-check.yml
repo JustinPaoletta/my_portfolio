@@ -4,9 +4,9 @@ name: Bundle Size Check
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, master]
   push:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   bundle-size:
