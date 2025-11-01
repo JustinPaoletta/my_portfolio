@@ -29,13 +29,13 @@ jobs:
         run: |
           echo "Playwright version:"
           npm list @playwright/test
-          
+
       - name: Install Playwright Browsers
         run: |
           echo "Installing Playwright browsers with system dependencies..."
           # Use the local installation to ensure version match
           node_modules/.bin/playwright install --with-deps chromium firefox webkit
-          
+
       - name: Verify browser installation
         run: |
           echo "Checking installed browsers..."
