@@ -38,14 +38,14 @@ VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 # VITE_UMAMI_SRC=https://your-umami-domain.com/script.js
 ```
 
-Also update your `.env.example` file so other developers know what's needed:
+**Optional Analytics Variables:**
 
 ```bash
-# Enable Analytics
+# Enable Analytics (add to your .env file)
 VITE_ENABLE_ANALYTICS=false
 
 # Umami Configuration (get from https://cloud.umami.is)
-VITE_UMAMI_WEBSITE_ID=
+VITE_UMAMI_WEBSITE_ID=your-website-id-here
 VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 ```
 

@@ -23,11 +23,13 @@ interface ImportMetaEnv {
   readonly VITE_UMAMI_WEBSITE_ID?: string;
   readonly VITE_UMAMI_SRC?: string;
 
-  // PWA & SEO
+  // Social Links (Required)
+  readonly VITE_GITHUB_URL: string;
+  readonly VITE_LINKEDIN_URL: string;
+  readonly VITE_EMAIL: string;
+
+  // PWA & SEO (Optional)
   readonly VITE_SITE_URL?: string;
-  readonly SITE_URL?: string;
-  readonly URL?: string;
-  readonly VITE_APP_URL?: string;
 }
 
 interface ImportMeta {

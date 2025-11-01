@@ -4,9 +4,7 @@ A modern, performant portfolio website showcasing my projects and skills. Built 
 
 ## 🌐 Live Site
 
-**[View Portfolio](https://my-portfolio-gamma-sandy-54.vercel.app/)** ← _Deploy to Vercel and update this URL_
-
-**Ready to deploy?** See [Vercel Deployment Guide](docs/VERCEL_DEPLOYMENT.md)
+**[View Portfolio](https://my-portfolio-gamma-sandy-54.vercel.app/)**
 
 ## ✨ Features
 
@@ -34,7 +32,7 @@ A modern, performant portfolio website showcasing my projects and skills. Built 
 1. **Clone the repository**
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/JustinPaoletta/my_portfolio.git
 cd my-portfolio
 ```
 
@@ -54,18 +52,12 @@ npm install
 npm run start:dev
 ```
 
-5. **Generate PWA icons** (required for full PWA functionality)
-   - See [PWA Icons Quickstart](docs/PWA_ICONS_QUICKSTART.md)
-   - Or use: https://favicon.io/favicon-converter/
-   - Place `pwa-192x192.png` and `pwa-512x512.png` in `public/` folder
-
-6. **Open your browser**
+5. **Open your browser**
    - Navigate to `http://localhost:5173`
 
 ### Build for Production
 
 ```bash
-npm run build
 npm run start:prod  # Preview production build
 ```
 
@@ -147,38 +139,27 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 - **[Quick Reference](docs/QUICK_REFERENCE.md)** - ⭐ Common commands and quick tips
 - **[VS Code Debugging Guide](docs/VSCODE_DEBUGGING.md)** - Debug configurations and workflows
 - **[Git Hooks Guide](docs/GIT_HOOKS.md)** - Pre-commit, pre-push, and other hooks
-- **[Environment Variables](docs/ENV.md)** - Environment setup with Zod validation
-- **[Environment Validation](docs/ENV_VALIDATION.md)** - Runtime validation details
 - **[Commit Conventions](docs/COMMIT_CONVENTION.md)** - Git commit guidelines
 - **[Changelog & Releases](docs/CHANGELOG_GUIDE.md)** - Version management with standard-version
 - **[Workspace Info](docs/WORKSPACE.md)** - Project structure
 - **[Dependabot Setup](docs/DEPENDABOT.md)** - Automated dependency updates
 
-### Deployment
-
-- **[Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)** - ⭐ Deploy your portfolio to Vercel
-
 ### Integrations & Services
 
 - **[PWA Setup](docs/PWA_SETUP.md)** - Progressive Web App configuration & offline support
-- **[PWA Icons Quickstart](docs/PWA_ICONS_QUICKSTART.md)** - Quick icon generation guide
 - **[Sentry Setup](docs/SENTRY_SETUP.md)** - Error monitoring integration
 - **[Analytics Setup](docs/ANALYTICS_SETUP.md)** - Umami integration guide
-- **[Analytics Quickstart](docs/ANALYTICS_QUICKSTART.md)** - Quick analytics setup
 - **[SEO Guide](docs/SEO.md)** - SEO configuration
 
 ### Accessibility
 
 - **[Accessibility Testing](docs/ACCESSIBILITY_TESTING.md)** - A11y testing strategies
 - **[Accessibility Quick Reference](docs/ACCESSIBILITY_QUICK_REFERENCE.md)** - A11y best practices
-- **[A11y Setup Summary](docs/A11Y_SETUP_SUMMARY.md)** - Accessibility setup overview
-- **[Accessibility Fixes](docs/ACCESSIBILITY_FIXES.md)** - A11y implementation details
 
 ### Performance & Monitoring
 
 - **[Performance Budget](docs/PERFORMANCE_BUDGET.md)** - Bundle size limits
 - **[Bundle Size Testing](docs/BUNDLE_SIZE_TEST.md)** - Performance monitoring
-- **[Umami Implementation Summary](docs/UMAMI_IMPLEMENTATION_SUMMARY.md)** - Analytics implementation details
 
 ## 📄 License
 

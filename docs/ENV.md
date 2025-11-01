@@ -4,10 +4,12 @@ This project uses environment variables for configuration with **runtime validat
 
 ## 📁 Files
 
-- `.env.example` - Template file with all available variables (committed to git)
-- `.env.development` - Development environment variables (gitignored)
-- `.env.production` - Production environment variables (gitignored)
-- `.env` - Local overrides (gitignored)
+- **`.env.example`** - Template file with all available variables (✅ committed to git)
+- **`.env.test`** - Test configuration for CI/CD with safe placeholder values (✅ committed to git)
+- **`.env`** - Your local development environment variables (gitignored)
+- **`.env.prod`** - Local copy of production variables set in Vercel (gitignored, optional)
+
+**Note:** All `.env*` files are gitignored **except** `.env.example` and `.env.test` which are committed to provide templates and enable CI/CD testing. The `.env.prod` file is a convenience for keeping a local reference of your Vercel production environment variables.
 
 ## 🚀 Getting Started
 
@@ -117,6 +119,26 @@ VITE_EMAIL=your.email@example.com
 - GitHub URL: Must be valid URL containing 'github.com'
 - LinkedIn URL: Must be valid URL containing 'linkedin.com'
 - Email: Must be valid email format
+
+### PWA & SEO (Optional)
+
+```bash
+# Your site's production URL - used for sitemap generation
+VITE_SITE_URL=https://yourportfolio.com
+```
+
+**Validation:**
+
+- Site URL: Must be valid URL format (optional)
+
+**When to set:**
+
+- Not required for development or initial deployment
+- Set this in production environment variables on Vercel/hosting platform
+- Used by the build process to generate `sitemap.xml` with correct URLs
+- Can be added after initial deployment and redeployed
+
+**Note:** If not set, the sitemap will generate with placeholder URLs. You can also manually generate the sitemap by running `npm run sitemap:generate` after setting this variable.
 
 ## 💻 Usage in Code
 
@@ -228,10 +250,12 @@ Vite loads environment variables in the following order (later values override e
 
 ## 🔒 Security
 
-- ❌ **Never commit** `.env`, `.env.local`, or `.env.*.local` files
-- ✅ **Always commit** `.env.example` as a template
+- ❌ **Never commit** `.env` or `.env.prod` (contain your actual values, gitignored)
+- ✅ `.env.example` - Template with placeholders (✅ committed, safe to share)
+- ✅ `.env.test` - Test values with safe placeholders (✅ committed, safe to share)
 - ❌ **Never store secrets** like API keys in client-side env vars
 - ✅ **Use a backend** to proxy requests that require secrets
+- ✅ **Set production variables** directly in hosting platform (Vercel, etc.)
 
 ## 🧪 Different Environments
 

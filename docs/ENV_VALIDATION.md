@@ -348,7 +348,8 @@ const validatedEnv = import.meta.env as any;
 5. **Document validation rules**
    - Add comments in the schema
    - Update ENV.md with requirements
-   - Include examples in .env.example
+   - Update `.env.example` with new variables and documentation
+   - Update `.env.test` with safe test values
 
 ## Resources
 
