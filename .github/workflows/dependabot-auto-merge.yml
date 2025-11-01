@@ -25,20 +25,7 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
-          github-token: "${{ secrets.GITHUB_TOKEN }}"
-
-      - name: Auto-approve PR
-        # Auto-approve patch and minor updates for all dependencies
-        # Or major updates for dev dependencies only
-        if: |
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          (steps.metadata.outputs.update-type == 'version-update:semver-major' &&
-           steps.metadata.outputs.dependency-type == 'direct:development')
-        run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          github-token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Enable auto-merge
         # Same conditions as auto-approve
@@ -53,7 +40,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment on PR
-        # Add a comment explaining why it was auto-merged
+        # Add a comment explaining that auto-merge is enabled
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
           steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
@@ -68,8 +55,8 @@ jobs:
           **Dependency type:** \`${{ steps.metadata.outputs.dependency-type }}\`
 
           ---
-          *If you want to prevent auto-merge, comment \`@dependabot cancel merge\`*"
+          *Note: Please manually approve this PR if required by your branch protection rules.*
+          *To prevent auto-merge, comment \`@dependabot cancel merge\`*"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-

@@ -1,0 +1,130 @@
+/* PWA Update Prompt Styles */
+
+.pwa-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  max-width: 400px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow:
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 10px 25px rgba(0, 0, 0, 0.15);
+  padding: 16px;
+  z-index: 9999;
+  animation: slideInUp 0.3s ease-out;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pwa-toast {
+    background: #2a2a2a;
+    color: #ffffff;
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.pwa-toast-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.pwa-toast-message {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.pwa-toast-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.pwa-toast-title {
+  font-weight: 600;
+  font-size: 16px;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.pwa-toast-description {
+  font-size: 14px;
+  margin: 0;
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.pwa-toast-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.pwa-toast-button {
+  flex: 1;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pwa-toast-button:hover {
+  transform: translateY(-1px);
+}
+
+.pwa-toast-button:active {
+  transform: translateY(0);
+}
+
+.pwa-toast-button-primary {
+  background: #646cff;
+  color: white;
+}
+
+.pwa-toast-button-primary:hover {
+  background: #535bf2;
+}
+
+.pwa-toast-button-secondary {
+  background: #e5e5e5;
+  color: #333;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pwa-toast-button-secondary {
+    background: #3a3a3a;
+    color: #ffffff;
+  }
+
+  .pwa-toast-button-secondary:hover {
+    background: #4a4a4a;
+  }
+}
+
+.pwa-toast-button-secondary:hover {
+  background: #d5d5d5;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .pwa-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+    max-width: none;
+  }
+}
