@@ -1,4 +1,13 @@
 {
+  "git": {
+    "deploymentEnabled": {
+      "master": true,
+      "feature/*": false,
+      "fix/*": false,
+      "chore/*": false,
+      "docs/*": false
+    }
+  },
   "headers": [
     {
       "source": "/(.*)",
