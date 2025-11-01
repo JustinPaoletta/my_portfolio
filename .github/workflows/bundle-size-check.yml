@@ -1,5 +1,4 @@
-# Example GitHub Actions workflow for bundle size checks
-# Rename this file to bundle-size-check.yml to enable it
+# GitHub Actions workflow for bundle size checks
 
 name: Bundle Size Check
 
