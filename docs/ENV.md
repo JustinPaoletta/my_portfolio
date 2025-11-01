@@ -4,10 +4,12 @@ This project uses environment variables for configuration with **runtime validat
 
 ## 📁 Files
 
-- `.env.example` - Template file with all available variables (committed to git)
-- `.env.development` - Development environment variables (gitignored)
-- `.env.production` - Production environment variables (gitignored)
-- `.env` - Local overrides (gitignored)
+- **`.env.example`** - Template file with all available variables (✅ committed to git)
+- **`.env.test`** - Test configuration for CI/CD with safe placeholder values (✅ committed to git)
+- **`.env`** - Your local development environment variables (gitignored)
+- **`.env.prod`** - Local copy of production variables set in Vercel (gitignored, optional)
+
+**Note:** All `.env*` files are gitignored **except** `.env.example` and `.env.test` which are committed to provide templates and enable CI/CD testing. The `.env.prod` file is a convenience for keeping a local reference of your Vercel production environment variables.
 
 ## 🚀 Getting Started
 
@@ -68,6 +70,7 @@ VITE_API_TIMEOUT=5000
 # Defaults to false if not specified
 VITE_ENABLE_ANALYTICS=false
 VITE_ENABLE_DEBUG=false
+VITE_ENABLE_ERROR_MONITORING=false
 ```
 
 **Validation:**
@@ -80,9 +83,6 @@ VITE_ENABLE_DEBUG=false
 ```bash
 # Google Analytics ID - format: G-XXXXXXXXXX or UA-XXXXXX-X
 VITE_GOOGLE_ANALYTICS_ID=G-ABC123XYZ
-
-# Sentry DSN - must be valid URL, should contain 'sentry.io' or 'ingest'
-VITE_SENTRY_DSN=https://abc123@o123.ingest.sentry.io/456
 
 # Mapbox token - any non-empty string
 VITE_MAPBOX_TOKEN=pk.abc123xyz
@@ -98,10 +98,76 @@ VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 **Validation:**
 
 - Google Analytics ID: Must match format `G-XXXXXXXXXX` or `UA-XXXXXX-X`
-- Sentry DSN: Must be valid URL containing 'sentry.io' or 'ingest'
 - Mapbox Token: Non-empty string (if provided)
 - Umami Website ID: Must be valid UUID format
 - Umami Src: Must be valid URL
+
+### New Relic Error Monitoring (Optional)
+
+New Relic provides real-time error monitoring and performance tracking. To enable:
+
+1. **Sign up for New Relic:**
+   - Go to [https://newrelic.com](https://newrelic.com)
+   - Create a free account (100GB/month free)
+
+2. **Create a Browser Application:**
+   - Navigate to: **Browser** → **Add data**
+   - Select **Browser monitoring** → **Copy/paste JavaScript code**
+   - Choose **Pro + SPA** (single page application)
+   - Give your app a name (e.g., "My Portfolio")
+
+3. **Get your configuration values:**
+   - After creating the app, go to: **Browser** → **(Your App)** → **Application settings**
+   - Copy the values from the JavaScript snippet or settings page
+
+```bash
+# Your New Relic Account ID (numeric)
+# Example: 1234567
+VITE_NEWRELIC_ACCOUNT_ID=
+
+# Trust Key (numeric) - from Browser monitoring settings
+# Example: 1234567
+VITE_NEWRELIC_TRUST_KEY=
+
+# Agent ID (numeric) - from Browser monitoring settings
+# Example: 1234567890
+VITE_NEWRELIC_AGENT_ID=
+
+# License Key (alphanumeric) - from Browser monitoring settings
+# Example: NRJS-abcd1234efgh5678
+VITE_NEWRELIC_LICENSE_KEY=
+
+# Application ID (numeric) - from Browser monitoring settings
+# Example: 1234567890
+VITE_NEWRELIC_APPLICATION_ID=
+
+# Optional: Comma-separated list of URL patterns to exclude from AJAX tracking
+# Example: /api/internal,/health,/metrics
+VITE_NEWRELIC_AJAX_DENY_LIST=
+```
+
+**Validation:**
+
+- Account ID: Must be numeric
+- Trust Key: Must be numeric
+- Agent ID: Must be numeric
+- License Key: Non-empty string (if provided)
+- Application ID: Must be numeric
+- AJAX Deny List: Comma-separated list (optional, defaults to empty)
+
+**Required for New Relic to work:**
+
+- All five main fields (Account ID, Trust Key, Agent ID, License Key, Application ID) must be set
+- `VITE_ENABLE_ERROR_MONITORING` must be set to `true`
+
+**Features:**
+
+- 🐛 **Error tracking** - Automatically captures JavaScript errors
+- 📊 **Performance monitoring** - Track page load times and Core Web Vitals
+- 🔍 **User sessions** - See exactly what users experienced during errors
+- 📈 **Custom attributes** - Add context to errors (user ID, environment, etc.)
+- 🎯 **Source maps** - See original source code in error stack traces
+- 🚨 **Alerts** - Get notified when error rates spike
 
 ### Social Links (Required)
 
@@ -117,6 +183,26 @@ VITE_EMAIL=your.email@example.com
 - GitHub URL: Must be valid URL containing 'github.com'
 - LinkedIn URL: Must be valid URL containing 'linkedin.com'
 - Email: Must be valid email format
+
+### PWA & SEO (Optional)
+
+```bash
+# Your site's production URL - used for sitemap generation
+VITE_SITE_URL=https://yourportfolio.com
+```
+
+**Validation:**
+
+- Site URL: Must be valid URL format (optional)
+
+**When to set:**
+
+- Not required for development or initial deployment
+- Set this in production environment variables on Vercel/hosting platform
+- Used by the build process to generate `sitemap.xml` with correct URLs
+- Can be added after initial deployment and redeployed
+
+**Note:** If not set, the sitemap will generate with placeholder URLs. You can also manually generate the sitemap by running `npm run sitemap:generate` after setting this variable.
 
 ## 💻 Usage in Code
 
@@ -199,15 +285,15 @@ console.log(env.social.email); // Guaranteed to be valid email format
 
 **What gets validated:**
 
-| Type     | Validation                                                  |
-| -------- | ----------------------------------------------------------- |
-| URLs     | Valid URL format + domain checks (GitHub, LinkedIn, Sentry) |
-| Email    | Valid email format                                          |
-| Numbers  | Range checks (min/max)                                      |
-| Booleans | Correct format (`true`/`false`/`1`/`0`)                     |
-| UUIDs    | Valid UUID v4 format                                        |
-| IDs      | Specific patterns (Google Analytics format)                 |
-| Strings  | Length constraints (min/max characters)                     |
+| Type     | Validation                                          |
+| -------- | --------------------------------------------------- |
+| URLs     | Valid URL format + domain checks (GitHub, LinkedIn) |
+| Email    | Valid email format                                  |
+| Numbers  | Range checks (min/max)                              |
+| Booleans | Correct format (`true`/`false`/`1`/`0`)             |
+| UUIDs    | Valid UUID v4 format                                |
+| IDs      | Specific patterns (Google Analytics format)         |
+| Strings  | Length constraints (min/max characters)             |
 
 ## 🌍 Environment-specific Files
 
@@ -228,10 +314,12 @@ Vite loads environment variables in the following order (later values override e
 
 ## 🔒 Security
 
-- ❌ **Never commit** `.env`, `.env.local`, or `.env.*.local` files
-- ✅ **Always commit** `.env.example` as a template
+- ❌ **Never commit** `.env` or `.env.prod` (contain your actual values, gitignored)
+- ✅ `.env.example` - Template with placeholders (✅ committed, safe to share)
+- ✅ `.env.test` - Test values with safe placeholders (✅ committed, safe to share)
 - ❌ **Never store secrets** like API keys in client-side env vars
 - ✅ **Use a backend** to proxy requests that require secrets
+- ✅ **Set production variables** directly in hosting platform (Vercel, etc.)
 
 ## 🧪 Different Environments
 

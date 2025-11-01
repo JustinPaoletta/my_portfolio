@@ -21,7 +21,6 @@ All environment variables are validated at runtime using [Zod](https://zod.dev/)
 
 - ✅ **GitHub URLs** - Must contain 'github.com'
 - ✅ **LinkedIn URLs** - Must contain 'linkedin.com'
-- ✅ **Sentry DSN** - Must contain 'sentry.io' or 'ingest'
 - ✅ **Google Analytics ID** - Must match G-XXXXXXXXXX or UA-XXXXXX-X format
 
 ## Example Error Messages
@@ -348,7 +347,8 @@ const validatedEnv = import.meta.env as any;
 5. **Document validation rules**
    - Add comments in the schema
    - Update ENV.md with requirements
-   - Include examples in .env.example
+   - Update `.env.example` with new variables and documentation
+   - Update `.env.test` with safe test values
 
 ## Resources
 

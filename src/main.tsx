@@ -4,11 +4,11 @@ import { HelmetProvider } from 'react-helmet-async';
 import './index.css';
 import App from './App.tsx';
 import { initializeAnalytics } from '@/utils/analytics';
-import { initSentry } from '@/config/sentry';
+import { initializeNewRelic } from '@/utils/newrelic';
 import ErrorBoundary from '@/components/ErrorBoundary';
 
-// Initialize Sentry first for error tracking
-initSentry();
+// Initialize error monitoring first (before analytics and app rendering)
+initializeNewRelic();
 
 // Initialize analytics before rendering
 initializeAnalytics();

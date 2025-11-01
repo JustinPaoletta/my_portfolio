@@ -4,29 +4,52 @@ This document explains how environment variables are configured for continuous i
 
 ## Overview
 
-The application requires certain environment variables to be set before it can build or run. To ensure tests pass in CI environments, we provide a `.env.test` file with safe default values.
+The application requires certain environment variables to be set before it can build or run. For CI/CD environments, set these variables directly in your platform's configuration (GitHub Secrets, Vercel Environment Variables, etc.).
 
 ## Environment Files
 
-### `.env.example`
+### Committed Files (Safe to Share)
 
-- Template file showing all available environment variables
-- Copy this to `.env.local` for local development
-- Fill in with your actual values
-- Committed to git for reference
+- **`.env.example`** - Template file with all available variables and documentation
+  - ✅ Committed to git
+  - Contains placeholder values only
+  - Copy this to create your local `.env`
 
-### `.env.test`
+- **`.env.test`** - Test configuration with safe placeholder values
+  - ✅ Committed to git
+  - Used by CI/CD for automated testing
+  - Contains safe test values only
 
-- Test environment configuration used in CI/CD
-- Contains safe placeholder values
-- Allows builds and tests to run without real credentials
-- **Committed to git** (safe - contains no real secrets)
+### Local Development Files (Gitignored)
 
-### `.env.local`
+- **`.env`** - Your personal development environment variables
+  - ❌ Not committed to git (gitignored)
+  - Create by copying `.env.example`
+  - Contains your actual development values
 
-- Your personal environment configuration
-- **Never committed to git** (gitignored)
-- Create from `.env.example`
+- **`.env.prod`** - Local copy of Vercel production variables (optional)
+  - ❌ Not committed to git (gitignored)
+  - Keeps a local reference of production environment variables set in Vercel
+  - Useful for comparing local vs. production configuration
+  - **Never committed** - production secrets stay in Vercel
+
+**Note:** This project keeps it simple for solo development - just copy `.env.example` to `.env` and update the values.
+
+### CI/CD Environments
+
+The CI workflows can use `.env.test` or set variables directly via GitHub Actions secrets:
+
+```bash
+# Option 1: Use the committed .env.test file
+cp .env.test .env
+
+# Option 2: Set variables in GitHub Secrets
+```
+
+### Production (Vercel)
+
+- Environment variables configured directly in Vercel dashboard
+- See [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) for setup instructions
 
 ## Required Environment Variables
 
@@ -45,17 +68,26 @@ The following environment variables are **required** for the app to build:
 
 ### GitHub Actions
 
-The CI workflows automatically copy `.env.test` to `.env.local` before building:
+The CI workflows can use the committed `.env.test` file:
 
 ```yaml
 - name: Set up test environment variables
-  run: cp .env.test .env.local
+  run: cp .env.test .env
+```
+
+Or set environment variables using GitHub Secrets for production-like testing:
+
+```yaml
+env:
+  VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE }}
+  VITE_API_URL: ${{ secrets.VITE_API_URL }}
+  # ... other variables
 ```
 
 This ensures:
 
-- ✅ Tests can run without manual configuration
-- ✅ No real secrets are exposed in CI logs
+- ✅ Tests can run using the committed `.env.test` file
+- ✅ No real secrets are exposed in repository
 - ✅ Builds are reproducible across environments
 
 ### Local Testing
@@ -64,7 +96,7 @@ To test with the same environment as CI:
 
 ```bash
 # Copy test environment
-cp .env.test .env.local
+cp .env.test .env
 
 # Run tests
 npm run test:unit
@@ -75,18 +107,35 @@ npm run test:a11y
 npm run build
 ```
 
+For development with real values:
+
+```bash
+# Copy example and update with your values
+cp .env.example .env
+# Then edit .env with your actual configuration
+```
+
 ## Security Notes
 
-### What's Safe to Commit
+### What's Committed (Safe to Share)
 
-✅ `.env.example` - Template with example values
-✅ `.env.test` - Test placeholders (no real credentials)
+✅ `.env.example` - Template with placeholder values (committed)
+✅ `.env.test` - Test configuration with safe placeholders (committed)
 
 ### What's NEVER Committed
 
-❌ `.env` - May contain real secrets
-❌ `.env.local` - Your personal configuration
-❌ `.env.*.local` - Any local overrides
+❌ `.env` - Your personal development environment variables (gitignored)
+❌ `.env.prod` - Local copy of Vercel production variables (gitignored)
+❌ **Any file containing real secrets or credentials**
+
+**Note:** `.env.prod` is a convenience file for keeping a local reference of production environment variables that are set in Vercel. The actual production variables are configured in Vercel's dashboard.
+
+### How to Handle Environment Variables
+
+✅ **Development:** Copy `.env.example` to `.env` and update with your values
+✅ **CI/CD:** Use the committed `.env.test` file or GitHub Secrets
+✅ **Production:** Configure variables directly in Vercel dashboard
+✅ **Testing:** Copy `.env.test` to `.env` for safe test values
 
 ## Troubleshooting
 
@@ -94,21 +143,21 @@ npm run build
 
 **Cause:** Required environment variables are missing.
 
-**Solution:** Ensure `.env.test` exists and is committed to your repository.
+**Solution:** Ensure `.env.test` exists or set variables in GitHub Actions secrets.
 
 ### App Won't Build Locally
 
-**Cause:** No environment file found.
+**Cause:** No `.env` file found.
 
-**Solution:**
+**Solution:** Copy the example template and customize:
 
 ```bash
-# Quick setup with test values
-cp .env.test .env.local
+# Quick setup with example template
+cp .env.example .env
+# Then edit .env with your actual values
 
-# OR for real development, use the example
-cp .env.example .env.local
-# Then edit .env.local with your actual values
+# OR for testing with safe values
+cp .env.test .env
 ```
 
 ### "Invalid environment variables" Error
