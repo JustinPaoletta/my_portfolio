@@ -4,7 +4,7 @@ A modern, performant portfolio website showcasing my projects and skills. Built 
 
 ## 🌐 Live Site
 
-**[View Portfolio](https://yourname.vercel.app)** ← _Deploy to Vercel and update this URL_
+**[View Portfolio](https://my-portfolio-gamma-sandy-54.vercel.app/)** ← _Deploy to Vercel and update this URL_
 
 **Ready to deploy?** See [Vercel Deployment Guide](docs/VERCEL_DEPLOYMENT.md)
 
