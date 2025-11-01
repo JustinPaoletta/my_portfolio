@@ -16,7 +16,6 @@ interface ImportMetaEnv {
 
   // Third-party Services (Optional)
   readonly VITE_GOOGLE_ANALYTICS_ID?: string;
-  readonly VITE_SENTRY_DSN?: string;
   readonly VITE_MAPBOX_TOKEN?: string;
 
   // Umami Analytics (Optional)

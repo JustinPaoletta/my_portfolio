@@ -106,7 +106,6 @@ VITE_API_URL="https://api.example.com"
 VITE_SITE_URL="https://yoursite.com"
 VITE_ENABLE_ANALYTICS="true"
 VITE_UMAMI_WEBSITE_ID="your-id"
-VITE_SENTRY_DSN="your-dsn"
 ```
 
 ## 📝 Commit Convention
@@ -208,7 +207,6 @@ git commit -m "docs: update setup instructions"
 
 - **Lighthouse** - Performance & PWA audit
 - **Chrome DevTools** - Debugging & testing
-- **Sentry** - Error monitoring (if configured)
 - **Umami** - Analytics (if configured)
 
 ## 🆘 Common Issues
@@ -261,7 +259,6 @@ npm run sitemap:generate
 - [PWA Setup](PWA_SETUP.md) - Full PWA guide
 - [PWA Icons](PWA_ICONS_QUICKSTART.md) - Icon generation
 - [Changelog Guide](CHANGELOG_GUIDE.md) - Version management
-- [Sentry Setup](SENTRY_SETUP.md) - Error monitoring
 - [Analytics Setup](ANALYTICS_SETUP.md) - Analytics integration
 - [SEO Guide](SEO.md) - SEO optimization
 - [Accessibility Testing](ACCESSIBILITY_TESTING.md) - A11y testing

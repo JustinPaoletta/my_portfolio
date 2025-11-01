@@ -21,7 +21,6 @@ All environment variables are validated at runtime using [Zod](https://zod.dev/)
 
 - ✅ **GitHub URLs** - Must contain 'github.com'
 - ✅ **LinkedIn URLs** - Must contain 'linkedin.com'
-- ✅ **Sentry DSN** - Must contain 'sentry.io' or 'ingest'
 - ✅ **Google Analytics ID** - Must match G-XXXXXXXXXX or UA-XXXXXX-X format
 
 ## Example Error Messages

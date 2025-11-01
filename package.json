@@ -7,6 +7,8 @@
     "build": "tsc -b && vite build",
     "build:analyze": "tsc -b && ANALYZE=true vite build",
     "analyze": "npm run build:analyze && npx vite-bundle-visualizer",
+    "clean": "rm -rf node_modules dist coverage .vite playwright-report test-results",
+    "clean:cache": "rm -rf dist coverage .vite playwright-report test-results",
     "lint:ci": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "start:dev": "vite",
@@ -33,7 +35,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@sentry/react": "^10.22.0",
+    "@newrelic/browser-agent": "^1.302.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-helmet-async": "^2.0.5",
