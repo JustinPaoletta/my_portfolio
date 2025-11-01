@@ -30,7 +30,6 @@
     "release:patch": "standard-version --release-as patch",
     "release:dry-run": "standard-version --dry-run",
     "sitemap:generate": "tsx scripts/generate-sitemap.ts",
-    "pwa:generate-icons": "node scripts/generate-pwa-icons.mjs",
     "prepare": "husky"
   },
   "dependencies": {
