@@ -43,13 +43,7 @@ export function initializeAnalytics(): void {
   script.setAttribute('data-website-id', env.analytics.umami.websiteId);
 
   // Optional: Auto-track (enabled by default)
-  // script.setAttribute('data-auto-track', 'true');
-
-  // Optional: Only track in production
-  // script.setAttribute('data-domains', 'yourportfolio.com');
-
-  // Optional: Honor Do Not Track
-  script.setAttribute('data-do-not-track', 'true');
+  script.setAttribute('data-auto-track', 'true');
 
   // Optional: Cache the tracking script
   script.setAttribute('data-cache', 'true');
