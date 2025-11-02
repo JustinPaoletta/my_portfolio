@@ -108,42 +108,25 @@ VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 
 ### New Relic Error Monitoring (Optional)
 
-New Relic provides real-time error monitoring and performance tracking. To enable:
-
-1. **Sign up for New Relic:**
-   - Go to [https://newrelic.com](https://newrelic.com)
-   - Create a free account (100GB/month free)
-
-2. **Create a Browser Application:**
-   - Navigate to: **Browser** → **Add data**
-   - Select **Browser monitoring** → **Copy/paste JavaScript code**
-   - Choose **Pro + SPA** (single page application)
-   - Give your app a name (e.g., "My Portfolio")
-
-3. **Get your configuration values:**
-   - After creating the app, go to: **Browser** → **(Your App)** → **Application settings**
-   - Copy the values from the JavaScript snippet or settings page
-
 ```bash
 # Your New Relic Account ID (numeric)
 # Example: 1234567
 VITE_NEWRELIC_ACCOUNT_ID=
 
-# Trust Key (numeric) - from Browser monitoring settings
+# Trust Key (numeric)
 # Example: 1234567
 VITE_NEWRELIC_TRUST_KEY=
 
-# Agent ID (numeric) - from Browser monitoring settings
+# Agent ID (numeric)
 # Example: 1234567890
 VITE_NEWRELIC_AGENT_ID=
 
-# License Key - from Browser monitoring settings
-# Must start with "NRJS-" followed by alphanumeric characters (10-50 chars total)
+# License Key - must start with "NRJS-" followed by alphanumeric characters (10-50 chars total)
 # Example: NRJS-ebbbb806e4ce754f330
 # Leave empty to disable New Relic
 VITE_NEWRELIC_LICENSE_KEY=
 
-# Application ID (numeric) - from Browser monitoring settings
+# Application ID (numeric)
 # Example: 1234567890
 VITE_NEWRELIC_APPLICATION_ID=
 
@@ -167,15 +150,6 @@ VITE_NEWRELIC_AJAX_DENY_LIST=
 
 - All five main fields (Account ID, Trust Key, Agent ID, License Key, Application ID) must be set
 - `VITE_ENABLE_ERROR_MONITORING` must be set to `true`
-
-**Features:**
-
-- 🐛 **Error tracking** - Automatically captures JavaScript errors
-- 📊 **Performance monitoring** - Track page load times and Core Web Vitals
-- 🔍 **User sessions** - See exactly what users experienced during errors
-- 📈 **Custom attributes** - Add context to errors (user ID, environment, etc.)
-- 🎯 **Source maps** - See original source code in error stack traces
-- 🚨 **Alerts** - Get notified when error rates spike
 
 ### Social Links (Required)
 
@@ -312,6 +286,62 @@ Vite loads environment variables in the following order (later values override e
 2. `.env.local` - Loaded in all cases (gitignored)
 3. `.env.[mode]` - Only loaded in specified mode (e.g., `.env.production`)
 4. `.env.[mode].local` - Only loaded in specified mode (gitignored)
+
+## 🧪 Running Tests with Different Environment Files
+
+Tests can be run with different environment configurations by specifying the `--mode` flag. The test runner will load variables from the corresponding `.env.[mode]` file.
+
+### Default Test Mode
+
+```bash
+# Uses .env.test (default)
+npm test
+```
+
+### Production Mode Tests
+
+```bash
+# Uses .env.production
+npm test -- --mode production
+```
+
+### Development Mode Tests
+
+```bash
+# Uses .env.development (or .env if .env.development doesn't exist)
+npm test -- --mode development
+```
+
+### Custom Mode Tests
+
+```bash
+# Uses .env.custom (must exist)
+npm test -- --mode custom
+```
+
+**How it works:**
+
+- Vitest loads environment variables using Vite's `loadEnv()` function
+- The mode determines which `.env.[mode]` file is loaded
+- Variables are merged: `.env` is loaded first, then `.env.[mode]` overrides any conflicts
+- Only `VITE_` prefixed variables are exposed to your tests
+- All variables are validated according to the schema in `src/config/env.ts`
+
+**Examples:**
+
+```bash
+# Run all tests with production environment variables
+npm test -- --mode production
+
+# Run tests in watch mode with production variables
+npm test -- --mode production --watch
+
+# Run specific test file with production variables
+npm test -- --mode production src/App.test.tsx
+
+# Run tests with coverage using production variables
+npm test -- --mode production --coverage
+```
 
 ## 📦 Build-time vs Runtime
 
