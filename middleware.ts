@@ -71,11 +71,17 @@ function injectNonce(html: string, nonce: string): string {
 
 /**
  * Generate CSP header value with nonce
+ *
+ * Using nonces with host allowlists (without 'strict-dynamic' for now)
+ * This ensures scripts from allowed hosts work, and nonces work for inline scripts.
+ * We can add 'strict-dynamic' later once the middleware is confirmed working.
  */
 function generateCSP(nonce: string): string {
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${nonce}' 'strict-dynamic' https://cloud.umami.is https://vercel.live`,
+    // Allow 'self', nonces for inline scripts, and specific external hosts
+    // Note: Without 'strict-dynamic', host allowlists work normally
+    `script-src 'self' 'nonce-${nonce}' https://cloud.umami.is https://vercel.live`,
     `style-src 'self' 'nonce-${nonce}'`,
     "img-src 'self' data: https:",
     "font-src 'self' data:",
@@ -90,6 +96,14 @@ function generateCSP(nonce: string): string {
 /**
  * Vercel Edge Middleware
  * This runs on every request before your site is served
+ *
+ * For static sites on Vercel, the middleware can intercept requests and modify responses.
+ * However, fetching the HTML from the same origin can be tricky. We'll use a different approach:
+ * Pass through the request and let Vercel serve it, but we'll modify it via rewrites if needed.
+ *
+ * Actually, Edge Middleware in Vercel can't easily modify static file responses.
+ * For now, we'll just set the CSP header. The HTML modification needs to happen at build time
+ * or via a different mechanism.
  */
 export default async function middleware(request: Request): Promise<Response> {
   const url = new URL(request.url);
@@ -98,78 +112,65 @@ export default async function middleware(request: Request): Promise<Response> {
   // Generate nonce for this request
   const nonce = generateNonce();
 
-  // Only process HTML responses (root path, .html files, or paths without extensions)
+  // Only process HTML responses (root path, .html files)
   const isHTMLRequest =
     pathname === '/' ||
     pathname.endsWith('.html') ||
     (!pathname.includes('.') &&
       !pathname.startsWith('/assets') &&
-      !pathname.startsWith('/_next'));
+      !pathname.startsWith('/_next') &&
+      pathname !== '/favicon.ico');
 
-  if (!isHTMLRequest) {
-    // For non-HTML requests, just return with CSP header
-    // Let Vercel serve the static file normally, but we'll set CSP via headers
-    // Note: We can't modify static file responses in edge middleware
-    // So we'll handle CSP via vercel.json for non-HTML files
-    return new Response(null, {
-      status: 200,
-      headers: {
-        'Content-Security-Policy': generateCSP(nonce),
-      },
-    });
-  }
+  // For all requests, set CSP header
+  // Note: The middleware can't easily modify static file responses on Vercel
+  // So we'll set headers and rely on the fact that 'self' allows scripts from the same origin
+  // Nonces will work for any inline scripts we add
 
-  // For HTML files, fetch the static file, modify it, and return
-  try {
-    // In Vercel Edge Middleware, we need to fetch from the origin
-    // The origin would be your static files
-    const origin =
-      request.headers.get('x-vercel-deployment-url') ||
-      request.headers.get('host') ||
-      url.hostname;
+  // Create a response that continues to the origin
+  // We'll modify this to add CSP headers
+  const response = await fetch(request);
 
-    // Construct the origin URL
-    const originUrl = `${url.protocol}//${origin}${pathname === '/' ? '/index.html' : pathname}`;
+  // For HTML responses, try to modify the body
+  if (isHTMLRequest && response.ok) {
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('text/html')) {
+      try {
+        const html = await response.text();
+        const modifiedHtml = injectNonce(html, nonce);
 
-    // Fetch the original HTML
-    const response = await fetch(originUrl, {
-      headers: {
-        // Forward important headers
-        'user-agent': request.headers.get('user-agent') || '',
-      },
-    });
-
-    if (!response.ok) {
-      // If fetch fails, return the response as-is
-      return response;
+        return new Response(modifiedHtml, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: {
+            ...Object.fromEntries(response.headers.entries()),
+            'Content-Security-Policy': generateCSP(nonce),
+            'Content-Type': 'text/html; charset=utf-8',
+          },
+        });
+      } catch (error) {
+        // If modification fails, return with just CSP header
+        console.error('Failed to inject nonces:', error);
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: {
+            ...Object.fromEntries(response.headers.entries()),
+            'Content-Security-Policy': generateCSP(nonce),
+          },
+        });
+      }
     }
-
-    // Read HTML content
-    const html = await response.text();
-
-    // Inject nonces into HTML
-    const modifiedHtml = injectNonce(html, nonce);
-
-    // Create new response with modified HTML and CSP header
-    return new Response(modifiedHtml, {
-      status: response.status,
-      statusText: response.statusText,
-      headers: {
-        ...Object.fromEntries(response.headers.entries()),
-        'Content-Security-Policy': generateCSP(nonce),
-        'Content-Type': 'text/html; charset=utf-8',
-      },
-    });
-  } catch (error) {
-    // If there's an error, return a basic response
-    console.error('Middleware error:', error);
-    return new Response(null, {
-      status: 500,
-      headers: {
-        'Content-Security-Policy': generateCSP(nonce),
-      },
-    });
   }
+
+  // For non-HTML or if HTML modification fails, just add CSP header
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: {
+      ...Object.fromEntries(response.headers.entries()),
+      'Content-Security-Policy': generateCSP(nonce),
+    },
+  });
 }
 
 /**
@@ -184,8 +185,11 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - assets (static assets)
+     * - assets (static assets - but we DO want to match root HTML)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|assets|.*\\..*).*)',
+    '/',
+    '/index.html',
+    // Match other HTML pages if you have them
+    '/*.html',
   ],
 };
