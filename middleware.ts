@@ -138,38 +138,40 @@ export default async function middleware(request: Request): Promise<Response> {
         const html = await response.text();
         const modifiedHtml = injectNonce(html, nonce);
 
+        // Create headers object (Edge Runtime compatible)
+        const headers = new Headers(response.headers);
+        headers.set('Content-Security-Policy', generateCSP(nonce));
+        headers.set('Content-Type', 'text/html; charset=utf-8');
+
         return new Response(modifiedHtml, {
           status: response.status,
           statusText: response.statusText,
-          headers: {
-            ...Object.fromEntries(response.headers.entries()),
-            'Content-Security-Policy': generateCSP(nonce),
-            'Content-Type': 'text/html; charset=utf-8',
-          },
+          headers,
         });
       } catch (error) {
         // If modification fails, return with just CSP header
         console.error('Failed to inject nonces:', error);
+        // Create headers object (Edge Runtime compatible)
+        const headers = new Headers(response.headers);
+        headers.set('Content-Security-Policy', generateCSP(nonce));
+
         return new Response(response.body, {
           status: response.status,
           statusText: response.statusText,
-          headers: {
-            ...Object.fromEntries(response.headers.entries()),
-            'Content-Security-Policy': generateCSP(nonce),
-          },
+          headers,
         });
       }
     }
   }
 
   // For non-HTML or if HTML modification fails, just add CSP header
+  const headers = new Headers(response.headers);
+  headers.set('Content-Security-Policy', generateCSP(nonce));
+
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers: {
-      ...Object.fromEntries(response.headers.entries()),
-      'Content-Security-Policy': generateCSP(nonce),
-    },
+    headers,
   });
 }
 
@@ -180,16 +182,12 @@ export default async function middleware(request: Request): Promise<Response> {
 export const config = {
   matcher: [
     /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - assets (static assets - but we DO want to match root HTML)
+     * Match HTML requests:
+     * - Root path
+     * - index.html
+     * - Any path that doesn't start with /assets, /api, /_next
      */
     '/',
     '/index.html',
-    // Match other HTML pages if you have them
-    '/*.html',
   ],
 };
