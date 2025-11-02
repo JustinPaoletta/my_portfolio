@@ -136,25 +136,26 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 ### Development Guides
 
-- **[Quick Reference](docs/QUICK_REFERENCE.md)** - ⭐ Common commands and quick tips
 - **[VS Code Debugging Guide](docs/VSCODE_DEBUGGING.md)** - Debug configurations and workflows
 - **[Git Hooks Guide](docs/GIT_HOOKS.md)** - Pre-commit, pre-push, and other hooks
 - **[Commit Conventions](docs/COMMIT_CONVENTION.md)** - Git commit guidelines
 - **[Changelog & Releases](docs/CHANGELOG_GUIDE.md)** - Version management with standard-version
 - **[Workspace Info](docs/WORKSPACE.md)** - Project structure
 - **[Dependabot Setup](docs/DEPENDABOT.md)** - Automated dependency updates
+- **[Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)** - Deployment configuration and best practices
 
 ### Integrations & Services
 
-- **[PWA Setup](docs/PWA_SETUP.md)** - Progressive Web App configuration & offline support
-- **[Analytics Setup](docs/ANALYTICS_SETUP.md)** - Umami integration guide
+- **[PWA Guide](docs/PWA.md)** - Progressive Web App configuration, offline support, and icon setup
+- **[Analytics Guide](docs/ANALYTICS.md)** - Umami integration and usage guide
 - **[New Relic Setup](docs/NEWRELIC.md)** - Error monitoring and performance tracking
-- **[SEO Guide](docs/SEO.md)** - SEO configuration
+- **[SEO Guide](docs/SEO.md)** - SEO configuration and best practices
+- **[Environment Variables](docs/ENV.md)** - Environment variable configuration and validation
 
-### Accessibility
+### Security & Accessibility
 
-- **[Accessibility Testing](docs/ACCESSIBILITY_TESTING.md)** - A11y testing strategies
-- **[Accessibility Quick Reference](docs/ACCESSIBILITY_QUICK_REFERENCE.md)** - A11y best practices
+- **[CSP Nonces](docs/CSP_NONCES.md)** - Content Security Policy nonce implementation
+- **[Accessibility Guide](docs/ACCESSIBILITY.md)** - A11y testing, best practices, and code patterns
 
 ### Performance & Monitoring
 

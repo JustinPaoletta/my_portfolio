@@ -1,90 +1,64 @@
-# Umami Analytics Setup Guide
+# 📊 Umami Analytics Guide
 
-This portfolio uses [Umami Analytics](https://umami.is/) - a privacy-friendly, GDPR-compliant, open-source analytics solution.
+This portfolio uses [Umami Analytics](https://umami.is/) - a privacy-friendly, GDPR-compliant, open-source analytics solution that requires no cookies or consent banners.
 
-## 🚀 Quick Start
+## 🚀 Configuration
 
-### 1. Create an Umami Account
+### Environment Variables
 
-Choose one of the following options:
-
-#### Option A: Umami Cloud (Recommended - Easy Setup)
-
-1. Go to [https://cloud.umami.is/signup](https://cloud.umami.is/signup)
-2. Sign up for a free account (up to 100k events/month)
-3. Create a new website in your dashboard
-4. Copy your **Website ID** and **Script URL**
-
-#### Option B: Self-Hosted (Free but requires server)
-
-1. Follow the [self-hosting guide](https://umami.is/docs/install)
-2. Deploy to Railway, Vercel, DigitalOcean, or your own server
-3. Create a website in your Umami dashboard
-4. Copy your **Website ID** and note your **Script URL**
-
-### 2. Configure Environment Variables
-
-Add these variables to your `.env` file:
+In your `.env` file:
 
 ```bash
 # Enable Analytics
 VITE_ENABLE_ANALYTICS=true
-
 # Umami Configuration
 VITE_UMAMI_WEBSITE_ID=your-website-id-here
 VITE_UMAMI_SRC=https://cloud.umami.is/script.js
-
-# Or for self-hosted:
-# VITE_UMAMI_SRC=https://your-umami-domain.com/script.js
 ```
 
-**Optional Analytics Variables:**
+## 🔧 How It Works
 
-```bash
-# Enable Analytics (add to your .env file)
-VITE_ENABLE_ANALYTICS=false
+### Project Structure
 
-# Umami Configuration (get from https://cloud.umami.is)
-VITE_UMAMI_WEBSITE_ID=your-website-id-here
-VITE_UMAMI_SRC=https://cloud.umami.is/script.js
+- **`src/utils/analytics.ts`** - Core analytics utility with Umami initialization
+- **`src/hooks/useAnalytics.ts`** - React hook for easy event tracking
+- **`src/main.tsx`** - Analytics initialized at app startup
+- **`src/config/env.ts`** - Environment variable validation with Zod
+
+### Initialization
+
+Analytics is automatically initialized when the app starts:
+
+```typescript
+// src/main.tsx
+import { initializeAnalytics } from '@/utils/analytics';
+
+// Initialized before React renders
+initializeAnalytics();
 ```
 
-### 3. Deploy and Test
+The initialization:
 
-1. **Local Testing:**
+- ✅ Checks if analytics is enabled
+- ✅ Verifies website ID is configured
+- ✅ Injects Umami script dynamically
+- ✅ Applies CSP nonces (if using CSP)
+- ✅ Honors Do Not Track settings
 
-   ```bash
-   npm run start:dev
-   ```
-
-   Analytics will log to console in development mode
-
-2. **Production Build:**
-
-   ```bash
-   npm run build
-   npm run start:prod
-   ```
-
-3. **Verify in Umami Dashboard:**
-   - Go to your Umami dashboard
-   - You should see page views appearing in real-time
-   - Custom events will show up in the Events section
-
-## 📊 What's Being Tracked
+## 📈 What's Being Tracked
 
 ### Automatic Tracking
 
-- **Page Views**: Every page/route visit
-- **Referrers**: Where visitors come from
-- **Devices**: Desktop, mobile, tablet
-- **Browsers**: Chrome, Firefox, Safari, etc.
-- **Operating Systems**: Windows, macOS, Linux, iOS, Android
-- **Countries**: Geographic location (country level only)
+These are tracked automatically without any code:
 
-### Custom Events
+- ✅ **Page Views** - Every route/page visit
+- ✅ **Referrers** - Where visitors come from
+- ✅ **Devices** - Desktop, mobile, tablet
+- ✅ **Browsers** - Chrome, Firefox, Safari, etc.
+- ✅ **Operating Systems** - Windows, macOS, Linux, iOS, Android
+- ✅ **Countries** - Geographic location (country level only)
 
-The following custom events are pre-configured:
+### Pre-configured Custom Events
 
 | Event Name        | When It Fires           | Data Captured                         |
 | ----------------- | ----------------------- | ------------------------------------- |
@@ -97,7 +71,7 @@ The following custom events are pre-configured:
 | `search`          | Search/filter usage     | Query, category                       |
 | `error`           | Client-side errors      | Error type, message                   |
 
-## 🔧 Usage Examples
+## 💻 How to Use
 
 ### In React Components
 
@@ -105,8 +79,12 @@ The following custom events are pre-configured:
 import { useAnalytics } from '@/hooks/useAnalytics';
 
 function MyComponent() {
-  const { trackProjectClick, trackResumeDownload, trackContact } =
-    useAnalytics();
+  const {
+    trackProjectClick,
+    trackResumeDownload,
+    trackContact,
+    trackExternalLink,
+  } = useAnalytics();
 
   return (
     <>
@@ -125,12 +103,22 @@ function MyComponent() {
 
       {/* Track contact methods */}
       <button onClick={() => trackContact('email')}>Email Me</button>
+
+      {/* Track external links */}
+      <a
+        href="https://example.com"
+        onClick={() => trackExternalLink('https://example.com', 'Example')}
+      >
+        Visit Example
+      </a>
     </>
   );
 }
 ```
 
 ### Custom Events
+
+Track any custom event with additional data:
 
 ```tsx
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -139,7 +127,6 @@ function AdvancedComponent() {
   const { trackCustomEvent } = useAnalytics();
 
   const handleSpecialAction = () => {
-    // Track any custom event
     trackCustomEvent('special_action', {
       category: 'engagement',
       value: 'high',
@@ -163,34 +150,30 @@ export function downloadFile(fileName: string) {
 }
 ```
 
-## 📈 Analytics Dashboard
+### Available Functions
 
-Access your analytics at:
+The `useAnalytics()` hook provides:
 
-- **Umami Cloud**: [https://cloud.umami.is](https://cloud.umami.is)
-- **Self-hosted**: Your custom domain
-
-### Key Metrics to Monitor
-
-1. **Total Visitors**: Unique visitors to your portfolio
-2. **Page Views**: Most popular pages/sections
-3. **Bounce Rate**: % of single-page sessions
-4. **Top Referrers**: Where visitors come from (LinkedIn, GitHub, etc.)
-5. **Custom Events**:
-   - Which projects get the most clicks?
-   - How many resume downloads?
-   - Which contact methods are preferred?
+- `trackProjectClick(projectName, linkType)` - Track project link clicks
+- `trackResumeDownload()` - Track resume/CV downloads
+- `trackContact(method)` - Track contact interactions
+- `trackSocialClick(platform)` - Track social media clicks
+- `trackNavigation(section)` - Track section navigation
+- `trackExternalLink(url, label?)` - Track external link clicks
+- `trackSearch(query, category?)` - Track search/filter usage
+- `trackError(errorType, errorMessage?)` - Track errors
+- `trackCustomEvent(eventName, eventData?)` - Track custom events
 
 ## 🔒 Privacy & Compliance
 
-### What Makes Umami Privacy-Friendly?
+### Why Umami is Privacy-Friendly
 
-✅ **No Cookies**: Doesn't use cookies, no consent banner needed
-✅ **No Personal Data**: Doesn't collect IP addresses or personal information
-✅ **GDPR Compliant**: Follows EU privacy regulations
-✅ **No Cross-Site Tracking**: Only tracks on your domain
-✅ **Anonymous**: All data is anonymized
-✅ **Do Not Track**: Honors browser DNT settings (enabled by default)
+✅ **No Cookies** - Doesn't use cookies, no consent banner needed
+✅ **No Personal Data** - Doesn't collect IP addresses or personal information
+✅ **GDPR Compliant** - Follows EU privacy regulations
+✅ **No Cross-Site Tracking** - Only tracks on your domain
+✅ **Anonymous** - All data is anonymized
+✅ **Do Not Track** - Honors browser DNT settings (enabled by default)
 
 ### Compliance Checklist
 
@@ -202,17 +185,9 @@ Access your analytics at:
 
 ## ⚙️ Configuration Options
 
-### Environment Variables
+### Advanced Script Options
 
-| Variable                | Required | Default                            | Description              |
-| ----------------------- | -------- | ---------------------------------- | ------------------------ |
-| `VITE_ENABLE_ANALYTICS` | Yes      | `false`                            | Enable/disable analytics |
-| `VITE_UMAMI_WEBSITE_ID` | Yes      | -                                  | Your Umami website ID    |
-| `VITE_UMAMI_SRC`        | No       | `https://cloud.umami.is/script.js` | Umami script URL         |
-
-### Advanced Options
-
-The Umami script in `/src/utils/analytics.ts` supports additional options:
+The Umami script in `src/utils/analytics.ts` supports additional options:
 
 ```typescript
 // Honor Do Not Track (enabled by default)
@@ -228,7 +203,37 @@ script.setAttribute('data-cache', 'true');
 // script.setAttribute('data-auto-track', 'false');
 ```
 
-## 🧪 Testing Analytics
+### Self-Hosted Option
+
+If you prefer to self-host Umami:
+
+1. Follow the [self-hosting guide](https://umami.is/docs/install)
+2. Deploy to Railway, Vercel, DigitalOcean, or your own server
+3. Update `VITE_UMAMI_SRC` to your custom domain:
+
+```bash
+VITE_UMAMI_SRC=https://your-umami-domain.com/script.js
+```
+
+## 📊 Analytics Dashboard
+
+Access your analytics at:
+
+- **Umami Cloud**: [https://cloud.umami.is](https://cloud.umami.is)
+- **Self-hosted**: Your custom domain
+
+### Key Metrics to Monitor
+
+1. **Total Visitors** - Unique visitors to your portfolio
+2. **Page Views** - Most popular pages/sections
+3. **Bounce Rate** - % of single-page sessions
+4. **Top Referrers** - Where visitors come from (LinkedIn, GitHub, etc.)
+5. **Custom Events**:
+   - Which projects get the most clicks?
+   - How many resume downloads?
+   - Which contact methods are preferred?
+
+## 🧪 Testing
 
 ### Development Mode
 
@@ -244,6 +249,7 @@ In development, analytics events are logged to the console:
 1. Build and preview:
 
    ```bash
+   npm run build
    npm run start:prod
    ```
 
@@ -354,31 +360,6 @@ Avoid tracking:
 | No data in dashboard         | Wait 5-10 minutes, data isn't instant     |
 | Wrong website ID             | Double-check ID in Umami dashboard        |
 
-## 📚 Additional Resources
-
-- [Umami Documentation](https://umami.is/docs)
-- [Umami Cloud](https://cloud.umami.is)
-- [Umami GitHub](https://github.com/umami-software/umami)
-- [Self-Hosting Guide](https://umami.is/docs/install)
-- [API Reference](https://umami.is/docs/api)
-
-## 🔄 Migration from Other Analytics
-
-### From Google Analytics
-
-1. Set up Umami (as above)
-2. Run both in parallel for 1-2 weeks
-3. Compare data to validate
-4. Remove Google Analytics
-5. Optionally remove cookie consent banner
-
-### From Plausible
-
-1. Very similar setup!
-2. Replace Plausible script with Umami
-3. Update event tracking calls
-4. Export historical data from Plausible if needed
-
 ## 💡 Tips for Portfolio Sites
 
 ### Showcase Your Data
@@ -410,6 +391,14 @@ Test different approaches:
 - Contact methods
 
 Use event data to see what works best.
+
+## 📚 Additional Resources
+
+- [Umami Documentation](https://umami.is/docs)
+- [Umami Cloud](https://cloud.umami.is)
+- [Umami GitHub](https://github.com/umami-software/umami)
+- [Self-Hosting Guide](https://umami.is/docs/install)
+- [API Reference](https://umami.is/docs/api)
 
 ---
 
