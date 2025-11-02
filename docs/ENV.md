@@ -2,6 +2,10 @@
 
 This project uses environment variables for configuration with **runtime validation using Zod**. Vite exposes environment variables through `import.meta.env`, and all values are validated for format and correctness at startup.
 
+### 🔒 Security defaults
+
+- Zod JIT parsing is disabled via `config({ jitless: true })` to stay compatible with the site's strict Content Security Policy (no `unsafe-eval`). Validation still runs at startup, just without the optional JIT shortcut that relies on `new Function()`.
+
 ## 📁 Files
 
 - **`.env.example`** - Template file with all available variables (✅ committed to git)
