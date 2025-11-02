@@ -115,6 +115,20 @@ test.describe('Accessibility Tests', () => {
     test('should use semantic HTML elements', async ({ page }) => {
       await page.goto('/');
 
+      // Wait for the React app to fully load and hydrate
+      // Wait for the main content area to be visible
+      await page.waitForSelector('main', { state: 'visible' });
+
+      // Wait for the root div to be populated (React has rendered)
+      await page.waitForSelector('#root', { state: 'attached' });
+
+      // Wait for network to be idle (all resources loaded)
+      await page.waitForLoadState('networkidle');
+
+      // Wait for at least one heading to be visible (React needs time to hydrate)
+      // Use a more specific selector to ensure the heading from App.tsx is rendered
+      await page.waitForSelector('h1', { state: 'visible', timeout: 5000 });
+
       // Check for proper heading structure
       const headings = page.locator('h1, h2, h3, h4, h5, h6');
       const headingCount = await headings.count();
