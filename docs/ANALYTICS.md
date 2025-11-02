@@ -23,7 +23,7 @@ VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 - **`src/utils/analytics.ts`** - Core analytics utility with Umami initialization
 - **`src/hooks/useAnalytics.ts`** - React hook for easy event tracking
 - **`src/main.tsx`** - Analytics initialized at app startup
-- **`src/config/env.ts`** - Environment variable validation with Zod
+- **`src/config/env.ts`** - Environment variable validation with Valibot
 
 ### Initialization
 
@@ -42,7 +42,7 @@ The initialization:
 - ✅ Checks if analytics is enabled
 - ✅ Verifies website ID is configured
 - ✅ Injects Umami script dynamically
-- ✅ Applies CSP nonces (if using CSP)
+- ✅ Compatible with strict CSP (external script from whitelisted domain)
 - ✅ Honors Do Not Track settings
 
 ## 📈 What's Being Tracked

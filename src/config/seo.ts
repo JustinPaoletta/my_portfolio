@@ -31,11 +31,15 @@ export const defaultSEO: SEOConfig = {
     'React',
     'TypeScript',
     'frontend',
+    'developer',
+    'engineer',
+    'software',
+    'engineering',
+    'dev',
   ],
-  author: 'Your Name',
-  siteUrl: 'https://yourportfolio.com', // Update with your actual URL
-  image: '/og-image.png', // Create an Open Graph image (1200x630px recommended)
-  twitterHandle: '@yourusername', // Update with your Twitter handle
+  author: 'Justin Paoletta',
+  siteUrl: env.site.url || 'https://jpengineering.dev',
+  image: '/og-image.png',
   locale: 'en_US',
   type: 'website',
 };

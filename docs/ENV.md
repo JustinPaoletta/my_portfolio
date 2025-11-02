@@ -1,6 +1,6 @@
 # Environment Variables Guide
 
-This project uses environment variables for configuration with **runtime validation using Zod**. Vite exposes environment variables through `import.meta.env`, and all values are validated for format and correctness at startup.
+This project uses environment variables for configuration with **runtime validation using Valibot**. Vite exposes environment variables through `import.meta.env`, and all values are validated for format and correctness at startup.
 
 ## 📁 Files
 
@@ -237,7 +237,7 @@ const isDebug = import.meta.env.VITE_ENABLE_DEBUG === 'true';
 
 ## 🎯 Type Safety & Runtime Validation
 
-This project uses **Zod** for runtime validation of environment variables. TypeScript definitions are in `src/vite-env.d.ts`, and validation logic is in `src/config/env.ts`.
+This project uses **Valibot** for runtime validation of environment variables. TypeScript definitions are in `src/vite-env.d.ts`, and validation logic is in `src/config/env.ts`.
 
 ### Features
 
@@ -369,7 +369,7 @@ VITE_EMAIL=my.email@example.com
 ### TypeScript errors?
 
 - Update `src/vite-env.d.ts` with new variables
-- Update `src/config/env.ts` Zod schema with validation rules
+- Update `src/config/env.ts` Valibot schema with validation rules
 - Restart TypeScript server in your editor
 
 ### Bypass validation temporarily (not recommended)
@@ -390,7 +390,7 @@ If you need to temporarily disable validation during development:
 ## 📚 Resources
 
 - **[Vite Environment Variables](https://vitejs.dev/guide/env-and-mode.html)** - Official Vite documentation
-- **[Zod Documentation](https://zod.dev/)** - Schema validation library
+- **[Valibot Documentation](https://valibot.dev/)** - Schema validation library
 - **[TypeScript ImportMeta](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-5.html#supporting-lib-from-node_modules)** - TypeScript environment types
 
 ## 🔍 Validation Schema Reference
@@ -410,24 +410,29 @@ The complete validation schema is defined in `src/config/env.ts`. Key validation
 **Example from schema:**
 
 ```typescript
-VITE_API_URL: z
-  .string()
-  .url('API URL must be a valid URL')
-  .refine(
-    (url) => url.startsWith('http://') || url.startsWith('https://'),
+VITE_API_URL: v.pipe(
+  v.string(),
+  v.url('API URL must be a valid URL'),
+  v.check(
+    (url: string) => url.startsWith('http://') || url.startsWith('https://'),
     'API URL must start with http:// or https://'
-  ),
+  )
+),
 
-VITE_EMAIL: z
-  .string()
-  .email('Email must be a valid email address'),
+VITE_EMAIL: v.pipe(
+  v.string(),
+  v.email('Email must be a valid email address')
+),
 
-VITE_API_TIMEOUT: z
-  .string()
-  .optional()
-  .default('5000')
-  .transform((val) => parseInt(val, 10))
-  .pipe(z.number().min(1000).max(60000)),
+VITE_API_TIMEOUT: v.pipe(
+  v.fallback(v.string(), '5000'),
+  v.transform((val: string) => parseInt(val, 10)),
+  v.pipe(
+    v.number(),
+    v.minValue(1000),
+    v.maxValue(60000)
+  )
+),
 ```
 
 For the complete schema, see `src/config/env.ts`.

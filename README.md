@@ -154,7 +154,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 ### Security & Accessibility
 
-- **[CSP Nonces](docs/CSP_NONCES.md)** - Content Security Policy nonce implementation
+- **[Content Security Policy](docs/CSP.md)** - CSP configuration and security setup
 - **[Accessibility Guide](docs/ACCESSIBILITY.md)** - A11y testing, best practices, and code patterns
 
 ### Performance & Monitoring
