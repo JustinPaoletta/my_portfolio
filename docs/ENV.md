@@ -36,7 +36,7 @@ All environment variables must be prefixed with `VITE_` to be exposed to your ap
 
 ```bash
 # 1-100 characters, cannot be empty
-VITE_APP_TITLE=My Portfolio
+VITE_APP_TITLE=JP - Engineering
 
 # 1-500 characters, cannot be empty
 VITE_APP_DESCRIPTION=My personal portfolio website

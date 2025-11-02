@@ -113,7 +113,7 @@ The PWA is configured via `src/pwa-config.ts`. Key settings:
 ```typescript
 export const pwaConfig = {
   manifest: {
-    name: 'My Portfolio', // Full app name
+    name: 'JP - Engineering', // Full app name
     short_name: 'Portfolio', // Short name for home screen
     description: '...', // App description
     theme_color: '#242424', // Browser theme color
@@ -149,7 +149,7 @@ Edit `src/pwa-config.ts` to customize your PWA:
 
 ```typescript
 manifest: {
-  name: 'My Portfolio',
+  name: 'JP - Engineering',
   short_name: 'Portfolio',
   description: 'My personal portfolio website',
   theme_color: '#242424',
