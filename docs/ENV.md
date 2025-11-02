@@ -7,9 +7,9 @@ This project uses environment variables for configuration with **runtime validat
 - **`.env.example`** - Template file with all available variables (✅ committed to git)
 - **`.env.test`** - Test configuration for CI/CD with safe placeholder values (✅ committed to git)
 - **`.env`** - Your local development environment variables (gitignored)
-- **`.env.prod`** - Local copy of production variables set in Vercel (gitignored, optional)
+- **`.env.production`** - Local copy of production variables set in Vercel (gitignored, optional)
 
-**Note:** All `.env*` files are gitignored **except** `.env.example` and `.env.test` which are committed to provide templates and enable CI/CD testing. The `.env.prod` file is a convenience for keeping a local reference of your Vercel production environment variables.
+**Note:** All `.env*` files are gitignored **except** `.env.example` and `.env.test` which are committed to provide templates and enable CI/CD testing. The `.env.production` file is a convenience for keeping a local reference of your Vercel production environment variables.
 
 ## 🚀 Getting Started
 
@@ -314,35 +314,12 @@ Vite loads environment variables in the following order (later values override e
 
 ## 🔒 Security
 
-- ❌ **Never commit** `.env` or `.env.prod` (contain your actual values, gitignored)
+- ❌ **Never commit** `.env` or `.env.production` (contain your actual values, gitignored)
 - ✅ `.env.example` - Template with placeholders (✅ committed, safe to share)
 - ✅ `.env.test` - Test values with safe placeholders (✅ committed, safe to share)
 - ❌ **Never store secrets** like API keys in client-side env vars
 - ✅ **Use a backend** to proxy requests that require secrets
 - ✅ **Set production variables** directly in hosting platform (Vercel, etc.)
-
-## 🧪 Different Environments
-
-### Development
-
-```bash
-npm run start:dev
-# Uses .env.development
-```
-
-### Production
-
-```bash
-npm run build
-# Uses .env.production
-```
-
-### Preview Production Build
-
-```bash
-npm run start:prod
-# Uses .env.production
-```
 
 ## 🐛 Troubleshooting
 

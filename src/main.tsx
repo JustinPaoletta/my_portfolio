@@ -10,8 +10,8 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 // Initialize error monitoring first (before analytics and app rendering)
 initializeNewRelic();
 
-// Initialize analytics before rendering
-initializeAnalytics();
+// Initialize analytics before rendering (async)
+void initializeAnalytics();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

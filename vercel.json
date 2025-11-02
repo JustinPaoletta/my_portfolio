@@ -74,7 +74,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self';"
+          "value": "default-src 'self'; script-src 'self' https://cloud.umami.is https://vercel.live; style-src 'self'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self';"
         }
       ]
     }
