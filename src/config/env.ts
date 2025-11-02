@@ -3,7 +3,10 @@
  * Access environment variables in a type-safe, validated way
  */
 
-import { z } from 'zod';
+import { config, z } from 'zod';
+
+// Disable Zod's JIT compilation to avoid runtime eval checks that violate CSP
+config({ jitless: true });
 
 /**
  * Environment variable schema with validation rules
