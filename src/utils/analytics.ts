@@ -18,7 +18,7 @@ declare global {
  * Initialize Umami Analytics
  * Injects the tracking script into the page
  */
-export function initializeAnalytics(): void {
+export async function initializeAnalytics(): Promise<void> {
   // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
     if (env.app.isDevelopment) {
@@ -47,6 +47,19 @@ export function initializeAnalytics(): void {
 
   // Optional: Cache the tracking script
   script.setAttribute('data-cache', 'true');
+
+  // Apply CSP nonce to the script element
+  // Scripts loaded by nonced scripts are allowed via 'strict-dynamic'
+  // But we should still apply nonce for consistency
+  try {
+    const { applyNonceToScript } = await import('@/utils/nonce');
+    applyNonceToScript(script);
+  } catch (error) {
+    // Nonce utility might not be available in all contexts
+    if (env.app.isDevelopment) {
+      console.warn('[Analytics] Could not apply nonce:', error);
+    }
+  }
 
   document.head.appendChild(script);
 
