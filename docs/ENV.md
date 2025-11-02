@@ -40,12 +40,16 @@ VITE_APP_TITLE=My Portfolio
 
 # 1-500 characters, cannot be empty
 VITE_APP_DESCRIPTION=My personal portfolio website
+
+# App version in semver format (Optional, defaults to 1.0.0)
+VITE_APP_VERSION=1.0.0
 ```
 
 **Validation:**
 
 - Title: 1-100 characters
 - Description: 1-500 characters
+- Version: Must be in semver format (e.g., `1.0.0`, `2.1.3`) or defaults to `1.0.0`
 
 ### API Configuration (Required)
 
@@ -133,8 +137,10 @@ VITE_NEWRELIC_TRUST_KEY=
 # Example: 1234567890
 VITE_NEWRELIC_AGENT_ID=
 
-# License Key (alphanumeric) - from Browser monitoring settings
-# Example: NRJS-abcd1234efgh5678
+# License Key - from Browser monitoring settings
+# Must start with "NRJS-" followed by alphanumeric characters (10-50 chars total)
+# Example: NRJS-ebbbb806e4ce754f330
+# Leave empty to disable New Relic
 VITE_NEWRELIC_LICENSE_KEY=
 
 # Application ID (numeric) - from Browser monitoring settings
@@ -148,12 +154,14 @@ VITE_NEWRELIC_AJAX_DENY_LIST=
 
 **Validation:**
 
-- Account ID: Must be numeric
-- Trust Key: Must be numeric
-- Agent ID: Must be numeric
-- License Key: Non-empty string (if provided)
-- Application ID: Must be numeric
-- AJAX Deny List: Comma-separated list (optional, defaults to empty)
+- Account ID: Must be numeric (digits only) or empty string
+- Trust Key: Must be numeric (digits only) or empty string
+- Agent ID: Must be numeric (digits only) or empty string
+- License Key: Must start with `"NRJS-"` followed by alphanumeric characters, 10-50 characters total. Can be empty string to disable.
+  - Valid format: `NRJS-ebbbb806e4ce754f330`
+  - Invalid: `INVALID-KEY`, `NRJS-`, keys shorter than 10 chars, keys longer than 50 chars
+- Application ID: Must be numeric (digits only) or empty string
+- AJAX Deny List: Comma-separated list (optional, defaults to empty array)
 
 **Required for New Relic to work:**
 
@@ -251,7 +259,7 @@ This project uses **Valibot** for runtime validation of environment variables. T
 
 ### How Validation Works
 
-When you start the app, the `env.ts` file validates all environment variables:
+When you start the app or run tests, the `env.ts` file validates all environment variables at module load time:
 
 ```typescript
 import { env } from '@/config/env';
@@ -285,15 +293,16 @@ console.log(env.social.email); // Guaranteed to be valid email format
 
 **What gets validated:**
 
-| Type     | Validation                                          |
-| -------- | --------------------------------------------------- |
-| URLs     | Valid URL format + domain checks (GitHub, LinkedIn) |
-| Email    | Valid email format                                  |
-| Numbers  | Range checks (min/max)                              |
-| Booleans | Correct format (`true`/`false`/`1`/`0`)             |
-| UUIDs    | Valid UUID v4 format                                |
-| IDs      | Specific patterns (Google Analytics format)         |
-| Strings  | Length constraints (min/max characters)             |
+| Type     | Validation                                                   |
+| -------- | ------------------------------------------------------------ |
+| URLs     | Valid URL format + domain checks (GitHub, LinkedIn)          |
+| Email    | Valid email format                                           |
+| Numbers  | Range checks (min/max)                                       |
+| Booleans | Correct format (`true`/`false`/`1`/`0`)                      |
+| UUIDs    | Valid UUID v4 format                                         |
+| IDs      | Specific patterns (Google Analytics, New Relic license keys) |
+| Strings  | Length constraints (min/max characters)                      |
+| Regex    | Format validation (URLs, emails, license keys)               |
 
 ## 🌍 Environment-specific Files
 
@@ -400,12 +409,13 @@ The complete validation schema is defined in `src/config/env.ts`. Key validation
 - **URL validation** - Ensures proper format and protocol
 - **Email validation** - RFC-compliant email format
 - **Number ranges** - Min/max constraints
-- **String length** - Character limits
-- **Pattern matching** - Regex for IDs and tokens
+- **String length** - Character limits (min/max)
+- **Pattern matching** - Regex for IDs and tokens (e.g., New Relic license keys: `NRJS-[A-Za-z0-9]+`)
 - **Domain validation** - Checks for specific domains (GitHub, LinkedIn, etc.)
 - **UUID validation** - Proper UUID v4 format
 - **Default values** - Sensible defaults for optional fields
 - **Type coercion** - Automatic string to number/boolean conversion
+- **Union types** - Allows empty strings or validated values (for optional fields)
 
 **Example from schema:**
 
@@ -433,6 +443,19 @@ VITE_API_TIMEOUT: v.pipe(
     v.maxValue(60000)
   )
 ),
+
+VITE_NEWRELIC_LICENSE_KEY: v.union([
+  v.pipe(
+    v.string(),
+    v.regex(
+      /^NRJS-[A-Za-z0-9]+$/,
+      'New Relic License Key must start with "NRJS-" followed by alphanumeric characters'
+    ),
+    v.minLength(10),
+    v.maxLength(50)
+  ),
+  v.literal(''),
+]),
 ```
 
 For the complete schema, see `src/config/env.ts`.

@@ -10,7 +10,6 @@ import * as v from 'valibot';
  * This validates format, type, and constraints at runtime
  */
 const envSchema = v.object({
-  // App Configuration (Required)
   VITE_APP_TITLE: v.pipe(
     v.string(),
     v.minLength(1, 'App title is required and cannot be empty'),
@@ -23,7 +22,6 @@ const envSchema = v.object({
     v.maxLength(500, 'App description must be less than 500 characters')
   ),
 
-  // API Configuration (Required)
   VITE_API_URL: v.pipe(
     v.string(),
     v.url('API URL must be a valid URL (e.g., https://api.example.com)'),
@@ -43,7 +41,6 @@ const envSchema = v.object({
     )
   ),
 
-  // Feature Flags
   VITE_ENABLE_ANALYTICS: v.pipe(
     v.fallback(v.optional(v.string()), 'false'),
     v.transform((val) => val === 'true' || val === '1'),
@@ -62,26 +59,6 @@ const envSchema = v.object({
     v.boolean()
   ),
 
-  // Third-party Services (Optional)
-  VITE_GOOGLE_ANALYTICS_ID: v.optional(
-    v.pipe(
-      v.string(),
-      v.regex(
-        /^(G-[A-Z0-9]+|UA-\d+-\d+)?$/,
-        'Google Analytics ID must be in format G-XXXXXXXXXX or UA-XXXXXX-X'
-      )
-    )
-  ),
-
-  VITE_MAPBOX_TOKEN: v.union([
-    v.pipe(
-      v.string(),
-      v.minLength(1, 'Mapbox token cannot be empty if provided')
-    ),
-    v.literal(''),
-  ]),
-
-  // Umami Analytics (Optional)
   VITE_UMAMI_WEBSITE_ID: v.union([
     v.pipe(v.string(), v.uuid('Umami website ID must be a valid UUID')),
     v.literal(''),
@@ -92,7 +69,6 @@ const envSchema = v.object({
     v.url('Umami script source must be a valid URL')
   ),
 
-  // New Relic Configuration (Optional)
   VITE_NEWRELIC_ACCOUNT_ID: v.union([
     v.pipe(
       v.string(),
@@ -117,7 +93,13 @@ const envSchema = v.object({
   VITE_NEWRELIC_LICENSE_KEY: v.union([
     v.pipe(
       v.string(),
-      v.minLength(1, 'New Relic License Key cannot be empty if provided')
+      // New Relic license keys typically start with "NRJS-" followed by alphanumeric characters
+      v.regex(
+        /^NRJS-[A-Za-z0-9]+$/,
+        'New Relic License Key must start with "NRJS-" followed by alphanumeric characters (e.g., NRJS-abc123xyz)'
+      ),
+      v.minLength(10, 'New Relic License Key appears too short'),
+      v.maxLength(50, 'New Relic License Key appears too long')
     ),
     v.literal(''),
   ]),
@@ -137,7 +119,6 @@ const envSchema = v.object({
     )
   ),
 
-  // App Version (Optional)
   VITE_APP_VERSION: v.pipe(
     v.fallback(v.string(), '1.0.0'),
     v.regex(
@@ -146,7 +127,6 @@ const envSchema = v.object({
     )
   ),
 
-  // Social Links (Required)
   VITE_GITHUB_URL: v.pipe(
     v.string(),
     v.url('GitHub URL must be a valid URL'),
@@ -172,7 +152,6 @@ const envSchema = v.object({
     )
   ),
 
-  // PWA & SEO
   VITE_SITE_URL: v.union([
     v.pipe(
       v.string(),
@@ -185,6 +164,24 @@ const envSchema = v.object({
     ),
     v.literal(''),
   ]),
+
+  VITE_GOOGLE_ANALYTICS_ID: v.optional(
+    v.pipe(
+      v.string(),
+      v.regex(
+        /^(G-[A-Z0-9]+|UA-\d+-\d+)?$/,
+        'Google Analytics ID must be in format G-XXXXXXXXXX or UA-XXXXXX-X'
+      )
+    )
+  ),
+
+  VITE_MAPBOX_TOKEN: v.union([
+    v.pipe(
+      v.string(),
+      v.minLength(1, 'Mapbox token cannot be empty if provided')
+    ),
+    v.literal(''),
+  ]),
 });
 
 /**
@@ -192,6 +189,13 @@ const envSchema = v.object({
  * Throws detailed error if validation fails
  */
 function validateEnv() {
+  // Log the mode being validated (helpful for debugging)
+  const mode = import.meta.env.MODE || 'development';
+  // Always log in test mode so users can see validation is happening
+  if (import.meta.env.DEV || mode === 'test' || mode === 'production') {
+    console.log(`🔍 Validating environment variables (mode: ${mode})...`);
+  }
+
   const parsed = v.safeParse(envSchema, import.meta.env);
 
   if (!parsed.success) {
@@ -205,7 +209,9 @@ function validateEnv() {
       })
       .join('\n');
 
-    console.error('❌ Invalid environment variables:\n' + errors);
+    console.error(
+      `❌ Invalid environment variables (mode: ${mode}):\n${errors}`
+    );
 
     throw new Error(
       `Environment validation failed:\n${errors}\n\n` +
