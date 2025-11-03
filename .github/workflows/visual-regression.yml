@@ -33,20 +33,13 @@ jobs:
         # Use npm install which handles optional dependencies better than npm ci
         run: npm install --no-audit --no-fund --prefer-offline=false
 
-      - name: Ensure rolldown native bindings are installed
-        # Explicitly install rolldown bindings if they're missing (common in CI)
-        # Rolldown native bindings are optional dependencies that npm may skip
+      - name: Fix rolldown native bindings
+        # Always force reinstall rolldown-vite to ensure native bindings are installed
+        # This is necessary due to npm bug with optional dependencies in CI
         run: |
-          echo "Checking for rolldown native bindings..."
-          if ! find node_modules -name "*rolldown*binding*" -o -name "*binding-linux-x64*" 2>/dev/null | grep -q .; then
-            echo "Rolldown bindings not found, attempting to install..."
-            # Reinstall rolldown-vite to trigger optional dependency installation
-            npm install --no-save --force rolldown-vite || echo "Rolldown-vite reinstall failed, continuing..."
-            # Also try installing the binding package explicitly
-            npm install --no-save @rolldown/binding-linux-x64-gnu || echo "Binding package install failed, continuing..."
-          else
-            echo "Rolldown bindings found ✓"
-          fi
+          echo "Ensuring rolldown native bindings are installed..."
+          npm install --no-save --force rolldown-vite
+          npm install --no-save @rolldown/binding-linux-x64-gnu || echo "Note: Binding may already be installed via rolldown-vite"
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
