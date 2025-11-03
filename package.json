@@ -12,7 +12,7 @@
     "lint:ci": "eslint . && prettier --check .",
     "lint:fix": "eslint . --fix && prettier --write .",
     "start:dev": "npx vite",
-    "start:prod": "npm run build && npx vite preview",
+    "start:prod": "npm run build && npx vite preview --strictPort --port 4173",
     "test": "vitest",
     "test:unit": "vitest run",
     "test:ui": "vitest --ui",

@@ -7,15 +7,30 @@ import SEO from '@/components/SEO';
 import PWAUpdatePrompt from '@/components/PWAUpdatePrompt';
 import { useAnalytics } from '@/hooks/useAnalytics';
 
-function App() {
+export default function App() {
   const [count, setCount] = useState(0);
   const { trackExternalLink } = useAnalytics();
 
+  // Always have exactly one <h1> per page (route) and exactly one <main>.
+  // Add a skip link so keyboard users can jump to content immediately.
   return (
     <>
       <SEO />
       <PWAUpdatePrompt />
-      <main>
+
+      {/* Skip link for keyboard users */}
+      <a href="#main" className="skip-link">
+        Skip to main content
+      </a>
+
+      <header role="banner">
+        {/* Put your site nav/logo here if you have one */}
+      </header>
+
+      <main id="main" role="main">
+        {/* Visible H1 (or sr-only if you already have a visible page title elsewhere) */}
+        <h1>{env?.app?.title ?? 'JP Engineering'}</h1>
+
         <div>
           <a
             href="https://vite.dev"
@@ -23,7 +38,7 @@ function App() {
             rel="noopener noreferrer"
             onClick={() => trackExternalLink('https://vite.dev', 'Vite Logo')}
           >
-            <img src={viteLogo} className="logo" alt="Vite logo" />
+            <img src={viteLogo} className="logo" alt="Vite" />
           </a>
           <a
             href="https://react.dev"
@@ -31,24 +46,25 @@ function App() {
             rel="noopener noreferrer"
             onClick={() => trackExternalLink('https://react.dev', 'React Logo')}
           >
-            <img src={reactLogo} className="logo react" alt="React logo" />
+            <img src={reactLogo} className="logo react" alt="React" />
           </a>
         </div>
-        <h1>{env.app.title}</h1>
+
         <div className="card">
-          <button onClick={() => setCount((count) => count + 1)}>
-            count is {count}
+          <button onClick={() => setCount((c) => c + 1)}>
+            Count is {count}
           </button>
           <p>
             Edit <code>src/App.tsx</code> and save to test HMR
           </p>
         </div>
+
         <p className="read-the-docs">
-          Click on the Vite and React logos to learn more
+          Click the Vite and React logos to learn more
         </p>
       </main>
+
+      <footer role="contentinfo">{/* footer stuff */}</footer>
     </>
   );
 }
-
-export default App;
