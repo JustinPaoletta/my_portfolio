@@ -25,13 +25,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          # Disable cache to avoid optional dependency issues with rolldown
 
       - name: Install dependencies
         # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
-        # Rolldown requires native bindings that may not be installed correctly by npm ci
-        # Use npm install which properly installs optional dependencies while respecting package-lock.json
-        run: npm install --no-audit --no-fund
+        # Rolldown requires native bindings that may not be installed correctly
+        # Use npm install which handles optional dependencies better than npm ci
+        run: npm install --no-audit --no-fund --prefer-offline=false
+
+      - name: Ensure rolldown native bindings are installed
+        # Explicitly install rolldown bindings if they're missing (common in CI)
+        # Rolldown native bindings are optional dependencies that npm may skip
+        run: |
+          echo "Checking for rolldown native bindings..."
+          if ! find node_modules -name "*rolldown*binding*" -o -name "*binding-linux-x64*" 2>/dev/null | grep -q .; then
+            echo "Rolldown bindings not found, attempting to install..."
+            # Reinstall rolldown-vite to trigger optional dependency installation
+            npm install --no-save --force rolldown-vite || echo "Rolldown-vite reinstall failed, continuing..."
+            # Also try installing the binding package explicitly
+            npm install --no-save @rolldown/binding-linux-x64-gnu || echo "Binding package install failed, continuing..."
+          else
+            echo "Rolldown bindings found ✓"
+          fi
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
