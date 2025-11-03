@@ -86,7 +86,6 @@
     "workbox-window": "^7.3.0"
   },
   "overrides": {
-    "vite": "npm:rolldown-vite@7.1.14",
     "react-helmet-async": {
       "react": "^19.1.1"
     }
