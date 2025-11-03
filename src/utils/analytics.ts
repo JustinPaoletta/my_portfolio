@@ -5,6 +5,9 @@
 
 import { env } from '@/config/env';
 
+// Check if we're in CI environment (analytics disabled in CI)
+const isCI = import.meta.env.CI === 'true';
+
 // Extend Window interface for Umami
 declare global {
   interface Window {
@@ -19,6 +22,14 @@ declare global {
  * Injects the tracking script into the page
  */
 export async function initializeAnalytics(): Promise<void> {
+  // Skip in CI environment
+  if (isCI) {
+    if (env.app.isDevelopment) {
+      console.log('[Analytics] Skipped - CI environment');
+    }
+    return;
+  }
+
   // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
     if (env.app.isDevelopment) {
@@ -64,8 +75,8 @@ export function trackEvent(
   eventName: string,
   eventData?: Record<string, unknown>
 ): void {
-  // Skip if analytics is disabled
-  if (!env.features.analytics) {
+  // Skip in CI environment or if analytics is disabled
+  if (isCI || !env.features.analytics) {
     return;
   }
 
