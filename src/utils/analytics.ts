@@ -48,19 +48,6 @@ export async function initializeAnalytics(): Promise<void> {
   // Optional: Cache the tracking script
   script.setAttribute('data-cache', 'true');
 
-  // Apply CSP nonce to the script element
-  // Scripts loaded by nonced scripts are allowed via 'strict-dynamic'
-  // But we should still apply nonce for consistency
-  try {
-    const { applyNonceToScript } = await import('@/utils/nonce');
-    applyNonceToScript(script);
-  } catch (error) {
-    // Nonce utility might not be available in all contexts
-    if (env.app.isDevelopment) {
-      console.warn('[Analytics] Could not apply nonce:', error);
-    }
-  }
-
   document.head.appendChild(script);
 
   if (env.app.isDevelopment) {
