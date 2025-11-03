@@ -38,7 +38,7 @@ export default function App() {
             rel="noopener noreferrer"
             onClick={() => trackExternalLink('https://vite.dev', 'Vite Logo')}
           >
-            <img src={viteLogo} className="logo" alt="Vite" />
+            <img src={viteLogo} className="logo" alt="Vite logo" />
           </a>
           <a
             href="https://react.dev"
@@ -46,7 +46,7 @@ export default function App() {
             rel="noopener noreferrer"
             onClick={() => trackExternalLink('https://react.dev', 'React Logo')}
           >
-            <img src={reactLogo} className="logo react" alt="React" />
+            <img src={reactLogo} className="logo react" alt="React logo" />
           </a>
         </div>
 
