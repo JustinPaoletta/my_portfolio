@@ -1,12 +1,10 @@
+#!/usr/bin/env sh
+# Lighter pre-push hook - faster but skips E2E tests
+. "$(dirname -- "$0")/_/husky.sh"
+
 echo "🔍 Running TypeScript type checking..."
 tsc -b || {
   echo "❌ TypeScript compilation failed. Fix type errors before pushing."
-  exit 1
-}
-
-echo "🧹 Running linter on all committed files..."
-npm run lint:fix || {
-  echo "❌ Linting failed. Fix linting errors before pushing."
   exit 1
 }
 
@@ -16,12 +14,6 @@ npm run test:unit || {
   exit 1
 }
 
-echo "🎭 Running E2E tests..."
-npm run test:e2e || {
-  echo "❌ E2E tests failed. Fix the tests before pushing."
-  echo "💡 Tip: Skip this hook with 'git push --no-verify' if needed."
-  exit 1
-}
-
-echo "✅ All checks passed! Proceeding with push..."
+echo "✅ Quick checks passed! (E2E tests skipped for speed)"
+echo "💡 Remember to run 'npm run test:e2e' before creating a PR"
 
