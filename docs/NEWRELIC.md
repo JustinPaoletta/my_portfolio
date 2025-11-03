@@ -4,7 +4,7 @@
 
 ## 📝 Files Modified
 
-1. **`src/config/env.ts`** - Added New Relic configuration with Zod validation:
+1. **`src/config/env.ts`** - Added New Relic configuration with Valibot validation:
    - `VITE_ENABLE_ERROR_MONITORING` - Feature flag
    - `VITE_NEWRELIC_ACCOUNT_ID` - Your account ID
    - `VITE_NEWRELIC_TRUST_KEY` - Trust key
@@ -104,7 +104,7 @@ All code follows your strict project standards:
 - ✅ **Proper error handling** - All errors are typed correctly
 - ✅ **Named exports** - No anonymous components
 - ✅ **Accessibility** - Mouse events have keyboard equivalents (where applicable)
-- ✅ **Environment validation** - All config validated with Zod
+- ✅ **Environment validation** - All config validated with Valibot
 - ✅ **No linter errors** - Passes ESLint and TypeScript checks
 - ✅ **Production ready** - Optimized and tested
 

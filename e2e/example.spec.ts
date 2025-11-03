@@ -14,5 +14,5 @@ test('has page title', async ({ page }) => {
   await page.goto('/');
 
   // Update this with your actual page title
-  await expect(page).toHaveTitle(/Portfolio/i);
+  await expect(page).toHaveTitle(/JP Engineering/i);
 });

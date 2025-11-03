@@ -1,6 +1,6 @@
 # Environment Variables Guide
 
-This project uses environment variables for configuration with **runtime validation using Zod**. Vite exposes environment variables through `import.meta.env`, and all values are validated for format and correctness at startup.
+This project uses environment variables for configuration with **runtime validation using Valibot**. Vite exposes environment variables through `import.meta.env`, and all values are validated for format and correctness at startup.
 
 ## 📁 Files
 
@@ -36,16 +36,20 @@ All environment variables must be prefixed with `VITE_` to be exposed to your ap
 
 ```bash
 # 1-100 characters, cannot be empty
-VITE_APP_TITLE=My Portfolio
+VITE_APP_TITLE=JP - Engineering
 
 # 1-500 characters, cannot be empty
 VITE_APP_DESCRIPTION=My personal portfolio website
+
+# App version in semver format (Optional, defaults to 1.0.0)
+VITE_APP_VERSION=1.0.0
 ```
 
 **Validation:**
 
 - Title: 1-100 characters
 - Description: 1-500 characters
+- Version: Must be in semver format (e.g., `1.0.0`, `2.1.3`) or defaults to `1.0.0`
 
 ### API Configuration (Required)
 
@@ -104,40 +108,25 @@ VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 
 ### New Relic Error Monitoring (Optional)
 
-New Relic provides real-time error monitoring and performance tracking. To enable:
-
-1. **Sign up for New Relic:**
-   - Go to [https://newrelic.com](https://newrelic.com)
-   - Create a free account (100GB/month free)
-
-2. **Create a Browser Application:**
-   - Navigate to: **Browser** → **Add data**
-   - Select **Browser monitoring** → **Copy/paste JavaScript code**
-   - Choose **Pro + SPA** (single page application)
-   - Give your app a name (e.g., "My Portfolio")
-
-3. **Get your configuration values:**
-   - After creating the app, go to: **Browser** → **(Your App)** → **Application settings**
-   - Copy the values from the JavaScript snippet or settings page
-
 ```bash
 # Your New Relic Account ID (numeric)
 # Example: 1234567
 VITE_NEWRELIC_ACCOUNT_ID=
 
-# Trust Key (numeric) - from Browser monitoring settings
+# Trust Key (numeric)
 # Example: 1234567
 VITE_NEWRELIC_TRUST_KEY=
 
-# Agent ID (numeric) - from Browser monitoring settings
+# Agent ID (numeric)
 # Example: 1234567890
 VITE_NEWRELIC_AGENT_ID=
 
-# License Key (alphanumeric) - from Browser monitoring settings
-# Example: NRJS-abcd1234efgh5678
+# License Key - must start with "NRJS-" followed by alphanumeric characters (10-50 chars total)
+# Example: NRJS-ebbbb806e4ce754f330
+# Leave empty to disable New Relic
 VITE_NEWRELIC_LICENSE_KEY=
 
-# Application ID (numeric) - from Browser monitoring settings
+# Application ID (numeric)
 # Example: 1234567890
 VITE_NEWRELIC_APPLICATION_ID=
 
@@ -148,26 +137,19 @@ VITE_NEWRELIC_AJAX_DENY_LIST=
 
 **Validation:**
 
-- Account ID: Must be numeric
-- Trust Key: Must be numeric
-- Agent ID: Must be numeric
-- License Key: Non-empty string (if provided)
-- Application ID: Must be numeric
-- AJAX Deny List: Comma-separated list (optional, defaults to empty)
+- Account ID: Must be numeric (digits only) or empty string
+- Trust Key: Must be numeric (digits only) or empty string
+- Agent ID: Must be numeric (digits only) or empty string
+- License Key: Must start with `"NRJS-"` followed by alphanumeric characters, 10-50 characters total. Can be empty string to disable.
+  - Valid format: `NRJS-ebbbb806e4ce754f330`
+  - Invalid: `INVALID-KEY`, `NRJS-`, keys shorter than 10 chars, keys longer than 50 chars
+- Application ID: Must be numeric (digits only) or empty string
+- AJAX Deny List: Comma-separated list (optional, defaults to empty array)
 
 **Required for New Relic to work:**
 
 - All five main fields (Account ID, Trust Key, Agent ID, License Key, Application ID) must be set
 - `VITE_ENABLE_ERROR_MONITORING` must be set to `true`
-
-**Features:**
-
-- 🐛 **Error tracking** - Automatically captures JavaScript errors
-- 📊 **Performance monitoring** - Track page load times and Core Web Vitals
-- 🔍 **User sessions** - See exactly what users experienced during errors
-- 📈 **Custom attributes** - Add context to errors (user ID, environment, etc.)
-- 🎯 **Source maps** - See original source code in error stack traces
-- 🚨 **Alerts** - Get notified when error rates spike
 
 ### Social Links (Required)
 
@@ -237,7 +219,7 @@ const isDebug = import.meta.env.VITE_ENABLE_DEBUG === 'true';
 
 ## 🎯 Type Safety & Runtime Validation
 
-This project uses **Zod** for runtime validation of environment variables. TypeScript definitions are in `src/vite-env.d.ts`, and validation logic is in `src/config/env.ts`.
+This project uses **Valibot** for runtime validation of environment variables. TypeScript definitions are in `src/vite-env.d.ts`, and validation logic is in `src/config/env.ts`.
 
 ### Features
 
@@ -251,7 +233,7 @@ This project uses **Zod** for runtime validation of environment variables. TypeS
 
 ### How Validation Works
 
-When you start the app, the `env.ts` file validates all environment variables:
+When you start the app or run tests, the `env.ts` file validates all environment variables at module load time:
 
 ```typescript
 import { env } from '@/config/env';
@@ -285,15 +267,16 @@ console.log(env.social.email); // Guaranteed to be valid email format
 
 **What gets validated:**
 
-| Type     | Validation                                          |
-| -------- | --------------------------------------------------- |
-| URLs     | Valid URL format + domain checks (GitHub, LinkedIn) |
-| Email    | Valid email format                                  |
-| Numbers  | Range checks (min/max)                              |
-| Booleans | Correct format (`true`/`false`/`1`/`0`)             |
-| UUIDs    | Valid UUID v4 format                                |
-| IDs      | Specific patterns (Google Analytics format)         |
-| Strings  | Length constraints (min/max characters)             |
+| Type     | Validation                                                   |
+| -------- | ------------------------------------------------------------ |
+| URLs     | Valid URL format + domain checks (GitHub, LinkedIn)          |
+| Email    | Valid email format                                           |
+| Numbers  | Range checks (min/max)                                       |
+| Booleans | Correct format (`true`/`false`/`1`/`0`)                      |
+| UUIDs    | Valid UUID v4 format                                         |
+| IDs      | Specific patterns (Google Analytics, New Relic license keys) |
+| Strings  | Length constraints (min/max characters)                      |
+| Regex    | Format validation (URLs, emails, license keys)               |
 
 ## 🌍 Environment-specific Files
 
@@ -303,6 +286,62 @@ Vite loads environment variables in the following order (later values override e
 2. `.env.local` - Loaded in all cases (gitignored)
 3. `.env.[mode]` - Only loaded in specified mode (e.g., `.env.production`)
 4. `.env.[mode].local` - Only loaded in specified mode (gitignored)
+
+## 🧪 Running Tests with Different Environment Files
+
+Tests can be run with different environment configurations by specifying the `--mode` flag. The test runner will load variables from the corresponding `.env.[mode]` file.
+
+### Default Test Mode
+
+```bash
+# Uses .env.test (default)
+npm test
+```
+
+### Production Mode Tests
+
+```bash
+# Uses .env.production
+npm test -- --mode production
+```
+
+### Development Mode Tests
+
+```bash
+# Uses .env.development (or .env if .env.development doesn't exist)
+npm test -- --mode development
+```
+
+### Custom Mode Tests
+
+```bash
+# Uses .env.custom (must exist)
+npm test -- --mode custom
+```
+
+**How it works:**
+
+- Vitest loads environment variables using Vite's `loadEnv()` function
+- The mode determines which `.env.[mode]` file is loaded
+- Variables are merged: `.env` is loaded first, then `.env.[mode]` overrides any conflicts
+- Only `VITE_` prefixed variables are exposed to your tests
+- All variables are validated according to the schema in `src/config/env.ts`
+
+**Examples:**
+
+```bash
+# Run all tests with production environment variables
+npm test -- --mode production
+
+# Run tests in watch mode with production variables
+npm test -- --mode production --watch
+
+# Run specific test file with production variables
+npm test -- --mode production src/App.test.tsx
+
+# Run tests with coverage using production variables
+npm test -- --mode production --coverage
+```
 
 ## 📦 Build-time vs Runtime
 
@@ -369,7 +408,7 @@ VITE_EMAIL=my.email@example.com
 ### TypeScript errors?
 
 - Update `src/vite-env.d.ts` with new variables
-- Update `src/config/env.ts` Zod schema with validation rules
+- Update `src/config/env.ts` Valibot schema with validation rules
 - Restart TypeScript server in your editor
 
 ### Bypass validation temporarily (not recommended)
@@ -390,7 +429,7 @@ If you need to temporarily disable validation during development:
 ## 📚 Resources
 
 - **[Vite Environment Variables](https://vitejs.dev/guide/env-and-mode.html)** - Official Vite documentation
-- **[Zod Documentation](https://zod.dev/)** - Schema validation library
+- **[Valibot Documentation](https://valibot.dev/)** - Schema validation library
 - **[TypeScript ImportMeta](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-4-5.html#supporting-lib-from-node_modules)** - TypeScript environment types
 
 ## 🔍 Validation Schema Reference
@@ -400,34 +439,53 @@ The complete validation schema is defined in `src/config/env.ts`. Key validation
 - **URL validation** - Ensures proper format and protocol
 - **Email validation** - RFC-compliant email format
 - **Number ranges** - Min/max constraints
-- **String length** - Character limits
-- **Pattern matching** - Regex for IDs and tokens
+- **String length** - Character limits (min/max)
+- **Pattern matching** - Regex for IDs and tokens (e.g., New Relic license keys: `NRJS-[A-Za-z0-9]+`)
 - **Domain validation** - Checks for specific domains (GitHub, LinkedIn, etc.)
 - **UUID validation** - Proper UUID v4 format
 - **Default values** - Sensible defaults for optional fields
 - **Type coercion** - Automatic string to number/boolean conversion
+- **Union types** - Allows empty strings or validated values (for optional fields)
 
 **Example from schema:**
 
 ```typescript
-VITE_API_URL: z
-  .string()
-  .url('API URL must be a valid URL')
-  .refine(
-    (url) => url.startsWith('http://') || url.startsWith('https://'),
+VITE_API_URL: v.pipe(
+  v.string(),
+  v.url('API URL must be a valid URL'),
+  v.check(
+    (url: string) => url.startsWith('http://') || url.startsWith('https://'),
     'API URL must start with http:// or https://'
+  )
+),
+
+VITE_EMAIL: v.pipe(
+  v.string(),
+  v.email('Email must be a valid email address')
+),
+
+VITE_API_TIMEOUT: v.pipe(
+  v.fallback(v.string(), '5000'),
+  v.transform((val: string) => parseInt(val, 10)),
+  v.pipe(
+    v.number(),
+    v.minValue(1000),
+    v.maxValue(60000)
+  )
+),
+
+VITE_NEWRELIC_LICENSE_KEY: v.union([
+  v.pipe(
+    v.string(),
+    v.regex(
+      /^NRJS-[A-Za-z0-9]+$/,
+      'New Relic License Key must start with "NRJS-" followed by alphanumeric characters'
+    ),
+    v.minLength(10),
+    v.maxLength(50)
   ),
-
-VITE_EMAIL: z
-  .string()
-  .email('Email must be a valid email address'),
-
-VITE_API_TIMEOUT: z
-  .string()
-  .optional()
-  .default('5000')
-  .transform((val) => parseInt(val, 10))
-  .pipe(z.number().min(1000).max(60000)),
+  v.literal(''),
+]),
 ```
 
 For the complete schema, see `src/config/env.ts`.

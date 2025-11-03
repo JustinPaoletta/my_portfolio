@@ -93,7 +93,7 @@ Value: (leave empty for now, we'll add after deploy)
 
 ```
 VITE_APP_TITLE
-My Portfolio
+JP - Engineering
 
 VITE_APP_DESCRIPTION
 A modern portfolio showcasing my projects and skills
