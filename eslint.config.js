@@ -27,6 +27,13 @@ export default [
   jsxA11y.flatConfigs.recommended,
   // Prettier config (disables conflicting rules)
   prettierConfig,
+  // Node.js configuration files (CommonJS)
+  {
+    files: ['.lighthouserc.js', '*.config.js', '*.config.cjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   // Custom configuration
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
