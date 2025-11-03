@@ -29,7 +29,7 @@ export default [
   prettierConfig,
   // Node.js configuration files (CommonJS)
   {
-    files: ['.lighthouserc.js', '*.config.js', '*.config.cjs'],
+    files: ['.lighthouserc.cjs', '*.config.js', '*.config.cjs'],
     languageOptions: {
       globals: globals.node,
     },
