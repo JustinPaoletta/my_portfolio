@@ -26,6 +26,11 @@
     "test:a11y:ui": "playwright test e2e/accessibility.spec.ts --ui",
     "test:a11y:debug": "playwright test e2e/accessibility.spec.ts --debug",
     "test:a11y:report": "playwright test e2e/accessibility.spec.ts --reporter=html",
+    "test:visual": "playwright test e2e/visual.spec.ts",
+    "test:visual:ci": "playwright test e2e/visual.spec.ts --project=chromium",
+    "test:visual:update": "playwright test e2e/visual.spec.ts --update-snapshots",
+    "test:visual:ui": "playwright test e2e/visual.spec.ts --ui",
+    "lighthouse": "lhci autorun",
     "release": "commit-and-tag-version",
     "release:minor": "commit-and-tag-version --release-as minor",
     "release:major": "commit-and-tag-version --release-as major",
@@ -77,7 +82,8 @@
     "vite": "npm:rolldown-vite@7.1.14",
     "vite-plugin-pwa": "^1.1.0",
     "vitest": "^4.0.5",
-    "workbox-window": "^7.3.0"
+    "workbox-window": "^7.3.0",
+    "@lhci/cli": "^0.13.0"
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.1.14",

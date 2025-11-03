@@ -22,6 +22,18 @@ export default defineConfig({
     baseURL: 'http://localhost:5173',
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
+    /* Screenshot settings for visual regression */
+    screenshot: 'only-on-failure',
+  },
+
+  /* Configure visual comparison */
+  expect: {
+    /* Maximum pixel difference for visual comparisons */
+    toHaveScreenshot: {
+      maxDiffPixels: 100,
+      threshold: 0.2,
+      animations: 'disabled',
+    },
   },
 
   /* Configure projects for major browsers */

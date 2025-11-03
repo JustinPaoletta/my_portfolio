@@ -20,22 +20,38 @@ export interface SEOConfig {
 /**
  * Default SEO configuration
  * Can be overridden on a per-page basis
+ *
+ * SEO Best Practices:
+ * - Keywords: Use 5-10 relevant, specific terms (avoid redundancy)
+ * - Description: 150-160 characters for optimal search result display
+ * - Include your primary skills, technologies, and job titles
+ * - Avoid keyword stuffing - focus on relevance and quality
  */
 export const defaultSEO: SEOConfig = {
   title: env.app.title,
   description: env.app.description,
   keywords: [
-    'portfolio',
-    'web developer',
+    // Primary role/job titles
     'software engineer',
+    'web developer',
+    'frontend developer',
+    'full stack developer',
+    // Core technologies (add/remove based on your stack)
     'React',
     'TypeScript',
-    'frontend',
-    'developer',
-    'engineer',
-    'software',
-    'engineering',
-    'dev',
+    'JavaScript',
+    'HTML5',
+    'CSS3',
+    // Professional focus
+    'portfolio',
+    'personal website',
+    'developer portfolio',
+    'software engineering',
+    'web development',
+    // Additional relevant terms
+    'UI/UX',
+    'responsive design',
+    'progressive web app',
   ],
   author: 'Justin Paoletta',
   siteUrl: env.site.url || 'https://jpengineering.dev',

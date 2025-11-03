@@ -2,15 +2,33 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+
+    <!-- Favicons - Multiple formats for better browser compatibility -->
+    <!-- SVG favicon for modern browsers (scalable, best quality) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- PNG favicons for various sizes and legacy browser support -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <!-- Apple Touch Icons for iOS home screen -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/pwa-192x192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/pwa-512x512.png" />
+    <!-- Shortcut icon for older browsers -->
+    <link rel="shortcut icon" href="/pwa-192x192.png" />
+
+    <!-- Microsoft Windows Tiles -->
+    <meta name="msapplication-TileColor" content="#242424" />
+    <meta name="msapplication-TileImage" content="/pwa-192x192.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{env.app.title}</title>
+    <title>JP Engineering</title>
     <meta
       name="description"
-      content="My personal portfolio website showcasing my work and skills"
+      content="My personal portfolio showcasing my work and skills"
     />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#242424" />
 
     <!-- Preconnect to external domains for performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
