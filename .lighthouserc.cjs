@@ -7,7 +7,8 @@ module.exports = {
       startServerReadyTimeout: 120000,
       numberOfRuns: 3,
       settings: {
-        chromeFlags: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu',
+        chromeFlags:
+          '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu',
         skipAudits: [],
         throttlingMethod: 'simulate',
       },
