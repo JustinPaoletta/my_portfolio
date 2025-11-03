@@ -45,6 +45,14 @@ jobs:
         env:
           CI: true
 
+      - name: Verify dist folder exists
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "Error: dist folder not found after build"
+            exit 1
+          fi
+          echo "✓ dist folder exists"
+
       - name: Run Lighthouse CI
         run: |
           npx @lhci/cli@latest autorun

@@ -2,10 +2,15 @@ module.exports = {
   ci: {
     collect: {
       url: ['http://localhost:4173'],
-      startServerCommand: 'npm run start:prod',
+      startServerCommand: 'npx vite preview --port 4173 --host 0.0.0.0',
       startServerReadyPattern: 'Local:',
-      startServerReadyTimeout: 30000,
+      startServerReadyTimeout: 120000,
       numberOfRuns: 3,
+      settings: {
+        chromeFlags: '--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu',
+        skipAudits: [],
+        throttlingMethod: 'simulate',
+      },
     },
     assert: {
       preset: 'lighthouse:recommended',
