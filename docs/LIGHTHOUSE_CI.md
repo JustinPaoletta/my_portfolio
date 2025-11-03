@@ -17,7 +17,9 @@ Lighthouse CI evaluates:
 
 ## Configuration
 
-The Lighthouse CI configuration is in `.lighthouserc.js`:
+The Lighthouse CI configuration is in `.lighthouserc.cjs`:
+
+> **Note**: The file uses the `.cjs` extension because this project uses ES modules (`"type": "module"` in `package.json`). Lighthouse CI supports CommonJS configuration files with the `.cjs` extension.
 
 ### Performance Thresholds
 
@@ -143,7 +145,7 @@ Full Lighthouse reports are available in GitHub Actions workflow artifacts:
 
 ### Custom Assertions
 
-You can customize thresholds in `.lighthouserc.js`:
+You can customize thresholds in `.lighthouserc.cjs`:
 
 ```javascript
 assertions: {
