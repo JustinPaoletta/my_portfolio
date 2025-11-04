@@ -74,6 +74,276 @@ function HomePage() {
 <SEO title="Draft Project" noindex={true} nofollow={true} />
 ```
 
+## 📄 Per-Page SEO for Routes
+
+### What is Per-Page SEO?
+
+**Per-page SEO** means customizing meta tags (title, description, keywords, images) for each route/page in your application. Instead of using the same SEO defaults everywhere, you provide unique, page-specific information that:
+
+- **Improves search rankings**: Each page targets relevant keywords
+- **Enhances social sharing**: Each page can have its own preview image and description
+- **Provides better UX**: Users see clear, relevant page titles in browser tabs and bookmarks
+- **Increases click-through rates**: Compelling, unique descriptions encourage clicks from search results
+
+### Current Setup (Single Page)
+
+Currently, your app is a single-page application, so you're using default SEO:
+
+```tsx
+// src/App.tsx
+function App() {
+  return (
+    <>
+      <SEO /> {/* Uses defaultSEO from src/config/seo.ts */}
+      {/* Your content */}
+    </>
+  );
+}
+```
+
+### When You Add Routes
+
+If you add routing (e.g., using React Router), you'll want per-page SEO. Here's how:
+
+#### Example 1: Using React Router
+
+```tsx
+// src/App.tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import SEO from '@/components/SEO';
+
+// Home page
+function HomePage() {
+  return (
+    <>
+      <SEO
+        title="Home"
+        description="Portfolio of Justin Paoletta - Software Engineer specializing in React and TypeScript"
+        keywords={['portfolio', 'software engineer', 'React developer']}
+      />
+      <h1>Welcome</h1>
+      {/* Home content */}
+    </>
+  );
+}
+
+// About page
+function AboutPage() {
+  return (
+    <>
+      <SEO
+        title="About"
+        description="Learn about my background, skills, and experience as a software engineer"
+        keywords={['about', 'background', 'experience', 'software engineer']}
+        canonical="https://jpengineering.dev/about"
+      />
+      <h1>About Me</h1>
+      {/* About content */}
+    </>
+  );
+}
+
+// Projects page
+function ProjectsPage() {
+  return (
+    <>
+      <SEO
+        title="Projects"
+        description="View my portfolio of web development projects built with React, TypeScript, and modern tools"
+        keywords={[
+          'projects',
+          'portfolio',
+          'web development',
+          'React projects',
+        ]}
+        image="/images/projects-og.png" // Custom OG image for projects
+        canonical="https://jpengineering.dev/projects"
+      />
+      <h1>My Projects</h1>
+      {/* Projects content */}
+    </>
+  );
+}
+
+// Contact page
+function ContactPage() {
+  return (
+    <>
+      <SEO
+        title="Contact"
+        description="Get in touch with me for collaboration opportunities or questions about my work"
+        keywords={['contact', 'hire', 'collaboration', 'software engineer']}
+        canonical="https://jpengineering.dev/contact"
+      />
+      <h1>Contact Me</h1>
+      {/* Contact form */}
+    </>
+  );
+}
+
+// Blog post page (dynamic route)
+function BlogPostPage({ slug }: { slug: string }) {
+  // In a real app, you'd fetch post data
+  const post = {
+    title: 'How to Build a Portfolio',
+    description: 'A guide to building a modern portfolio website',
+    image: '/images/blog/portfolio-guide.png',
+  };
+
+  return (
+    <>
+      <SEO
+        title={post.title}
+        description={post.description}
+        type="article" // Important for blog posts!
+        keywords={['blog', 'tutorial', 'web development']}
+        image={post.image}
+        canonical={`https://jpengineering.dev/blog/${slug}`}
+      />
+      <article>
+        <h1>{post.title}</h1>
+        {/* Blog content */}
+      </article>
+    </>
+  );
+}
+
+// Main App component
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<HomePage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/projects" element={<ProjectsPage />} />
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage slug="..." />} />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+```
+
+#### Example 2: Helper Function for Route-Specific SEO
+
+Create a helper to centralize SEO configs:
+
+```tsx
+// src/config/pageSEO.ts
+import { defaultSEO } from './seo';
+import type { SEOConfig } from './seo';
+
+export const pageSEOConfig: Record<string, Partial<SEOConfig>> = {
+  home: {
+    title: 'Home',
+    description: 'Portfolio of Justin Paoletta - Software Engineer',
+    keywords: ['portfolio', 'software engineer', 'React developer'],
+  },
+  about: {
+    title: 'About',
+    description: 'Learn about my background and experience',
+    keywords: ['about', 'background', 'experience'],
+    canonical: `${defaultSEO.siteUrl}/about`,
+  },
+  projects: {
+    title: 'Projects',
+    description: 'View my web development projects',
+    keywords: ['projects', 'portfolio', 'web development'],
+    image: '/images/projects-og.png',
+    canonical: `${defaultSEO.siteUrl}/projects`,
+  },
+  contact: {
+    title: 'Contact',
+    description: 'Get in touch with me',
+    keywords: ['contact', 'hire', 'collaboration'],
+    canonical: `${defaultSEO.siteUrl}/contact`,
+  },
+};
+
+// Usage in components
+function AboutPage() {
+  const seoConfig = pageSEOConfig.about;
+
+  return (
+    <>
+      <SEO {...seoConfig} />
+      <h1>About Me</h1>
+    </>
+  );
+}
+```
+
+#### Example 3: Dynamic Routes (Blog, Project Details)
+
+For dynamic routes like `/blog/:slug` or `/projects/:id`:
+
+```tsx
+import { useParams } from 'react-router-dom';
+
+function BlogPostPage() {
+  const { slug } = useParams<{ slug: string }>();
+
+  // Fetch post data (from API, CMS, or static files)
+  const post = getBlogPost(slug);
+
+  if (!post) {
+    return <div>Post not found</div>;
+  }
+
+  return (
+    <>
+      <SEO
+        title={post.title}
+        description={post.excerpt || post.description}
+        type="article"
+        keywords={post.tags}
+        image={post.featuredImage}
+        canonical={`https://jpengineering.dev/blog/${slug}`}
+      />
+      <article>
+        <h1>{post.title}</h1>
+        {/* Post content */}
+      </article>
+    </>
+  );
+}
+```
+
+### Best Practices for Per-Page SEO
+
+1. **Always set a unique title** - Helps users identify the page
+2. **Write compelling descriptions** - 150-160 characters, include a CTA
+3. **Use relevant keywords** - 5-10 keywords specific to that page's content
+4. **Set canonical URLs** - Prevents duplicate content issues
+5. **Use custom OG images** - Create unique preview images for major pages
+6. **Match content to SEO** - Ensure meta tags accurately reflect page content
+
+### SEO Component Props Reference
+
+```tsx
+interface SEOProps {
+  // Basic
+  title?: string; // Page title (will be combined with default)
+  description?: string; // Meta description
+  keywords?: string[]; // Meta keywords
+
+  // Advanced
+  author?: string; // Content author
+  image?: string; // OG/Twitter image URL
+  siteUrl?: string; // Base site URL
+  twitterHandle?: string; // Twitter @handle
+  locale?: string; // Language/locale (e.g., 'en_US')
+  type?: string; // Open Graph type ('website', 'article', etc.)
+
+  // Special
+  canonical?: string; // Canonical URL for this page
+  noindex?: boolean; // Prevent search indexing
+  nofollow?: boolean; // Prevent link following
+}
+```
+
+All props are optional - if omitted, defaults from `src/config/seo.ts` are used.
+
 ## ⚙️ Configuration
 
 ### Default SEO Settings

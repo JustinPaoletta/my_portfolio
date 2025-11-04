@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRegisterSW } from 'virtual:pwa-register/react';
+import { useRegisterSW as useRegisterSWHook } from './pwa-register-wrapper';
 
 /**
  * Hook for managing PWA updates and installation
@@ -8,18 +8,27 @@ export function usePWA() {
   const [needRefresh, setNeedRefresh] = useState(false);
   const [offlineReady, setOfflineReady] = useState(false);
 
-  const {
-    needRefresh: [needRefreshState, setNeedRefreshState],
-    offlineReady: [offlineReadyState, setOfflineReadyState],
-    updateServiceWorker,
-  } = useRegisterSW({
+  // Always call the same hook (required by React rules of hooks)
+  // The hook itself handles whether to actually register based on CI and availability
+  const registerResult = useRegisterSWHook({
     onRegistered(registration) {
-      console.log('✅ Service Worker registered:', registration);
+      if (import.meta.env.DEV) {
+        console.log('✅ Service Worker registered:', registration);
+      }
     },
     onRegisterError(error) {
-      console.error('❌ Service Worker registration error:', error);
+      // Only log errors in development - in production, errors should be silent
+      if (import.meta.env.DEV) {
+        console.error('❌ Service Worker registration error:', error);
+      }
     },
   });
+
+  const needRefreshState = registerResult.needRefresh[0];
+  const setNeedRefreshState = registerResult.needRefresh[1];
+  const offlineReadyState = registerResult.offlineReady[0];
+  const setOfflineReadyState = registerResult.offlineReady[1];
+  const updateServiceWorker = registerResult.updateServiceWorker;
 
   useEffect(() => {
     setNeedRefresh(needRefreshState);

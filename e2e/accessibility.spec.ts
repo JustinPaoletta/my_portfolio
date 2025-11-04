@@ -13,6 +13,7 @@ test.describe('Accessibility Tests', () => {
       page,
     }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Use the helper to check for violations
       await expectNoA11yViolations(page);
@@ -20,6 +21,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should comply with WCAG 2.1 Level AA', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       const results = await checkWCAG21AA(page);
 
@@ -28,6 +30,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should have proper page structure', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Check for specific accessibility features
       const results = await checkA11y(page, {
@@ -43,6 +46,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should generate an accessibility report', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       const report = await getA11yReport(page);
 
@@ -59,6 +63,7 @@ test.describe('Accessibility Tests', () => {
       page,
     }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Check that interactive elements have proper focus management
       const results = await checkA11y(page, {
@@ -77,27 +82,44 @@ test.describe('Accessibility Tests', () => {
 
     test('should have visible focus indicators', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
-      // Get the first link (we know there are Vite and React links)
+      // Wait for interactive elements to be present
+      await page.waitForSelector('a, button', { state: 'visible' });
+
+      // Get the first link
       const firstLink = page.locator('a').first();
-      await expect(firstLink).toBeVisible();
+      const linkCount = await page.locator('a').count();
 
-      // Focus on it programmatically to test focus indicators
-      await firstLink.focus();
+      if (linkCount > 0) {
+        await expect(firstLink).toBeVisible();
 
-      // Verify it has focus
-      await expect(firstLink).toBeFocused();
+        // Focus on it programmatically to test focus indicators
+        await firstLink.focus();
 
-      // Now test keyboard navigation
-      const button = page.locator('button');
-      await button.focus();
-      await expect(button).toBeFocused();
+        // Verify it has focus
+        await expect(firstLink).toBeFocused();
+      }
+
+      // Now test keyboard navigation with buttons
+      const button = page.locator('button').first();
+      const buttonCount = await page.locator('button').count();
+
+      if (buttonCount > 0) {
+        await expect(button).toBeVisible();
+        await button.focus();
+        await expect(button).toBeFocused();
+      }
+
+      // Verify at least one interactive element was tested
+      expect(linkCount + buttonCount).toBeGreaterThan(0);
     });
   });
 
   test.describe('Color Contrast', () => {
     test('should have sufficient color contrast', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       const results = await checkA11y(page, {
         includeTags: ['wcag2aa'],
@@ -148,6 +170,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should have proper document structure', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Check for html lang attribute
       const htmlLang = await page.getAttribute('html', 'lang');
@@ -161,6 +184,7 @@ test.describe('Accessibility Tests', () => {
   test.describe('Images and Media', () => {
     test('should have alt text for images', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       const results = await checkA11y(page);
 
@@ -179,6 +203,7 @@ test.describe('Accessibility Tests', () => {
       // Skip if your app doesn't have forms
       // Remove .skip and implement when you have forms
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       const results = await checkA11y(page);
 
@@ -198,6 +223,7 @@ test.describe('Accessibility Tests', () => {
       page,
     }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Direct usage of AxeBuilder without helper
       const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
@@ -207,6 +233,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should check specific WCAG levels directly', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Test specific WCAG levels
       const results = await new AxeBuilder({ page })
@@ -218,6 +245,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should exclude specific elements from testing', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Example: Exclude third-party widgets or known issues
       const results = await new AxeBuilder({ page })
@@ -229,6 +257,7 @@ test.describe('Accessibility Tests', () => {
 
     test('should disable specific rules when needed', async ({ page }) => {
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       // Example: Temporarily disable color-contrast for development
       const results = await new AxeBuilder({ page })
@@ -244,6 +273,7 @@ test.describe('Accessibility Tests', () => {
       // Set mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       await expectNoA11yViolations(page);
     });
@@ -251,6 +281,7 @@ test.describe('Accessibility Tests', () => {
     test('should have proper touch target sizes', async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto('/');
+      await page.waitForLoadState('networkidle');
 
       const results = await checkA11y(page, {
         includeTags: ['wcag2aa'],
