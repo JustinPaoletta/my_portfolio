@@ -12,10 +12,15 @@ export function usePWA() {
   // The hook itself handles whether to actually register based on CI and availability
   const registerResult = useRegisterSWHook({
     onRegistered(registration) {
-      console.log('✅ Service Worker registered:', registration);
+      if (import.meta.env.DEV) {
+        console.log('✅ Service Worker registered:', registration);
+      }
     },
     onRegisterError(error) {
-      console.error('❌ Service Worker registration error:', error);
+      // Only log errors in development - in production, errors should be silent
+      if (import.meta.env.DEV) {
+        console.error('❌ Service Worker registration error:', error);
+      }
     },
   });
 

@@ -79,7 +79,8 @@ export function initializeNewRelic(): void {
       isDevelopment: env.app.isDevelopment,
     });
   } catch (error) {
-    if (error instanceof Error) {
+    // Only log errors in development mode to avoid console errors in Lighthouse
+    if (error instanceof Error && env.app.isDevelopment) {
       console.error('[New Relic] Initialization failed:', error.message);
     }
   }
@@ -112,7 +113,8 @@ export function reportError(
       }
     }
   } catch (reportError) {
-    if (reportError instanceof Error) {
+    // Only log errors in development mode to avoid console errors in Lighthouse
+    if (reportError instanceof Error && env.app.isDevelopment) {
       console.error('[New Relic] Failed to report error:', reportError.message);
     }
   }

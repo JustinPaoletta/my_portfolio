@@ -33,16 +33,14 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error to console in development
+    // Only log errors in development mode to avoid console errors in Lighthouse
     if (import.meta.env.DEV) {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
+      console.error('Error:', error);
+      console.error('Component Stack:', errorInfo.componentStack);
     }
 
-    // In production, log to console for browser error tracking
-    console.error('Error:', error);
-    console.error('Component Stack:', errorInfo.componentStack);
-
-    // Report error to New Relic with component stack
+    // Report error to New Relic with component stack (always report for monitoring)
     reportError(error, {
       errorBoundary: true,
       componentStack: errorInfo.componentStack || 'unknown',

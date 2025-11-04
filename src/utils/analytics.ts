@@ -24,6 +24,7 @@ declare global {
 export async function initializeAnalytics(): Promise<void> {
   // Skip in CI environment
   if (isCI) {
+    // Only log in development mode to avoid console errors in Lighthouse
     if (env.app.isDevelopment) {
       console.log('[Analytics] Skipped - CI environment');
     }
@@ -32,6 +33,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
+    // Only log in development mode to avoid console errors in Lighthouse
     if (env.app.isDevelopment) {
       console.log('[Analytics] Skipped - disabled or not configured');
     }
@@ -40,6 +42,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   // Skip if script is already loaded
   if (document.querySelector('[data-website-id]')) {
+    // Only log in development mode to avoid console errors in Lighthouse
     if (env.app.isDevelopment) {
       console.log('[Analytics] Already initialized');
     }
@@ -61,6 +64,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   document.head.appendChild(script);
 
+  // Only log in development mode to avoid console errors in Lighthouse
   if (env.app.isDevelopment) {
     console.log('[Analytics] Umami initialized');
   }
@@ -84,10 +88,12 @@ export function trackEvent(
   if (window.umami && typeof window.umami.track === 'function') {
     window.umami.track(eventName, eventData);
 
+    // Only log in development mode to avoid console errors in Lighthouse
     if (env.app.isDevelopment) {
       console.log('[Analytics] Event tracked:', eventName, eventData);
     }
   } else if (env.app.isDevelopment) {
+    // Only log in development mode to avoid console errors in Lighthouse
     console.log('[Analytics] Umami not loaded, event skipped:', eventName);
   }
 }
