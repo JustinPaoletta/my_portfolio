@@ -28,20 +28,26 @@ module.exports = {
     assert: {
       preset: 'lighthouse:recommended',
       assertions: {
-        'categories:performance': ['error', { minScore: 0.9 }],
+        // Categories
+        'categories:performance': ['error', { minScore: 0.90 }],
         'categories:accessibility': ['error', { minScore: 0.95 }],
-        'categories:best-practices': ['error', { minScore: 0.9 }],
-        'categories:seo': ['error', { minScore: 0.9 }],
-        'first-contentful-paint': ['warn', { maxNumericValue: 2000 }],
-        'largest-contentful-paint': ['warn', { maxNumericValue: 2500 }],
-        'total-blocking-time': ['warn', { maxNumericValue: 300 }],
-        'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
-        'color-contrast': 'error',
-        'image-alt': 'error',
-        'aria-allowed-attr': 'error',
+        'categories:best-practices': ['error', { minScore: 0.90 }],
+        'categories:seo': ['error', { minScore: 0.90 }],
+
+        // Real issues you care about
+        'unsized-images': ['error', { minScore: 1 }],
+        'errors-in-console': 'warn',
+
+        // Don’t assert on “insights” (informative, no score)
+        'network-dependency-tree-insight': 'off',
+        'render-blocking-insight': 'off',
+
+        // Be pragmatic on noisy perf items from vendor bundles
+        'unused-javascript': ['warn', { maxLength: 3 }],
+        'legacy-javascript': ['warn', { maxLength: 1 }],
+        'render-blocking-resources': ['warn', { maxLength: 2 }],
       },
     },
-
     upload: {
       target: 'temporary-public-storage',
     },

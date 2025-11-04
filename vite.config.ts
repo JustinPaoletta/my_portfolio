@@ -119,5 +119,6 @@ export default defineConfig({
         },
       },
     },
+    target: 'es2020',
   },
 });
