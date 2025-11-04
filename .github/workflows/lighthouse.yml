@@ -32,6 +32,11 @@ jobs:
         # Use npm install which handles optional dependencies better than npm ci
         run: npm install --no-audit --no-fund --prefer-offline=false
 
+      - name: Setup ENV
+        run: |
+          cp .env.test .env.local
+          cp .env.test .env.production
+          
       - name: Build application
         run: npm run build
         env:
