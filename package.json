@@ -35,7 +35,7 @@
     "prepare": "husky"
   },
   "dependencies": {
-    "@newrelic/browser-agent": "^1.302.0",
+    "@newrelic/browser-agent": "^1.303.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-helmet-async": "^2.0.5",
