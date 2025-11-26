@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc -b && npx vite build",
+    "build:lhci": "tsc -b && npx vite build --mode lhci",
     "build:analyze": "tsc -b && ANALYZE=true npx vite build",
     "analyze": "npm run build:analyze && npx vite-bundle-visualizer",
     "clean": "rm -rf node_modules dist coverage .vite playwright-report test-results",
@@ -13,6 +14,7 @@
     "lint:fix": "eslint . --fix && prettier --write .",
     "start:dev": "npx vite",
     "start:prod": "npm run build && npx vite preview --strictPort --port 4173",
+    "serve:compressed": "node server.mjs",
     "test": "vitest",
     "test:unit": "vitest run",
     "test:ui": "vitest --ui",
@@ -40,6 +42,9 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.21.1",
+    "helmet": "^7.1.0",
     "@newrelic/browser-agent": "^1.302.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

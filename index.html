@@ -5,7 +5,7 @@
 
     <!-- Favicons - Multiple formats for better browser compatibility -->
     <!-- SVG favicon for modern browsers (scalable, best quality) -->
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" sizes="32x32" type="image/svg+xml" href="/favicon.svg" />
     <!-- PNG favicons for various sizes and legacy browser support -->
     <link rel="icon" type="image/png" sizes="16x16" href="/pwa-192x192.png" />
     <link rel="icon" type="image/png" sizes="32x32" href="/pwa-192x192.png" />
@@ -15,7 +15,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/pwa-192x192.png" />
     <link rel="apple-touch-icon" sizes="512x512" href="/pwa-512x512.png" />
     <!-- Shortcut icon for older browsers -->
-    <link rel="shortcut icon" href="/pwa-192x192.png" />
+    <link rel="shortcut icon" sizes="192x192" href="/pwa-192x192.png" />
 
     <!-- Microsoft Windows Tiles -->
     <meta name="msapplication-TileColor" content="#242424" />
@@ -24,10 +24,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <!-- Content Security Policy -->
+    <!-- Development: includes unsafe-inline/unsafe-eval for Vite HMR -->
+    <!-- Production: Plugin will replace with stricter CSP during build -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is https://vercel.live; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self';"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is https://vercel.live; script-src-attr 'none'; object-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests;"
     />
+
 
     <title>JP Engineering</title>
     <meta

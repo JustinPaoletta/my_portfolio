@@ -13,12 +13,21 @@ interface NewRelicCustomAttributes {
 
 let agent: BrowserAgent | null = null;
 let isInitialized = false;
+const monitoringEnabled = __ENABLE_ERROR_MONITORING__;
+const shouldLog = import.meta.env.DEV && __ENABLE_DEBUG_TOOLS__;
 
 /**
  * Initialize New Relic Browser Agent
  * Should be called once at application startup
  */
 export function initializeNewRelic(): void {
+  if (!monitoringEnabled) {
+    if (shouldLog) {
+      console.log('[New Relic] Skipped - disabled by feature flag');
+    }
+    return;
+  }
+
   // Skip if monitoring is disabled or not configured
   if (
     !env.features.errorMonitoring ||
@@ -28,7 +37,7 @@ export function initializeNewRelic(): void {
     !env.monitoring.newrelic.licenseKey ||
     !env.monitoring.newrelic.applicationId
   ) {
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[New Relic] Skipped - disabled or not configured');
     }
     return;
@@ -36,7 +45,7 @@ export function initializeNewRelic(): void {
 
   // Skip if already initialized
   if (isInitialized) {
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[New Relic] Already initialized');
     }
     return;
@@ -68,7 +77,7 @@ export function initializeNewRelic(): void {
 
     isInitialized = true;
 
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[New Relic] Successfully initialized');
     }
 
@@ -80,7 +89,7 @@ export function initializeNewRelic(): void {
     });
   } catch (error) {
     // Only log errors in development mode to avoid console errors in Lighthouse
-    if (error instanceof Error && env.app.isDevelopment) {
+    if (error instanceof Error && shouldLog) {
       console.error('[New Relic] Initialization failed:', error.message);
     }
   }
@@ -96,8 +105,8 @@ export function reportError(
   customAttributes?: NewRelicCustomAttributes
 ): void {
   // Skip if not initialized or monitoring is disabled
-  if (!isInitialized || !env.features.errorMonitoring) {
-    if (env.app.isDevelopment) {
+  if (!monitoringEnabled || !isInitialized || !env.features.errorMonitoring) {
+    if (shouldLog) {
       console.log('[New Relic] Error not reported - not initialized:', error);
     }
     return;
@@ -108,13 +117,13 @@ export function reportError(
     if (agent && typeof agent.noticeError === 'function') {
       agent.noticeError(error, customAttributes);
 
-      if (env.app.isDevelopment) {
+      if (shouldLog) {
         console.log('[New Relic] Error reported:', error, customAttributes);
       }
     }
   } catch (reportError) {
     // Only log errors in development mode to avoid console errors in Lighthouse
-    if (reportError instanceof Error && env.app.isDevelopment) {
+    if (reportError instanceof Error && shouldLog) {
       console.error('[New Relic] Failed to report error:', reportError.message);
     }
   }
@@ -139,7 +148,7 @@ export function setGlobalAttributes(
         }
       });
 
-      if (env.app.isDevelopment) {
+      if (shouldLog) {
         console.log('[New Relic] Global attributes set:', attributes);
       }
     }
@@ -190,7 +199,7 @@ export function trackPageAction(
     if (typeof agent.addPageAction === 'function') {
       agent.addPageAction(name, attributes);
 
-      if (env.app.isDevelopment) {
+      if (shouldLog) {
         console.log('[New Relic] Page action tracked:', name, attributes);
       }
     }

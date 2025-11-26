@@ -2,11 +2,14 @@
  * Umami Analytics Utility
  * Privacy-friendly analytics tracking
  */
-
 import { env } from '@/config/env';
+import { getCspNonce } from '@/utils/csp';
 
 // Check if we're in CI environment (analytics disabled in CI)
-const isCI = import.meta.env.CI === 'true';
+const mode = import.meta.env.MODE;
+const isCI = mode === 'test' || mode === 'lhci';
+const analyticsEnabled = __ENABLE_ANALYTICS__;
+const shouldLog = import.meta.env.DEV && __ENABLE_DEBUG_TOOLS__;
 
 // Extend Window interface for Umami
 declare global {
@@ -22,10 +25,16 @@ declare global {
  * Injects the tracking script into the page
  */
 export async function initializeAnalytics(): Promise<void> {
+  if (!analyticsEnabled) {
+    if (shouldLog) {
+      console.log('[Analytics] Skipped - disabled by feature flag');
+    }
+    return;
+  }
+
   // Skip in CI environment
   if (isCI) {
-    // Only log in development mode to avoid console errors in Lighthouse
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Skipped - CI environment');
     }
     return;
@@ -33,8 +42,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
-    // Only log in development mode to avoid console errors in Lighthouse
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Skipped - disabled or not configured');
     }
     return;
@@ -42,8 +50,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   // Skip if script is already loaded
   if (document.querySelector('[data-website-id]')) {
-    // Only log in development mode to avoid console errors in Lighthouse
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Already initialized');
     }
     return;
@@ -55,6 +62,10 @@ export async function initializeAnalytics(): Promise<void> {
   script.defer = true;
   script.src = env.analytics.umami.src;
   script.setAttribute('data-website-id', env.analytics.umami.websiteId);
+  const cspNonce = getCspNonce();
+  if (cspNonce) {
+    script.nonce = cspNonce;
+  }
 
   // Optional: Auto-track (enabled by default)
   script.setAttribute('data-auto-track', 'true');
@@ -64,8 +75,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   document.head.appendChild(script);
 
-  // Only log in development mode to avoid console errors in Lighthouse
-  if (env.app.isDevelopment) {
+  if (shouldLog) {
     console.log('[Analytics] Umami initialized');
   }
 }
@@ -80,7 +90,7 @@ export function trackEvent(
   eventData?: Record<string, unknown>
 ): void {
   // Skip in CI environment or if analytics is disabled
-  if (isCI || !env.features.analytics) {
+  if (!analyticsEnabled || isCI) {
     return;
   }
 
@@ -88,12 +98,10 @@ export function trackEvent(
   if (window.umami && typeof window.umami.track === 'function') {
     window.umami.track(eventName, eventData);
 
-    // Only log in development mode to avoid console errors in Lighthouse
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Event tracked:', eventName, eventData);
     }
-  } else if (env.app.isDevelopment) {
-    // Only log in development mode to avoid console errors in Lighthouse
+  } else if (shouldLog) {
     console.log('[Analytics] Umami not loaded, event skipped:', eventName);
   }
 }

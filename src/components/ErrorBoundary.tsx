@@ -1,5 +1,35 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { reportError } from '@/utils/newrelic';
+
+type NewRelicModule = typeof import('@/utils/newrelic');
+
+let newRelicModule: NewRelicModule | undefined;
+let newRelicPromise: Promise<NewRelicModule | undefined> | undefined;
+
+const loadNewRelic: () => Promise<NewRelicModule | undefined> =
+  __ENABLE_ERROR_MONITORING__
+    ? () => {
+        if (newRelicModule) {
+          return Promise.resolve(newRelicModule);
+        }
+
+        if (!newRelicPromise) {
+          newRelicPromise = import('@/utils/newrelic')
+            .then((mod) => {
+              newRelicModule = mod;
+              return mod;
+            })
+            .catch((error) => {
+              if (import.meta.env.DEV) {
+                console.error('[New Relic] Failed to load module', error);
+              }
+              newRelicPromise = undefined;
+              return undefined;
+            });
+        }
+
+        return newRelicPromise;
+      }
+    : () => Promise.resolve(undefined);
 
 interface Props {
   children: ReactNode;
@@ -41,11 +71,15 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     // Report error to New Relic with component stack (always report for monitoring)
-    reportError(error, {
-      errorBoundary: true,
-      componentStack: errorInfo.componentStack || 'unknown',
-      source: 'React ErrorBoundary',
-    });
+    if (__ENABLE_ERROR_MONITORING__) {
+      void loadNewRelic().then((mod) => {
+        mod?.reportError(error, {
+          errorBoundary: true,
+          componentStack: errorInfo.componentStack || 'unknown',
+          source: 'React ErrorBoundary',
+        });
+      });
+    }
   }
 
   handleReset = (): void => {

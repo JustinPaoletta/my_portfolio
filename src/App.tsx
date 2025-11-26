@@ -44,6 +44,7 @@ export default function App() {
               alt="Vite logo"
               width={64}
               height={64}
+              loading="lazy"
             />
           </a>
           <a
@@ -58,6 +59,7 @@ export default function App() {
               alt="React logo"
               width={64}
               height={64}
+              loading="lazy"
             />
           </a>
         </div>

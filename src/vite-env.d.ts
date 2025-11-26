@@ -13,6 +13,7 @@ interface ImportMetaEnv {
   // Feature Flags
   readonly VITE_ENABLE_ANALYTICS: string;
   readonly VITE_ENABLE_DEBUG: string;
+  readonly VITE_ENABLE_ERROR_MONITORING: string;
 
   // Third-party Services (Optional)
   readonly VITE_GOOGLE_ANALYTICS_ID?: string;
@@ -34,3 +35,7 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare const __ENABLE_ANALYTICS__: boolean;
+declare const __ENABLE_ERROR_MONITORING__: boolean;
+declare const __ENABLE_DEBUG_TOOLS__: boolean;

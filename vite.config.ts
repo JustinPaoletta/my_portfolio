@@ -1,9 +1,10 @@
-import { defineConfig, type Plugin } from 'vite';
+import { defineConfig, loadEnv, type Plugin } from 'vite';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 import fs from 'node:fs';
 import { sitemapPlugin } from './scripts/vite-plugin-sitemap';
+import { cspPlugin } from './scripts/vite-plugin-csp';
 import { pwaConfig } from './src/pwa-config';
 
 // Bundle size limits in KB
@@ -85,40 +86,72 @@ function bundleSizeLimit(): Plugin {
   };
 }
 
-const isCI = process.env.CI === 'true';
-const isAnalyze = process.env.ANALYZE === 'true';
-
 // https://vite.dev/config/
-export default defineConfig({
-  // Critical for LHCI staticDistDir to resolve asset URLs predictably
-  base: '/',
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, process.cwd(), '');
+  const toBoolean = (value: string | undefined) =>
+    value === 'true' || value === '1';
 
-  plugins: [
-    react(),
-    // Disable PWA in CI to avoid SW/registration interfering with LHCI static server
-    ...(isCI ? [] : [VitePWA(pwaConfig)]),
-    bundleSizeLimit(),
-    sitemapPlugin(),
-  ],
+  const isLhci = mode === 'lhci';
+  const isCIEnv = env.CI === 'true';
+  const isCI = isCIEnv || isLhci;
+  const isAnalyze = env.ANALYZE === 'true';
 
-  resolve: {
-    alias: { '@': path.resolve(__dirname, './src') },
-  },
+  const analyticsEnabled = toBoolean(env.VITE_ENABLE_ANALYTICS) && !isCI;
+  const errorMonitoringEnabled =
+    toBoolean(env.VITE_ENABLE_ERROR_MONITORING) && !isCI;
+  const debugEnabled = toBoolean(env.VITE_ENABLE_DEBUG) && !isCI;
+  const enablePwa = !isCIEnv || isLhci;
 
-  build: {
-    chunkSizeWarningLimit: 400,
-    sourcemap: isAnalyze,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom'))
-              return 'vendor-react';
-            return 'vendor';
-          }
+  return {
+    // Critical for LHCI staticDistDir to resolve asset URLs predictably
+    base: '/',
+
+    plugins: [
+      react(),
+      // Disable PWA in CI to avoid SW/registration interfering with LHCI static server
+      ...(enablePwa ? [VitePWA(pwaConfig)] : []),
+      bundleSizeLimit(),
+      sitemapPlugin(),
+      cspPlugin(),
+    ],
+
+    define: {
+      __ENABLE_ANALYTICS__: JSON.stringify(analyticsEnabled),
+      __ENABLE_ERROR_MONITORING__: JSON.stringify(errorMonitoringEnabled),
+      __ENABLE_DEBUG_TOOLS__: JSON.stringify(debugEnabled),
+    },
+
+    resolve: {
+      alias: { '@': path.resolve(__dirname, './src') },
+    },
+
+    // esbuild options for production builds
+    esbuild: {
+      drop: isCI ? [] : ['console', 'debugger'], // Remove console in production, keep in CI
+    },
+
+    build: {
+      chunkSizeWarningLimit: 400,
+      sourcemap: isAnalyze,
+      minify: 'esbuild',
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules')) {
+              if (id.includes('react') || id.includes('react-dom'))
+                return 'vendor-react';
+              if (id.includes('@newrelic')) return 'vendor-newrelic';
+              return 'vendor';
+            }
+          },
+          // Optimize chunk filenames for better caching
+          chunkFileNames: 'assets/[name]-[hash].js',
+          entryFileNames: 'assets/[name]-[hash].js',
+          assetFileNames: 'assets/[name]-[hash].[ext]',
         },
       },
+      target: 'es2020',
     },
-    target: 'es2020',
-  },
+  };
 });
