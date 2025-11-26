@@ -1,6 +1,4 @@
-#!/usr/bin/env sh
 # Lighter pre-push hook - faster but skips E2E tests
-. "$(dirname -- "$0")/_/husky.sh"
 
 echo "🔍 Running TypeScript type checking..."
 tsc -b || {

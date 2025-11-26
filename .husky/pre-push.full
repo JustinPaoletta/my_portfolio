@@ -1,4 +1,3 @@
-#!/usr/bin/env sh
 # Comprehensive pre-push hook - includes E2E tests
 # To use: mv .husky/pre-push .husky/pre-push.light && mv .husky/pre-push.full .husky/pre-push
 
