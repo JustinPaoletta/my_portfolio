@@ -5,9 +5,10 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { sitemapPlugin } from './scripts/vite-plugin-sitemap';
 import { cspPlugin } from './scripts/vite-plugin-csp';
+import { inlineCssPlugin } from './scripts/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
 
-// Bundle size limits in KB
+// KBs
 const BUNDLE_SIZE_LIMITS = {
   appChunk: 200,
   vendorChunk: 500,
@@ -92,28 +93,22 @@ export default defineConfig(({ mode }) => {
   const toBoolean = (value: string | undefined) =>
     value === 'true' || value === '1';
 
-  const isLhci = mode === 'lhci';
-  const isCIEnv = env.CI === 'true';
-  const isCI = isCIEnv || isLhci;
   const isAnalyze = env.ANALYZE === 'true';
 
-  const analyticsEnabled = toBoolean(env.VITE_ENABLE_ANALYTICS) && !isCI;
-  const errorMonitoringEnabled =
-    toBoolean(env.VITE_ENABLE_ERROR_MONITORING) && !isCI;
-  const debugEnabled = toBoolean(env.VITE_ENABLE_DEBUG) && !isCI;
-  const enablePwa = !isCIEnv || isLhci;
+  const analyticsEnabled = toBoolean(env.VITE_ENABLE_ANALYTICS);
+  const errorMonitoringEnabled = toBoolean(env.VITE_ENABLE_ERROR_MONITORING);
+  const debugEnabled = toBoolean(env.VITE_ENABLE_DEBUG);
 
   return {
-    // Critical for LHCI staticDistDir to resolve asset URLs predictably
     base: '/',
 
     plugins: [
       react(),
-      // Disable PWA in CI to avoid SW/registration interfering with LHCI static server
-      ...(enablePwa ? [VitePWA(pwaConfig)] : []),
+      VitePWA(pwaConfig),
       bundleSizeLimit(),
       sitemapPlugin(),
-      cspPlugin(),
+      inlineCssPlugin(), // Inline small CSS files to eliminate render-blocking resources
+      cspPlugin(), // CSP plugin runs after CSS inlining to ensure inline styles are allowed
     ],
 
     define: {
@@ -128,20 +123,26 @@ export default defineConfig(({ mode }) => {
 
     // esbuild options for production builds
     esbuild: {
-      drop: isCI ? [] : ['console', 'debugger'], // Remove console in production, keep in CI
+      drop: ['console', 'debugger'], // remove console/debugger
     },
 
     build: {
       chunkSizeWarningLimit: 400,
       sourcemap: isAnalyze,
       minify: 'esbuild',
+      cssMinify: true,
+      cssCodeSplit: true,
+      assetsInlineLimit: 4096, // 4KBs
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              // Split React into its own chunk
               if (id.includes('react') || id.includes('react-dom'))
                 return 'vendor-react';
+              // Split New Relic into its own chunk for better caching
               if (id.includes('@newrelic')) return 'vendor-newrelic';
+              // Other vendor code
               return 'vendor';
             }
           },
@@ -150,8 +151,16 @@ export default defineConfig(({ mode }) => {
           entryFileNames: 'assets/[name]-[hash].js',
           assetFileNames: 'assets/[name]-[hash].[ext]',
         },
+        // Tree-shake more aggressively
+        treeshake: {
+          moduleSideEffects: false,
+          propertyReadSideEffects: false,
+          tryCatchDeoptimization: false,
+        },
       },
-      target: 'es2020',
+      target: 'es2022',
+      // Improve build performance
+      reportCompressedSize: true,
     },
   };
 });

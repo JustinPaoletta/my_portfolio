@@ -61,6 +61,85 @@ npm run start:dev
 npm run start:prod  # Preview production build
 ```
 
+## 📜 NPM Scripts Reference
+
+This project includes a comprehensive set of npm scripts for development, testing, building, and deployment. Here's a complete reference:
+
+### 🏗️ Build Scripts
+
+- **`npm run build`** - Build the project for production. Runs TypeScript compilation and Vite build.
+- **`npm run build:lhci`** - Build optimized for Lighthouse CI testing. Uses `lhci` mode which enables PWA and optimizes for performance audits.
+- **`npm run build:analyze`** - Build with source maps enabled for bundle analysis. Used in conjunction with `analyze` script.
+- **`npm run analyze`** - Build the project and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
+
+### 🧹 Cleanup Scripts
+
+- **`npm run clean`** - Remove all generated files and caches: `node_modules`, `dist`, `coverage`, `.vite`, `playwright-report`, and `test-results`.
+- **`npm run clean:cache`** - Remove only cache and build artifacts (keeps `node_modules`): `dist`, `coverage`, `.vite`, `playwright-report`, and `test-results`.
+
+### 🔍 Code Quality Scripts
+
+- **`npm run lint:ci`** - Run ESLint and Prettier in check mode (CI-friendly, exits with error if issues found).
+- **`npm run lint:fix`** - Automatically fix linting and formatting issues using ESLint and Prettier.
+
+### 🚀 Development & Preview Scripts
+
+- **`npm run start:dev`** - Start the Vite development server with hot module replacement (HMR).
+- **`npm run start:prod`** - Build the project and start a production preview server on port 4173.
+- **`npm run serve:compressed`** - Start a local Express server with gzip compression and CSP headers. Used for Lighthouse CI testing.
+
+### 🧪 Testing Scripts
+
+#### Unit Tests
+
+- **`npm test`** - Run Vitest in watch mode (re-runs tests on file changes).
+- **`npm run test:unit`** - Run unit tests once and exit (used in CI and pre-push hooks).
+- **`npm run test:ui`** - Open Vitest UI for interactive test running and debugging.
+- **`npm run test:coverage`** - Run tests and generate coverage report (text, JSON, HTML, LCOV formats).
+- **`npm run test:coverage:watch`** - Run tests with coverage in watch mode.
+- **`npm run test:coverage:ui`** - Run tests with coverage and open Vitest UI.
+
+#### End-to-End Tests
+
+- **`npm run test:e2e`** - Run all Playwright E2E tests across configured browsers.
+- **`npm run test:e2e:ui`** - Run E2E tests with Playwright UI mode for interactive debugging.
+- **`npm run test:e2e:debug`** - Run E2E tests in debug mode with Playwright Inspector.
+
+#### Accessibility Tests
+
+- **`npm run test:a11y`** - Run accessibility tests using axe-core via Playwright.
+- **`npm run test:a11y:ui`** - Run accessibility tests with Playwright UI mode.
+- **`npm run test:a11y:debug`** - Run accessibility tests in debug mode.
+- **`npm run test:a11y:report`** - Run accessibility tests and generate HTML report.
+
+#### Visual Regression Tests
+
+- **`npm run test:visual`** - Run visual regression tests across all configured browsers.
+- **`npm run test:visual:ci`** - Run visual tests on Chromium only (faster for CI).
+- **`npm run test:visual:update`** - Update visual regression snapshots (use when UI changes are intentional).
+- **`npm run test:visual:ui`** - Run visual tests with Playwright UI mode.
+
+### 📊 Performance & Analysis Scripts
+
+- **`npm run lighthouse`** - Run Lighthouse CI audits. Builds the project, starts a local server, and runs Lighthouse tests with assertions.
+- **`npm run analyze`** - Build with analysis mode and open bundle visualizer (see Build Scripts above).
+
+### 📝 SEO & Sitemap Scripts
+
+- **`npm run sitemap:generate`** - Generate or update `sitemap.xml` and `robots.txt` files based on route configuration.
+
+### 🏷️ Release & Versioning Scripts
+
+- **`npm run release`** - Automatically determine version bump (patch/minor/major) based on commit messages and create a release with changelog.
+- **`npm run release:patch`** - Create a patch release (0.0.X) - bug fixes.
+- **`npm run release:minor`** - Create a minor release (0.X.0) - new features, backward compatible.
+- **`npm run release:major`** - Create a major release (X.0.0) - breaking changes.
+- **`npm run release:dry-run`** - Preview what the release would do without making any changes.
+
+### ⚙️ Setup Scripts
+
+- **`npm run prepare`** - Husky setup script (runs automatically after `npm install`). Initializes git hooks.
+
 ### Run Tests
 
 ```bash

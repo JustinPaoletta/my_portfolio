@@ -1,12 +1,17 @@
-/* Skip link for keyboard navigation - visually hidden until focused */
-/* High contrast colors ensure it passes Lighthouse tests even when hidden */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* skip link for keyboard users - visually hidden until focused */
 .skip-link {
   position: absolute;
   top: -9999px;
   left: -9999px;
-  /* Use very high contrast colors that work on any background */
-  background-color: #000000; /* Black background: maximum contrast */
-  color: #ffffff; /* White text: 21:1 contrast on black */
+  background-color: #000000;
+  color: #ffffff;
   padding: 8px 16px;
   text-decoration: none;
   z-index: 1000;
@@ -22,13 +27,12 @@
   left: 0;
   opacity: 1;
   pointer-events: auto;
-  background-color: #000000; /* Black: ensures maximum contrast */
+  background-color: #000000;
   color: #ffffff;
   outline: 3px solid #ffffff;
   outline-offset: 2px;
 }
 
-/* Dark mode - keep black background for maximum contrast */
 @media (prefers-color-scheme: dark) {
   .skip-link {
     background-color: #000000;
@@ -38,57 +42,5 @@
   .skip-link:focus {
     background-color: #000000;
     color: #ffffff;
-  }
-}
-
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
-}
-
-.logo {
-  height: 6em;
-  width: 6em; /* Explicit width to prevent layout shift */
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-  aspect-ratio: 1 / 1; /* Maintain square aspect ratio */
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #4b5563; /* gray-600 on white: 7.02:1 contrast (exceeds WCAG AA) */
-}
-
-/* Ensure proper contrast in dark mode */
-@media (prefers-color-scheme: dark) {
-  .read-the-docs {
-    color: #d1d5db; /* gray-300 on #242424: 7.51:1 contrast (exceeds WCAG AA) */
   }
 }

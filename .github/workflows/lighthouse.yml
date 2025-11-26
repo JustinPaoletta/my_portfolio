@@ -37,22 +37,9 @@ jobs:
           cp .env.test .env.local
           cp .env.test .env.production
 
-      - name: Build application
-        run: npm run build
-        env:
-          CI: true
-
-      - name: Verify dist folder exists
-        run: |
-          if [ ! -d "dist" ]; then
-            echo "Error: dist folder not found after build"
-            exit 1
-          fi
-          echo "✓ dist folder exists"
-
+      # Note: LHCI autorun builds via .lighthouserc.cjs buildCommand
       - name: Run Lighthouse CI
-        run: |
-          npx @lhci/cli@latest autorun
+        run: npx @lhci/cli@latest autorun
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
