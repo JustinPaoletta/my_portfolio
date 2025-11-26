@@ -37,9 +37,12 @@ jobs:
           cp .env.test .env.local
           cp .env.test .env.production
 
-      # Note: LHCI autorun builds via .lighthouserc.cjs buildCommand
+      - name: Build Application
+        run: npm run build
+
+      # Note: We've already built the app, so we disable the build command here
       - name: Run Lighthouse CI
-        run: npx @lhci/cli@latest autorun
+        run: npx @lhci/cli@latest autorun --collect.buildCommand=""
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
