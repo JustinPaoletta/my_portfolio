@@ -39,7 +39,7 @@
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-helmet-async": "^2.0.5",
-    "valibot": "^1.1.0"
+    "valibot": "^1.2.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.0",
