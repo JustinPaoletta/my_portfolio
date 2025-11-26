@@ -28,6 +28,11 @@ export default defineConfig(({ mode }) => {
     // Define environment variables so they're available in import.meta.env
     define: {
       'import.meta.env.MODE': JSON.stringify(testMode),
+      // Define global feature flags (must match vite.config.ts)
+      // These are disabled in test mode to prevent side effects
+      __ENABLE_ANALYTICS__: JSON.stringify(false),
+      __ENABLE_ERROR_MONITORING__: JSON.stringify(false),
+      __ENABLE_DEBUG_TOOLS__: JSON.stringify(false),
       // Expose all VITE_ prefixed env variables from the mode-specific .env file
       ...Object.keys(env).reduce(
         (acc, key) => {
