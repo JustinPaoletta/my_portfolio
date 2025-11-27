@@ -45,7 +45,7 @@ export default [
   },
   // Node.js scripts (ESM)
   {
-    files: ['server.mjs', 'scripts/**/*.ts', 'vite.config.ts'],
+    files: ['scripts/**/*.ts', 'vite.config.ts'],
     languageOptions: {
       globals: globals.node,
     },

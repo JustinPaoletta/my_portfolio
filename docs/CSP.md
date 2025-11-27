@@ -7,25 +7,28 @@ This project uses Content Security Policy to enhance security by restricting wha
 CSP headers are set via `vercel.json` and ensure that:
 
 - Only trusted scripts from whitelisted domains can execute
-- Inline scripts are blocked (improving XSS protection)
 - External resources are restricted to approved sources
-- Data exfiltration is limited
+- Data exfiltration is limited through controlled `connect-src`
+- Clickjacking is prevented via `frame-ancestors`
 
 ## Current CSP Policy
 
-The CSP is defined in `vercel.json` and applies to all requests:
+The CSP is defined in `vercel.json` and applies to all Vercel deployments.
 
 ```
 default-src 'self';
-script-src 'self' https://cloud.umami.is https://vercel.live;
-style-src 'self';
+script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live;
+script-src-attr 'none';
+object-src 'none';
+style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 img-src 'self' data: https:;
-font-src 'self' data:;
+font-src 'self' data: https://fonts.gstatic.com;
 connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net;
-frame-ancestors 'none';
 base-uri 'self';
 form-action 'self';
+frame-ancestors 'self';
 manifest-src 'self';
+upgrade-insecure-requests;
 ```
 
 ## Directive Explanations
@@ -35,27 +38,36 @@ manifest-src 'self';
 - Default fallback for all resource types
 - Only allows resources from the same origin
 
-### `script-src 'self' https://cloud.umami.is https://vercel.live`
+### `script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live`
 
-- Allows scripts from same origin and Umami analytics
-- **No inline scripts allowed** - all scripts must be external with `src` attribute
-- `vercel.live` for Vercel's live preview functionality
+- Allows scripts from same origin, Umami analytics, and Vercel live preview
+- `'unsafe-inline'` is required because Vite may inject inline scripts
+- `vercel.live` for Vercel's live preview functionality (preview toolbar, comments)
 
-### `style-src 'self'`
+### `script-src-attr 'none'`
 
-- Allows stylesheets from same origin only
-- Inline `style` attributes are allowed (different from `<style>` tags)
-- React's inline styles work fine
+- Blocks inline event handlers like `onclick="..."` in HTML attributes
+- These are a common XSS vector and should use addEventListener instead
+
+### `object-src 'none'`
+
+- Blocks `<object>`, `<embed>`, and `<applet>` elements
+- Prevents Flash and other plugin-based attacks
+
+### `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
+
+- Allows stylesheets from same origin and Google Fonts
+- `'unsafe-inline'` allows inline styles (Vite may inject these, React style props)
 
 ### `img-src 'self' data: https:`
 
 - Allows images from same origin, data URIs, and any HTTPS URL
 - Necessary for external images (GitHub avatars, project screenshots, etc.)
 
-### `font-src 'self' data:`
+### `font-src 'self' data: https://fonts.gstatic.com`
 
-- Allows fonts from same origin and data URIs
-- Sufficient for most use cases
+- Allows fonts from same origin, data URIs, and Google Fonts CDN
+- `fonts.gstatic.com` serves the actual font files (while `fonts.googleapis.com` serves the CSS)
 
 ### `connect-src 'self' ...`
 
@@ -65,10 +77,11 @@ manifest-src 'self';
   - `vercel.live` - Vercel live preview
   - `bam.nr-data.net` - New Relic error monitoring
 
-### `frame-ancestors 'none'`
+### `frame-ancestors 'self'`
 
-- Prevents the site from being embedded in frames/iframes
-- Protects against clickjacking attacks
+- Only allows the site to be embedded in iframes on the same origin
+- Protects against clickjacking attacks from external sites
+- Use `'none'` instead if you never need iframes
 
 ### `base-uri 'self'`
 
@@ -83,46 +96,56 @@ manifest-src 'self';
 ### `manifest-src 'self'`
 
 - Allows PWA manifest from same origin
-- Required for service worker registration
+- Required for PWA installability
 
-## Why No Nonces?
+### `upgrade-insecure-requests`
 
-This project **does not use CSP nonces** because:
+- Automatically upgrades HTTP requests to HTTPS
+- Ensures all resources are loaded securely
 
-1. ✅ **All scripts are external** - Vite bundles scripts with `src` attributes, no inline code
-2. ✅ **All dynamically injected scripts** come from whitelisted domains (Umami)
-3. ✅ **No inline `<style>` tags** - all styles are external CSS files
-4. ✅ **React inline styles** use `style` attributes (not `<style>` tags) - CSP allows these
-5. ✅ **Modern dependencies** - New Relic is imported as ES module, not injected
+## Why `'unsafe-inline'` Instead of Nonces?
 
-Nonces are only needed for inline scripts/styles. Since we don't have any, nonces are unnecessary.
+This project uses `'unsafe-inline'` instead of CSP nonces because:
+
+1. **Vercel injects scripts** - Vercel's preview toolbar injects scripts without nonces, which would be blocked by a strict nonce-based CSP
+2. **Simpler configuration** - One CSP in `vercel.json`, no build-time nonce generation needed
+3. **`script-src-attr 'none'` still protects** - Inline event handlers (`onclick="..."`) are still blocked, which is a major XSS vector
+
+**Trade-off:** `'unsafe-inline'` is less secure than nonces because it allows any inline script. However:
+
+- Your main scripts are external (bundled by Vite)
+- Inline event handlers are still blocked
+- XSS via injected `<script>` tags would need to bypass other protections first
+
+**To use nonces instead:** You'd need to generate nonces at build time, add them to all script tags, and ensure Vercel's scripts have nonces (which isn't possible for preview deployments).
 
 ## Adding New External Services
 
-When adding new third-party scripts or services:
+When adding new third-party scripts or services, update `vercel.json`:
 
 1. **External Scripts**: Add the domain to `script-src`
 
-   ```json
-   "script-src 'self' https://cloud.umami.is https://new-service.com"
+   ```
+   script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live https://new-service.com
    ```
 
 2. **API/Fetch Requests**: Add the domain to `connect-src`
 
-   ```json
-   "connect-src 'self' ... https://api.newservice.com"
+   ```
+   connect-src 'self' ... https://api.newservice.com
    ```
 
-3. **Fonts**: If using external fonts, update `font-src`
-   ```json
-   "font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com"
+3. **Fonts**: Add CSS source to `style-src`, font files to `font-src`
+   ```
+   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com
+   font-src 'self' data: https://fonts.gstatic.com
    ```
 
 ## Files Involved
 
 ### `vercel.json`
 
-- Sets CSP header on all responses
+- Sets CSP header on all responses for Vercel deployments
 - Located at project root
 - Applied via Vercel's header configuration
 
@@ -169,11 +192,13 @@ This reports violations without blocking them. Check browser console for reports
 
 ## Security Benefits
 
-- ✅ **XSS Protection** - Inline scripts blocked
-- ✅ **Data Exfiltration Prevention** - Limited external connections
-- ✅ **Clickjacking Protection** - `frame-ancestors 'none'`
+- ✅ **XSS Protection** - Inline event handlers blocked (`script-src-attr 'none'`)
+- ✅ **Plugin Attacks Blocked** - `object-src 'none'` blocks Flash/plugins
+- ✅ **Data Exfiltration Prevention** - Limited external connections via `connect-src`
+- ✅ **Clickjacking Protection** - `frame-ancestors 'self'`
 - ✅ **Base Tag Protection** - `base-uri 'self'`
 - ✅ **Form Protection** - `form-action 'self'`
+- ✅ **HTTPS Enforced** - `upgrade-insecure-requests`
 
 ## Troubleshooting
 
@@ -186,8 +211,8 @@ This reports violations without blocking them. Check browser console for reports
 ### Styles Not Applying
 
 - React inline styles (via `style` prop) work fine
-- External CSS must be from `'self'`
-- Check if you're trying to use `<style>` tags (not allowed without nonces)
+- External CSS must be from `'self'` or `fonts.googleapis.com`
+- Inline `<style>` tags are allowed (we use `'unsafe-inline'`)
 
 ### API Calls Failing
 

@@ -3,7 +3,6 @@
  * Privacy-friendly analytics tracking
  */
 import { env } from '@/config/env';
-import { getCspNonce } from '@/utils/csp';
 
 // Check if we're in CI environment (analytics disabled in CI)
 const mode = import.meta.env.MODE;
@@ -62,10 +61,6 @@ export async function initializeAnalytics(): Promise<void> {
   script.defer = true;
   script.src = env.analytics.umami.src;
   script.setAttribute('data-website-id', env.analytics.umami.websiteId);
-  const cspNonce = getCspNonce();
-  if (cspNonce) {
-    script.nonce = cspNonce;
-  }
 
   // Optional: Auto-track (enabled by default)
   script.setAttribute('data-auto-track', 'true');

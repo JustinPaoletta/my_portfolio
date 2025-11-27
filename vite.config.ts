@@ -4,7 +4,6 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 import fs from 'node:fs';
 import { sitemapPlugin } from './scripts/vite-plugin-sitemap';
-import { cspPlugin } from './scripts/vite-plugin-csp';
 import { inlineCssPlugin } from './scripts/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
 
@@ -108,7 +107,6 @@ export default defineConfig(({ mode }) => {
       bundleSizeLimit(),
       sitemapPlugin(),
       inlineCssPlugin(), // Inline small CSS files to eliminate render-blocking resources
-      cspPlugin(), // CSP plugin runs after CSS inlining to ensure inline styles are allowed
     ],
 
     define: {
@@ -120,11 +118,6 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: { '@': path.resolve(__dirname, './src') },
     },
-
-    // esbuild options for production builds
-    // esbuild: {
-    //   drop: ['console', 'debugger'],
-    // },
 
     build: {
       chunkSizeWarningLimit: 400,

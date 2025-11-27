@@ -85,7 +85,6 @@ This project includes a comprehensive set of npm scripts for development, testin
 
 - **`npm run start:dev`** - Start the Vite development server with hot module replacement (HMR).
 - **`npm run start:prod`** - Build the project and start a production preview server on port 4173.
-- **`npm run serve:compressed`** - Start a local Express server with gzip compression and CSP headers. Used for Lighthouse CI testing.
 
 ### 🧪 Testing Scripts
 

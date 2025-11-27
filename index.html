@@ -21,13 +21,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Content Security Policy -->
-    <!-- Development: includes unsafe-inline/unsafe-eval for Vite HMR -->
-    <!-- Production: Plugin will replace with stricter CSP during build -->
-    <meta
-      http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cloud.umami.is https://vercel.live; script-src-attr 'none'; object-src 'none'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net; base-uri 'self'; form-action 'self'; manifest-src 'self'; upgrade-insecure-requests;"
-    />
+    <!-- CSP is set via HTTP headers in vercel.json -->
 
     <title>JP Engineering</title>
     <meta
