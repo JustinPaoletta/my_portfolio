@@ -122,9 +122,9 @@ export default defineConfig(({ mode }) => {
     },
 
     // esbuild options for production builds
-    esbuild: {
-      drop: ['console', 'debugger'], // remove console/debugger
-    },
+    // esbuild: {
+    //   drop: ['console', 'debugger'],
+    // },
 
     build: {
       chunkSizeWarningLimit: 400,

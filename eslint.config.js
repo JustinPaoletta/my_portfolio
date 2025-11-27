@@ -29,7 +29,23 @@ export default [
   prettierConfig,
   // Node.js configuration files (CommonJS)
   {
-    files: ['.lighthouserc.cjs', '*.config.js', '*.config.cjs'],
+    files: [
+      '.lighthouserc.cjs',
+      '*.config.js',
+      '*.config.cjs',
+      'scripts/**/*.cjs',
+    ],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
+  // Node.js scripts (ESM)
+  {
+    files: ['server.mjs', 'scripts/**/*.ts', 'vite.config.ts'],
     languageOptions: {
       globals: globals.node,
     },

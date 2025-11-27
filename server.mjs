@@ -65,33 +65,37 @@ if (buildCspHeader) {
     helmet.contentSecurityPolicy({
       useDefaults: true,
       directives: {
-        "default-src": ["'self'"],
-        "script-src": [
+        'default-src': ["'self'"],
+        'script-src': [
           "'self'",
           // Allow analytics script domain explicitly
-          "https://cloud.umami.is",
+          'https://cloud.umami.is',
         ],
         // Disallow inline event handlers
-        "script-src-attr": ["'none'"],
+        'script-src-attr': ["'none'"],
         // Inline styles are often needed due to bundlers/CSS-in-JS; keep it scoped to styles only
-        "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-        "img-src": ["'self'", "data:", "https:"],
-        "font-src": ["'self'", "data:", "https://fonts.gstatic.com"],
-        "connect-src": [
+        'style-src': [
           "'self'",
-          "https://cloud.umami.is",
-          "https://api-gateway.umami.dev",
-          "https://bam.nr-data.net"
+          "'unsafe-inline'",
+          'https://fonts.googleapis.com',
+        ],
+        'img-src': ["'self'", 'data:', 'https:'],
+        'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
+        'connect-src': [
+          "'self'",
+          'https://cloud.umami.is',
+          'https://api-gateway.umami.dev',
+          'https://bam.nr-data.net',
         ],
         // PWA/service worker compatibility
-        "worker-src": ["'self'"],
+        'worker-src': ["'self'"],
         // Explicitly disallow frames if you don't embed any
-        "frame-src": ["'none'"],
-        "object-src": ["'none'"],
-        "base-uri": ["'self'"],
-        "form-action": ["'self'"],
-        "frame-ancestors": ["'self'"],
-        "manifest-src": ["'self'"],
+        'frame-src': ["'none'"],
+        'object-src': ["'none'"],
+        'base-uri': ["'self'"],
+        'form-action': ["'self'"],
+        'frame-ancestors': ["'self'"],
+        'manifest-src': ["'self'"],
         // upgrade-insecure-requests is a boolean directive; helmet sets it via "upgradeInsecureRequests: true"
       },
       reportOnly: false,
@@ -100,7 +104,13 @@ if (buildCspHeader) {
 }
 
 // 2) Serve static assets from dist
-app.use(express.static(distPath, { immutable: true, maxAge: '1y', extensions: ['html'] }));
+app.use(
+  express.static(distPath, {
+    immutable: true,
+    maxAge: '1y',
+    extensions: ['html'],
+  })
+);
 
 // 3) SPA fallback to index.html
 app.get('*', (_req, res) => {
@@ -119,5 +129,3 @@ app.listen(port, host, () => {
     }
   }, 100); // Small delay to ensure server is fully initialized
 });
-
-

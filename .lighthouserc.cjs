@@ -30,20 +30,20 @@ module.exports = {
 
     assert: {
       preset: 'lighthouse:recommended',
-      assertions: {        
+      assertions: {
         // Sites like Vercel, Netlify, and major apps score 0.80-0.90
         'categories:performance': ['error', { minScore: 0.85 }],
         'categories:accessibility': ['error', { minScore: 0.95 }],
-        'categories:best-practices': ['error', { minScore: 0.90 }],
-        'categories:seo': ['error', { minScore: 0.90 }],
+        'categories:best-practices': ['error', { minScore: 0.9 }],
+        'categories:seo': ['error', { minScore: 0.9 }],
         // FCP: "Good" is <1.8s, we allow up to 2.5s with monitoring
-        'first-contentful-paint':       ['warn', { maxNumericValue: 2500 }],
+        'first-contentful-paint': ['warn', { maxNumericValue: 2500 }],
         // LCP: "Good" is <2.5s, we allow up to 3s with monitoring overhead
-        'largest-contentful-paint':     ['warn', { maxNumericValue: 3000 }],
+        'largest-contentful-paint': ['warn', { maxNumericValue: 3000 }],
         // TBT: "Good" is <200ms, monitoring adds ~100-200ms
-        'total-blocking-time':          ['warn', { maxNumericValue: 400 }],
-        'cumulative-layout-shift':      ['warn', { maxNumericValue: 0.1 }],
-        'total-byte-weight':            ['warn', { maxNumericValue: 500000 }],
+        'total-blocking-time': ['warn', { maxNumericValue: 400 }],
+        'cumulative-layout-shift': ['warn', { maxNumericValue: 0.1 }],
+        'total-byte-weight': ['warn', { maxNumericValue: 500000 }],
         // BF-cache: Often fails due to unload handlers in monitoring libs
         'bf-cache': 'off',
         // CSP-XSS: LHCI's static server doesn't send HTTP headers
@@ -64,11 +64,11 @@ module.exports = {
         // NOISY DIAGNOSTICS
         // Set to 'off' to reduce CI noise, but monitor manually
         // ============================================================
-        'bootup-time':                  'off',
-        'dom-size':                     'off',
-        'server-response-time':         'off',
-        'mainthread-work-breakdown':    'off',
-        'render-blocking-resources':    'off',
+        'bootup-time': 'off',
+        'dom-size': 'off',
+        'server-response-time': 'off',
+        'mainthread-work-breakdown': 'off',
+        'render-blocking-resources': 'off',
       },
     },
     upload: {
