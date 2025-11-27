@@ -26,8 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - standard-version integration
   - Conventional Commits based versioning
   - Automatic CHANGELOG.md updates
-- Comprehensive testing setup (Vitest, Playwright, axe-core)
-- Accessibility compliance (WCAG 2.1 Level AA)
+- Comprehensive testing setup (Vitest, Playwright)
 - SEO optimization with React Helmet Async
 - Privacy-friendly analytics with Umami
 - ESLint and Prettier configuration
@@ -43,6 +42,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Deprecated
 
 ### Removed
+
+- Accessibility testing suite (axe-core, a11y-helper, accessibility.spec.ts)
+- Visual regression testing (visual.spec.ts, snapshots, workflows)
+- Related npm scripts (test:a11y:_, test:visual:_)
+- Accessibility and visual testing documentation
 
 ### Fixed
 
