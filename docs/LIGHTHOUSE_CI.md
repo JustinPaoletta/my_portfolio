@@ -21,37 +21,58 @@ The Lighthouse CI configuration is in `.lighthouserc.cjs`:
 
 > **Note**: The file uses the `.cjs` extension because this project uses ES modules (`"type": "module"` in `package.json`). Lighthouse CI supports CommonJS configuration files with the `.cjs` extension.
 
-### Performance Thresholds
+### Key Configuration Details
 
-- **Performance Score**: Minimum 90% (error if below)
-- **Accessibility Score**: Minimum 95% (error if below)
-- **Best Practices Score**: Minimum 90% (error if below)
-- **SEO Score**: Minimum 90% (error if below)
+- **Collection**: Uses `staticDistDir: './dist'` to serve the built app via LHCI's static server
+- **Runs**: Tests 3 times and averages results for consistency
+- **Upload**: Uses `temporary-public-storage` - reports are publicly accessible for 7 days via a temporary URL
+- **Chrome Flags**: Headless Chrome with disabled features for CI consistency
+
+### Performance Thresholds (Errors)
+
+- **Performance Score**: Minimum 85% (realistic for apps with monitoring)
+- **Accessibility Score**: Minimum 95%
+- **Best Practices Score**: Minimum 90%
+- **SEO Score**: Minimum 90%
 
 ### Performance Metrics (Warnings)
 
-- **First Contentful Paint (FCP)**: < 2000ms
-- **Largest Contentful Paint (LCP)**: < 2500ms
-- **Total Blocking Time (TBT)**: < 300ms
+- **First Contentful Paint (FCP)**: < 2500ms
+- **Largest Contentful Paint (LCP)**: < 3000ms
+- **Total Blocking Time (TBT)**: < 400ms
 - **Cumulative Layout Shift (CLS)**: < 0.1
+- **Total Byte Weight**: < 500KB
 
 ### Accessibility Checks (Errors)
 
-- Color contrast violations
+- Color contrast violations (enforced as error)
 - Missing image alt text
 - Invalid ARIA attributes
+
+### Disabled Audits
+
+The following audits are disabled to reduce false positives:
+
+- **bf-cache** - Back/forward cache often fails with monitoring libraries
+- **csp-xss** - CSP is configured in `vercel.json`, not tested by LHCI's static server
+- **unused-javascript** - Expected with React and New Relic monitoring
+- **legacy-javascript** - New Relic includes polyfills for older browsers
+- **interaction-to-next-paint** - Still experimental
+- **network-dependency-tree-insight** - False positive with static server
+- **Noisy diagnostics** - `bootup-time`, `dom-size`, `server-response-time`, `mainthread-work-breakdown`, `render-blocking-resources`
 
 ## CI/CD Integration
 
 ### On Pull Requests
 
 1. Lighthouse CI runs automatically when a PR is opened or updated
-2. Tests the production build (using `npm run start:prod`)
-3. Runs 3 times and averages results for consistency
-4. Posts a comment on the PR with:
-   - Overall category scores (Performance, Accessibility, etc.)
-   - Key performance metrics (FCP, LCP, TBT, CLS)
-   - Links to full reports in workflow artifacts
+2. Builds the app with `npm run build`
+3. Tests the production build using LHCI's built-in static server (`staticDistDir: './dist'`)
+4. Runs 3 times and averages results for consistency
+5. Posts TWO types of feedback:
+   - **Lighthouse CI App status checks** - Official status on commits (if `LHCI_GITHUB_APP_TOKEN` is configured)
+   - **Custom PR comment** - Detailed scores and metrics via GitHub Actions script
+6. Uploads full HTML reports as workflow artifacts (retained for 30 days)
 
 ### On Main Branch
 
@@ -84,9 +105,12 @@ npx @lhci/cli autorun
 
 ### Score Interpretation
 
-- **🟢 90-100%**: Excellent - Meets all thresholds
-- **🟡 50-89%**: Needs improvement - Below threshold
+- **🟢 90-100%**: Excellent - Exceeds thresholds
+- **🟢 85-89%**: Good - Meets performance threshold (85% minimum)
+- **🟡 50-84%**: Needs improvement - Below thresholds
 - **🔴 0-49%**: Poor - Significant issues
+
+Note: Performance threshold is 85% (not 90%) to account for monitoring overhead from New Relic.
 
 ### Common Issues and Fixes
 
@@ -156,10 +180,15 @@ assertions: {
 
 ### Multiple URLs
 
-To test multiple pages:
+The current configuration uses `staticDistDir` to test the built site. To test multiple pages, you'd need to switch to URL-based testing:
 
 ```javascript
 collect: {
+  // Remove staticDistDir
+  // staticDistDir: './dist',
+
+  // Add startServerCommand and URLs
+  startServerCommand: 'npm run start:prod',
   url: [
     'http://localhost:4173',
     'http://localhost:4173/about',
@@ -168,21 +197,33 @@ collect: {
 }
 ```
 
-## GitHub App Token (Optional)
+**Note**: The current `staticDistDir` approach is simpler and works well for single-page apps.
 
-For enhanced PR integration, you can set up a Lighthouse CI GitHub App:
+## GitHub App Token (Recommended)
+
+The workflow is configured to use the Lighthouse CI GitHub App for enhanced status checks:
+
+### Setup
 
 1. Install the [Lighthouse CI GitHub App](https://github.com/apps/lighthouse-ci)
-2. Add the token as a repository secret: `LHCI_GITHUB_APP_TOKEN`
-3. This enables richer PR comments and status checks
+2. Copy the provided token
+3. Add it as a repository secret named `LHCI_GITHUB_APP_TOKEN`
+4. The app will then post commit status checks on PRs
+
+### What You Get
+
+- **Without token**: Custom PR comment with scores (via GitHub Actions script)
+- **With token**: Official Lighthouse CI status checks on commits + custom PR comment
+
+The custom PR comment will always be posted on PRs, regardless of whether the GitHub App is configured.
 
 ## Troubleshooting
 
 ### Tests fail locally
 
-1. **Port conflicts**: Ensure port 4173 is available
-2. **Build issues**: Check that `npm run build` succeeds
-3. **Timeout**: Increase `startServerReadyTimeout` if server is slow to start
+1. **Build issues**: Check that `npm run build` succeeds
+2. **Missing dist folder**: Ensure `./dist` exists after build
+3. **Chrome flags**: CI uses headless Chrome with specific flags (see `.lighthouserc.cjs`)
 
 ### CI fails but local passes
 
