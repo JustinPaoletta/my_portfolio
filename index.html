@@ -2,22 +2,35 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <!-- SVG favicon (scalable, best quality) -->
+    <link rel="icon" sizes="32x32" type="image/svg+xml" href="/favicon.svg" />
+    <!-- PNG favicons -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png" />
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/pwa-192x192.png" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/pwa-512x512.png" />
+    <!-- Shortcut icon for older browsers -->
+    <link rel="shortcut icon" sizes="192x192" href="/pwa-192x192.png" />
+
+    <!-- Microsoft Windows Tiles -->
+    <meta name="msapplication-TileColor" content="#242424" />
+    <meta name="msapplication-TileImage" content="/pwa-192x192.png" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>{env.app.title}</title>
+    <!-- CSP is set via HTTP headers in vercel.json -->
+
+    <title>JP Engineering</title>
     <meta
       name="description"
-      content="My personal portfolio website showcasing my work and skills"
+      content="My personal portfolio showcasing my work and skills"
     />
-    <meta name="theme-color" content="#000000" />
+    <meta name="theme-color" content="#242424" />
 
-    <!-- Preconnect to external domains for performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Umami Analytics - Privacy-friendly, GDPR compliant -->
-    <!-- Script will be injected at runtime from env config -->
+    <!-- Umami Analytics - injected at runtime from env config -->
   </head>
   <body>
     <div id="root"></div>

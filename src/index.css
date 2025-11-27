@@ -3,8 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
+  /* Dark theme defaults */
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
+  color: rgba(255, 255, 255, 0.95); /* ~#F2F2F2 on #242424 (≫ 4.5:1) */
   background-color: #242424;
 
   font-synthesis: none;
@@ -13,13 +14,15 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Links on dark: use a lighter blue and underline for non-color cue */
 a {
   font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
+  color: #93c5fd; /* blue-300 on #242424 ≈ ≥4.5:1 */
+  text-decoration: underline; /* ensures distinguishability within text blocks */
+  text-underline-offset: 2px;
 }
 a:hover {
-  color: #535bf2;
+  color: #bfdbfe; /* blue-200 (still ≥4.5:1 on dark) */
 }
 
 body {
@@ -43,26 +46,34 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
+  color: #ffffff; /*  on #1a1a1a ≫ 4.5:1 */
   cursor: pointer;
   transition: border-color 0.25s;
 }
 button:hover {
-  border-color: #646cff;
+  border-color: #8ab4ff; /* lighter border on dark for better visibility */
 }
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light theme overrides */
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
+    color: #111827; /* gray-900 on white (≫ 4.5:1) */
     background-color: #ffffff;
   }
+  /* Links on light: darker blue to pass 4.5:1 on white */
+  a {
+    color: #1d4ed8; /* blue-700 on white ≥ 4.5:1 */
+  }
   a:hover {
-    color: #747bff;
+    color: #1e40af; /* blue-800 */
   }
   button {
     background-color: #f9f9f9;
+    color: #111827; /* ≫ 4.5:1 */
+    border-color: #cbd5e1; /* subtle but visible on light */
   }
 }

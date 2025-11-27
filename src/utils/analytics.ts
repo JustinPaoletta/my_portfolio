@@ -2,8 +2,13 @@
  * Umami Analytics Utility
  * Privacy-friendly analytics tracking
  */
-
 import { env } from '@/config/env';
+
+// Check if we're in CI environment (analytics disabled in CI)
+const mode = import.meta.env.MODE;
+const isCI = mode === 'test' || mode === 'lhci';
+const analyticsEnabled = __ENABLE_ANALYTICS__;
+const shouldLog = import.meta.env.DEV && __ENABLE_DEBUG_TOOLS__;
 
 // Extend Window interface for Umami
 declare global {
@@ -19,9 +24,24 @@ declare global {
  * Injects the tracking script into the page
  */
 export async function initializeAnalytics(): Promise<void> {
+  if (!analyticsEnabled) {
+    if (shouldLog) {
+      console.log('[Analytics] Skipped - disabled by feature flag');
+    }
+    return;
+  }
+
+  // Skip in CI environment
+  if (isCI) {
+    if (shouldLog) {
+      console.log('[Analytics] Skipped - CI environment');
+    }
+    return;
+  }
+
   // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Skipped - disabled or not configured');
     }
     return;
@@ -29,7 +49,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   // Skip if script is already loaded
   if (document.querySelector('[data-website-id]')) {
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Already initialized');
     }
     return;
@@ -50,7 +70,7 @@ export async function initializeAnalytics(): Promise<void> {
 
   document.head.appendChild(script);
 
-  if (env.app.isDevelopment) {
+  if (shouldLog) {
     console.log('[Analytics] Umami initialized');
   }
 }
@@ -64,8 +84,8 @@ export function trackEvent(
   eventName: string,
   eventData?: Record<string, unknown>
 ): void {
-  // Skip if analytics is disabled
-  if (!env.features.analytics) {
+  // Skip in CI environment or if analytics is disabled
+  if (!analyticsEnabled || isCI) {
     return;
   }
 
@@ -73,10 +93,10 @@ export function trackEvent(
   if (window.umami && typeof window.umami.track === 'function') {
     window.umami.track(eventName, eventData);
 
-    if (env.app.isDevelopment) {
+    if (shouldLog) {
       console.log('[Analytics] Event tracked:', eventName, eventData);
     }
-  } else if (env.app.isDevelopment) {
+  } else if (shouldLog) {
     console.log('[Analytics] Umami not loaded, event skipped:', eventName);
   }
 }

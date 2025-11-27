@@ -1,0 +1,165 @@
+name: Lighthouse CI
+
+on:
+  pull_request:
+    branches: ['*']
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  lighthouse:
+    name: Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for better reporting
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          # Disable cache to avoid optional dependency issues with rolldown
+
+      - name: Install dependencies
+        # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
+        # Rolldown requires native bindings that may not be installed correctly
+        # Use npm install which handles optional dependencies better than npm ci
+        run: npm install --no-audit --no-fund --prefer-offline=false
+
+      - name: Setup ENV
+        run: |
+          cp .env.test .env.local
+          cp .env.test .env.production
+
+      - name: Build Application
+        run: npm run build
+
+      # Note: We've already built the app, so we disable the build command here
+      - name: Run Lighthouse CI
+        run: npx @lhci/cli@latest autorun --collect.buildCommand=""
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-reports
+          path: .lighthouseci/
+          retention-days: 30
+
+      - name: Comment PR with Lighthouse results
+        uses: actions/github-script@v7
+        if: github.event_name == 'pull_request'
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            // Try to read the lighthouse results
+            const lhciPath = path.join(process.cwd(), '.lighthouseci');
+            let comment = '## 🔍 Lighthouse Results\n\n';
+
+            if (fs.existsSync(lhciPath)) {
+              const files = fs.readdirSync(lhciPath);
+              const jsonFiles = files.filter(f => f.endsWith('.json'));
+
+              if (jsonFiles.length > 0) {
+                try {
+                  const latestResult = JSON.parse(
+                    fs.readFileSync(path.join(lhciPath, jsonFiles[0]), 'utf8')
+                  );
+
+                  if (latestResult.audits) {
+                    const categories = latestResult.categories || {};
+                    const performance = categories.performance?.score || 0;
+                    const accessibility = categories.accessibility?.score || 0;
+                    const bestPractices = categories['best-practices']?.score || 0;
+                    const seo = categories.seo?.score || 0;
+
+                    const formatScore = (score) => {
+                      const percentage = Math.round(score * 100);
+                      const emoji = percentage >= 90 ? '🟢' : percentage >= 50 ? '🟡' : '🔴';
+                      return `${emoji} ${percentage}%`;
+                    };
+
+                    comment += '### Overall Scores\n\n';
+                    comment += `- **Performance**: ${formatScore(performance)}\n`;
+                    comment += `- **Accessibility**: ${formatScore(accessibility)}\n`;
+                    comment += `- **Best Practices**: ${formatScore(bestPractices)}\n`;
+                    comment += `- **SEO**: ${formatScore(seo)}\n\n`;
+
+                    // Performance metrics
+                    const metrics = latestResult.audits;
+                    if (metrics['first-contentful-paint'] || metrics['largest-contentful-paint']) {
+                      comment += '### Key Metrics\n\n';
+
+                      if (metrics['first-contentful-paint']) {
+                        const fcp = metrics['first-contentful-paint'].numericValue;
+                        comment += `- **First Contentful Paint**: ${fcp?.toFixed(0)}ms\n`;
+                      }
+
+                      if (metrics['largest-contentful-paint']) {
+                        const lcp = metrics['largest-contentful-paint'].numericValue;
+                        comment += `- **Largest Contentful Paint**: ${lcp?.toFixed(0)}ms\n`;
+                      }
+
+                      if (metrics['total-blocking-time']) {
+                        const tbt = metrics['total-blocking-time'].numericValue;
+                        comment += `- **Total Blocking Time**: ${tbt?.toFixed(0)}ms\n`;
+                      }
+
+                      if (metrics['cumulative-layout-shift']) {
+                        const cls = metrics['cumulative-layout-shift'].numericValue;
+                        comment += `- **Cumulative Layout Shift**: ${cls?.toFixed(3)}\n`;
+                      }
+
+                      comment += '\n';
+                    }
+
+                    comment += '---\n';
+                    comment += '📊 Full report available in workflow artifacts\n';
+                  }
+                } catch (error) {
+                  comment += '⚠️ Could not parse Lighthouse results. Check workflow artifacts for details.\n';
+                }
+              } else {
+                comment += '⚠️ No Lighthouse results found.\n';
+              }
+            } else {
+              comment += '⚠️ Lighthouse results directory not found.\n';
+            }
+
+            // Find existing PR comment
+            const comments = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const botComment = comments.data.find(
+              comment => comment.user.type === 'Bot' && comment.body.includes('🔍 Lighthouse Results')
+            );
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: comment,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment,
+              });
+            }

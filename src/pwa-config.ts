@@ -8,7 +8,14 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
  */
 export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
-  includeAssets: ['favicon.ico', 'robots.txt', 'sitemap.xml'],
+  includeAssets: [
+    'favicon.svg',
+    'pwa-192x192.png',
+    'pwa-512x512.png',
+    'robots.txt',
+    'sitemap.xml',
+    'og-image.png',
+  ],
   manifestFilename: 'manifest.webmanifest',
 
   manifest: {
@@ -22,6 +29,14 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     scope: '/',
     start_url: '/',
     icons: [
+      // SVG icon for modern browsers (scalable, best quality)
+      {
+        src: '/favicon.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+        purpose: 'any',
+      },
+      // Standard PWA icons (PNG for broader compatibility)
       {
         src: '/pwa-192x192.png',
         sizes: '192x192',
@@ -34,6 +49,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
         type: 'image/png',
         purpose: 'any',
       },
+      // Maskable icons for Android adaptive icons
       {
         src: '/pwa-192x192.png',
         sizes: '192x192',
@@ -45,6 +61,19 @@ export const pwaConfig: Partial<VitePWAOptions> = {
         sizes: '512x512',
         type: 'image/png',
         purpose: 'maskable',
+      },
+      // Windows/Microsoft tile sizes (using existing icons)
+      {
+        src: '/pwa-192x192.png',
+        sizes: '144x144',
+        type: 'image/png',
+        purpose: 'any',
+      },
+      {
+        src: '/pwa-512x512.png',
+        sizes: '310x310',
+        type: 'image/png',
+        purpose: 'any',
       },
     ],
     categories: ['portfolio', 'personal', 'developer'],

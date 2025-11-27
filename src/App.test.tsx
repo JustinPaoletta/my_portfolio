@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@/test/test-utils';
-import userEvent from '@testing-library/user-event';
 import App from './App';
 
 describe('App', () => {
@@ -11,31 +10,31 @@ describe('App', () => {
     ).toBeInTheDocument();
   });
 
-  it('increments count when button is clicked', async () => {
-    const user = userEvent.setup();
+  it('renders the JP image with correct attributes', () => {
     render(<App />);
 
-    const button = screen.getByRole('button', { name: /count is 0/i });
-    expect(button).toBeInTheDocument();
-
-    await user.click(button);
-    expect(
-      screen.getByRole('button', { name: /count is 1/i })
-    ).toBeInTheDocument();
-
-    await user.click(button);
-    expect(
-      screen.getByRole('button', { name: /count is 2/i })
-    ).toBeInTheDocument();
+    const jpImage = screen.getByAltText(/JP/i);
+    expect(jpImage).toBeInTheDocument();
+    expect(jpImage).toHaveAttribute('width', '100');
+    expect(jpImage).toHaveAttribute('height', '100');
+    expect(jpImage).toHaveAttribute('src', '/jp-100.webp');
   });
 
-  it('renders the logos', () => {
+  it('renders skip link for keyboard navigation', () => {
     render(<App />);
 
-    const viteLogo = screen.getByAltText(/vite logo/i);
-    const reactLogo = screen.getByAltText(/react logo/i);
+    const skipLink = screen.getByRole('link', {
+      name: /skip to main content/i,
+    });
+    expect(skipLink).toBeInTheDocument();
+    expect(skipLink).toHaveAttribute('href', '#main');
+  });
 
-    expect(viteLogo).toBeInTheDocument();
-    expect(reactLogo).toBeInTheDocument();
+  it('renders semantic HTML structure', () => {
+    render(<App />);
+
+    expect(screen.getByRole('banner')).toBeInTheDocument(); // header
+    expect(screen.getByRole('main')).toBeInTheDocument(); // main
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument(); // footer
   });
 });

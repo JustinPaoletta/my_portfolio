@@ -4,7 +4,52 @@
  */
 
 import { useCallback } from 'react';
-import { analytics, trackEvent } from '@/utils/analytics';
+
+type AnalyticsModule = typeof import('@/utils/analytics');
+
+let analyticsModule: AnalyticsModule | undefined;
+let analyticsPromise: Promise<AnalyticsModule | undefined> | undefined;
+
+const loadAnalytics: () => Promise<AnalyticsModule | undefined> =
+  __ENABLE_ANALYTICS__
+    ? () => {
+        if (analyticsModule) {
+          return Promise.resolve(analyticsModule);
+        }
+
+        if (!analyticsPromise) {
+          analyticsPromise = import('@/utils/analytics')
+            .then((mod) => {
+              analyticsModule = mod;
+              return mod;
+            })
+            .catch((error) => {
+              if (import.meta.env.DEV) {
+                console.error(
+                  '[Analytics] Failed to load analytics module',
+                  error
+                );
+              }
+              analyticsPromise = undefined;
+              return undefined;
+            });
+        }
+
+        return analyticsPromise;
+      }
+    : () => Promise.resolve(undefined);
+
+function withAnalytics(execute: (module: AnalyticsModule) => void): void {
+  if (!__ENABLE_ANALYTICS__) {
+    return;
+  }
+
+  void loadAnalytics().then((mod) => {
+    if (mod) {
+      execute(mod);
+    }
+  });
+}
 
 /**
  * Hook for analytics tracking
@@ -14,46 +59,50 @@ export function useAnalytics() {
   // Wrap analytics functions in useCallback to prevent unnecessary re-renders
   const trackProjectClick = useCallback(
     (projectName: string, linkType: 'demo' | 'github') => {
-      analytics.trackProjectClick(projectName, linkType);
+      withAnalytics(({ analytics }) =>
+        analytics.trackProjectClick(projectName, linkType)
+      );
     },
     []
   );
 
   const trackResumeDownload = useCallback(() => {
-    analytics.trackResumeDownload();
+    withAnalytics(({ analytics }) => analytics.trackResumeDownload());
   }, []);
 
   const trackContact = useCallback((method: 'email' | 'form' | 'linkedin') => {
-    analytics.trackContact(method);
+    withAnalytics(({ analytics }) => analytics.trackContact(method));
   }, []);
 
   const trackSocialClick = useCallback(
     (platform: 'github' | 'linkedin' | 'twitter' | 'other') => {
-      analytics.trackSocialClick(platform);
+      withAnalytics(({ analytics }) => analytics.trackSocialClick(platform));
     },
     []
   );
 
   const trackNavigation = useCallback((section: string) => {
-    analytics.trackNavigation(section);
+    withAnalytics(({ analytics }) => analytics.trackNavigation(section));
   }, []);
 
   const trackExternalLink = useCallback((url: string, label?: string) => {
-    analytics.trackExternalLink(url, label);
+    withAnalytics(({ analytics }) => analytics.trackExternalLink(url, label));
   }, []);
 
   const trackSearch = useCallback((query: string, category?: string) => {
-    analytics.trackSearch(query, category);
+    withAnalytics(({ analytics }) => analytics.trackSearch(query, category));
   }, []);
 
   const trackError = useCallback((errorType: string, errorMessage?: string) => {
-    analytics.trackError(errorType, errorMessage);
+    withAnalytics(({ analytics }) =>
+      analytics.trackError(errorType, errorMessage)
+    );
   }, []);
 
   // Generic event tracking
   const trackCustomEvent = useCallback(
     (eventName: string, eventData?: Record<string, unknown>) => {
-      trackEvent(eventName, eventData);
+      withAnalytics(({ trackEvent }) => trackEvent(eventName, eventData));
     },
     []
   );

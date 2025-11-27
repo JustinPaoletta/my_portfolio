@@ -192,7 +192,10 @@ function validateEnv() {
   // Log the mode being validated (helpful for debugging)
   const mode = import.meta.env.MODE || 'development';
   // Always log in test mode so users can see validation is happening
-  if (import.meta.env.DEV || mode === 'test' || mode === 'production') {
+  const shouldLogValidation =
+    (import.meta.env.DEV || mode === 'test' || mode === 'production') &&
+    __ENABLE_DEBUG_TOOLS__;
+  if (shouldLogValidation) {
     console.log(`🔍 Validating environment variables (mode: ${mode})...`);
   }
 
@@ -226,6 +229,13 @@ function validateEnv() {
 // Validate and export environment variables
 const validatedEnv = validateEnv();
 
+const analyticsFeatureEnabled =
+  __ENABLE_ANALYTICS__ && validatedEnv.VITE_ENABLE_ANALYTICS;
+const debugFeatureEnabled =
+  __ENABLE_DEBUG_TOOLS__ && validatedEnv.VITE_ENABLE_DEBUG;
+const errorMonitoringFeatureEnabled =
+  __ENABLE_ERROR_MONITORING__ && validatedEnv.VITE_ENABLE_ERROR_MONITORING;
+
 /**
  * Application environment configuration
  * All values are validated at runtime for type safety and correctness
@@ -249,9 +259,9 @@ export const env = {
 
   // Feature Flags
   features: {
-    analytics: validatedEnv.VITE_ENABLE_ANALYTICS,
-    debug: validatedEnv.VITE_ENABLE_DEBUG,
-    errorMonitoring: validatedEnv.VITE_ENABLE_ERROR_MONITORING,
+    analytics: analyticsFeatureEnabled,
+    debug: debugFeatureEnabled,
+    errorMonitoring: errorMonitoringFeatureEnabled,
   },
 
   // Third-party Services

@@ -1,5 +1,35 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
-import { reportError } from '@/utils/newrelic';
+
+type NewRelicModule = typeof import('@/utils/newrelic');
+
+let newRelicModule: NewRelicModule | undefined;
+let newRelicPromise: Promise<NewRelicModule | undefined> | undefined;
+
+const loadNewRelic: () => Promise<NewRelicModule | undefined> =
+  __ENABLE_ERROR_MONITORING__
+    ? () => {
+        if (newRelicModule) {
+          return Promise.resolve(newRelicModule);
+        }
+
+        if (!newRelicPromise) {
+          newRelicPromise = import('@/utils/newrelic')
+            .then((mod) => {
+              newRelicModule = mod;
+              return mod;
+            })
+            .catch((error) => {
+              if (import.meta.env.DEV) {
+                console.error('[New Relic] Failed to load module', error);
+              }
+              newRelicPromise = undefined;
+              return undefined;
+            });
+        }
+
+        return newRelicPromise;
+      }
+    : () => Promise.resolve(undefined);
 
 interface Props {
   children: ReactNode;
@@ -33,21 +63,23 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Log error to console in development
+    // Only log errors in development mode to avoid console errors in Lighthouse
     if (import.meta.env.DEV) {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
+      console.error('Error:', error);
+      console.error('Component Stack:', errorInfo.componentStack);
     }
 
-    // In production, log to console for browser error tracking
-    console.error('Error:', error);
-    console.error('Component Stack:', errorInfo.componentStack);
-
-    // Report error to New Relic with component stack
-    reportError(error, {
-      errorBoundary: true,
-      componentStack: errorInfo.componentStack || 'unknown',
-      source: 'React ErrorBoundary',
-    });
+    // Report error to New Relic with component stack (always report for monitoring)
+    if (__ENABLE_ERROR_MONITORING__) {
+      void loadNewRelic().then((mod) => {
+        mod?.reportError(error, {
+          errorBoundary: true,
+          componentStack: errorInfo.componentStack || 'unknown',
+          source: 'React ErrorBoundary',
+        });
+      });
+    }
   }
 
   handleReset = (): void => {

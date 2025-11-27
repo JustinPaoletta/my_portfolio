@@ -27,6 +27,29 @@ export default [
   jsxA11y.flatConfigs.recommended,
   // Prettier config (disables conflicting rules)
   prettierConfig,
+  // Node.js configuration files (CommonJS)
+  {
+    files: [
+      '.lighthouserc.cjs',
+      '*.config.js',
+      '*.config.cjs',
+      'scripts/**/*.cjs',
+    ],
+    languageOptions: {
+      globals: globals.node,
+    },
+    rules: {
+      '@typescript-eslint/no-require-imports': 'off',
+      '@typescript-eslint/no-var-requires': 'off',
+    },
+  },
+  // Node.js scripts (ESM)
+  {
+    files: ['scripts/**/*.ts', 'vite.config.ts'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   // Custom configuration
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
