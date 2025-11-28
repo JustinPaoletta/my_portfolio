@@ -28,6 +28,10 @@ module.exports = {
       },
     },
 
+    upload: {
+      target: 'temporary-public-storage',
+    },
+
     assert: {
       preset: 'lighthouse:recommended',
       assertions: {
@@ -70,9 +74,6 @@ module.exports = {
         'mainthread-work-breakdown': 'off',
         'render-blocking-resources': 'off',
       },
-    },
-    upload: {
-      target: 'temporary-public-storage',
     },
   },
 };
