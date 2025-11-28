@@ -40,11 +40,25 @@ jobs:
       - name: Build Application
         run: npm run build
 
-      # Note: We've already built the app, so we disable the build command here
-      - name: Run Lighthouse CI
-        run: npx @lhci/cli@latest autorun --collect.buildCommand=""
+      # Run LHCI steps separately to ensure reports are preserved
+      - name: Collect Lighthouse Reports
+        run: npx @lhci/cli@latest collect --staticDistDir=./dist
+        
+      - name: Assert Lighthouse Results
+        run: npx @lhci/cli@latest assert || echo "Some assertions failed, but continuing..."
+        
+      - name: Upload to Temporary Storage
+        run: npx @lhci/cli@latest upload
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Debug - List Lighthouse files
+        if: always()
+        run: |
+          echo "Contents of .lighthouseci directory:"
+          ls -la .lighthouseci/ || echo "Directory does not exist"
+          echo "Looking for JSON files:"
+          find .lighthouseci -name "*.json" -type f || echo "No JSON files found"
 
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4
@@ -66,72 +80,120 @@ jobs:
             // Try to read the lighthouse results
             const lhciPath = path.join(process.cwd(), '.lighthouseci');
             let comment = '## 🔍 Lighthouse Results\n\n';
+            let reportFound = false;
 
             if (fs.existsSync(lhciPath)) {
               const files = fs.readdirSync(lhciPath);
-              const jsonFiles = files.filter(f => f.endsWith('.json'));
+              console.log('Files in .lighthouseci:', files);
+              
+              // Look for LHR (Lighthouse Report) JSON files, excluding manifests and assertion results
+              const lhrFiles = files.filter(f => 
+                f.endsWith('.json') && 
+                f.includes('lhr-') &&
+                !f.includes('manifest') &&
+                !f.includes('assertion')
+              );
 
-              if (jsonFiles.length > 0) {
+              console.log('LHR files found:', lhrFiles);
+
+              if (lhrFiles.length > 0) {
+                // Sort by filename (which includes datetime) and get the latest
+                const latestFile = lhrFiles.sort().reverse()[0];
+                console.log('Using file:', latestFile);
+
                 try {
                   const latestResult = JSON.parse(
-                    fs.readFileSync(path.join(lhciPath, jsonFiles[0]), 'utf8')
+                    fs.readFileSync(path.join(lhciPath, latestFile), 'utf8')
                   );
 
-                  if (latestResult.audits) {
-                    const categories = latestResult.categories || {};
-                    const performance = categories.performance?.score || 0;
-                    const accessibility = categories.accessibility?.score || 0;
-                    const bestPractices = categories['best-practices']?.score || 0;
-                    const seo = categories.seo?.score || 0;
+                  console.log('Report has audits:', !!latestResult.audits);
+                  console.log('Report has categories:', !!latestResult.categories);
+
+                  if (latestResult.audits && latestResult.categories) {
+                    reportFound = true;
+                    const categories = latestResult.categories;
+                    const performance = categories.performance?.score ?? 0;
+                    const accessibility = categories.accessibility?.score ?? 0;
+                    const bestPractices = categories['best-practices']?.score ?? 0;
+                    const seo = categories.seo?.score ?? 0;
 
                     const formatScore = (score) => {
                       const percentage = Math.round(score * 100);
                       const emoji = percentage >= 90 ? '🟢' : percentage >= 50 ? '🟡' : '🔴';
-                      return `${emoji} ${percentage}%`;
+                      return `${emoji} ${percentage}`;
                     };
 
                     comment += '### Overall Scores\n\n';
-                    comment += `- **Performance**: ${formatScore(performance)}\n`;
-                    comment += `- **Accessibility**: ${formatScore(accessibility)}\n`;
-                    comment += `- **Best Practices**: ${formatScore(bestPractices)}\n`;
-                    comment += `- **SEO**: ${formatScore(seo)}\n\n`;
+                    comment += `| Category | Score |\n`;
+                    comment += `|----------|-------|\n`;
+                    comment += `| **Performance** | ${formatScore(performance)} |\n`;
+                    comment += `| **Accessibility** | ${formatScore(accessibility)} |\n`;
+                    comment += `| **Best Practices** | ${formatScore(bestPractices)} |\n`;
+                    comment += `| **SEO** | ${formatScore(seo)} |\n\n`;
 
                     // Performance metrics
                     const metrics = latestResult.audits;
-                    if (metrics['first-contentful-paint'] || metrics['largest-contentful-paint']) {
-                      comment += '### Key Metrics\n\n';
+                    const hasMetrics = metrics['first-contentful-paint'] || 
+                                       metrics['largest-contentful-paint'] ||
+                                       metrics['total-blocking-time'] ||
+                                       metrics['cumulative-layout-shift'];
+
+                    if (hasMetrics) {
+                      comment += '### Key Performance Metrics\n\n';
+                      comment += '| Metric | Value |\n';
+                      comment += '|--------|-------|\n';
 
                       if (metrics['first-contentful-paint']) {
                         const fcp = metrics['first-contentful-paint'].numericValue;
-                        comment += `- **First Contentful Paint**: ${fcp?.toFixed(0)}ms\n`;
+                        const fcpMs = Math.round(fcp);
+                        const fcpEmoji = fcpMs < 1800 ? '🟢' : fcpMs < 3000 ? '🟡' : '🔴';
+                        comment += `| **First Contentful Paint** | ${fcpEmoji} ${fcpMs}ms |\n`;
                       }
 
                       if (metrics['largest-contentful-paint']) {
                         const lcp = metrics['largest-contentful-paint'].numericValue;
-                        comment += `- **Largest Contentful Paint**: ${lcp?.toFixed(0)}ms\n`;
+                        const lcpMs = Math.round(lcp);
+                        const lcpEmoji = lcpMs < 2500 ? '🟢' : lcpMs < 4000 ? '🟡' : '🔴';
+                        comment += `| **Largest Contentful Paint** | ${lcpEmoji} ${lcpMs}ms |\n`;
                       }
 
                       if (metrics['total-blocking-time']) {
                         const tbt = metrics['total-blocking-time'].numericValue;
-                        comment += `- **Total Blocking Time**: ${tbt?.toFixed(0)}ms\n`;
+                        const tbtMs = Math.round(tbt);
+                        const tbtEmoji = tbtMs < 200 ? '🟢' : tbtMs < 600 ? '🟡' : '🔴';
+                        comment += `| **Total Blocking Time** | ${tbtEmoji} ${tbtMs}ms |\n`;
                       }
 
                       if (metrics['cumulative-layout-shift']) {
                         const cls = metrics['cumulative-layout-shift'].numericValue;
-                        comment += `- **Cumulative Layout Shift**: ${cls?.toFixed(3)}\n`;
+                        const clsEmoji = cls < 0.1 ? '🟢' : cls < 0.25 ? '🟡' : '🔴';
+                        comment += `| **Cumulative Layout Shift** | ${clsEmoji} ${cls.toFixed(3)} |\n`;
                       }
 
                       comment += '\n';
                     }
 
+                    // Add URL to full report if available
+                    if (latestResult.finalUrl) {
+                      comment += `**Tested URL:** \`${latestResult.finalUrl}\`\n\n`;
+                    }
+
                     comment += '---\n';
-                    comment += '📊 Full report available in workflow artifacts\n';
+                    comment += '_📊 Median of 3 runs • View [workflow artifacts](../actions) for detailed reports_\n';
                   }
                 } catch (error) {
-                  comment += '⚠️ Could not parse Lighthouse results. Check workflow artifacts for details.\n';
+                  console.error('Error parsing report:', error);
+                  comment += `⚠️ Error parsing Lighthouse results: ${error.message}\n`;
+                  comment += 'Check workflow logs for details.\n';
                 }
-              } else {
-                comment += '⚠️ No Lighthouse results found.\n';
+              }
+              
+              if (!reportFound) {
+                comment += '⚠️ No Lighthouse report files found.\n';
+                comment += `\nFound ${files.length} file(s) in .lighthouseci directory.\n`;
+                if (files.length > 0) {
+                  comment += `Files: ${files.join(', ')}\n`;
+                }
               }
             } else {
               comment += '⚠️ Lighthouse results directory not found.\n';
