@@ -188,13 +188,11 @@ Target scores (on fast 3G throttled):
 - **Largest Contentful Paint**: < 3s
 - **Time to Interactive**: < 4s
 
-Run Lighthouse in CI with:
+Run Lighthouse locally with:
 
 ```bash
-npm run lighthouse:ci
+npm run lighthouse
 ```
-
-_(Coming soon)_
 
 ## 🎯 Best Practices
 

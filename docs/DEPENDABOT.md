@@ -72,7 +72,7 @@ All Dependabot PRs are automatically tagged with:
 
 ### Add Reviewers/Assignees
 
-Uncomment and update these lines in `.github/dependabot.yml`:
+Update these lines in `.github/dependabot.yml`:
 
 ```yaml
 reviewers:
@@ -123,7 +123,7 @@ Auto-merge is **enabled** via the GitHub Actions workflow at `.github/workflows/
 
 #### What Gets Auto-Merged?
 
-The workflow automatically approves and merges:
+The workflow automatically enables auto-merge for:
 
 - ✅ **Patch updates** (1.0.0 → 1.0.1) - All dependencies
 - ✅ **Minor updates** (1.0.0 → 1.1.0) - All dependencies
@@ -134,9 +134,8 @@ Major updates to production dependencies require manual review.
 #### How It Works
 
 1. Dependabot creates a PR
-2. Workflow automatically approves if criteria met
-3. Auto-merge is enabled
-4. PR merges automatically once all CI checks pass
+2. Workflow enables auto-merge if criteria met
+3. PR merges automatically once all CI checks pass (and any required approvals are obtained)
 
 #### Customizing Auto-Merge Rules
 

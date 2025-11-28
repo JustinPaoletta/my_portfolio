@@ -1,10 +1,10 @@
 # Changelog & Release Management Guide
 
-This project uses automated changelog generation with [standard-version](https://github.com/conventional-changelog/standard-version) based on [Conventional Commits](https://www.conventionalcommits.org/).
+This project uses automated changelog generation with [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) (formerly standard-version) based on [Conventional Commits](https://www.conventionalcommits.org/).
 
 ## 📋 How It Works
 
-When you make commits following the [Conventional Commits](docs/COMMIT_CONVENTION.md) format, `standard-version` automatically:
+When you make commits following the [Conventional Commits](docs/COMMIT_CONVENTION.md) format, `commit-and-tag-version` automatically:
 
 1. **Determines version bump** based on commit types
 2. **Generates changelog entries** from commit messages
@@ -16,7 +16,7 @@ When you make commits following the [Conventional Commits](docs/COMMIT_CONVENTIO
 
 ### Automatic Version (Recommended)
 
-Let `standard-version` determine the version based on your commits:
+Let `commit-and-tag-version` determine the version based on your commits:
 
 ```bash
 npm run release
@@ -46,7 +46,7 @@ npm run release:major
 
 ### Dry Run (Preview)
 
-Test what `standard-version` would do without making changes:
+Test what `commit-and-tag-version` would do without making changes:
 
 ```bash
 npm run release:dry-run
@@ -181,7 +181,7 @@ npm run release:major  # Creates v1.0.0
 - [Conventional Commits Specification](https://www.conventionalcommits.org/)
 - [Semantic Versioning](https://semver.org/)
 - [Keep a Changelog](https://keepachangelog.com/)
-- [standard-version Documentation](https://github.com/conventional-changelog/standard-version)
+- [commit-and-tag-version Documentation](https://github.com/absolute-version/commit-and-tag-version)
 
 ## 💡 Quick Reference
 

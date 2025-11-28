@@ -23,6 +23,15 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 ✅ **Save time** - Automatic checks reduce manual review
 ✅ **Build confidence** - Know your code works before sharing
 
+### Pre-Push Hook Versions
+
+This project includes **two pre-push hook versions** to balance speed and thoroughness:
+
+- **Light (default):** Fast checks (TypeScript + unit tests) - ~10-15 seconds
+- **Full (optional):** Comprehensive checks (+ linting + E2E tests) - ~30-60 seconds
+
+You can switch between them based on your workflow. See [Pre-Push Hook](#3-pre-push-hook-light-version---default) section for details.
+
 ## Active Hooks
 
 ### 1. Pre-Commit Hook
@@ -91,28 +100,63 @@ chore: update dependencies
 ✖ type may not be empty [type-empty]
 ```
 
-### 3. Pre-Push Hook
+### 3. Pre-Push Hook (Light Version - Default)
 
 **Runs:** Before every push
 **File:** `.husky/pre-push`
 
 **What it does:**
 
-1. ✅ TypeScript type checking
+1. ✅ TypeScript type checking (`tsc -b`)
 2. ✅ Run all unit tests (`npm run test:unit`)
-3. ✅ Run all E2E tests (`npm run test:e2e`)
+3. ⚠️ **Skips E2E tests** for speed (reminder shown to run before PR)
 
 **Why it's useful:**
 
 - Prevents pushing broken code
-- Catches test failures before CI/CD
-- Ensures code quality in remote repository
-- Saves CI/CD minutes
+- Fast feedback (10-15 seconds)
+- Catches most issues without slowing you down
+- Still maintains code quality
 
 **Example output:**
 
 ```
 🔍 Running TypeScript type checking...
+🧪 Running unit tests...
+✓ src/App.test.tsx (1 test) 234ms
+
+Test Files  1 passed (1)
+Tests  1 passed (1)
+
+✅ Quick checks passed! (E2E tests skipped for speed)
+💡 Remember to run 'npm run test:e2e' before creating a PR
+```
+
+**⚠️ Note:** This is the lightweight version optimized for speed. For comprehensive testing including E2E tests, see [Full Pre-Push Hook](#full-pre-push-hook-optional).
+
+### 3b. Full Pre-Push Hook (Optional)
+
+**File:** `.husky/pre-push.full` (not active by default)
+
+**What it does:**
+
+1. ✅ TypeScript type checking (`tsc -b`)
+2. ✅ Full linting with auto-fix (`npm run lint:fix`)
+3. ✅ Run all unit tests (`npm run test:unit`)
+4. ✅ Run all E2E tests (`npm run test:e2e`)
+
+**Why it's useful:**
+
+- Comprehensive testing before pushing
+- Catches all issues including E2E failures
+- Ensures code quality in remote repository
+- Saves CI/CD minutes by catching issues early
+
+**Example output:**
+
+```
+🔍 Running TypeScript type checking...
+🧹 Running linter on all committed files...
 🧪 Running unit tests...
 ✓ src/App.test.tsx (1 test) 234ms
 
@@ -126,7 +170,28 @@ Running 3 tests using 3 workers
 ✅ All checks passed! Proceeding with push...
 ```
 
-**⚠️ Note:** This hook can take 30-60 seconds. If you need to skip it (emergency fix), see [Skipping Hooks](#skipping-hooks).
+**⚠️ Note:** This hook takes 30-60 seconds. Good for final checks before creating PRs.
+
+#### How to Switch Between Light and Full Versions
+
+**Switch to FULL version** (with E2E tests):
+
+```bash
+mv .husky/pre-push .husky/pre-push.light
+mv .husky/pre-push.full .husky/pre-push
+```
+
+**Switch back to LIGHT version** (without E2E tests):
+
+```bash
+mv .husky/pre-push .husky/pre-push.full
+mv .husky/pre-push.light .husky/pre-push
+```
+
+**When to use each:**
+
+- **Light (default):** Daily development, frequent pushes to feature branches
+- **Full:** Before creating PRs, before merging to main, when you want maximum confidence
 
 ## Skipping Hooks
 
@@ -322,37 +387,28 @@ chmod +x .husky/prepare-commit-msg
 - Improves traceability
 - Saves typing
 
-### Lighter Pre-Push Hook
+### Additional Pre-Push Hook Variants
 
-If the full pre-push hook is too slow, here's a lighter version:
+The project includes two pre-push hook versions (see [Pre-Push Hook](#3-pre-push-hook-light-version---default) section above):
 
-**Create:** `.husky/pre-push.light` (rename to `pre-push` to use)
+1. **Light version** (`.husky/pre-push`) - Default, skips E2E tests for speed
+2. **Full version** (`.husky/pre-push.full`) - Includes E2E tests and full linting
+
+You can switch between them as needed based on your workflow:
 
 ```bash
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
+# Switch to full version
+mv .husky/pre-push .husky/pre-push.light && mv .husky/pre-push.full .husky/pre-push
 
-echo "🔍 Running TypeScript type checking..."
-tsc -b || {
-  echo "❌ TypeScript compilation failed."
-  exit 1
-}
-
-echo "🧪 Running unit tests..."
-npm run test:unit || {
-  echo "❌ Unit tests failed."
-  exit 1
-}
-
-echo "✅ Quick checks passed! (Skipping E2E for speed)"
-echo "💡 Run 'npm run test:e2e' before creating PR"
+# Switch back to light version
+mv .husky/pre-push .husky/pre-push.full && mv .husky/pre-push.light .husky/pre-push
 ```
 
-**Why it's useful:**
+**Recommendation:**
 
-- Faster feedback (10-15 seconds vs 60 seconds)
-- Still catches most issues
-- Good for frequent pushes to feature branches
+- Use **light version** for daily development
+- Switch to **full version** temporarily before creating important PRs or merging to main
+- Or keep light version active and run E2E tests manually: `npm run test:e2e`
 
 ## Troubleshooting
 
@@ -419,9 +475,12 @@ echo "💡 Run 'npm run test:e2e' before creating PR"
 
 **Solutions:**
 
-1. **Skip E2E tests locally** (run in CI instead):
-   - Edit `.husky/pre-push` and comment out E2E tests
-   - Or use the [lighter version](#lighter-pre-push-hook)
+1. **Use the light version** (default):
+   - The project already uses a light pre-push hook that skips E2E tests
+   - If you're using the full version, switch back to light:
+     ```bash
+     mv .husky/pre-push .husky/pre-push.full && mv .husky/pre-push.light .husky/pre-push
+     ```
 
 2. **Run tests in parallel** (already configured in this project)
 
@@ -515,11 +574,16 @@ If hooks are too slow, developers will skip them.
 
 ### 3. Run Expensive Checks in CI
 
-**In hooks (fast):**
+**In hooks (fast) - Default light version:**
 
 - Type checking
-- Linting staged files
+- Linting staged files (pre-commit only)
 - Unit tests
+
+**Optional in hooks - Full version:**
+
+- Full linting on all files
+- E2E tests (can be enabled by switching to `.husky/pre-push.full`)
 
 **In CI only (slow):**
 
@@ -527,6 +591,9 @@ If hooks are too slow, developers will skip them.
 - Bundle size analysis
 - Security audits
 - E2E tests on multiple browsers
+- Full linting on entire codebase
+
+**This project:** By default uses the light pre-push hook, keeping pushes fast while CI runs comprehensive checks.
 
 ### 4. Make Hooks Informative
 
@@ -576,9 +643,10 @@ As your project grows, adjust hooks:
 
 ### Husky Files
 
-- **`.husky/pre-commit`** - Runs before commit
-- **`.husky/commit-msg`** - Validates commit message
-- **`.husky/pre-push`** - Runs before push
+- **`.husky/pre-commit`** - Runs before commit (type check + lint staged)
+- **`.husky/commit-msg`** - Validates commit message format
+- **`.husky/pre-push`** - Light version, runs before push (default)
+- **`.husky/pre-push.full`** - Full version with E2E tests (optional)
 - **`.husky/_/`** - Husky internals (don't modify)
 
 ### Related Config
@@ -669,7 +737,22 @@ git commit
 
 git push
   ↓
-  pre-push (type check + unit tests + E2E tests)
+  pre-push LIGHT (default)
+    - type check
+    - unit tests
+    ⚠️ E2E tests skipped for speed
+  ↓
+  ✅ Push to remote
+
+  OR
+
+git push
+  ↓
+  pre-push FULL (if enabled)
+    - type check
+    - full linting
+    - unit tests
+    - E2E tests
   ↓
   ✅ Push to remote
 ```

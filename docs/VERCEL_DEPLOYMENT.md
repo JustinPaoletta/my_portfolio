@@ -21,7 +21,7 @@ Complete step-by-step guide to deploy your portfolio to Vercel.
 **Before deploying, ensure:**
 
 1. **PWA Icons are ready** (recommended but optional for first deploy)
-   - If not ready, see [PWA_ICONS_QUICKSTART.md](PWA_ICONS_QUICKSTART.md)
+   - If not ready, see [PWA.md](PWA.md) for icon generation instructions
    - You can add these later and redeploy
 
 2. **Build works locally:**
@@ -462,7 +462,7 @@ Vercel automatically sets:
 1. **Add PWA Icons**
    - Improves installability
    - Better UX on mobile
-   - See [PWA_ICONS_QUICKSTART.md](PWA_ICONS_QUICKSTART.md)
+   - See [PWA.md](PWA.md) for icon generation instructions
 
 2. **Configure Analytics**
    - Set up Umami or Vercel Analytics
