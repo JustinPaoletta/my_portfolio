@@ -7,12 +7,11 @@ import { sitemapPlugin } from './scripts/vite-plugin-sitemap';
 import { inlineCssPlugin } from './scripts/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
 
-// KBs
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 200,
-  vendorChunk: 500,
-  totalSize: 800,
-  cssFile: 50,
+  appChunk: 150,
+  vendorChunk: 400,
+  totalSize: 650,
+  cssFile: 40,
 };
 
 function bundleSizeLimit(): Plugin {
@@ -75,9 +74,6 @@ function bundleSizeLimit(): Plugin {
 
       if (errors.length) {
         console.error('\n🚨 Bundle size limit exceeded:\n' + errors.join('\n'));
-        console.error(
-          '\n💡 Consider:\n   - Code splitting\n   - Dynamic imports\n   - Tree shaking\n   - npm run analyze\n'
-        );
         throw new Error('Build failed due to bundle size limits');
       } else {
         console.log('\n✅ All bundle size checks passed!\n');
@@ -86,65 +82,54 @@ function bundleSizeLimit(): Plugin {
   };
 }
 
-// https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
   const toBoolean = (value: string | undefined) =>
     value === 'true' || value === '1';
 
   const isAnalyze = env.ANALYZE === 'true';
-
   const analyticsEnabled = toBoolean(env.VITE_ENABLE_ANALYTICS);
   const errorMonitoringEnabled = toBoolean(env.VITE_ENABLE_ERROR_MONITORING);
   const debugEnabled = toBoolean(env.VITE_ENABLE_DEBUG);
 
   return {
     base: '/',
-
     plugins: [
       react(),
       VitePWA(pwaConfig),
       bundleSizeLimit(),
       sitemapPlugin(),
-      inlineCssPlugin(), // Inline small CSS files to eliminate render-blocking resources
+      inlineCssPlugin(),
     ],
-
     define: {
       __ENABLE_ANALYTICS__: JSON.stringify(analyticsEnabled),
       __ENABLE_ERROR_MONITORING__: JSON.stringify(errorMonitoringEnabled),
       __ENABLE_DEBUG_TOOLS__: JSON.stringify(debugEnabled),
     },
-
     resolve: {
       alias: { '@': path.resolve(__dirname, './src') },
     },
-
     build: {
       chunkSizeWarningLimit: 400,
       sourcemap: isAnalyze,
       minify: 'esbuild',
       cssMinify: true,
       cssCodeSplit: true,
-      assetsInlineLimit: 4096, // 4KBs
+      assetsInlineLimit: 4096,
       rollupOptions: {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
-              // Split React into its own chunk
               if (id.includes('react') || id.includes('react-dom'))
                 return 'vendor-react';
-              // Split New Relic into its own chunk for better caching
               if (id.includes('@newrelic')) return 'vendor-newrelic';
-              // Other vendor code
               return 'vendor';
             }
           },
-          // Optimize chunk filenames for better caching
           chunkFileNames: 'assets/[name]-[hash].js',
           entryFileNames: 'assets/[name]-[hash].js',
           assetFileNames: 'assets/[name]-[hash].[ext]',
         },
-        // Tree-shake more aggressively
         treeshake: {
           moduleSideEffects: false,
           propertyReadSideEffects: false,
@@ -152,7 +137,6 @@ export default defineConfig(({ mode }) => {
         },
       },
       target: 'es2022',
-      // Improve build performance
       reportCompressedSize: true,
     },
   };

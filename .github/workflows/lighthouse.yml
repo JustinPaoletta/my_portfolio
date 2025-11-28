@@ -43,10 +43,10 @@ jobs:
       # Run LHCI steps separately to ensure reports are preserved
       - name: Collect Lighthouse Reports
         run: npx @lhci/cli@latest collect --staticDistDir=./dist
-        
+
       - name: Assert Lighthouse Results
         run: npx @lhci/cli@latest assert || echo "Some assertions failed, but continuing..."
-        
+
       - name: Upload to Temporary Storage
         run: npx @lhci/cli@latest upload
         env:

@@ -4,33 +4,35 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "tsc -b && npx vite build",
-    "build:analyze": "tsc -b && ANALYZE=true npx vite build",
     "analyze": "npm run build:analyze && npx vite-bundle-visualizer",
+    "build": "npm run type-check && npx vite build",
+    "build:analyze": "npm run type-check && ANALYZE=true npx vite build",
     "clean": "rm -rf node_modules dist coverage .vite .lighthouseci playwright-report test-results",
     "clean:cache": "rm -rf dist coverage .vite .lighthouseci playwright-report test-results",
-    "lint:ci": "eslint . && prettier --check .",
-    "lint:fix": "eslint . --fix && prettier --write .",
+    "images:optimize": "tsx scripts/optimize-images.ts",
+    "lighthouse": "npx @lhci/cli autorun",
+    "lint:ci": "npm run type-check && eslint . && prettier --check .",
+    "lint:fix": "npm run type-check && eslint . --fix && prettier --write .",
+    "prepare": "husky",
+    "release": "commit-and-tag-version",
+    "release:dry-run": "commit-and-tag-version --dry-run",
+    "release:major": "commit-and-tag-version --release-as major",
+    "release:minor": "commit-and-tag-version --release-as minor",
+    "release:patch": "commit-and-tag-version --release-as patch",
+    "sitemap:generate": "tsx scripts/generate-sitemap.ts",
     "start:dev": "npx vite",
     "start:prod": "npm run build && npx vite preview --strictPort --port 4173",
     "test": "vitest",
-    "test:unit": "vitest run",
-    "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "test:coverage:watch": "vitest --coverage",
     "test:coverage:ui": "vitest --coverage --ui",
+    "test:coverage:watch": "vitest --coverage",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
     "test:e2e:debug": "playwright test --debug",
-    "lighthouse": "npx @lhci/cli autorun",
-    "release": "commit-and-tag-version",
-    "release:minor": "commit-and-tag-version --release-as minor",
-    "release:major": "commit-and-tag-version --release-as major",
-    "release:patch": "commit-and-tag-version --release-as patch",
-    "release:dry-run": "commit-and-tag-version --dry-run",
-    "images:optimize": "tsx scripts/optimize-images.ts",
-    "sitemap:generate": "tsx scripts/generate-sitemap.ts",
-    "prepare": "husky"
+    "test:e2e:ui": "playwright test --ui",
+    "test:ui": "vitest --ui",
+    "test:unit": "vitest run",
+    "type-check": "tsc -b --noEmit",
+    "type-check:watch": "tsc -b --noEmit --watch"
   },
   "dependencies": {
     "@newrelic/browser-agent": "^1.303.0",
@@ -78,12 +80,12 @@
     "workbox-window": "^7.4.0"
   },
   "overrides": {
+    "chrome-launcher": "^1.2.1",
+    "magic-string": "^0.30.0",
     "react-helmet-async": {
       "react": "^19.1.1"
     },
-    "tmp": ">=0.2.4",
-    "chrome-launcher": "^1.2.1",
-    "magic-string": "^0.30.0"
+    "tmp": ">=0.2.4"
   },
   "lint-staged": {
     "*.{ts,tsx}": [

@@ -4,14 +4,7 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig(({ mode }) => {
-  // Load environment variables based on the actual mode
-  // Defaults to 'test' if no mode is specified
   const testMode = mode || 'test';
-
-  // For testing, we want to validate the mode-specific file in isolation
-  // loadEnv merges .env + .env.[mode], so we use loadEnv but prioritize validation
-  // This ensures we catch missing/invalid variables in that specific environment
-  // Note: loadEnv automatically merges .env + .env.[mode], with .env.[mode] taking precedence
   const env = loadEnv(testMode, process.cwd(), '');
 
   return {
@@ -25,15 +18,11 @@ export default defineConfig(({ mode }) => {
         ),
       },
     },
-    // Define environment variables so they're available in import.meta.env
     define: {
       'import.meta.env.MODE': JSON.stringify(testMode),
-      // Define global feature flags (must match vite.config.ts)
-      // These are disabled in test mode to prevent side effects
       __ENABLE_ANALYTICS__: JSON.stringify(false),
       __ENABLE_ERROR_MONITORING__: JSON.stringify(false),
       __ENABLE_DEBUG_TOOLS__: JSON.stringify(false),
-      // Expose all VITE_ prefixed env variables from the mode-specific .env file
       ...Object.keys(env).reduce(
         (acc, key) => {
           if (key.startsWith('VITE_')) {
@@ -49,10 +38,19 @@ export default defineConfig(({ mode }) => {
       environment: 'jsdom',
       setupFiles: './src/test/setup.ts',
       css: true,
+      testTimeout: 10_000,
+      hookTimeout: 30_000,
+      pool: 'forks',
+      poolOptions: {
+        forks: {
+          singleFork: true,
+        },
+      },
       exclude: ['node_modules', 'dist', 'e2e', '**/*.e2e.spec.ts'],
       coverage: {
         provider: 'v8',
-        reporter: ['text', 'json', 'html', 'lcov'],
+        reporter: ['text', 'json', 'html', 'lcov', 'text-summary'],
+        all: true,
         exclude: [
           'node_modules/',
           'dist/',
