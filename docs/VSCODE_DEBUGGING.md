@@ -1,6 +1,8 @@
 # VS Code Debugging Guide
 
-This guide explains how to use the VS Code debugging configurations set up for this portfolio project.
+This guide explains how to set up VS Code debugging configurations for this portfolio project.
+
+**Note:** This project does not include `.vscode/launch.json` or `.vscode/tasks.json` files by default, as these are typically user-specific configurations. You'll need to create them yourself using the examples provided below.
 
 ## Table of Contents
 
@@ -13,7 +15,7 @@ This guide explains how to use the VS Code debugging configurations set up for t
 
 ## Overview
 
-This project includes VS Code launch configurations that enable you to:
+You can set up VS Code launch configurations to enable you to:
 
 - Debug your React application in the browser with breakpoints
 - Debug unit tests with Vitest
@@ -31,6 +33,10 @@ This project includes VS Code launch configurations that enable you to:
 ### Optional but Recommended
 
 - **Playwright Test for VSCode** - Enhanced Playwright debugging experience
+
+## Setting Up Debug Configurations
+
+To use the debugging features described below, create a `.vscode/launch.json` file in your project root with the configurations shown in the [Files Reference](#files-reference) section below.
 
 ## Available Configurations
 
@@ -102,12 +108,12 @@ This project includes VS Code launch configurations that enable you to:
 
 ### 5. Debug Accessibility Tests
 
-**Purpose:** Debug accessibility-specific Playwright tests.
+**Purpose:** Debug Playwright tests with accessibility focus.
 
 **What it does:**
 
-- Runs `npm run test:a11y:debug`
-- Same as E2E debugging but focused on accessibility tests
+- Runs `npm run test:e2e:debug` (Playwright's debug mode works for all tests including accessibility checks)
+- Same as E2E debugging but can be used specifically for accessibility test files
 - Useful for understanding axe-core violations
 
 **When to use:**
@@ -196,7 +202,7 @@ While paused at a breakpoint:
 ```
 1. Open the E2E test file (e.g., e2e/accessibility.spec.ts)
 2. Set a breakpoint where you want to pause
-3. Select "Debug E2E Tests" or "Debug Accessibility Tests"
+3. Select "Debug E2E Tests"
 4. Press F5
 5. Playwright Inspector opens
 6. Step through the test and inspect browser state
@@ -315,11 +321,11 @@ Add expressions to the Watch panel to monitor them:
 
 ## Files Reference
 
-The debugging setup consists of two files:
+The debugging setup consists of two files that you'll need to create:
 
 ### `.vscode/launch.json`
 
-Contains all debug configurations. Each configuration specifies:
+Create this file in your `.vscode` directory with the following example content. Each configuration specifies:
 
 - `name` - What appears in the debug dropdown
 - `type` - Debugger type (chrome, node, etc.)
@@ -327,9 +333,79 @@ Contains all debug configurations. Each configuration specifies:
 - `runtimeExecutable` - What command to run (e.g., "npm")
 - `runtimeArgs` - Arguments to pass
 
+**Example `.vscode/launch.json`:**
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Dev Server",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src",
+      "preLaunchTask": "Start Dev Server"
+    },
+    {
+      "name": "Debug Unit Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug Current Unit Test File",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test", "${file}"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug E2E Tests",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "test:e2e:debug"],
+      "console": "integratedTerminal"
+    }
+  ]
+}
+```
+
 ### `.vscode/tasks.json`
 
-Defines the background task for starting the dev server:
+Create this file in your `.vscode` directory to define the background task for starting the dev server:
+
+**Example `.vscode/tasks.json`:**
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Dev Server",
+      "type": "shell",
+      "command": "npm run start:dev",
+      "isBackground": true,
+      "problemMatcher": {
+        "pattern": {
+          "regexp": "."
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".",
+          "endsPattern": "Local:.*http://localhost:5173"
+        }
+      }
+    }
+  ]
+}
+```
+
+This task:
 
 - Uses `isBackground: true` to keep running
 - Problem matcher detects when Vite is ready
@@ -348,8 +424,7 @@ Defines the background task for starting the dev server:
 Debug Dev Server      → Debug React app in Chrome
 Debug Unit Tests      → Debug all Vitest tests
 Debug Current File    → Debug just the open test file
-Debug E2E Tests       → Debug Playwright tests
-Debug A11y Tests      → Debug accessibility tests
+Debug E2E Tests       → Debug Playwright tests (including accessibility)
 
 F5        → Start/Continue
 F9        → Toggle breakpoint

@@ -67,19 +67,21 @@ This project includes a comprehensive set of npm scripts for development, testin
 
 ### 🏗️ Build Scripts
 
-- **`npm run build`** - Build the project for production. Runs TypeScript compilation and Vite build.
-- **`npm run build:analyze`** - Build with source maps enabled for bundle analysis. Used in conjunction with `analyze` script.
-- **`npm run analyze`** - Build the project and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
+- **`npm run build`** - Build the project for production. Runs type-check first, then TypeScript compilation and Vite build.
+- **`npm run build:analyze`** - Build with source maps enabled for bundle analysis. Runs type-check first, then builds with `ANALYZE=true` flag.
+- **`npm run analyze`** - Alias for `build:analyze` - builds and opens bundle visualizer to analyze bundle composition and identify optimization opportunities.
 
 ### 🧹 Cleanup Scripts
 
 - **`npm run clean`** - Remove all generated files and caches: `node_modules`, `dist`, `coverage`, `.vite`, `playwright-report`, and `test-results`.
 - **`npm run clean:cache`** - Remove only cache and build artifacts (keeps `node_modules`): `dist`, `coverage`, `.vite`, `playwright-report`, and `test-results`.
 
-### 🔍 Code Quality Scripts
+### 🔍 Code Quality & Type Checking Scripts
 
-- **`npm run lint:ci`** - Run ESLint and Prettier in check mode (CI-friendly, exits with error if issues found).
-- **`npm run lint:fix`** - Automatically fix linting and formatting issues using ESLint and Prettier.
+- **`npm run type-check`** - Run TypeScript type checking without emitting files. Validates type safety across the entire codebase.
+- **`npm run type-check:watch`** - Run TypeScript type checking in watch mode (re-checks on file changes).
+- **`npm run lint:ci`** - Run type-check, ESLint, and Prettier in check mode (CI-friendly, exits with error if issues found).
+- **`npm run lint:fix`** - Run type-check, then automatically fix linting and formatting issues using ESLint and Prettier.
 
 ### 🚀 Development & Preview Scripts
 
@@ -133,10 +135,12 @@ npm run test:coverage     # Tests with coverage report
 npm run test:e2e          # End-to-end tests
 ```
 
-### Code Quality
+### Code Quality & Type Safety
 
 ```bash
-npm run lint:fix          # Fix linting and formatting issues
+npm run type-check        # Check TypeScript types
+npm run type-check:watch  # Watch mode type checking
+npm run lint:fix          # Fix linting, formatting, and type issues
 npm run analyze           # Analyze bundle size
 ```
 
@@ -156,24 +160,27 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 ### Core
 
-- **React 19** - UI library with latest features
-- **TypeScript** - Type-safe JavaScript
-- **Vite (Rolldown)** - Lightning-fast build tool
+- **React 19.1.1** - Latest version with latest features
+- **TypeScript 5.9** - Type-safe JavaScript with strict mode
+- **Vite (Rolldown 7.1.14)** - Lightning-fast build tool with advanced bundling
+- **Valibot 1.2** - Runtime type validation for environment variables
 
 ### Testing
 
-- **Vitest** - Unit testing framework
-- **Playwright** - End-to-end testing
-- **Testing Library** - React component testing
+- **Vitest 4.0.5** - Unit testing framework with fast refresh
+- **Playwright 1.56.1** - End-to-end testing with multi-browser support (Chromium, Firefox, WebKit)
+- **Testing Library** - React component testing with accessibility best practices
+- **Coverage reporting** - V8 provider with text, JSON, HTML, LCOV, and text-summary reporters (85% thresholds)
 
 ### Code Quality & Workflow
 
-- **ESLint** - JavaScript/TypeScript linting
-- **Prettier** - Code formatting
-- **Husky** - Git hooks
-- **lint-staged** - Run linters on staged files
-- **Commitlint** - Conventional commit enforcement
-- **standard-version** - Automated changelog and versioning
+- **ESLint 9.39.1** - JavaScript/TypeScript linting with strict a11y rules
+- **Prettier 3.6.2** - Code formatting with automatic enforcement
+- **Husky 9.1.7** - Git hooks for pre-commit and pre-push validation
+- **lint-staged 16.2.7** - Run linters on staged files only
+- **Commitlint 20.1.0** - Enforce conventional commits format
+- **commit-and-tag-version 12.6.0** - Automated changelog and semantic versioning
+- **TypeScript strict mode** - Full type safety with `useUnknownInCatchVariables` for proper error handling
 
 ### PWA & Performance
 
@@ -220,6 +227,39 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 - **[Performance Budget](docs/PERFORMANCE_BUDGET.md)** - Bundle size limits
 - **[Bundle Size Testing](docs/BUNDLE_SIZE_TEST.md)** - Performance monitoring
+
+## 🔒 Security & Quality Assurance
+
+### Type Safety & Error Handling
+
+- **Strict TypeScript Configuration**
+  - `strict: true` - Strict type checking enabled
+  - `useUnknownInCatchVariables: true` - Enforces proper error handling (no implicit `any` in catch blocks)
+  - `noUnusedLocals: true` - Catches unused variables
+  - `noUnusedParameters: true` - Catches unused function parameters
+  - `forceConsistentCasingInFileNames: true` - Prevents subtle bugs from file path issues
+- **Runtime Validation** - Environment variables validated using Valibot with detailed error messages
+
+### Bundle Size Management
+
+- Strict bundle size budgeting (650 KB total, 150 KB app chunk, 40 KB CSS)
+- Intelligent chunk splitting (React, New Relic, and other vendors in separate chunks)
+- Lazy loading and code splitting for optimal performance
+- Tree shaking optimizations and aggressive minification
+
+### Accessibility Standards
+
+- Full ESLint a11y linting with strict rules
+- WCAG compliance built into development workflow
+- Semantic HTML enforcement
+- Keyboard navigation support requirements
+
+### Testing & CI/CD
+
+- **E2E Testing**: Playwright with video capture on failure, multiple reporters (HTML, JSON, JUnit)
+- **Unit Testing**: Vitest with 85% coverage thresholds across all metrics
+- **Type Checking**: Automatic validation in build and lint scripts
+- **Environment Variables**: Configurable baseURL for Playwright tests via `PLAYWRIGHT_BASE_URL` env var
 
 ## 📄 License
 

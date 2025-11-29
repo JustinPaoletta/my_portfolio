@@ -1,30 +1,32 @@
 # Comprehensive pre-push hook - includes E2E tests
-# To use: mv .husky/pre-push .husky/pre-push.light && mv .husky/pre-push.full .husky/pre-push
+# To switch between : 
+# mv .husky/pre-push .husky/pre-push.light && mv .husky/pre-push.full .husky/pre-push
+# OR
+# mv .husky/pre-push .husky/pre-push.full && mv .husky/pre-push.light .husky/pre-push
 
-echo "🔍 Running TypeScript type checking..."
+echo "Running TypeScript type checking..."
 tsc -b || {
   echo "❌ TypeScript compilation failed. Fix type errors before pushing."
   exit 1
 }
 
-echo "🧹 Running linter on all committed files..."
+echo "Running linter on all committed files..."
 npm run lint:fix || {
   echo "❌ Linting failed. Fix linting errors before pushing."
   exit 1
 }
 
-echo "🧪 Running unit tests..."
+echo "Running unit tests..."
 npm run test:unit || {
   echo "❌ Unit tests failed. Fix the tests before pushing."
   exit 1
 }
 
-echo "🎭 Running E2E tests..."
+echo "Running E2E tests..."
 npm run test:e2e || {
   echo "❌ E2E tests failed. Fix the tests before pushing."
-  echo "💡 Tip: Skip this hook with 'git push --no-verify' if needed."
+  echo "Tip: Skip this hook with 'git push --no-verify' if needed."
   exit 1
 }
 
 echo "✅ All checks passed! Proceeding with push..."
-

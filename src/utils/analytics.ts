@@ -6,7 +6,7 @@ import { env } from '@/config/env';
 
 // Check if we're in CI environment (analytics disabled in CI)
 const mode = import.meta.env.MODE;
-const isCI = mode === 'test' || mode === 'lhci';
+const isCI = mode === 'test';
 const analyticsEnabled = __ENABLE_ANALYTICS__;
 const shouldLog = import.meta.env.DEV && __ENABLE_DEBUG_TOOLS__;
 

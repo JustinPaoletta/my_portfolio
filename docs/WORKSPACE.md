@@ -202,10 +202,10 @@ If you want personal settings that differ from the workspace:
 Personal `.vscode` files to NOT commit:
 
 - `.vscode/*.code-workspace`
-- `.vscode/launch.json` (unless team-shared)
-- `.vscode/tasks.json` (unless team-shared)
+- `.vscode/launch.json` (user-specific debugging configurations)
+- `.vscode/tasks.json` (user-specific tasks)
 
-These are already excluded by `.gitignore`.
+These are typically user-specific and excluded by `.gitignore`. The workspace settings in `.vscode/settings.json` and recommended extensions in `.vscode/extensions.json` ARE committed for team consistency.
 
 ## 🐛 Troubleshooting
 

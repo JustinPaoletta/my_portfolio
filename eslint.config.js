@@ -8,7 +8,6 @@ import prettierPlugin from 'eslint-plugin-prettier';
 import prettierConfig from 'eslint-config-prettier';
 
 export default [
-  // Global ignores
   {
     ignores: [
       'dist/**',
@@ -19,21 +18,16 @@ export default [
       '.cache/**',
     ],
   },
-  // JavaScript recommended config
   js.configs.recommended,
-  // TypeScript configs
   ...tseslint.configs.recommended,
-  // JSX Accessibility recommended config
   jsxA11y.flatConfigs.recommended,
-  // Prettier config (disables conflicting rules)
   prettierConfig,
-  // Node.js configuration files (CommonJS)
   {
     files: [
       '.lighthouserc.cjs',
       '*.config.js',
       '*.config.cjs',
-      'scripts/**/*.cjs',
+      'plugins/**/*.cjs',
     ],
     languageOptions: {
       globals: globals.node,
@@ -43,14 +37,12 @@ export default [
       '@typescript-eslint/no-var-requires': 'off',
     },
   },
-  // Node.js scripts (ESM)
   {
-    files: ['scripts/**/*.ts', 'vite.config.ts'],
+    files: ['plugins/**/*.ts', 'vite.config.ts'],
     languageOptions: {
       globals: globals.node,
     },
   },
-  // Custom configuration
   {
     files: ['**/*.{ts,tsx,js,jsx}'],
     plugins: {
@@ -68,17 +60,12 @@ export default [
       },
     },
     rules: {
-      // Prettier
       'prettier/prettier': 'error',
-      // React Hooks
       ...reactHooks.configs.recommended.rules,
-      // React Refresh
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
-      // Accessibility rules - these are already in the recommended config
-      // but you can customize them here if needed
       'jsx-a11y/alt-text': 'error',
       'jsx-a11y/anchor-is-valid': 'error',
       'jsx-a11y/aria-props': 'error',
