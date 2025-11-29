@@ -18,17 +18,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
         with:
-          fetch-depth: 0 # Full history for better reporting
+          fetch-depth: 0 # full history for better reporting
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          # Disable cache to avoid optional dependency issues with rolldown
 
       - name: Install dependencies
         # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
-        # Rolldown requires native bindings that may not be installed correctly
         # Use npm install which handles optional dependencies better than npm ci
         run: npm install --no-audit --no-fund --prefer-offline=false
 
@@ -40,7 +38,7 @@ jobs:
       - name: Build Application
         run: npm run build
 
-      # Run LHCI steps separately to ensure reports are preserved
+      # run LHCI steps separately to ensure reports are preserved
       - name: Collect Lighthouse Reports
         run: npx @lhci/cli@latest collect --staticDistDir=./dist
 
@@ -79,7 +77,7 @@ jobs:
 
             // Try to read the lighthouse results
             const lhciPath = path.join(process.cwd(), '.lighthouseci');
-            let comment = '## 🔍 Lighthouse Results\n\n';
+            let comment = '##Lighthouse Results\n\n';
             let reportFound = false;
 
             if (fs.existsSync(lhciPath)) {
@@ -179,7 +177,7 @@ jobs:
                     }
 
                     comment += '---\n';
-                    comment += '_📊 Median of 3 runs • View [workflow artifacts](../actions) for detailed reports_\n';
+                    comment += '_Median of 3 runs • View [workflow artifacts](../actions) for detailed reports_\n';
                   }
                 } catch (error) {
                   console.error('Error parsing report:', error);

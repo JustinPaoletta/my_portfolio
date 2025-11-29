@@ -27,7 +27,7 @@ export default [
       '.lighthouserc.cjs',
       '*.config.js',
       '*.config.cjs',
-      'scripts/**/*.cjs',
+      'plugins/**/*.cjs',
     ],
     languageOptions: {
       globals: globals.node,
@@ -38,7 +38,7 @@ export default [
     },
   },
   {
-    files: ['scripts/**/*.ts', 'vite.config.ts'],
+    files: ['plugins/**/*.ts', 'vite.config.ts'],
     languageOptions: {
       globals: globals.node,
     },

@@ -3,7 +3,6 @@
 
 version: 2
 updates:
-  # Maintain npm dependencies
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -11,15 +10,14 @@ updates:
       day: 'monday'
       time: '09:00'
       timezone: 'America/New_York'
-    # Group updates by type for cleaner PRs
     groups:
-      # Production dependencies
+      # prod deps
       react:
         patterns:
           - 'react'
           - 'react-dom'
           - 'react-*'
-      # Development dependencies
+      # dev deps
       vite:
         patterns:
           - 'vite'
@@ -48,24 +46,20 @@ updates:
           - '@commitlint/*'
           - 'husky'
           - 'lint-staged'
-    # Add labels to PRs
     labels:
       - 'dependencies'
       - 'dependabot'
-    # Open PRs with these settings
     open-pull-requests-limit: 10
-    # Commit message prefix for conventional commits
     commit-message:
       prefix: 'chore'
       prefix-development: 'chore'
       include: 'scope'
-    # Reviewers (add your GitHub username or team)
     reviewers:
       - 'JustinPaoletta'
     assignees:
       - 'JustinPaoletta'
 
-  # Maintain GitHub Actions (if you add any workflows in the future)
+  # check for dependency updates weekly
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:

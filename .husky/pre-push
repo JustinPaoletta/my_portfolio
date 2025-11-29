@@ -1,17 +1,16 @@
-# Lighter pre-push hook - faster but skips E2E tests
+# light version of pre-push hook - skips e2e tests
 
-echo "🔍 Running TypeScript type checking..."
+echo "Running TypeScript type checking..."
 tsc -b || {
   echo "❌ TypeScript compilation failed. Fix type errors before pushing."
   exit 1
 }
 
-echo "🧪 Running unit tests..."
+echo "Running unit tests..."
 npm run test:unit || {
   echo "❌ Unit tests failed. Fix the tests before pushing."
   exit 1
 }
 
 echo "✅ Quick checks passed! (E2E tests skipped for speed)"
-echo "💡 Remember to run 'npm run test:e2e' before creating a PR"
-
+echo "Remember to run 'npm run test:e2e' before creating a PR"

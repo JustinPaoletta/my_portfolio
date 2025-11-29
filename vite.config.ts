@@ -3,8 +3,8 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 import fs from 'node:fs';
-import { sitemapPlugin } from './scripts/vite-plugin-sitemap';
-import { inlineCssPlugin } from './scripts/vite-plugin-inline-css';
+import { sitemapPlugin } from './plugins/vite-plugin-sitemap';
+import { inlineCssPlugin } from './plugins/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
 
 const BUNDLE_SIZE_LIMITS = {

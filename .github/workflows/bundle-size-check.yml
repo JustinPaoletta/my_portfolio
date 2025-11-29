@@ -1,5 +1,3 @@
-# GitHub Actions workflow for bundle size checks
-
 name: Bundle Size Check
 
 on:
@@ -26,17 +24,14 @@ jobs:
         uses: actions/setup-node@v6
         with:
           node-version: '20'
-          # Disable cache to avoid optional dependency issues with rolldown
 
       - name: Install dependencies
         # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
-        # Rolldown requires native bindings that may not be installed correctly
-        # Use npm install which handles optional dependencies better than npm ci
         run: npm install --no-audit --no-fund --prefer-offline=false
 
       - name: Fix rolldown native bindings
-        # Always force reinstall rolldown-vite to ensure native bindings are installed
-        # This is necessary due to npm bug with optional dependencies in CI
+        # Force reinstall rolldown-vite to ensure native bindings are installed
+        # This is necessary due to npm bug with optional dependencies in ci
         run: |
           echo "Ensuring rolldown native bindings are installed..."
           npm install --no-save --force rolldown-vite
@@ -81,16 +76,16 @@ jobs:
               let status = '✅';
 
               if (file.endsWith('.js')) {
-                limit = file.includes('vendor') ? '500 KB' : '200 KB';
+                limit = file.includes('vendor') ? '400 KB' : '150 KB';
               } else if (file.endsWith('.css')) {
-                limit = '50 KB';
+                limit = '40 KB';
               }
 
               bundleInfo += `| ${file} | ${sizeKB} KB | ${limit} | ${status} |\n`;
             });
 
             bundleInfo += '\n';
-            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 800 KB\n\n`;
+            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 650 KB\n\n`;
             bundleInfo += '---\n';
             bundleInfo += '*Bundle size checks passed! ✅*';
 

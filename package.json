@@ -19,7 +19,7 @@
     "release:major": "commit-and-tag-version --release-as major",
     "release:minor": "commit-and-tag-version --release-as minor",
     "release:patch": "commit-and-tag-version --release-as patch",
-    "sitemap:generate": "tsx scripts/generate-sitemap.ts",
+    "sitemap:generate": "tsx plugins/vite-plugin-sitemap.ts",
     "start:dev": "npx vite",
     "start:prod": "npm run build && npx vite preview --strictPort --port 4173",
     "test": "vitest",

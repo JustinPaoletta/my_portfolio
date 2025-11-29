@@ -1,6 +1,4 @@
-# Auto-merge Dependabot PRs
-# This workflow automatically approves and merges trusted Dependabot PRs
-# when all checks pass.
+# approves and merges trusted dependabot prs once all checks pass.
 
 name: Dependabot Auto-Merge
 
@@ -17,7 +15,7 @@ permissions:
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    # Only run for Dependabot PRs
+    # only run for dependabot PRs
     if: github.actor == 'dependabot[bot]'
 
     steps:
@@ -28,7 +26,6 @@ jobs:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
 
       - name: Enable auto-merge
-        # Same conditions as auto-approve
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
           steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
@@ -40,7 +37,6 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Comment on PR
-        # Add a comment explaining that auto-merge is enabled
         if: |
           steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
           steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
