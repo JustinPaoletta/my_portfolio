@@ -6,6 +6,23 @@
 - Follow existing project patterns and conventions
 - Ensure all code passes ESLint and TypeScript checks before suggesting commits
 
+## Path Aliases
+
+### Import Convention
+- **Always use `@/` path alias** for src imports instead of relative paths
+- Configured in `tsconfig.app.json` and `vite.config.ts`
+
+### Examples
+```tsx
+// ❌ BAD - Relative paths
+import { env } from '../../config/env';
+import SEO from '../components/SEO';
+
+// ✅ GOOD - Path alias
+import { env } from '@/config/env';
+import SEO from '@/components/SEO';
+```
+
 ## Accessibility (a11y) Standards
 
 ### Interactive Elements
@@ -26,11 +43,19 @@
   - Use `aria-invalid` for invalid fields
 - **Color and contrast:**
   - Never rely on color alone to convey information
-  - Ensure sufficient contrast ratios (WCAG AA minimum)
+  - Ensure sufficient contrast ratios (WCAG AA minimum: 4.5:1 for text)
 - **ARIA attributes:**
   - Use `aria-label` for icon buttons without visible text
   - Use `role="alert"` for important messages
   - Use `aria-live` for dynamic content updates
+
+### Skip Links
+- Always include a skip link for keyboard users
+- Pattern: `<a href="#main" className="skip-link">Skip to main content</a>`
+
+### Semantic HTML Structure
+- Use proper landmark roles: `<header role="banner">`, `<main role="main">`, `<footer role="contentinfo">`
+- Use heading hierarchy correctly (h1 → h2 → h3)
 
 ### Examples
 ```tsx
@@ -52,6 +77,14 @@
 
 // ✅ GOOD - Semantic button element
 <button onClick={handleClick}>Click me</button>
+
+// ✅ GOOD - Semantic page structure
+<>
+  <a href="#main" className="skip-link">Skip to main content</a>
+  <header role="banner">{/* nav */}</header>
+  <main id="main" role="main">{/* content */}</main>
+  <footer role="contentinfo">{/* footer */}</footer>
+</>
 ```
 
 ## TypeScript Type Safety Standards
@@ -135,19 +168,198 @@ export default EnhancedComponent;
 - Follow Rules of Hooks (only call at top level)
 - Always include dependency arrays for `useEffect`, `useCallback`, `useMemo`
 - Name custom hooks with `use` prefix
+- Place custom hooks in `src/hooks/`
 
 ### State Management
 - Use proper TypeScript types for `useState`
 - Prefer `useReducer` for complex state logic
 - Keep state as local as possible
 
+### React 19 Considerations
+- This project uses React 19 - be aware of new features and deprecations
+- Prefer function components over class components (except for Error Boundaries)
+
+## Environment Variables
+
+### Validation with Valibot
+- All environment variables are validated at runtime using Valibot in `src/config/env.ts`
+- **Never access `import.meta.env` directly in components** - use the `env` object from `@/config/env`
+- All new environment variables MUST be added to the Valibot schema
+
+### Adding New Environment Variables
+1. Add to `.env.example` with documentation
+2. Add to Valibot schema in `src/config/env.ts` with validation rules
+3. Add TypeScript types to `src/vite-env.d.ts`
+4. Export through the `env` object with proper grouping
+5. Update `docs/ENV.md` documentation
+
+### Valibot Schema Patterns
+```typescript
+// ✅ GOOD - Required URL with validation
+VITE_API_URL: v.pipe(
+  v.string(),
+  v.url('API URL must be a valid URL'),
+  v.check(
+    (url: string) => url.startsWith('http://') || url.startsWith('https://'),
+    'API URL must start with http:// or https://'
+  )
+),
+
+// ✅ GOOD - Optional with fallback default
+VITE_API_TIMEOUT: v.pipe(
+  v.fallback(v.string(), '5000'),
+  v.transform((val) => parseInt(val, 10)),
+  v.pipe(v.number(), v.minValue(1000), v.maxValue(60000))
+),
+
+// ✅ GOOD - Optional field that can be empty
+VITE_OPTIONAL_ID: v.union([
+  v.pipe(v.string(), v.uuid('Must be valid UUID')),
+  v.literal(''),
+]),
+
+// ✅ GOOD - Boolean from string
+VITE_ENABLE_FEATURE: v.pipe(
+  v.fallback(v.optional(v.string()), 'false'),
+  v.transform((val) => val === 'true' || val === '1'),
+  v.boolean()
+),
+```
+
+### Usage in Code
+```tsx
+// ❌ BAD - Direct access
+const title = import.meta.env.VITE_APP_TITLE;
+
+// ✅ GOOD - Through validated env object
+import { env } from '@/config/env';
+const title = env.app.title;
+```
+
+## CSS & Styling Standards
+
+### Color Contrast
+- All text MUST meet WCAG AA contrast ratio (4.5:1 minimum for normal text)
+- Document contrast ratios in comments when defining colors
+- Test both light and dark themes
+
+### Dark Mode Support
+- Use `@media (prefers-color-scheme: dark/light)` for theme variants
+- Define theme-aware CSS custom properties in `:root`
+- Use `color-scheme: light dark` for native form element theming
+- Always test both color schemes
+
+### Focus States
+- All interactive elements MUST have visible focus indicators
+- Use `outline` with sufficient contrast (3:1 minimum against background)
+- Never use `outline: none` without providing an alternative focus style
+
+### Examples
+```css
+/* ✅ GOOD - Documented contrast ratios */
+:root {
+  color: rgba(255, 255, 255, 0.95); /* ~#F2F2F2 on #242424 (≫ 4.5:1) */
+  background-color: #242424;
+}
+
+/* ✅ GOOD - Theme variant */
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #111827; /* gray-900 on white (≫ 4.5:1) */
+    background-color: #ffffff;
+  }
+}
+
+/* ✅ GOOD - Visible focus state */
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* ✅ GOOD - Skip link with focus visibility */
+.skip-link {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  opacity: 0;
+}
+.skip-link:focus {
+  position: fixed;
+  top: 0;
+  left: 0;
+  opacity: 1;
+  outline: 3px solid #ffffff;
+  outline-offset: 2px;
+}
+```
+
+## Testing Standards
+
+### Unit Tests (Vitest)
+- Place test files adjacent to source files: `Component.tsx` → `Component.test.tsx`
+- Use `@/test/test-utils` for rendering (pre-configured with providers)
+- Test accessibility: semantic roles, keyboard navigation, ARIA attributes
+- Use `screen.getByRole()` over `getByTestId()` when possible
+- Coverage thresholds: 85% for lines, functions, branches, statements
+
+### E2E Tests (Playwright)
+- Place E2E tests in `e2e/` directory with `.spec.ts` extension
+- Test across chromium, firefox, and webkit browsers
+- Use accessible selectors: `page.getByRole()`, `page.getByLabel()`
+- Include tests for critical user flows
+
+### Test Examples
+```tsx
+// ✅ GOOD - Testing semantic structure and accessibility
+import { render, screen } from '@/test/test-utils';
+
+describe('App', () => {
+  it('renders semantic HTML structure', () => {
+    render(<App />);
+    expect(screen.getByRole('banner')).toBeInTheDocument();
+    expect(screen.getByRole('main')).toBeInTheDocument();
+    expect(screen.getByRole('contentinfo')).toBeInTheDocument();
+  });
+
+  it('renders skip link for keyboard navigation', () => {
+    render(<App />);
+    const skipLink = screen.getByRole('link', { name: /skip to main content/i });
+    expect(skipLink).toHaveAttribute('href', '#main');
+  });
+
+  it('renders image with proper alt text', () => {
+    render(<App />);
+    const image = screen.getByAltText(/JP/i);
+    expect(image).toHaveAttribute('width', '100');
+    expect(image).toHaveAttribute('height', '100');
+  });
+});
+```
+
+### E2E Test Examples
+```typescript
+// ✅ GOOD - Playwright E2E test
+import { test, expect } from '@playwright/test';
+
+test('homepage loads successfully', async ({ page }) => {
+  await page.goto('/');
+  await expect(page).toHaveURL('/');
+  await expect(page).toHaveTitle(/JP Engineering/i);
+});
+```
+
 ## Error Handling
 
 ### Always Handle Errors
 - Wrap risky operations in try-catch blocks
 - Type errors properly (avoid `any` in catch blocks)
-- Log errors appropriately (use Sentry in production)
+- Log errors appropriately (use New Relic in production via `@/utils/newrelic`)
 - Provide user-friendly error messages
+
+### Error Boundary
+- Use `ErrorBoundary` component from `@/components/ErrorBoundary` to catch React errors
+- Provide meaningful fallback UI
+- Report errors to monitoring service
 
 ### Examples
 ```tsx
@@ -162,42 +374,137 @@ async function fetchData(): Promise<Data> {
   } catch (error) {
     if (error instanceof Error) {
       console.error('Failed to fetch data:', error.message);
-      Sentry.captureException(error);
+      // Report to monitoring in production
+      if (__ENABLE_ERROR_MONITORING__) {
+        const { reportError } = await import('@/utils/newrelic');
+        reportError(error, { context: 'fetchData' });
+      }
     }
     throw error;
   }
 }
 ```
 
+## PWA Considerations
+
+### Service Worker
+- PWA configuration lives in `src/pwa-config.ts`
+- Use `vite-plugin-pwa` for service worker generation
+- Use the `usePWA` hook from `@/hooks/usePWA` for update detection
+
+### Update Prompts
+- Always provide user-friendly update notifications
+- Include both "Update" and "Dismiss" options
+- Use `role="alert"` and `aria-live="polite"` for accessibility
+
+### Offline Support
+- Ensure critical functionality works offline
+- Provide clear offline indicators
+- Handle network errors gracefully
+- Test service worker behavior before deploying
+
+## SEO Standards
+
+### SEO Component
+- Use the `SEO` component from `@/components/SEO` for meta tags
+- SEO configuration lives in `@/config/seo.ts`
+- Always provide meaningful titles and descriptions
+
+### Required Meta Tags
+- `<title>` - Unique for each page
+- `<meta name="description">` - 150-160 characters
+- Open Graph tags for social sharing
+- Twitter Card tags
+
+### Image Optimization
+- Use WebP format for images
+- Provide `srcSet` for responsive images
+- Always include `width` and `height` attributes to prevent CLS
+- Use descriptive `alt` text
+
+### Example
+```tsx
+// ✅ GOOD - Optimized image with srcSet
+<img
+  src="/jp-100.webp"
+  srcSet="/jp-100.webp 100w, /jp-200.webp 200w, /jp-400.webp 400w"
+  sizes="100px"
+  width={100}
+  height={100}
+  alt="Justin Paoletta - Software Engineer"
+/>
+```
+
 ## Performance
 
-### Optimization
+### Bundle Size
+- Monitor bundle sizes - limits defined in `vite.config.ts`
+- App chunks: < 150 KB
+- Vendor chunks: < 400 KB
+- Total bundle: < 650 KB
+- CSS files: < 40 KB
+
+### Lighthouse CI
+- Performance score target: ≥ 85
+- Accessibility score target: ≥ 95
+- Best Practices score target: ≥ 90
+- SEO score target: ≥ 90
+- Configuration in `.lighthouserc.cjs`
+
+### Optimization Techniques
 - Use `React.memo` for expensive components
 - Use `useCallback` for functions passed as props
 - Use `useMemo` for expensive calculations
 - Lazy load components and routes when appropriate
-- Optimize images (use WebP, proper sizing)
+- Defer non-critical scripts (analytics, monitoring)
 
-## Environment Variables
-
-### Validation
-- Always validate environment variables using the `validateEnv()` function
-- Use TypeScript to define expected env var types
-- Never access `import.meta.env` directly in components - use `src/config/env.ts`
-- Provide sensible defaults for optional variables
+### Deferred Loading Pattern
+```tsx
+// ✅ GOOD - Defer non-critical initialization
+if (__ENABLE_ANALYTICS__) {
+  void import('@/utils/analytics')
+    .then(({ initializeAnalytics }) => initializeAnalytics())
+    .catch((error) => {
+      if (import.meta.env.DEV) {
+        console.error('[Analytics] Failed to initialize', error);
+      }
+    });
+}
+```
 
 ## Code Organization
 
 ### File Structure
 - One component per file
 - Co-locate related files (component + styles + tests)
-- Use index files for clean imports
+- Use index files for clean imports from directories
 - Keep utility functions in `src/utils/`
 - Keep hooks in `src/hooks/`
+- Keep configuration in `src/config/`
+
+### Directory Structure
+```
+src/
+├── components/          # React components
+│   ├── ComponentName/   # Component with related files
+│   │   ├── index.tsx
+│   │   ├── ComponentName.css
+│   │   └── ComponentName.test.tsx
+├── config/              # Configuration files
+│   ├── env.ts           # Environment validation
+│   └── seo.ts           # SEO configuration
+├── hooks/               # Custom React hooks
+├── utils/               # Utility functions
+├── test/                # Test utilities and mocks
+│   ├── mocks/
+│   ├── setup.ts
+│   └── test-utils.tsx
+└── main.tsx             # Application entry point
+```
 
 ### Imports
-- Group imports: React, third-party, local
-- Use absolute imports when available
+- Group imports: React, third-party, local (using @/ alias)
+- Use `@/` path aliases for all src imports
 - Avoid circular dependencies
 
 ### Comments
@@ -205,32 +512,50 @@ async function fetchData(): Promise<Data> {
 - Explain "why" not "what" in inline comments
 - Keep comments up-to-date with code changes
 
-## Testing (when applicable)
-
-### Write Tests For
-- Utility functions
-- Custom hooks
-- Critical user flows
-- Complex business logic
-
-### Test Standards
-- Use meaningful test descriptions
-- Test behavior, not implementation
-- Include accessibility checks in tests
-
 ## Git Commit Standards
 
 ### Before Committing
-- Ensure no ESLint errors
-- Ensure no TypeScript errors
-- Run `npm run lint` to verify
-- Run `npm run type-check` to verify
-- Follow conventional commit format
+- Ensure no ESLint errors: `npm run lint:ci`
+- Ensure no TypeScript errors: `npm run type-check`
+- Run tests: `npm test`
+- Follow conventional commit format (enforced by commitlint)
 
-### Commit Messages
-- Use conventional commits: `feat:`, `fix:`, `docs:`, etc.
-- Keep first line under 72 characters
-- Provide context in commit body when needed
+### Commit Message Format
+```
+<type>(<scope>): <subject>
+
+[optional body]
+
+[optional footer]
+```
+
+### Allowed Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation changes
+- `style`: Code style changes (formatting, no logic change)
+- `refactor`: Code refactoring
+- `perf`: Performance improvements
+- `test`: Adding or updating tests
+- `build`: Build system or dependency changes
+- `ci`: CI/CD changes
+- `chore`: Other changes (maintenance)
+- `revert`: Revert previous commit
+
+### Rules
+- Header max length: 100 characters
+- Subject must not be empty
+- Subject must not end with period
+- Use lowercase for scope
+- Body and footer must have leading blank line
+
+### Examples
+```
+feat(seo): add Twitter Card meta tags
+fix(a11y): add keyboard handlers to hover buttons
+docs(env): update environment variable documentation
+refactor(hooks): extract PWA logic into usePWA hook
+```
 
 ## Security
 
@@ -239,32 +564,48 @@ async function fetchData(): Promise<Data> {
 - Validate all user inputs
 - Sanitize data before rendering
 - Use environment variables for configuration
-- Keep dependencies updated
+- Keep dependencies updated (Dependabot enabled)
+
+### Client-Side Limitations
+- Environment variables are embedded at build time
+- Never store sensitive secrets in `VITE_*` variables
+- Use backend proxies for sensitive API calls
+
+## Analytics & Monitoring
+
+### Privacy-First Analytics
+- Use Umami for privacy-friendly analytics
+- Never track PII without explicit consent
+- Analytics utilities in `@/utils/analytics`
+- Use predefined tracking functions from the `analytics` object
+
+### Error Monitoring
+- Use New Relic for error monitoring
+- Utilities in `@/utils/newrelic`
+- Only enabled when `__ENABLE_ERROR_MONITORING__` is true
+- Defer loading to not impact performance
+
+### Conditional Feature Flags
+- `__ENABLE_ANALYTICS__` - Analytics feature flag
+- `__ENABLE_ERROR_MONITORING__` - Error monitoring flag
+- `__ENABLE_DEBUG_TOOLS__` - Debug tools flag
+- These are compile-time constants defined in `vite.config.ts`
 
 ## Documentation
 
 ### When to Document
 - Update README.md when adding new features
 - Document complex algorithms or business logic
-- Keep CHANGELOG.md updated
+- Keep CHANGELOG.md updated (automated via commit-and-tag-version)
 - Add JSDoc comments for public APIs
 - Update relevant docs in `/docs` folder
 
-## Analytics & Monitoring
-
-### Privacy-First
-- Use Umami for privacy-friendly analytics
-- Never track PII without explicit consent
-- Use Sentry for error monitoring
-- Set appropriate sample rates for production
-
-## PWA Considerations
-
-### Offline Support
-- Ensure critical functionality works offline
-- Provide clear offline indicators
-- Handle network errors gracefully
-- Test service worker behavior
+### Documentation Files
+- `docs/ENV.md` - Environment variable documentation
+- `docs/PWA.md` - PWA documentation
+- `docs/SEO.md` - SEO documentation
+- `docs/LIGHTHOUSE_CI.md` - Lighthouse CI documentation
+- See `/docs` folder for full list
 
 ## Summary Checklist
 
@@ -277,6 +618,10 @@ Before suggesting any code changes, verify:
 - ✅ Code follows existing project patterns
 - ✅ No ESLint or TypeScript errors
 - ✅ Appropriate comments and documentation
-- ✅ Environment variables properly validated
+- ✅ Environment variables properly validated with Valibot
 - ✅ Sensitive data not exposed
-
+- ✅ Using `@/` path aliases for imports
+- ✅ Color contrast meets WCAG AA (4.5:1)
+- ✅ Focus states are visible
+- ✅ Images have proper alt text and dimensions
+- ✅ Tests cover accessibility and semantic structure

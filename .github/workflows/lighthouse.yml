@@ -48,6 +48,7 @@ jobs:
           VITE_NEWRELIC_APPLICATION_ID: ${{ secrets.VITE_NEWRELIC_APPLICATION_ID || '' }}
           VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID || '' }}
           VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN || '' }}
+          VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || '' }}
         run: npm run build
 
       # run LHCI steps separately to ensure reports are preserved
