@@ -1,6 +1,23 @@
 /**
  * SEO Component
  * Manages meta tags for SEO, Open Graph, and Twitter Cards
+ *
+ * IMPORTANT: This component uses react-helmet-async which injects meta tags
+ * via JavaScript at runtime. This works for:
+ * - Google (which executes JavaScript when crawling)
+ * - Browser tab titles
+ * - Dynamic page updates during client-side navigation
+ *
+ * However, social media crawlers (Facebook, Twitter/X, LinkedIn, etc.) and
+ * tools like opengraph.xyz do NOT execute JavaScript. They only read the
+ * raw HTML served by the server.
+ *
+ * For this reason, Open Graph and Twitter Card meta tags are ALSO defined
+ * statically in index.html to ensure social sharing previews work correctly.
+ *
+ * If you need to update OG/Twitter meta tags, update BOTH:
+ * 1. This component (for Google SEO and future SSR compatibility)
+ * 2. index.html (for social media crawlers)
  */
 
 import { Helmet } from 'react-helmet-async';

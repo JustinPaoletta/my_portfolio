@@ -30,6 +30,21 @@
     />
     <meta name="theme-color" content="#242424" />
 
+    <!--
+      Open Graph & Twitter Card Meta Tags
+      =====================================
+      These tags are defined here in index.html because social media crawlers
+      (Facebook, Twitter/X, LinkedIn, etc.) do NOT execute JavaScript.
+      They only read the raw HTML served by the server.
+
+      The SEO component (src/components/SEO.tsx) also defines these tags for:
+      - Google (which does execute JavaScript)
+      - Dynamic page updates during client-side navigation
+      - Future SSR/SSG compatibility
+
+      If you update these values, also update src/components/SEO.tsx and src/config/seo.ts
+    -->
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jpengineering.dev" />
