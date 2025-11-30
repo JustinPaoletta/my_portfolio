@@ -66,7 +66,8 @@ module.exports = {
         'color-contrast': 'error',
         // ============================================================
         // NOISY DIAGNOSTICS
-        // Set to 'off' to reduce CI noise, but monitor manually
+        // Set to off for now but can be enabled later if wanted for
+        // even stricter checks
         // ============================================================
         'bootup-time': 'off',
         'dom-size': 'off',

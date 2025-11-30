@@ -12,10 +12,10 @@ Edit `vite.config.ts`:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 5, // Lowered from 200 to 5 KB
-  vendorChunk: 500,
-  totalSize: 800,
-  cssFile: 50,
+  appChunk: 5, // Lowered from 150 to 5 KB
+  vendorChunk: 400,
+  totalSize: 650,
+  cssFile: 40,
 };
 ```
 
@@ -49,10 +49,10 @@ Revert `vite.config.ts` to original values:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 200,
-  vendorChunk: 500,
-  totalSize: 800,
-  cssFile: 50,
+  appChunk: 150,
+  vendorChunk: 400,
+  totalSize: 650,
+  cssFile: 40,
 };
 ```
 
@@ -102,7 +102,7 @@ To track bundle size changes:
   run: npm run build
 
 - name: Upload bundle stats
-  uses: actions/upload-artifact@v3
+  uses: actions/upload-artifact@v5
   with:
     name: bundle-stats
     path: dist/

@@ -5,10 +5,6 @@
 
 import * as v from 'valibot';
 
-/**
- * Environment variable schema with validation rules
- * This validates format, type, and constraints at runtime
- */
 const envSchema = v.object({
   VITE_APP_TITLE: v.pipe(
     v.string(),
@@ -93,7 +89,6 @@ const envSchema = v.object({
   VITE_NEWRELIC_LICENSE_KEY: v.union([
     v.pipe(
       v.string(),
-      // New Relic license keys typically start with "NRJS-" followed by alphanumeric characters
       v.regex(
         /^NRJS-[A-Za-z0-9]+$/,
         'New Relic License Key must start with "NRJS-" followed by alphanumeric characters (e.g., NRJS-abc123xyz)'
@@ -184,17 +179,11 @@ const envSchema = v.object({
   ]),
 });
 
-/**
- * Validate and parse environment variables
- * Throws detailed error if validation fails
- */
-function validateEnv() {
-  // Log the mode being validated (helpful for debugging)
+function validateEnv(): v.InferOutput<typeof envSchema> {
   const mode = import.meta.env.MODE || 'development';
-  // Always log in test mode so users can see validation is happening
-  const shouldLogValidation =
-    (import.meta.env.DEV || mode === 'test' || mode === 'production') &&
-    __ENABLE_DEBUG_TOOLS__;
+
+  // log validation in development or when debug tools are enabled
+  const shouldLogValidation = import.meta.env.DEV && __ENABLE_DEBUG_TOOLS__;
   if (shouldLogValidation) {
     console.log(`🔍 Validating environment variables (mode: ${mode})...`);
   }
@@ -202,7 +191,7 @@ function validateEnv() {
   const parsed = v.safeParse(envSchema, import.meta.env);
 
   if (!parsed.success) {
-    // Format validation errors in a readable way
+    // format validation errors in a readable way
     const errors = parsed.issues
       .map((issue) => {
         const path =
@@ -226,7 +215,6 @@ function validateEnv() {
   return parsed.output;
 }
 
-// Validate and export environment variables
 const validatedEnv = validateEnv();
 
 const analyticsFeatureEnabled =
@@ -236,12 +224,7 @@ const debugFeatureEnabled =
 const errorMonitoringFeatureEnabled =
   __ENABLE_ERROR_MONITORING__ && validatedEnv.VITE_ENABLE_ERROR_MONITORING;
 
-/**
- * Application environment configuration
- * All values are validated at runtime for type safety and correctness
- */
 export const env = {
-  // App Configuration
   app: {
     title: validatedEnv.VITE_APP_TITLE,
     description: validatedEnv.VITE_APP_DESCRIPTION,
@@ -250,35 +233,25 @@ export const env = {
     isProduction: import.meta.env.PROD,
     mode: import.meta.env.MODE,
   },
-
-  // API Configuration
   api: {
     url: validatedEnv.VITE_API_URL,
     timeout: validatedEnv.VITE_API_TIMEOUT,
   },
-
-  // Feature Flags
   features: {
     analytics: analyticsFeatureEnabled,
     debug: debugFeatureEnabled,
     errorMonitoring: errorMonitoringFeatureEnabled,
   },
-
-  // Third-party Services
   services: {
     googleAnalyticsId: validatedEnv.VITE_GOOGLE_ANALYTICS_ID || undefined,
     mapboxToken: validatedEnv.VITE_MAPBOX_TOKEN || undefined,
   },
-
-  // Analytics
   analytics: {
     umami: {
       websiteId: validatedEnv.VITE_UMAMI_WEBSITE_ID || undefined,
       src: validatedEnv.VITE_UMAMI_SRC,
     },
   },
-
-  // Error Monitoring
   monitoring: {
     newrelic: {
       accountId: validatedEnv.VITE_NEWRELIC_ACCOUNT_ID || undefined,
@@ -289,22 +262,15 @@ export const env = {
       ajaxDenyList: validatedEnv.VITE_NEWRELIC_AJAX_DENY_LIST,
     },
   },
-
-  // Social Links
   social: {
     github: validatedEnv.VITE_GITHUB_URL,
     linkedin: validatedEnv.VITE_LINKEDIN_URL,
     email: validatedEnv.VITE_EMAIL,
   },
-
-  // SEO & PWA
   site: {
     url: validatedEnv.VITE_SITE_URL || undefined,
   },
 } as const;
 
-// Export type for use in other files
 export type Env = typeof env;
-
-// Export the Valibot schema type for reference
 export type ValidatedEnv = v.InferOutput<typeof envSchema>;

@@ -42,7 +42,7 @@ You can switch between them based on your workflow. See [Pre-Push Hook](#3-pre-p
 **What it does:**
 
 1. ✅ TypeScript type checking (`tsc -b`)
-2. ✅ Lint and format staged files (`lint-staged`)
+2. ✅ Lint and format staged files (`npx lint-staged`)
    - ESLint auto-fix for `.ts` and `.tsx` files
    - Prettier formatting for all files
 

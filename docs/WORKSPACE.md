@@ -4,10 +4,10 @@ This project includes workspace settings for Cursor/VS Code to ensure consistent
 
 ## 📁 Files
 
-- `.vscode/settings.json` - Workspace settings
-- `.vscode/extensions.json` - Recommended extensions
+- `.vscode/extensions.json` - Recommended extensions (committed to repository)
+- `.vscode/settings.json` - Workspace settings (optional, user-specific)
 
-Both files are committed to the repository to ensure consistency.
+**Note:** `.vscode/settings.json` is not included by default. You can create it with your preferred settings, or use the examples provided in this guide.
 
 ## ⚙️ Configured Settings
 

@@ -69,7 +69,7 @@ This project includes a comprehensive set of npm scripts for development, testin
 
 - **`npm run build`** - Build the project for production. Runs type-check first, then TypeScript compilation and Vite build.
 - **`npm run build:analyze`** - Build with source maps enabled for bundle analysis. Runs type-check first, then builds with `ANALYZE=true` flag.
-- **`npm run analyze`** - Alias for `build:analyze` - builds and opens bundle visualizer to analyze bundle composition and identify optimization opportunities.
+- **`npm run analyze`** - Build with analysis mode and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
 
 ### 🧹 Cleanup Scripts
 
@@ -113,6 +113,10 @@ This project includes a comprehensive set of npm scripts for development, testin
 ### 📝 SEO & Sitemap Scripts
 
 - **`npm run sitemap:generate`** - Generate or update `sitemap.xml` and `robots.txt` files based on route configuration.
+
+### 🖼️ Image Optimization Scripts
+
+- **`npm run images:optimize`** - Optimize images in the project using Sharp for better performance and smaller file sizes.
 
 ### 🏷️ Release & Versioning Scripts
 
@@ -163,7 +167,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 - **React 19.1.1** - Latest version with latest features
 - **TypeScript 5.9** - Type-safe JavaScript with strict mode
 - **Vite (Rolldown 7.1.14)** - Lightning-fast build tool with advanced bundling
-- **Valibot 1.2** - Runtime type validation for environment variables
+- **Valibot 1.2.0** - Runtime type validation for environment variables
 
 ### Testing
 
@@ -206,7 +210,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 - **[VS Code Debugging Guide](docs/VSCODE_DEBUGGING.md)** - Debug configurations and workflows
 - **[Git Hooks Guide](docs/GIT_HOOKS.md)** - Pre-commit, pre-push, and other hooks
 - **[Commit Conventions](docs/COMMIT_CONVENTION.md)** - Git commit guidelines
-- **[Changelog & Releases](docs/CHANGELOG_GUIDE.md)** - Version management with standard-version
+- **[Changelog & Releases](docs/CHANGELOG_GUIDE.md)** - Version management with commit-and-tag-version
 - **[Workspace Info](docs/WORKSPACE.md)** - Project structure
 - **[Dependabot Setup](docs/DEPENDABOT.md)** - Automated dependency updates
 - **[Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)** - Deployment configuration and best practices
@@ -227,6 +231,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 - **[Performance Budget](docs/PERFORMANCE_BUDGET.md)** - Bundle size limits
 - **[Bundle Size Testing](docs/BUNDLE_SIZE_TEST.md)** - Performance monitoring
+- **[Lighthouse CI](docs/LIGHTHOUSE_CI.md)** - Automated performance auditing
 
 ## 🔒 Security & Quality Assurance
 

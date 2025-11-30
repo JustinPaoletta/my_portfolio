@@ -9,6 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+---
+
+## [1.0.0] - 2025-01-27
+
+### Added
+
 - Initial portfolio website setup
 - React 19.1.1 with TypeScript 5.9
 - Vite (Rolldown 7.1.14) build configuration with aggressive optimization
