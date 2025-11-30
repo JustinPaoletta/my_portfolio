@@ -14,6 +14,24 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
+    # Define env vars at job level so all steps inherit them
+    env:
+      VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE || 'Portfolio' }}
+      VITE_APP_DESCRIPTION: ${{ secrets.VITE_APP_DESCRIPTION || 'Portfolio website' }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.example.com' }}
+      VITE_GITHUB_URL: ${{ secrets.VITE_GITHUB_URL || 'https://github.com/example' }}
+      VITE_LINKEDIN_URL: ${{ secrets.VITE_LINKEDIN_URL || 'https://linkedin.com/in/example' }}
+      VITE_EMAIL: ${{ secrets.VITE_EMAIL || 'example@example.com' }}
+      VITE_UMAMI_WEBSITE_ID: ${{ secrets.VITE_UMAMI_WEBSITE_ID || '' }}
+      VITE_NEWRELIC_LICENSE_KEY: ${{ secrets.VITE_NEWRELIC_LICENSE_KEY || '' }}
+      VITE_NEWRELIC_ACCOUNT_ID: ${{ secrets.VITE_NEWRELIC_ACCOUNT_ID || '' }}
+      VITE_NEWRELIC_TRUST_KEY: ${{ secrets.VITE_NEWRELIC_TRUST_KEY || '' }}
+      VITE_NEWRELIC_AGENT_ID: ${{ secrets.VITE_NEWRELIC_AGENT_ID || '' }}
+      VITE_NEWRELIC_APPLICATION_ID: ${{ secrets.VITE_NEWRELIC_APPLICATION_ID || '' }}
+      VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID || '' }}
+      VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN || '' }}
+      VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || '' }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -32,23 +50,6 @@ jobs:
 
 
       - name: Build Application
-        # env variables from github secrets
-        env:
-          VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE || 'Portfolio' }}
-          VITE_APP_DESCRIPTION: ${{ secrets.VITE_APP_DESCRIPTION || 'Portfolio website' }}
-          VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.example.com' }}
-          VITE_GITHUB_URL: ${{ secrets.VITE_GITHUB_URL || 'https://github.com/example' }}
-          VITE_LINKEDIN_URL: ${{ secrets.VITE_LINKEDIN_URL || 'https://linkedin.com/in/example' }}
-          VITE_EMAIL: ${{ secrets.VITE_EMAIL || 'example@example.com' }}
-          VITE_UMAMI_WEBSITE_ID: ${{ secrets.VITE_UMAMI_WEBSITE_ID || '' }}
-          VITE_NEWRELIC_LICENSE_KEY: ${{ secrets.VITE_NEWRELIC_LICENSE_KEY || '' }}
-          VITE_NEWRELIC_ACCOUNT_ID: ${{ secrets.VITE_NEWRELIC_ACCOUNT_ID || '' }}
-          VITE_NEWRELIC_TRUST_KEY: ${{ secrets.VITE_NEWRELIC_TRUST_KEY || '' }}
-          VITE_NEWRELIC_AGENT_ID: ${{ secrets.VITE_NEWRELIC_AGENT_ID || '' }}
-          VITE_NEWRELIC_APPLICATION_ID: ${{ secrets.VITE_NEWRELIC_APPLICATION_ID || '' }}
-          VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID || '' }}
-          VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN || '' }}
-          VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || '' }}
         run: npm run build
 
       # run LHCI steps separately to ensure reports are preserved
