@@ -18,21 +18,30 @@ jobs:
 
     # Define env vars at job level so all steps inherit them
     env:
+      # App configuration
       VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE || 'Portfolio' }}
       VITE_APP_DESCRIPTION: ${{ secrets.VITE_APP_DESCRIPTION || 'Portfolio website' }}
       VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.example.com' }}
+      VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || '' }}
+      # Feature flags (disabled for CI testing)
+      VITE_ENABLE_ANALYTICS: 'false'
+      VITE_ENABLE_DEBUG: 'false'
+      VITE_ENABLE_ERROR_MONITORING: 'false'
+      # Social links
       VITE_GITHUB_URL: ${{ secrets.VITE_GITHUB_URL || 'https://github.com/example' }}
       VITE_LINKEDIN_URL: ${{ secrets.VITE_LINKEDIN_URL || 'https://linkedin.com/in/example' }}
       VITE_EMAIL: ${{ secrets.VITE_EMAIL || 'example@example.com' }}
+      # Analytics (optional)
       VITE_UMAMI_WEBSITE_ID: ${{ secrets.VITE_UMAMI_WEBSITE_ID || '' }}
+      VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID || '' }}
+      # Error monitoring (optional)
       VITE_NEWRELIC_LICENSE_KEY: ${{ secrets.VITE_NEWRELIC_LICENSE_KEY || '' }}
       VITE_NEWRELIC_ACCOUNT_ID: ${{ secrets.VITE_NEWRELIC_ACCOUNT_ID || '' }}
       VITE_NEWRELIC_TRUST_KEY: ${{ secrets.VITE_NEWRELIC_TRUST_KEY || '' }}
       VITE_NEWRELIC_AGENT_ID: ${{ secrets.VITE_NEWRELIC_AGENT_ID || '' }}
       VITE_NEWRELIC_APPLICATION_ID: ${{ secrets.VITE_NEWRELIC_APPLICATION_ID || '' }}
-      VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID || '' }}
+      # Third-party services (optional)
       VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN || '' }}
-      VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || '' }}
 
     steps:
       - name: Checkout code
