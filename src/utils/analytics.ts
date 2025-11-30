@@ -31,7 +31,6 @@ export async function initializeAnalytics(): Promise<void> {
     return;
   }
 
-  // Skip in CI environment
   if (isCI) {
     if (shouldLog) {
       console.log('[Analytics] Skipped - CI environment');
@@ -39,7 +38,6 @@ export async function initializeAnalytics(): Promise<void> {
     return;
   }
 
-  // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
     if (shouldLog) {
       console.log('[Analytics] Skipped - disabled or not configured');
@@ -47,7 +45,6 @@ export async function initializeAnalytics(): Promise<void> {
     return;
   }
 
-  // Skip if script is already loaded
   if (document.querySelector('[data-website-id]')) {
     if (shouldLog) {
       console.log('[Analytics] Already initialized');
@@ -61,11 +58,7 @@ export async function initializeAnalytics(): Promise<void> {
   script.defer = true;
   script.src = env.analytics.umami.src;
   script.setAttribute('data-website-id', env.analytics.umami.websiteId);
-
-  // Optional: Auto-track (enabled by default)
   script.setAttribute('data-auto-track', 'true');
-
-  // Optional: Cache the tracking script
   script.setAttribute('data-cache', 'true');
 
   document.head.appendChild(script);
@@ -84,12 +77,10 @@ export function trackEvent(
   eventName: string,
   eventData?: Record<string, unknown>
 ): void {
-  // Skip in CI environment or if analytics is disabled
   if (!analyticsEnabled || isCI) {
     return;
   }
 
-  // Check if Umami is loaded
   if (window.umami && typeof window.umami.track === 'function') {
     window.umami.track(eventName, eventData);
 

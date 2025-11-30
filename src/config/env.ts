@@ -191,7 +191,6 @@ function validateEnv(): v.InferOutput<typeof envSchema> {
   const parsed = v.safeParse(envSchema, import.meta.env);
 
   if (!parsed.success) {
-    // format validation errors in a readable way
     const errors = parsed.issues
       .map((issue) => {
         const path =
