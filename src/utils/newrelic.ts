@@ -83,7 +83,7 @@ export function initializeNewRelic(): void {
       appVersion: env.app.version,
       isDevelopment: env.app.isDevelopment,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error && shouldLog) {
       console.error('[New Relic] Initialization failed:', error.message);
     }
@@ -114,9 +114,9 @@ export function reportError(
         console.log('[New Relic] Error reported:', error, customAttributes);
       }
     }
-  } catch (reportError) {
-    if (reportError instanceof Error && shouldLog) {
-      console.error('[New Relic] Failed to report error:', reportError.message);
+  } catch (reportErr: unknown) {
+    if (reportErr instanceof Error && shouldLog) {
+      console.error('[New Relic] Failed to report error:', reportErr.message);
     }
   }
 }
@@ -144,7 +144,7 @@ export function setGlobalAttributes(
         console.log('[New Relic] Global attributes set:', attributes);
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(
         '[New Relic] Failed to set global attributes:',
@@ -195,7 +195,7 @@ export function trackPageAction(
         console.log('[New Relic] Page action tracked:', name, attributes);
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('[New Relic] Failed to track page action:', error.message);
     }
@@ -219,7 +219,7 @@ export function addTiming(name: string, startTime: number): void {
     if (env.app.isDevelopment) {
       console.log(`[New Relic] Custom timing "${name}": ${duration}ms`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('[New Relic] Failed to add timing:', error.message);
     }
@@ -245,7 +245,7 @@ export function withErrorReporting<T extends unknown[], R>(
   return async (...args: T): Promise<R> => {
     try {
       return await fn(...args);
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Error) {
         reportError(error, {
           context: errorContext || fn.name || 'unknown',

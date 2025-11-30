@@ -55,7 +55,7 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
+    // update state so the next render will show the fallback UI
     return {
       hasError: true,
       error,
@@ -63,14 +63,14 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    // Only log errors in development mode to avoid console errors in Lighthouse
+    // only log errors in development mode to avoid console errors in lighthouse
     if (import.meta.env.DEV) {
       console.error('ErrorBoundary caught an error:', error, errorInfo);
       console.error('Error:', error);
       console.error('Component Stack:', errorInfo.componentStack);
     }
 
-    // Report error to New Relic with component stack (always report for monitoring)
+    // report error to new relic with component stack (always report for monitoring)
     if (__ENABLE_ERROR_MONITORING__) {
       void loadNewRelic().then((mod) => {
         mod?.reportError(error, {
@@ -91,12 +91,12 @@ class ErrorBoundary extends Component<Props, State> {
 
   render(): ReactNode {
     if (this.state.hasError) {
-      // Custom fallback UI if provided
+      // custom fallback UI if provided
       if (this.props.fallback) {
         return this.props.fallback;
       }
 
-      // Default fallback UI
+      // default fallback UI
       return (
         <div
           style={{

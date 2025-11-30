@@ -8,7 +8,7 @@ import { defaultSEO, getPageTitle, getFullUrl } from '@/config/seo';
 import type { SEOConfig } from '@/config/seo';
 
 interface SEOProps extends Partial<SEOConfig> {
-  // Additional props
+  // additional props
   canonical?: string;
   noindex?: boolean;
   nofollow?: boolean;
@@ -39,7 +39,7 @@ export const SEO: React.FC<SEOProps> = ({
 
   return (
     <Helmet>
-      {/* Primary Meta Tags */}
+      {/* primary meta tags */}
       <title>{pageTitle}</title>
       <meta name="title" content={pageTitle} />
       <meta name="description" content={description} />
@@ -49,10 +49,10 @@ export const SEO: React.FC<SEOProps> = ({
       {author && <meta name="author" content={author} />}
       <meta name="robots" content={robotsContent} />
 
-      {/* Canonical URL */}
+      {/* canonical URL */}
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
-      {/* Open Graph / Facebook */}
+      {/* open graph / facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={pageTitle} />
@@ -61,7 +61,7 @@ export const SEO: React.FC<SEOProps> = ({
       {locale && <meta property="og:locale" content={locale} />}
       <meta property="og:site_name" content={defaultSEO.title} />
 
-      {/* Twitter */}
+      {/* twitter/x */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={canonicalUrl} />
       <meta name="twitter:title" content={pageTitle} />
@@ -70,7 +70,7 @@ export const SEO: React.FC<SEOProps> = ({
       {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
       {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
 
-      {/* Additional SEO Tags */}
+      {/* additional SEO tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="language" content="English" />

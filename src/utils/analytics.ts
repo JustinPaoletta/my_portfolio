@@ -99,7 +99,10 @@ export const analytics = {
   /**
    * Track project link clicks
    */
-  trackProjectClick: (projectName: string, linkType: 'demo' | 'github') => {
+  trackProjectClick: (
+    projectName: string,
+    linkType: 'demo' | 'github'
+  ): void => {
     trackEvent('project_click', {
       project: projectName,
       link_type: linkType,
@@ -109,35 +112,37 @@ export const analytics = {
   /**
    * Track resume/CV downloads
    */
-  trackResumeDownload: () => {
+  trackResumeDownload: (): void => {
     trackEvent('resume_download');
   },
 
   /**
    * Track contact interactions
    */
-  trackContact: (method: 'email' | 'form' | 'linkedin') => {
+  trackContact: (method: 'email' | 'form' | 'linkedin'): void => {
     trackEvent('contact', { method });
   },
 
   /**
    * Track social link clicks
    */
-  trackSocialClick: (platform: 'github' | 'linkedin' | 'twitter' | 'other') => {
+  trackSocialClick: (
+    platform: 'github' | 'linkedin' | 'twitter' | 'other'
+  ): void => {
     trackEvent('social_click', { platform });
   },
 
   /**
    * Track navigation to sections
    */
-  trackNavigation: (section: string) => {
+  trackNavigation: (section: string): void => {
     trackEvent('navigation', { section });
   },
 
   /**
    * Track external link clicks
    */
-  trackExternalLink: (url: string, label?: string) => {
+  trackExternalLink: (url: string, label?: string): void => {
     trackEvent('external_link', {
       url,
       label: label || 'unknown',
@@ -147,7 +152,7 @@ export const analytics = {
   /**
    * Track search or filter interactions
    */
-  trackSearch: (query: string, category?: string) => {
+  trackSearch: (query: string, category?: string): void => {
     trackEvent('search', {
       query,
       category: category || 'general',
@@ -157,7 +162,7 @@ export const analytics = {
   /**
    * Track errors (client-side)
    */
-  trackError: (errorType: string, errorMessage?: string) => {
+  trackError: (errorType: string, errorMessage?: string): void => {
     trackEvent('error', {
       type: errorType,
       message: errorMessage,

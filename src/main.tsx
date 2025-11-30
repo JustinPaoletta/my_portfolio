@@ -59,10 +59,8 @@ if (__ENABLE_ERROR_MONITORING__) {
 
   // Start scheduling after page is interactive (not blocking initial render)
   if (document.readyState === 'loading') {
-    // Wait for DOMContentLoaded before scheduling
     document.addEventListener('DOMContentLoaded', scheduleLoad, { once: true });
   } else {
-    // DOM already loaded, schedule immediately
     scheduleLoad();
   }
 }

@@ -23,11 +23,13 @@ const loadAnalytics: () => Promise<AnalyticsModule | undefined> =
               analyticsModule = mod;
               return mod;
             })
-            .catch((error) => {
+            .catch((error: unknown) => {
               if (import.meta.env.DEV) {
+                const errorMessage =
+                  error instanceof Error ? error.message : String(error);
                 console.error(
                   '[Analytics] Failed to load analytics module',
-                  error
+                  errorMessage
                 );
               }
               analyticsPromise = undefined;
@@ -52,10 +54,30 @@ function withAnalytics(execute: (module: AnalyticsModule) => void): void {
 }
 
 /**
+ * Return type for useAnalytics hook
+ */
+export interface UseAnalyticsReturn {
+  trackProjectClick: (projectName: string, linkType: 'demo' | 'github') => void;
+  trackResumeDownload: () => void;
+  trackContact: (method: 'email' | 'form' | 'linkedin') => void;
+  trackSocialClick: (
+    platform: 'github' | 'linkedin' | 'twitter' | 'other'
+  ) => void;
+  trackNavigation: (section: string) => void;
+  trackExternalLink: (url: string, label?: string) => void;
+  trackSearch: (query: string, category?: string) => void;
+  trackError: (errorType: string, errorMessage?: string) => void;
+  trackCustomEvent: (
+    eventName: string,
+    eventData?: Record<string, unknown>
+  ) => void;
+}
+
+/**
  * Hook for analytics tracking
  * @returns Object with tracking functions
  */
-export function useAnalytics() {
+export function useAnalytics(): UseAnalyticsReturn {
   // Wrap analytics functions in useCallback to prevent unnecessary re-renders
   const trackProjectClick = useCallback(
     (projectName: string, linkType: 'demo' | 'github') => {
