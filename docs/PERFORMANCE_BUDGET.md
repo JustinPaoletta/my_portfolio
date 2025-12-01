@@ -65,12 +65,12 @@ const BUNDLE_SIZE_LIMITS = {
 ### Quick Analysis
 
 ```bash
-npm run analyze
+npm run build:analyze
 ```
 
 This will:
 
-1. Build with sourcemaps
+1. Build with analysis mode enabled
 2. Open an interactive visualization
 3. Show what's taking up space
 
@@ -156,7 +156,7 @@ If the build fails due to bundle size:
 1. **Run the analyzer**:
 
    ```bash
-   npm run analyze
+   npm run build:analyze
    ```
 
 2. **Identify the largest chunks** in the visualization
@@ -202,7 +202,7 @@ npm run lighthouse
 - Use code splitting liberally
 - Lazy load non-critical features
 - Monitor bundle size in every PR
-- Run analyzer before adding large dependencies
+- Run `npm run build:analyze` before adding large dependencies
 
 ### Don'ts ❌
 
@@ -229,7 +229,7 @@ npm run lighthouse
 
 **Per Feature**:
 
-- Run analyzer before/after
+- Run `npm run build:analyze` before/after
 - Document size impact
 - Optimize if needed
 

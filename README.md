@@ -67,14 +67,13 @@ This project includes a comprehensive set of npm scripts for development, testin
 
 ### 🏗️ Build Scripts
 
-- **`npm run build`** - Build the project for production. Runs type-check first, then TypeScript compilation and Vite build.
-- **`npm run build:analyze`** - Build with source maps enabled for bundle analysis. Runs type-check first, then builds with `ANALYZE=true` flag.
-- **`npm run analyze`** - Build with analysis mode and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
+- **`npm run build`** - Build the project for production. Runs type-check first, then Vite build.
+- **`npm run build:analyze`** - Build with analysis mode and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
 
 ### 🧹 Cleanup Scripts
 
-- **`npm run clean`** - Remove all generated files and caches: `node_modules`, `dist`, `coverage`, `.vite`, `playwright-report`, and `test-results`.
-- **`npm run clean:cache`** - Remove only cache and build artifacts (keeps `node_modules`): `dist`, `coverage`, `.vite`, `playwright-report`, and `test-results`.
+- **`npm run clean:cache`** - Remove cache and build artifacts (keeps `node_modules`): `dist`, `coverage`, `.vite`, `.lighthouseci`, `playwright-report`, and `test-results`.
+- **`npm run nuke`** - Remove all generated files including `node_modules` and `package-lock.json`: `node_modules`, `package-lock.json`, `dist`, `coverage`, `.vite`, `.lighthouseci`, `playwright-report`, and `test-results`.
 
 ### 🔍 Code Quality & Type Checking Scripts
 
@@ -95,8 +94,7 @@ This project includes a comprehensive set of npm scripts for development, testin
 - **`npm test`** - Run Vitest in watch mode (re-runs tests on file changes).
 - **`npm run test:unit`** - Run unit tests once and exit (used in CI and pre-push hooks).
 - **`npm run test:ui`** - Open Vitest UI for interactive test running and debugging.
-- **`npm run test:coverage`** - Run tests and generate coverage report (text, JSON, HTML, LCOV formats).
-- **`npm run test:coverage:watch`** - Run tests with coverage in watch mode.
+- **`npm run test:coverage`** - Run tests once and generate coverage report.
 - **`npm run test:coverage:ui`** - Run tests with coverage and open Vitest UI.
 
 #### End-to-End Tests
@@ -108,15 +106,11 @@ This project includes a comprehensive set of npm scripts for development, testin
 ### 📊 Performance & Analysis Scripts
 
 - **`npm run lighthouse`** - Run Lighthouse CI audits. Builds the project, starts a local server, and runs Lighthouse tests with assertions.
-- **`npm run analyze`** - Build with analysis mode and open bundle visualizer (see Build Scripts above).
+- **`npm run build:analyze`** - Build with analysis mode and open bundle visualizer.
 
 ### 📝 SEO & Sitemap Scripts
 
 - **`npm run sitemap:generate`** - Generate or update `sitemap.xml` and `robots.txt` files based on route configuration.
-
-### 🖼️ Image Optimization Scripts
-
-- **`npm run images:optimize`** - Optimize images in the project using Sharp for better performance and smaller file sizes.
 
 ### 🏷️ Release & Versioning Scripts
 
@@ -145,7 +139,7 @@ npm run test:e2e          # End-to-end tests
 npm run type-check        # Check TypeScript types
 npm run type-check:watch  # Watch mode type checking
 npm run lint:fix          # Fix linting, formatting, and type issues
-npm run analyze           # Analyze bundle size
+npm run build:analyze     # Analyze bundle size
 ```
 
 ### Releases & Versioning
@@ -165,8 +159,8 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 ### Core
 
 - **React 19.1.1** - Latest version with latest features
-- **TypeScript 5.9** - Type-safe JavaScript with strict mode
-- **Vite (Rolldown 7.1.14)** - Lightning-fast build tool with advanced bundling
+- **TypeScript 5.9.3** - Type-safe JavaScript with strict mode
+- **Vite (rolldown-vite 7.1.14)** - Lightning-fast build tool with advanced bundling
 - **Valibot 1.2.0** - Runtime type validation for environment variables
 
 ### Testing
@@ -174,7 +168,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 - **Vitest 4.0.5** - Unit testing framework with fast refresh
 - **Playwright 1.56.1** - End-to-end testing with multi-browser support (Chromium, Firefox, WebKit)
 - **Testing Library** - React component testing with accessibility best practices
-- **Coverage reporting** - V8 provider with text, JSON, HTML, LCOV, and text-summary reporters (85% thresholds)
+- **Coverage reporting** - V8 provider with coverage thresholds (85%)
 
 ### Code Quality & Workflow
 

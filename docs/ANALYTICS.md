@@ -303,7 +303,7 @@ Avoid tracking:
 
 - Umami script is only ~2KB
 - Loads asynchronously (doesn't block page load)
-- Check bundle size with: `npm run analyze`
+- Check bundle size with: `npm run build:analyze`
 
 ### 5. Regular Review
 

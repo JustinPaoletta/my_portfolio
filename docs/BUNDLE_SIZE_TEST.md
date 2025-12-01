@@ -87,6 +87,14 @@ Run this to see current bundle sizes:
 npm run build
 ```
 
+### Analyze Bundle
+
+To analyze bundle composition:
+
+```bash
+npm run build:analyze
+```
+
 ### Trends Over Time
 
 To track bundle size changes:
@@ -114,7 +122,7 @@ For detailed analysis in CI/CD:
 
 ```yaml
 - name: Analyze bundle
-  run: npm run analyze
+  run: npm run build:analyze
   if: failure() # Only run if build failed
 ```
 
@@ -123,7 +131,7 @@ This helps debug bundle size issues directly from CI logs.
 ## ✅ Best Practices
 
 1. **Run locally before pushing**: `npm run build`
-2. **Check analysis for large features**: `npm run analyze`
+2. **Check analysis for large features**: `npm run build:analyze`
 3. **Monitor bundle size in PRs**: Compare before/after
 4. **Set up alerts**: Notify team when approaching limits
 5. **Document size increases**: Justify in PR descriptions

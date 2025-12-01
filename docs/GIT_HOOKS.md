@@ -41,7 +41,7 @@ You can switch between them based on your workflow. See [Pre-Push Hook](#3-pre-p
 
 **What it does:**
 
-1. ✅ TypeScript type checking (`tsc -b`)
+1. ✅ TypeScript type checking (`tsc -b --noEmit`)
 2. ✅ Lint and format staged files (`npx lint-staged`)
    - ESLint auto-fix for `.ts` and `.tsx` files
    - Prettier formatting for all files
@@ -107,7 +107,7 @@ chore: update dependencies
 
 **What it does:**
 
-1. ✅ TypeScript type checking (`tsc -b`)
+1. ✅ TypeScript type checking (`tsc -b --noEmit`)
 2. ✅ Run all unit tests (`npm run test:unit`)
 3. ⚠️ **Skips E2E tests** for speed (reminder shown to run before PR)
 
@@ -140,7 +140,7 @@ Tests  1 passed (1)
 
 **What it does:**
 
-1. ✅ TypeScript type checking (`tsc -b`)
+1. ✅ TypeScript type checking (`tsc -b --noEmit`)
 2. ✅ Full linting with auto-fix (`npm run lint:fix`)
 3. ✅ Run all unit tests (`npm run test:unit`)
 4. ✅ Run all E2E tests (`npm run test:e2e`)
@@ -448,7 +448,7 @@ mv .husky/pre-push .husky/pre-push.full && mv .husky/pre-push.light .husky/pre-p
 1. Run the commands manually to see the actual error:
 
    ```bash
-   tsc -b
+   npm run type-check
    npm run test:unit
    npm run test:e2e
    ```
