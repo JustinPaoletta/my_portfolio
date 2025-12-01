@@ -52,27 +52,13 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Install Chrome dependencies
+      - name: Verify Chrome Installation
         run: |
-          echo "=== Installing Chrome dependencies for headless mode ==="
-          sudo apt-get update
-          sudo apt-get install -y \
-            libnss3 \
-            libatk1.0-0 \
-            libatk-bridge2.0-0 \
-            libcups2 \
-            libdrm2 \
-            libxkbcommon0 \
-            libxcomposite1 \
-            libxdamage1 \
-            libxfixes3 \
-            libxrandr2 \
-            libgbm1 \
-            libasound2 \
-            libpango-1.0-0 \
-            libcairo2 \
-            fonts-liberation \
-            xdg-utils
+          echo "=== Checking pre-installed Chrome ==="
+          which google-chrome || which google-chrome-stable || which chromium-browser || echo "Chrome not found"
+          google-chrome --version || google-chrome-stable --version || chromium-browser --version || echo "Could not get Chrome version"
+          echo ""
+          echo "=== Chrome should be pre-installed on GitHub Actions runners ==="
 
       - name: Install dependencies
         # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
