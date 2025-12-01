@@ -54,7 +54,7 @@
     "@vitejs/plugin-react": "^5.1.1",
     "@vitest/coverage-v8": "^4.0.13",
     "@vitest/ui": "^4.0.5",
-    "commit-and-tag-version": "^12.6.0",
+    "commit-and-tag-version": "^12.6.1",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.1",
     "eslint-config-prettier": "^10.1.8",
