@@ -52,14 +52,6 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Verify Chrome Installation
-        run: |
-          echo "=== Checking pre-installed Chrome ==="
-          which google-chrome || which google-chrome-stable || which chromium-browser || echo "Chrome not found"
-          google-chrome --version || google-chrome-stable --version || chromium-browser --version || echo "Could not get Chrome version"
-          echo ""
-          echo "=== Chrome should be pre-installed on GitHub Actions runners ==="
-
       - name: Install dependencies
         # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
         # Use npm install which handles optional dependencies better than npm ci
@@ -68,75 +60,8 @@ jobs:
       - name: Build Application
         run: npm run build
 
-      - name: Debug - Environment and System Info
-        run: |
-          echo "=== Node.js Version ==="
-          node --version
-          echo ""
-          echo "=== npm Version ==="
-          npm --version
-          echo ""
-          echo "=== Chrome/Chromium Info ==="
-          which google-chrome || which chromium-browser || which chromium || echo "Chrome not found in PATH"
-          google-chrome --version 2>/dev/null || chromium-browser --version 2>/dev/null || chromium --version 2>/dev/null || echo "Could not get Chrome version"
-          echo ""
-          echo "=== Environment Variables (VITE_*) ==="
-          env | grep "^VITE_" | sed 's/=.*/=***/' || echo "No VITE_ vars found"
-          echo ""
-          echo "=== Lighthouse CI Config ==="
-          cat .lighthouserc.cjs
-          echo ""
-
-      - name: Debug - Verify Build Output
-        run: |
-          echo "=== Checking dist folder ==="
-          ls -la dist/
-          echo ""
-          echo "=== Checking dist/assets ==="
-          ls -la dist/assets/ || echo "No assets folder"
-          echo ""
-          echo "=== Checking index.html content ==="
-          cat dist/index.html
-          echo ""
-          echo "=== Checking for JavaScript files ==="
-          find dist -name "*.js" -type f | head -10
-          echo ""
-          echo "=== First 50 lines of main JS bundle ==="
-          MAIN_JS=$(find dist/assets -name "index-*.js" -type f | head -1)
-          if [ -n "$MAIN_JS" ]; then
-            echo "File: $MAIN_JS"
-            head -50 "$MAIN_JS"
-          else
-            echo "Main JS bundle not found"
-          fi
-
-      - name: Debug - Test Static Server
-        run: |
-          echo "=== Installing serve ==="
-          npm install -g serve
-          echo ""
-          echo "=== Starting test server ==="
-          serve -s dist -l 3333 &
-          SERVER_PID=$!
-          sleep 3
-          echo ""
-          echo "=== Testing server response ==="
-          curl -v http://localhost:3333/ 2>&1 | head -100
-          echo ""
-          echo "=== Killing test server ==="
-          kill $SERVER_PID 2>/dev/null || true
-
-      # run LHCI steps separately to ensure reports are preserved
       - name: Collect Lighthouse Reports
-        run: |
-          echo "=== Running LHCI with verbose logging ==="
-          npx @lhci/cli@latest collect --staticDistDir=./dist 2>&1 || {
-            echo ""
-            echo "=== LHCI collect failed, checking for error details ==="
-            ls -la .lighthouseci/ 2>/dev/null || echo "No .lighthouseci directory"
-            cat .lighthouseci/*.json 2>/dev/null | head -200 || echo "No JSON files to inspect"
-            exit 1
-          }
+        run: npx @lhci/cli@latest collect --staticDistDir=./dist
 
       - name: Assert Lighthouse Results
         run: npx @lhci/cli@latest assert || echo "Some assertions failed, but continuing..."
@@ -145,14 +70,6 @@ jobs:
         run: npx @lhci/cli@latest upload
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-
-      - name: Debug - List Lighthouse files
-        if: always()
-        run: |
-          echo "Contents of .lighthouseci directory:"
-          ls -la .lighthouseci/ || echo "Directory does not exist"
-          echo "Looking for JSON files:"
-          find .lighthouseci -name "*.json" -type f || echo "No JSON files found"
 
       - name: Upload Lighthouse reports
         uses: actions/upload-artifact@v4

@@ -43,12 +43,11 @@ module.exports = {
           '--force-color-profile=srgb',
           '--hide-scrollbars',
           '--mute-audio',
-          // Window size for consistent rendering
+          // for consistent rendering
           '--window-size=1350,940',
         ],
         throttlingMethod: 'simulate',
         maxWaitForLoad: 60000,
-        // Increase timeout for slower CI environments
         onlyCategories: [
           'performance',
           'accessibility',
