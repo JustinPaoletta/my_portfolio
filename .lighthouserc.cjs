@@ -11,22 +11,50 @@ module.exports = {
         // Chrome flags must be inside settings (per LHCI docs)
         // These flags are essential for running Chrome in CI environments
         chromeFlags: [
+          // Essential for CI environments (Docker, GitHub Actions, etc.)
           '--no-sandbox',
           '--disable-setuid-sandbox',
           '--disable-dev-shm-usage',
+          // Headless mode - use new headless for Chrome 112+
+          '--headless=new',
+          // Disable GPU (not available in CI)
           '--disable-gpu',
+          '--disable-software-rasterizer',
+          // Disable features that cause issues in headless
           '--disable-extensions',
-          '--disable-translate',
           '--disable-background-networking',
-          '--disable-sync',
+          '--disable-background-timer-throttling',
+          '--disable-backgrounding-occluded-windows',
+          '--disable-breakpad',
+          '--disable-component-extensions-with-background-pages',
+          '--disable-component-update',
           '--disable-default-apps',
-          '--mute-audio',
-          '--hide-scrollbars',
-          '--disable-features=TranslateUI,BlinkGenPropertyTrees',
+          '--disable-hang-monitor',
+          '--disable-ipc-flooding-protection',
+          '--disable-popup-blocking',
+          '--disable-prompt-on-repost',
+          '--disable-renderer-backgrounding',
+          '--disable-sync',
+          '--disable-translate',
+          // Memory and stability
+          '--disable-features=TranslateUI,BlinkGenPropertyTrees,IsolateOrigins,site-per-process',
+          '--enable-features=NetworkService,NetworkServiceInProcess',
+          // Rendering
           '--force-color-profile=srgb',
+          '--hide-scrollbars',
+          '--mute-audio',
+          // Window size for consistent rendering
+          '--window-size=1350,940',
         ],
         throttlingMethod: 'simulate',
-        maxWaitForLoad: 45000,
+        maxWaitForLoad: 60000,
+        // Increase timeout for slower CI environments
+        onlyCategories: [
+          'performance',
+          'accessibility',
+          'best-practices',
+          'seo',
+        ],
       },
     },
 
