@@ -1,6 +1,23 @@
 /**
  * SEO Component
  * Manages meta tags for SEO, Open Graph, and Twitter Cards
+ *
+ * IMPORTANT: This component uses react-helmet-async which injects meta tags
+ * via JavaScript at runtime. This works for:
+ * - Google (which executes JavaScript when crawling)
+ * - Browser tab titles
+ * - Dynamic page updates during client-side navigation
+ *
+ * However, social media crawlers (Facebook, Twitter/X, LinkedIn, etc.) and
+ * tools like opengraph.xyz do NOT execute JavaScript. They only read the
+ * raw HTML served by the server.
+ *
+ * For this reason, Open Graph and Twitter Card meta tags are ALSO defined
+ * statically in index.html to ensure social sharing previews work correctly.
+ *
+ * If you need to update OG/Twitter meta tags, update BOTH:
+ * 1. This component (for Google SEO and future SSR compatibility)
+ * 2. index.html (for social media crawlers)
  */
 
 import { Helmet } from 'react-helmet-async';
@@ -8,7 +25,7 @@ import { defaultSEO, getPageTitle, getFullUrl } from '@/config/seo';
 import type { SEOConfig } from '@/config/seo';
 
 interface SEOProps extends Partial<SEOConfig> {
-  // Additional props
+  // additional props
   canonical?: string;
   noindex?: boolean;
   nofollow?: boolean;
@@ -39,7 +56,7 @@ export const SEO: React.FC<SEOProps> = ({
 
   return (
     <Helmet>
-      {/* Primary Meta Tags */}
+      {/* primary meta tags */}
       <title>{pageTitle}</title>
       <meta name="title" content={pageTitle} />
       <meta name="description" content={description} />
@@ -49,10 +66,10 @@ export const SEO: React.FC<SEOProps> = ({
       {author && <meta name="author" content={author} />}
       <meta name="robots" content={robotsContent} />
 
-      {/* Canonical URL */}
+      {/* canonical URL */}
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
 
-      {/* Open Graph / Facebook */}
+      {/* open graph / facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
       <meta property="og:title" content={pageTitle} />
@@ -61,7 +78,7 @@ export const SEO: React.FC<SEOProps> = ({
       {locale && <meta property="og:locale" content={locale} />}
       <meta property="og:site_name" content={defaultSEO.title} />
 
-      {/* Twitter */}
+      {/* twitter/x */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={canonicalUrl} />
       <meta name="twitter:title" content={pageTitle} />
@@ -70,7 +87,7 @@ export const SEO: React.FC<SEOProps> = ({
       {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
       {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
 
-      {/* Additional SEO Tags */}
+      {/* additional SEO tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta name="language" content="English" />

@@ -60,17 +60,11 @@ export const defaultSEO: SEOConfig = {
   type: 'website',
 };
 
-/**
- * Generate full page title
- */
 export const getPageTitle = (pageTitle?: string): string => {
   if (!pageTitle) return defaultSEO.title;
   return `${pageTitle} | ${defaultSEO.title}`;
 };
 
-/**
- * Generate full URL from path
- */
 export const getFullUrl = (path: string = ''): string => {
   return `${defaultSEO.siteUrl}${path}`;
 };

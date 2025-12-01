@@ -119,7 +119,7 @@ Note: Performance threshold is 85% (not 90%) to account for monitoring overhead 
 1. **Large bundle size**
    - Use code splitting
    - Remove unused dependencies
-   - Check bundle analysis: `npm run analyze`
+   - Check bundle analysis: `npm run build:analyze`
 
 2. **Slow images**
    - Optimize images (use WebP, proper sizing)

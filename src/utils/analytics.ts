@@ -31,7 +31,6 @@ export async function initializeAnalytics(): Promise<void> {
     return;
   }
 
-  // Skip in CI environment
   if (isCI) {
     if (shouldLog) {
       console.log('[Analytics] Skipped - CI environment');
@@ -39,7 +38,6 @@ export async function initializeAnalytics(): Promise<void> {
     return;
   }
 
-  // Skip if analytics is disabled or no website ID is configured
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
     if (shouldLog) {
       console.log('[Analytics] Skipped - disabled or not configured');
@@ -47,7 +45,6 @@ export async function initializeAnalytics(): Promise<void> {
     return;
   }
 
-  // Skip if script is already loaded
   if (document.querySelector('[data-website-id]')) {
     if (shouldLog) {
       console.log('[Analytics] Already initialized');
@@ -61,11 +58,7 @@ export async function initializeAnalytics(): Promise<void> {
   script.defer = true;
   script.src = env.analytics.umami.src;
   script.setAttribute('data-website-id', env.analytics.umami.websiteId);
-
-  // Optional: Auto-track (enabled by default)
   script.setAttribute('data-auto-track', 'true');
-
-  // Optional: Cache the tracking script
   script.setAttribute('data-cache', 'true');
 
   document.head.appendChild(script);
@@ -84,12 +77,10 @@ export function trackEvent(
   eventName: string,
   eventData?: Record<string, unknown>
 ): void {
-  // Skip in CI environment or if analytics is disabled
   if (!analyticsEnabled || isCI) {
     return;
   }
 
-  // Check if Umami is loaded
   if (window.umami && typeof window.umami.track === 'function') {
     window.umami.track(eventName, eventData);
 
@@ -108,7 +99,10 @@ export const analytics = {
   /**
    * Track project link clicks
    */
-  trackProjectClick: (projectName: string, linkType: 'demo' | 'github') => {
+  trackProjectClick: (
+    projectName: string,
+    linkType: 'demo' | 'github'
+  ): void => {
     trackEvent('project_click', {
       project: projectName,
       link_type: linkType,
@@ -118,35 +112,37 @@ export const analytics = {
   /**
    * Track resume/CV downloads
    */
-  trackResumeDownload: () => {
+  trackResumeDownload: (): void => {
     trackEvent('resume_download');
   },
 
   /**
    * Track contact interactions
    */
-  trackContact: (method: 'email' | 'form' | 'linkedin') => {
+  trackContact: (method: 'email' | 'form' | 'linkedin'): void => {
     trackEvent('contact', { method });
   },
 
   /**
    * Track social link clicks
    */
-  trackSocialClick: (platform: 'github' | 'linkedin' | 'twitter' | 'other') => {
+  trackSocialClick: (
+    platform: 'github' | 'linkedin' | 'twitter' | 'other'
+  ): void => {
     trackEvent('social_click', { platform });
   },
 
   /**
    * Track navigation to sections
    */
-  trackNavigation: (section: string) => {
+  trackNavigation: (section: string): void => {
     trackEvent('navigation', { section });
   },
 
   /**
    * Track external link clicks
    */
-  trackExternalLink: (url: string, label?: string) => {
+  trackExternalLink: (url: string, label?: string): void => {
     trackEvent('external_link', {
       url,
       label: label || 'unknown',
@@ -156,7 +152,7 @@ export const analytics = {
   /**
    * Track search or filter interactions
    */
-  trackSearch: (query: string, category?: string) => {
+  trackSearch: (query: string, category?: string): void => {
     trackEvent('search', {
       query,
       category: category || 'general',
@@ -166,7 +162,7 @@ export const analytics = {
   /**
    * Track errors (client-side)
    */
-  trackError: (errorType: string, errorMessage?: string) => {
+  trackError: (errorType: string, errorMessage?: string): void => {
     trackEvent('error', {
       type: errorType,
       message: errorMessage,

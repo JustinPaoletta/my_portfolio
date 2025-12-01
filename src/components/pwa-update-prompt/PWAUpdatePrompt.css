@@ -4,7 +4,7 @@
   right: 20px;
   max-width: 400px;
   background: #ffffff;
-  color: #111827; /* ✅ ensure dark text on white toast */
+  color: #111827; /* ensure dark text on white toast */
   border-radius: 12px;
   box-shadow:
     0 4px 6px rgba(0, 0, 0, 0.1),
@@ -72,12 +72,12 @@
   font-size: 14px;
   margin: 0;
   line-height: 1.5;
-  color: #374151; /* ✅ light theme: gray-700 on white passes */
+  color: #374151; /* light theme: gray-700 on white passes */
 }
 @media (prefers-color-scheme: dark) {
   .pwa-toast-description {
     color: #d1d5db;
-  } /* ✅ dark theme: gray-300 on #2a2a2a passes */
+  } /* dark theme: gray-300 on #2a2a2a passes */
 }
 
 .pwa-toast-actions {
@@ -108,7 +108,7 @@
 
 /* Primary: darker shade for contrast with white text */
 .pwa-toast-button-primary {
-  background: #1d4ed8; /* ✅ blue-700: white text contrast ≥ 4.5:1 */
+  background: #1d4ed8; /* blue-700: white text contrast ≥ 4.5:1 */
   color: #ffffff;
 }
 .pwa-toast-button-primary:hover {
@@ -118,7 +118,7 @@
 /* Secondary */
 .pwa-toast-button-secondary {
   background: #e5e5e5;
-  color: #111827; /* ✅ strong contrast on light */
+  color: #111827; /* strong contrast on light */
 }
 .pwa-toast-button-secondary:hover {
   background: #d5d5d5;

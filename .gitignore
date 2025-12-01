@@ -16,9 +16,8 @@ dev-dist
 # Environment variables
 # Ignore all .env files
 .env*
-# Except example templates and CI/CD files
+# Except example templates
 !.env.example
-!.env.test
 
 # Editor directories and files
 .vscode/*

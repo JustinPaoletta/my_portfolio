@@ -2,9 +2,19 @@ import { useEffect, useState } from 'react';
 import { useRegisterSW as useRegisterSWHook } from './pwa-register-wrapper';
 
 /**
+ * Return type for usePWA hook
+ */
+export interface UsePWAReturn {
+  needRefresh: boolean;
+  offlineReady: boolean;
+  updateServiceWorker: (reloadPage?: boolean) => Promise<void>;
+  closePrompt: () => void;
+}
+
+/**
  * Hook for managing PWA updates and installation
  */
-export function usePWA() {
+export function usePWA(): UsePWAReturn {
   const [needRefresh, setNeedRefresh] = useState(false);
   const [offlineReady, setOfflineReady] = useState(false);
 
@@ -38,7 +48,7 @@ export function usePWA() {
     setOfflineReady(offlineReadyState);
   }, [offlineReadyState]);
 
-  const closePrompt = () => {
+  const closePrompt = (): void => {
     setOfflineReadyState(false);
     setNeedRefreshState(false);
   };

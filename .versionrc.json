@@ -2,39 +2,39 @@
   "types": [
     {
       "type": "feat",
-      "section": "✨ Features"
+      "section": "Added"
     },
     {
       "type": "fix",
-      "section": "🐛 Bug Fixes"
+      "section": "Fixed"
     },
     {
       "type": "perf",
-      "section": "⚡ Performance Improvements"
+      "section": "Changed"
     },
     {
       "type": "refactor",
-      "section": "♻️ Code Refactoring"
+      "section": "Changed"
     },
     {
       "type": "docs",
-      "section": "📚 Documentation"
+      "section": "Changed"
     },
     {
       "type": "style",
-      "section": "🎨 Styling"
+      "hidden": true
     },
     {
       "type": "test",
-      "section": "✅ Tests"
+      "hidden": true
     },
     {
       "type": "build",
-      "section": "🔧 Build System"
+      "section": "Changed"
     },
     {
       "type": "ci",
-      "section": "👷 CI/CD"
+      "section": "Changed"
     },
     {
       "type": "chore",
