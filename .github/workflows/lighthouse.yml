@@ -66,15 +66,6 @@ jobs:
       - name: Assert Lighthouse Results
         run: npx @lhci/cli@latest assert || echo "Some assertions failed, but continuing..."
 
-      - name: Upload Lighthouse reports
-        uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: lighthouse-reports
-          path: .lighthouseci/
-          retention-days: 30
-          if-no-files-found: warn
-
       - name: Upload to LHCI Temporary Storage
         run: npx @lhci/cli@latest upload
         env:
