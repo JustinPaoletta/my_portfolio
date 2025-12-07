@@ -1,5 +1,7 @@
 # light version of pre-push hook - skips e2e tests
 
+. "$(dirname -- "$0")/common.sh"
+
 echo "Running TypeScript type checking..."
 tsc -b || {
   echo "❌ TypeScript compilation failed. Fix type errors before pushing."

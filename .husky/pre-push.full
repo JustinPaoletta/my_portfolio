@@ -4,6 +4,8 @@
 # OR
 # mv .husky/pre-push .husky/pre-push.full && mv .husky/pre-push.light .husky/pre-push
 
+. "$(dirname -- "$0")/common.sh"
+
 echo "Running TypeScript type checking..."
 tsc -b || {
   echo "❌ TypeScript compilation failed. Fix type errors before pushing."
