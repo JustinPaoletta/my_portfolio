@@ -32,7 +32,7 @@
     "type-check:watch": "tsc -b --noEmit --watch"
   },
   "dependencies": {
-    "@newrelic/browser-agent": "^1.304.0",
+    "@newrelic/browser-agent": "^1.305.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-helmet-async": "^2.0.5",
