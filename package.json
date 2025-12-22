@@ -52,7 +52,7 @@
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
-    "@vitest/coverage-v8": "^4.0.15",
+    "@vitest/coverage-v8": "^4.0.16",
     "@vitest/ui": "^4.0.5",
     "commit-and-tag-version": "^12.6.1",
     "dotenv": "^17.2.3",
