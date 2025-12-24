@@ -43,3 +43,6 @@ dev-dist
 
 # Bundle analysis
 stats.html
+
+# Local npm cache
+.npm-cache/
