@@ -9,7 +9,6 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   timeout: 30_000,
-  navigationTimeout: 30_000,
   reporter: [
     ['html'],
     ['json', { outputFile: 'test-results/results.json' }],
@@ -17,6 +16,7 @@ export default defineConfig({
   ],
   use: {
     baseURL,
+    navigationTimeout: 30_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',

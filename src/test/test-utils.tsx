@@ -3,7 +3,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import type { ReactElement } from 'react';
 
 /**
- * Custom render function that wraps components with necessary providers
+ * custom render function that wraps components with necessary providers
  */
 function customRender(ui: ReactElement, options?: RenderOptions) {
   return render(ui, {
@@ -12,9 +12,9 @@ function customRender(ui: ReactElement, options?: RenderOptions) {
   });
 }
 
-// Re-export everything from @testing-library/react
+// re-export everything from @testing-library/react
 // eslint-disable-next-line react-refresh/only-export-components
 export * from '@testing-library/react';
 
-// Override render with custom render
+// override render with custom render
 export { customRender as render };

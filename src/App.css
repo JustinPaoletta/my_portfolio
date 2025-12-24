@@ -5,7 +5,7 @@
   text-align: center;
 }
 
-/* skip link for keyboard users - visually hidden until focused */
+/* visually hidden until keyboard focused */
 .skip-link {
   position: absolute;
   top: -9999px;

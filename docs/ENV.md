@@ -5,11 +5,9 @@ This project uses environment variables for configuration with **runtime validat
 ## 📁 Files
 
 - **`.env.example`** - Template file with all available variables (✅ committed to git)
-- **`.env.test`** - Test configuration for CI/CD with safe placeholder values (✅ committed to git)
 - **`.env`** - Your local development environment variables (gitignored)
-- **`.env.production`** - Local copy of production variables set in Vercel (gitignored, optional)
 
-**Note:** All `.env*` files are gitignored **except** `.env.example` and `.env.test` which are committed to provide templates and enable CI/CD testing. The `.env.production` file is a convenience for keeping a local reference of your Vercel production environment variables.
+**Note:** All `.env*` files are gitignored **except** `.env.example` which is committed to provide a template.
 
 ## 🚀 Getting Started
 
@@ -278,70 +276,64 @@ console.log(env.social.email); // Guaranteed to be valid email format
 | Strings  | Length constraints (min/max characters)                      |
 | Regex    | Format validation (URLs, emails, license keys)               |
 
-## 🌍 Environment-specific Files
+## 🌍 Environment Files
 
-Vite loads environment variables in the following order (later values override earlier ones):
+This project uses a simple approach with just two environment files:
 
-1. `.env` - Loaded in all cases
-2. `.env.local` - Loaded in all cases (gitignored)
-3. `.env.[mode]` - Only loaded in specified mode (e.g., `.env.production`)
-4. `.env.[mode].local` - Only loaded in specified mode (gitignored)
+- **`.env`** - Your local development and test environment variables (gitignored)
+- **`.env.example`** - Template file showing all available variables (committed to git)
 
-## 🧪 Running Tests with Different Environment Files
+For production, environment variables are set directly in your hosting platform (Vercel, etc.) rather than using a separate file.
 
-Tests can be run with different environment configurations by specifying the `--mode` flag. The test runner will load variables from the corresponding `.env.[mode]` file.
+### GitHub Actions & CI/CD
 
-### Default Test Mode
+For GitHub Actions workflows (Lighthouse CI, Bundle Size Check, etc.), environment variables are set as **GitHub Secrets**:
+
+1. Go to your repository **Settings** → **Secrets and variables** → **Actions**
+2. Click **New repository secret**
+3. Add each required variable (see list below)
+
+**Required Secrets for CI/CD:**
+
+- `VITE_APP_TITLE` - Your app title
+- `VITE_APP_DESCRIPTION` - Your app description
+- `VITE_API_URL` - API URL
+- `VITE_GITHUB_URL` - Your GitHub profile URL
+- `VITE_LINKEDIN_URL` - Your LinkedIn profile URL
+- `VITE_EMAIL` - Your email address
+
+**Optional Secrets for CI/CD:**
+
+- `VITE_UMAMI_WEBSITE_ID` - Umami analytics ID
+- `VITE_NEWRELIC_LICENSE_KEY` - New Relic license key
+- `VITE_NEWRELIC_ACCOUNT_ID` - New Relic account ID
+- `VITE_NEWRELIC_TRUST_KEY` - New Relic trust key
+- `VITE_NEWRELIC_AGENT_ID` - New Relic agent ID
+- `VITE_NEWRELIC_APPLICATION_ID` - New Relic application ID
+- `VITE_GOOGLE_ANALYTICS_ID` - Google Analytics ID
+- `VITE_MAPBOX_TOKEN` - Mapbox token
+
+**Note:** Workflows will use fallback values for required variables if secrets are not set, but it's recommended to set actual values for accurate testing and reporting.
+
+## 🧪 Running Tests
+
+Tests use the same `.env` file as development:
 
 ```bash
-# Uses .env.test (default)
+# Run tests (uses .env)
 npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run specific test file
+npm test src/App.test.tsx
+
+# Run tests with coverage
+npm test -- --coverage
 ```
 
-### Production Mode Tests
-
-```bash
-# Uses .env.production
-npm test -- --mode production
-```
-
-### Development Mode Tests
-
-```bash
-# Uses .env.development (or .env if .env.development doesn't exist)
-npm test -- --mode development
-```
-
-### Custom Mode Tests
-
-```bash
-# Uses .env.custom (must exist)
-npm test -- --mode custom
-```
-
-**How it works:**
-
-- Vitest loads environment variables using Vite's `loadEnv()` function
-- The mode determines which `.env.[mode]` file is loaded
-- Variables are merged: `.env` is loaded first, then `.env.[mode]` overrides any conflicts
-- Only `VITE_` prefixed variables are exposed to your tests
-- All variables are validated according to the schema in `src/config/env.ts`
-
-**Examples:**
-
-```bash
-# Run all tests with production environment variables
-npm test -- --mode production
-
-# Run tests in watch mode with production variables
-npm test -- --mode production --watch
-
-# Run specific test file with production variables
-npm test -- --mode production src/App.test.tsx
-
-# Run tests with coverage using production variables
-npm test -- --mode production --coverage
-```
+All environment variables from `.env` are loaded and validated when running tests.
 
 ## 📦 Build-time vs Runtime
 
@@ -353,12 +345,12 @@ npm test -- --mode production --coverage
 
 ## 🔒 Security
 
-- ❌ **Never commit** `.env` or `.env.production` (contain your actual values, gitignored)
+- ❌ **Never commit** `.env` (contains your actual values, gitignored)
 - ✅ `.env.example` - Template with placeholders (✅ committed, safe to share)
-- ✅ `.env.test` - Test values with safe placeholders (✅ committed, safe to share)
 - ❌ **Never store secrets** like API keys in client-side env vars
 - ✅ **Use a backend** to proxy requests that require secrets
 - ✅ **Set production variables** directly in hosting platform (Vercel, etc.)
+- ✅ **Set GitHub Secrets** for CI/CD workflows (see GitHub Actions section above)
 
 ## 🐛 Troubleshooting
 

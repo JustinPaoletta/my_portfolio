@@ -1,7 +1,7 @@
 import '@/App.css';
 import { env } from '@/config/env';
 import SEO from '@/components/SEO';
-import PWAUpdatePrompt from '@/components/PWAUpdatePrompt';
+import PWAUpdatePrompt from '@/components/pwa-update-prompt';
 
 export default function App() {
   return (
@@ -14,7 +14,7 @@ export default function App() {
         Skip to main content
       </a>
 
-      <header role="banner">{/* nav bar */}</header>
+      <header role="banner">{/* nav bar - todo */}</header>
 
       <main id="main" role="main">
         <h1>{env.app.title}</h1>
@@ -31,7 +31,7 @@ export default function App() {
         </div>
       </main>
 
-      <footer role="contentinfo">{/* footer content */}</footer>
+      <footer role="contentinfo">{/* footer - todo */}</footer>
     </>
   );
 }

@@ -29,14 +29,12 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     scope: '/',
     start_url: '/',
     icons: [
-      // SVG icon for modern browsers (scalable, best quality)
       {
         src: '/favicon.svg',
         sizes: 'any',
         type: 'image/svg+xml',
         purpose: 'any',
       },
-      // Standard PWA icons (PNG for broader compatibility)
       {
         src: '/pwa-192x192.png',
         sizes: '192x192',
@@ -49,7 +47,6 @@ export const pwaConfig: Partial<VitePWAOptions> = {
         type: 'image/png',
         purpose: 'any',
       },
-      // Maskable icons for Android adaptive icons
       {
         src: '/pwa-192x192.png',
         sizes: '192x192',
@@ -62,7 +59,6 @@ export const pwaConfig: Partial<VitePWAOptions> = {
         type: 'image/png',
         purpose: 'maskable',
       },
-      // Windows/Microsoft tile sizes (using existing icons)
       {
         src: '/pwa-192x192.png',
         sizes: '144x144',
@@ -97,11 +93,8 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   workbox: {
     // Cache configuration
     globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
-
-    // Runtime caching strategies
     runtimeCaching: [
       {
-        // Cache images with a cache-first strategy
         urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
         handler: 'CacheFirst',
         options: {

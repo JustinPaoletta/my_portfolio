@@ -41,8 +41,12 @@ if (isCI) {
       useRegisterSW: UseRegisterSW;
     };
     useRegisterSW = pwaModule.useRegisterSW;
-  } catch {
+  } catch (error: unknown) {
     // Virtual module doesn't exist (fallback to stub)
+    // Error is intentionally ignored as we fall back to stub
+    if (import.meta.env.DEV && error instanceof Error) {
+      console.warn('[PWA] Failed to load virtual module:', error.message);
+    }
     useRegisterSW = useRegisterSWStub;
   }
 }

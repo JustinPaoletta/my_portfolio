@@ -12,10 +12,10 @@ Edit `vite.config.ts`:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 5, // Lowered from 200 to 5 KB
-  vendorChunk: 500,
-  totalSize: 800,
-  cssFile: 50,
+  appChunk: 5, // Lowered from 150 to 5 KB
+  vendorChunk: 400,
+  totalSize: 650,
+  cssFile: 40,
 };
 ```
 
@@ -49,10 +49,10 @@ Revert `vite.config.ts` to original values:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 200,
-  vendorChunk: 500,
-  totalSize: 800,
-  cssFile: 50,
+  appChunk: 150,
+  vendorChunk: 400,
+  totalSize: 650,
+  cssFile: 40,
 };
 ```
 
@@ -87,6 +87,14 @@ Run this to see current bundle sizes:
 npm run build
 ```
 
+### Analyze Bundle
+
+To analyze bundle composition:
+
+```bash
+npm run build:analyze
+```
+
 ### Trends Over Time
 
 To track bundle size changes:
@@ -102,7 +110,7 @@ To track bundle size changes:
   run: npm run build
 
 - name: Upload bundle stats
-  uses: actions/upload-artifact@v3
+  uses: actions/upload-artifact@v5
   with:
     name: bundle-stats
     path: dist/
@@ -114,7 +122,7 @@ For detailed analysis in CI/CD:
 
 ```yaml
 - name: Analyze bundle
-  run: npm run analyze
+  run: npm run build:analyze
   if: failure() # Only run if build failed
 ```
 
@@ -123,7 +131,7 @@ This helps debug bundle size issues directly from CI logs.
 ## ✅ Best Practices
 
 1. **Run locally before pushing**: `npm run build`
-2. **Check analysis for large features**: `npm run analyze`
+2. **Check analysis for large features**: `npm run build:analyze`
 3. **Monitor bundle size in PRs**: Compare before/after
 4. **Set up alerts**: Notify team when approaching limits
 5. **Document size increases**: Justify in PR descriptions

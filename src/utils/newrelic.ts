@@ -28,7 +28,6 @@ export function initializeNewRelic(): void {
     return;
   }
 
-  // Skip if monitoring is disabled or not configured
   if (
     !env.features.errorMonitoring ||
     !env.monitoring.newrelic.accountId ||
@@ -43,7 +42,6 @@ export function initializeNewRelic(): void {
     return;
   }
 
-  // Skip if already initialized
   if (isInitialized) {
     if (shouldLog) {
       console.log('[New Relic] Already initialized');
@@ -52,7 +50,6 @@ export function initializeNewRelic(): void {
   }
 
   try {
-    // Initialize the New Relic Browser Agent
     agent = new BrowserAgent({
       init: {
         distributed_tracing: { enabled: true },
@@ -81,14 +78,12 @@ export function initializeNewRelic(): void {
       console.log('[New Relic] Successfully initialized');
     }
 
-    // Set global attributes
     setGlobalAttributes({
       environment: env.app.mode,
       appVersion: env.app.version,
       isDevelopment: env.app.isDevelopment,
     });
-  } catch (error) {
-    // Only log errors in development mode to avoid console errors in Lighthouse
+  } catch (error: unknown) {
     if (error instanceof Error && shouldLog) {
       console.error('[New Relic] Initialization failed:', error.message);
     }
@@ -104,7 +99,6 @@ export function reportError(
   error: Error | string,
   customAttributes?: NewRelicCustomAttributes
 ): void {
-  // Skip if not initialized or monitoring is disabled
   if (!monitoringEnabled || !isInitialized || !env.features.errorMonitoring) {
     if (shouldLog) {
       console.log('[New Relic] Error not reported - not initialized:', error);
@@ -113,7 +107,6 @@ export function reportError(
   }
 
   try {
-    // Use the noticeError API - it accepts Error or string
     if (agent && typeof agent.noticeError === 'function') {
       agent.noticeError(error, customAttributes);
 
@@ -121,10 +114,9 @@ export function reportError(
         console.log('[New Relic] Error reported:', error, customAttributes);
       }
     }
-  } catch (reportError) {
-    // Only log errors in development mode to avoid console errors in Lighthouse
-    if (reportError instanceof Error && shouldLog) {
-      console.error('[New Relic] Failed to report error:', reportError.message);
+  } catch (reportErr: unknown) {
+    if (reportErr instanceof Error && shouldLog) {
+      console.error('[New Relic] Failed to report error:', reportErr.message);
     }
   }
 }
@@ -152,7 +144,7 @@ export function setGlobalAttributes(
         console.log('[New Relic] Global attributes set:', attributes);
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error(
         '[New Relic] Failed to set global attributes:',
@@ -203,7 +195,7 @@ export function trackPageAction(
         console.log('[New Relic] Page action tracked:', name, attributes);
       }
     }
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('[New Relic] Failed to track page action:', error.message);
     }
@@ -227,7 +219,7 @@ export function addTiming(name: string, startTime: number): void {
     if (env.app.isDevelopment) {
       console.log(`[New Relic] Custom timing "${name}": ${duration}ms`);
     }
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.error('[New Relic] Failed to add timing:', error.message);
     }
@@ -253,7 +245,7 @@ export function withErrorReporting<T extends unknown[], R>(
   return async (...args: T): Promise<R> => {
     try {
       return await fn(...args);
-    } catch (error) {
+    } catch (error: unknown) {
       if (error instanceof Error) {
         reportError(error, {
           context: errorContext || fn.name || 'unknown',

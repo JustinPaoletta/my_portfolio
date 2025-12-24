@@ -422,7 +422,7 @@ Create `vercel.json`:
 
 **Solutions:**
 
-1. Check bundle size: `npm run analyze`
+1. Check bundle size: `npm run build:analyze`
 2. Remove unused dependencies
 3. Optimize images before committing
 4. Use dynamic imports for large components

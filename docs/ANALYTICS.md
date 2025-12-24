@@ -31,10 +31,15 @@ Analytics is automatically initialized when the app starts:
 
 ```typescript
 // src/main.tsx
-import { initializeAnalytics } from '@/utils/analytics';
-
-// Initialized before React renders
-initializeAnalytics();
+if (__ENABLE_ANALYTICS__) {
+  void import('@/utils/analytics')
+    .then(({ initializeAnalytics }) => initializeAnalytics())
+    .catch((error) => {
+      if (import.meta.env.DEV) {
+        console.error('[Analytics] Failed to initialize', error);
+      }
+    });
+}
 ```
 
 The initialization:
@@ -43,7 +48,7 @@ The initialization:
 - ✅ Verifies website ID is configured
 - ✅ Injects Umami script dynamically
 - ✅ Compatible with strict CSP (external script from whitelisted domain)
-- ✅ Honors Do Not Track settings
+- ✅ Loads asynchronously to avoid blocking page load
 
 ## 📈 What's Being Tracked
 
@@ -173,7 +178,6 @@ The `useAnalytics()` hook provides:
 ✅ **GDPR Compliant** - Follows EU privacy regulations
 ✅ **No Cross-Site Tracking** - Only tracks on your domain
 ✅ **Anonymous** - All data is anonymized
-✅ **Do Not Track** - Honors browser DNT settings (enabled by default)
 
 ### Compliance Checklist
 
@@ -190,8 +194,8 @@ The `useAnalytics()` hook provides:
 The Umami script in `src/utils/analytics.ts` supports additional options:
 
 ```typescript
-// Honor Do Not Track (enabled by default)
-script.setAttribute('data-do-not-track', 'true');
+// Auto-track page views (enabled by default)
+script.setAttribute('data-auto-track', 'true');
 
 // Cache the tracking script (enabled by default)
 script.setAttribute('data-cache', 'true');
@@ -299,7 +303,7 @@ Avoid tracking:
 
 - Umami script is only ~2KB
 - Loads asynchronously (doesn't block page load)
-- Check bundle size with: `npm run analyze`
+- Check bundle size with: `npm run build:analyze`
 
 ### 5. Regular Review
 
