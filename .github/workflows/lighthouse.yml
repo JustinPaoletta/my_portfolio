@@ -82,7 +82,7 @@ jobs:
 
             // Try to read the lighthouse results
             const lhciPath = path.join(process.cwd(), '.lighthouseci');
-            let comment = '##Lighthouse Results\n\n';
+            let comment = '## Lighthouse Results\n\n';
             let reportFound = false;
 
             if (fs.existsSync(lhciPath)) {
