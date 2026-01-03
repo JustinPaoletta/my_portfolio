@@ -3,9 +3,37 @@ import { loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
+// Default test environment values for CI/CD where .env files don't exist
+const testEnvDefaults: Record<string, string> = {
+  VITE_APP_TITLE: 'Test App',
+  VITE_APP_DESCRIPTION: 'Test description for unit tests',
+  VITE_API_URL: 'https://api.test.example.com',
+  VITE_API_TIMEOUT: '5000',
+  VITE_ENABLE_ANALYTICS: 'false',
+  VITE_ENABLE_DEBUG: 'false',
+  VITE_ENABLE_ERROR_MONITORING: 'false',
+  VITE_UMAMI_WEBSITE_ID: '',
+  VITE_UMAMI_SRC: 'https://cloud.umami.is/script.js',
+  VITE_NEWRELIC_ACCOUNT_ID: '',
+  VITE_NEWRELIC_TRUST_KEY: '',
+  VITE_NEWRELIC_AGENT_ID: '',
+  VITE_NEWRELIC_LICENSE_KEY: '',
+  VITE_NEWRELIC_APPLICATION_ID: '',
+  VITE_NEWRELIC_AJAX_DENY_LIST: '',
+  VITE_APP_VERSION: '1.0.0',
+  VITE_GITHUB_URL: 'https://github.com/test',
+  VITE_LINKEDIN_URL: 'https://linkedin.com/in/test',
+  VITE_EMAIL: 'test@example.com',
+  VITE_SITE_URL: 'https://test.example.com',
+  VITE_MAPBOX_TOKEN: '',
+};
+
 export default defineConfig(({ mode }) => {
   const testMode = mode || 'test';
-  const env = loadEnv(testMode, process.cwd(), '');
+  const loadedEnv = loadEnv(testMode, process.cwd(), '');
+
+  // Merge loaded env with defaults (loaded env takes precedence)
+  const env = { ...testEnvDefaults, ...loadedEnv };
 
   return {
     plugins: [react()],
@@ -41,11 +69,7 @@ export default defineConfig(({ mode }) => {
       testTimeout: 10_000,
       hookTimeout: 30_000,
       pool: 'forks',
-      poolOptions: {
-        forks: {
-          singleFork: true,
-        },
-      },
+      isolate: false,
       exclude: ['node_modules', 'dist', 'e2e', '**/*.e2e.spec.ts'],
       coverage: {
         provider: 'v8',
