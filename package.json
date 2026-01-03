@@ -56,7 +56,6 @@
     "@vitest/ui": "^4.0.5",
     "commit-and-tag-version": "^12.6.1",
     "dotenv": "^17.2.3",
-    "esbuild": "^0.27.2",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jsx-a11y": "^6.10.2",
@@ -79,6 +78,7 @@
   },
   "overrides": {
     "chrome-launcher": "^1.2.1",
+    "esbuild": "~0.27.0",
     "magic-string": "^0.30.0",
     "react-helmet-async": {
       "react": "^19.1.1"
