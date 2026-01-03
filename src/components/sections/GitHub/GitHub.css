@@ -1,0 +1,302 @@
+/* GitHub Section Styles */
+
+.github-section {
+  padding: 6rem 2rem;
+  position: relative;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(57, 211, 83, 0.02) 50%,
+    transparent 100%
+  );
+}
+
+/* GitHub Error */
+.github-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.3);
+  border-radius: 12px;
+  color: #ff6b6b;
+  margin-bottom: 2rem;
+}
+
+.github-error svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Stats Bar */
+.github-stats-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s ease 0.1s,
+    transform 0.6s ease 0.1s;
+}
+
+.github-section.visible .github-stats-bar {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.github-profile-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+.github-profile-link:hover {
+  opacity: 0.8;
+}
+
+.github-profile-link:focus-visible {
+  outline: 2px solid #7877c6;
+  outline-offset: 4px;
+  border-radius: 8px;
+}
+
+.github-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.github-profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.github-name {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.github-username {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.5);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.github-stats {
+  display: flex;
+  gap: 2rem;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.stat-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.stat-item.highlight .stat-value {
+  background: linear-gradient(135deg, #39d353 0%, #26a641 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Loading State */
+.github-loading {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.loading-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.02) 25%,
+    rgba(255, 255, 255, 0.05) 50%,
+    rgba(255, 255, 255, 0.02) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: 16px;
+}
+
+.contribution-skeleton {
+  height: 180px;
+}
+
+.repos-skeleton {
+  height: 200px;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* GitHub CTA */
+.github-cta {
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s ease 0.5s,
+    transform 0.6s ease 0.5s;
+}
+
+.github-section.visible .github-cta {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.github-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 50px;
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.github-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.github-button:focus-visible {
+  outline: 2px solid #7877c6;
+  outline-offset: 2px;
+}
+
+.github-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.github-button .arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.github-button:hover .arrow-icon {
+  transform: translateX(4px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .github-section {
+    padding: 4rem 1.5rem;
+  }
+
+  .github-stats-bar {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .github-stats {
+    justify-content: center;
+    gap: 1.5rem;
+  }
+
+  .stat-value {
+    font-size: 1.25rem;
+  }
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  .github-section {
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(57, 211, 83, 0.015) 50%,
+      transparent 100%
+    );
+  }
+
+  .github-error {
+    background: rgba(255, 107, 107, 0.08);
+    border-color: rgba(255, 107, 107, 0.2);
+  }
+
+  .github-stats-bar {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.08);
+  }
+
+  .github-avatar {
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+
+  .github-name {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .github-username {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .stat-value {
+    color: rgba(0, 0, 0, 0.9);
+  }
+
+  .stat-label {
+    color: rgba(0, 0, 0, 0.5);
+  }
+
+  .loading-skeleton {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.02) 25%,
+      rgba(0, 0, 0, 0.04) 50%,
+      rgba(0, 0, 0, 0.02) 75%
+    );
+    background-size: 200% 100%;
+  }
+
+  .github-button {
+    background: rgba(0, 0, 0, 0.02);
+    border-color: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+  }
+
+  .github-button:hover {
+    background: rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.2);
+  }
+}

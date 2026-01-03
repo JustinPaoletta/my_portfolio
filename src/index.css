@@ -1,12 +1,17 @@
+/**
+ * Global Base Styles
+ * Core styling, theming, and accessibility
+ */
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
+  font-family: 'Space Grotesk', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
   font-weight: 400;
 
   /* Dark theme defaults */
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.95); /* ~#F2F2F2 on #242424 (≫ 4.5:1) */
-  background-color: #242424;
+  background-color: #121218;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,25 +22,52 @@
 /* Links on dark: use a lighter blue and underline for non-color cue */
 a {
   font-weight: 500;
-  color: #93c5fd; /* blue-300 on #242424 ≈ ≥4.5:1 */
-  text-decoration: underline; /* ensures distinguishability within text blocks */
+  color: #93c5fd; /* blue-300 on dark background ≈ ≥4.5:1 */
+  text-decoration: none;
   text-underline-offset: 2px;
+  transition: color 0.3s ease;
 }
+
 a:hover {
   color: #bfdbfe; /* blue-200 (still ≥4.5:1 on dark) */
 }
 
+/* Reset and base */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  margin: 0;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
 }
 
 button {
@@ -46,13 +78,15 @@ button {
   font-weight: 500;
   font-family: inherit;
   background-color: #1a1a1a;
-  color: #ffffff; /*  on #1a1a1a ≫ 4.5:1 */
+  color: #ffffff; /* on #1a1a1a ≫ 4.5:1 */
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.25s ease;
 }
+
 button:hover {
-  border-color: #8ab4ff; /* lighter border on dark for better visibility */
+  border-color: #8ab4ff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
@@ -62,18 +96,34 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #111827; /* gray-900 on white (≫ 4.5:1) */
-    background-color: #ffffff;
+    background-color: #fafafa;
   }
+
   /* Links on light: darker blue to pass 4.5:1 on white */
   a {
     color: #1d4ed8; /* blue-700 on white ≥ 4.5:1 */
   }
+
   a:hover {
     color: #1e40af; /* blue-800 */
   }
+
   button {
     background-color: #f9f9f9;
     color: #111827; /* ≫ 4.5:1 */
-    border-color: #cbd5e1; /* subtle but visible on light */
+    border-color: #cbd5e1;
   }
+}
+
+/* Utility classes */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
