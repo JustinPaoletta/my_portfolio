@@ -86,7 +86,7 @@ function ContributionGraph({
           </div>
 
           {/* Contribution grid */}
-          <div className="contribution-grid" role="img">
+          <div className="contribution-grid">
             {contributions.weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="contribution-week">
                 {week.contributionDays.map((day, dayIndex) => (

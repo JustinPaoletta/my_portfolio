@@ -25,7 +25,7 @@ function Footer(): React.ReactElement {
 
           <nav className="footer-nav" aria-label="Footer navigation">
             <div className="footer-links-group">
-              <h4 className="footer-links-title">Navigation</h4>
+              <p className="footer-links-title">Navigation</p>
               <ul className="footer-links">
                 <li>
                   <a href="#about">About</a>
@@ -43,7 +43,7 @@ function Footer(): React.ReactElement {
             </div>
 
             <div className="footer-links-group">
-              <h4 className="footer-links-title">Connect</h4>
+              <p className="footer-links-title">Connect</p>
               <ul className="footer-links">
                 <li>
                   <a
@@ -77,10 +77,11 @@ function Footer(): React.ReactElement {
           </p>
           <p className="built-with">
             Built with{' '}
-            <span className="heart" aria-label="love">
+            <span className="heart" aria-hidden="true">
               ❤️
-            </span>{' '}
-            using React + TypeScript
+            </span>
+            <span className="visually-hidden">love</span> using React +
+            TypeScript
           </p>
         </div>
       </div>

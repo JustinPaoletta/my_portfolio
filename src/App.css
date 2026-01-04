@@ -23,7 +23,7 @@
   /* Theme-aware colors */
   --text-primary: rgba(255, 255, 255, 0.95);
   --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-muted: rgba(255, 255, 255, 0.7);
   --bg-card: rgba(255, 255, 255, 0.02);
   --bg-card-hover: rgba(255, 255, 255, 0.05);
   --border-subtle: rgba(255, 255, 255, 0.08);
@@ -36,7 +36,7 @@
     --color-primary-dark: #5a59a8;
     --text-primary: rgba(0, 0, 0, 0.9);
     --text-secondary: rgba(0, 0, 0, 0.7);
-    --text-muted: rgba(0, 0, 0, 0.5);
+    --text-muted: rgba(0, 0, 0, 0.7);
     --bg-card: rgba(0, 0, 0, 0.02);
     --bg-card-hover: rgba(0, 0, 0, 0.04);
     --border-subtle: rgba(0, 0, 0, 0.08);

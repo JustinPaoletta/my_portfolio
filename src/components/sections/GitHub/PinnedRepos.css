@@ -77,7 +77,7 @@
 .repo-icon {
   width: 18px;
   height: 18px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   flex-shrink: 0;
 }
 
@@ -130,7 +130,7 @@
   align-items: center;
   gap: 0.25rem;
   font-size: 0.8rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .repo-stat svg {

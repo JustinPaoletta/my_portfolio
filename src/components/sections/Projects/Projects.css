@@ -226,7 +226,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
   transition: color 0.3s ease;
   border-radius: 6px;
 }
@@ -275,13 +275,13 @@
 .tech-tag-small {
   font-family: 'JetBrains Mono', monospace;
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .tech-tag-small:not(:last-child)::after {
   content: '·';
   margin-left: 0.5rem;
-  color: rgba(255, 255, 255, 0.3);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Responsive */

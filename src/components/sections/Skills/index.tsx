@@ -106,7 +106,7 @@ function Skills(): React.ReactElement {
                       } as React.CSSProperties
                     }
                   >
-                    <span className="skill-icon" aria-hidden="true" role="img">
+                    <span className="skill-icon" aria-hidden="true">
                       {skill.icon}
                     </span>
                     <span className="skill-name">{skill.name}</span>
