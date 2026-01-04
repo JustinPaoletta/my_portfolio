@@ -248,55 +248,40 @@
       transparent 100%
     );
   }
-
   .github-error {
     background: rgba(255, 107, 107, 0.08);
     border-color: rgba(255, 107, 107, 0.2);
   }
-
-  .github-stats-bar {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
+  .github-stats-bar,
+  .github-button {
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
   }
-
   .github-avatar {
-    border-color: rgba(0, 0, 0, 0.1);
+    border-color: var(--border-subtle);
   }
-
-  .github-name {
-    color: rgba(0, 0, 0, 0.9);
-  }
-
-  .github-username {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
+  .github-name,
   .stat-value {
-    color: rgba(0, 0, 0, 0.9);
+    color: var(--text-primary);
   }
-
+  .github-username,
   .stat-label {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--text-muted);
   }
-
   .loading-skeleton {
     background: linear-gradient(
       90deg,
-      rgba(0, 0, 0, 0.02) 25%,
-      rgba(0, 0, 0, 0.04) 50%,
-      rgba(0, 0, 0, 0.02) 75%
+      var(--bg-card) 25%,
+      var(--bg-card-hover) 50%,
+      var(--bg-card) 75%
     );
     background-size: 200% 100%;
   }
-
   .github-button {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.8);
+    color: var(--text-secondary);
   }
-
   .github-button:hover {
-    background: rgba(0, 0, 0, 0.05);
+    background: var(--bg-card-hover);
     border-color: rgba(0, 0, 0, 0.2);
   }
 }

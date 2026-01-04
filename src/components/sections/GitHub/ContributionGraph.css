@@ -174,43 +174,31 @@
 /* Light mode */
 @media (prefers-color-scheme: light) {
   .contribution-graph {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
   }
-
-  .graph-title {
-    color: rgba(0, 0, 0, 0.7);
-  }
-
+  .graph-title,
   .day-label,
-  .month-label {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
+  .month-label,
   .legend-label {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--text-muted);
   }
-
   .contribution-day.level-0,
   .legend-level.level-0 {
     background: rgba(0, 0, 0, 0.06);
   }
-
   .contribution-day.level-1,
   .legend-level.level-1 {
     background: #9be9a8;
   }
-
   .contribution-day.level-2,
   .legend-level.level-2 {
     background: #40c463;
   }
-
   .contribution-day.level-3,
   .legend-level.level-3 {
     background: #30a14e;
   }
-
   .contribution-day.level-4,
   .legend-level.level-4 {
     background: #216e39;

@@ -11,23 +11,6 @@
   );
 }
 
-.section-subtitle {
-  font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.6);
-  max-width: 500px;
-  margin: 1rem auto 0;
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.6s ease 0.2s,
-    transform 0.6s ease 0.2s;
-}
-
-.projects-section.visible .section-subtitle {
-  opacity: 1;
-  transform: translateY(0);
-}
-
 /* Featured Projects */
 .featured-projects {
   display: grid;
@@ -345,50 +328,34 @@
       transparent 100%
     );
   }
-
-  .section-subtitle {
-    color: rgba(0, 0, 0, 0.6);
-  }
-
   .project-image-wrapper {
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   }
-
-  .project-description {
-    color: rgba(0, 0, 0, 0.65);
+  .project-description,
+  .card-description {
+    color: var(--text-muted);
   }
-
   .tech-tag {
     background: rgba(120, 119, 198, 0.1);
     border-color: rgba(120, 119, 198, 0.2);
-    color: #5a59a8;
+    color: var(--color-primary-dark);
   }
-
   .project-card {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
   }
-
   .project-card:hover {
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--bg-card-hover);
   }
-
   .card-link {
-    color: rgba(0, 0, 0, 0.4);
+    color: var(--text-muted);
   }
-
   .card-link:hover {
-    color: #5a59a8;
+    color: var(--color-primary-dark);
   }
-
-  .card-description {
-    color: rgba(0, 0, 0, 0.6);
-  }
-
   .tech-tag-small {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--text-muted);
   }
-
   .tech-tag-small:not(:last-child)::after {
     color: rgba(0, 0, 0, 0.3);
   }

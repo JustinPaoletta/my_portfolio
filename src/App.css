@@ -6,18 +6,42 @@
 /* Import Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Root Variables */
+/* Root Variables - Dark Theme Default */
 :root {
   --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 
   --color-primary: #7877c6;
   --color-primary-light: #a8a8ff;
+  --color-primary-dark: #5a59a8;
   --color-accent: #ff6b6b;
   --color-accent-teal: #4ecdc4;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Theme-aware colors */
+  --text-primary: rgba(255, 255, 255, 0.95);
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --text-muted: rgba(255, 255, 255, 0.5);
+  --bg-card: rgba(255, 255, 255, 0.02);
+  --bg-card-hover: rgba(255, 255, 255, 0.05);
+  --border-subtle: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(120, 119, 198, 0.3);
+}
+
+/* Light Theme Overrides */
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-primary-dark: #5a59a8;
+    --text-primary: rgba(0, 0, 0, 0.9);
+    --text-secondary: rgba(0, 0, 0, 0.7);
+    --text-muted: rgba(0, 0, 0, 0.5);
+    --bg-card: rgba(0, 0, 0, 0.02);
+    --bg-card-hover: rgba(0, 0, 0, 0.04);
+    --border-subtle: rgba(0, 0, 0, 0.08);
+    --border-hover: rgba(120, 119, 198, 0.2);
+  }
 }
 
 /* Global Styles */
@@ -87,6 +111,16 @@ h6 {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin-bottom: 0.75rem;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s ease,
+    transform 0.6s ease;
+}
+
+.visible .section-label {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section-title {
@@ -95,6 +129,16 @@ h6 {
   font-weight: 700;
   margin: 0;
   color: inherit;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s ease 0.1s,
+    transform 0.6s ease 0.1s;
+}
+
+.visible .section-title {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 .section-subtitle {
@@ -102,6 +146,16 @@ h6 {
   color: rgba(255, 255, 255, 0.6);
   max-width: 500px;
   margin: 1rem auto 0;
+  opacity: 0;
+  transform: translateY(20px);
+  transition:
+    opacity 0.6s ease 0.2s,
+    transform 0.6s ease 0.2s;
+}
+
+.visible .section-subtitle {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* Smooth scrolling */

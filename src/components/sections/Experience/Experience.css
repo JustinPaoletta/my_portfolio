@@ -310,7 +310,6 @@
       transparent 100%
     );
   }
-
   .timeline::before {
     background: linear-gradient(
       180deg,
@@ -318,59 +317,43 @@
       rgba(120, 119, 198, 0.05) 100%
     );
   }
-
   .timeline-marker {
     background: #ffffff;
   }
-
   .timeline-item.current .timeline-marker {
-    background: #7877c6;
+    background: var(--color-primary);
   }
-
-  .timeline-content {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.06);
+  .timeline-content,
+  .resume-button {
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
   }
-
   .timeline-content:hover {
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--bg-card-hover);
   }
-
   .org-name {
-    color: rgba(0, 0, 0, 0.8);
+    color: var(--text-secondary);
   }
-
-  .org-location {
-    color: rgba(0, 0, 0, 0.5);
+  .org-location,
+  .item-description {
+    color: var(--text-muted);
   }
-
   .org-location::before {
     color: rgba(0, 0, 0, 0.3);
   }
-
-  .item-description {
-    color: rgba(0, 0, 0, 0.6);
-  }
-
   .item-highlights li {
-    color: rgba(0, 0, 0, 0.7);
+    color: var(--text-secondary);
   }
-
   .tech-badge {
     background: rgba(120, 119, 198, 0.08);
-    color: #5a59a8;
+    color: var(--color-primary-dark);
   }
-
   .resume-cta {
-    border-top-color: rgba(0, 0, 0, 0.1);
+    border-top-color: var(--border-subtle);
   }
-
   .resume-button {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.8);
+    color: var(--text-secondary);
   }
-
   .resume-button:hover {
     background: rgba(120, 119, 198, 0.1);
   }

@@ -357,7 +357,6 @@
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   }
-
   .navigation.scrolled::after {
     background: linear-gradient(
       90deg,
@@ -366,55 +365,46 @@
       transparent
     );
   }
-
-  .nav-link {
-    color: rgba(0, 0, 0, 0.6);
+  .nav-link,
+  .mobile-nav-link {
+    color: var(--text-muted);
   }
-
   .nav-link:hover,
-  .nav-link.active {
-    color: rgba(0, 0, 0, 0.9);
+  .nav-link.active,
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: var(--text-primary);
   }
-
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active {
+    color: var(--color-primary-dark);
+  }
   .nav-social-link {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--text-muted);
   }
-
   .nav-social-link:hover {
-    color: #5a59a8;
+    color: var(--color-primary-dark);
     background: rgba(120, 119, 198, 0.08);
   }
-
   .hamburger-line {
     background: rgba(0, 0, 0, 0.7);
   }
-
   .mobile-menu-content {
     background: rgba(255, 255, 255, 0.98);
   }
-
   .mobile-nav-link {
-    color: rgba(0, 0, 0, 0.6);
-    border-bottom-color: rgba(0, 0, 0, 0.06);
+    border-bottom-color: var(--border-subtle);
   }
-
-  .mobile-nav-link:hover,
-  .mobile-nav-link.active {
-    color: #5a59a8;
-  }
-
   .mobile-social {
-    border-top-color: rgba(0, 0, 0, 0.1);
+    border-top-color: var(--border-subtle);
   }
-
   .mobile-social-link {
-    background: rgba(0, 0, 0, 0.03);
-    border-color: rgba(0, 0, 0, 0.1);
-    color: rgba(0, 0, 0, 0.6);
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
+    color: var(--text-muted);
   }
-
   .mobile-social-link:hover {
     background: rgba(120, 119, 198, 0.1);
-    color: #5a59a8;
+    color: var(--color-primary-dark);
   }
 }

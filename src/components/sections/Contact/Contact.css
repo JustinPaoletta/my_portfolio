@@ -358,56 +358,39 @@
         transparent
       );
   }
-
-  .contact-intro {
-    color: rgba(0, 0, 0, 0.65);
-  }
-
-  .contact-method {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
-  .contact-method:hover {
-    background: rgba(0, 0, 0, 0.03);
-  }
-
+  .contact-intro,
   .method-label {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--text-muted);
   }
-
+  .contact-method,
+  .contact-form {
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
+  }
+  .contact-method:hover {
+    background: var(--bg-card-hover);
+  }
   .method-value {
-    color: rgba(0, 0, 0, 0.85);
+    color: var(--text-primary);
   }
-
   .availability {
     background: rgba(78, 205, 196, 0.08);
     border-color: rgba(78, 205, 196, 0.15);
   }
-
-  .contact-form {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
-  }
-
   .form-label {
-    color: rgba(0, 0, 0, 0.75);
+    color: var(--text-secondary);
   }
-
   .form-input {
     background: rgba(255, 255, 255, 0.8);
     border-color: rgba(0, 0, 0, 0.15);
-    color: rgba(0, 0, 0, 0.9);
+    color: var(--text-primary);
   }
-
   .form-input::placeholder {
     color: rgba(0, 0, 0, 0.35);
   }
-
   .form-input:focus {
     background: rgba(255, 255, 255, 0.95);
   }
-
   .form-success {
     background: rgba(78, 205, 196, 0.08);
     border-color: rgba(78, 205, 196, 0.2);

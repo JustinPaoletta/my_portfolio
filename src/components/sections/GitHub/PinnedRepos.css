@@ -154,31 +154,23 @@
 /* Light mode */
 @media (prefers-color-scheme: light) {
   .repo-card {
-    background: rgba(0, 0, 0, 0.02);
-    border-color: rgba(0, 0, 0, 0.08);
+    background: var(--bg-card);
+    border-color: var(--border-subtle);
   }
-
   .repo-card:hover {
-    background: rgba(0, 0, 0, 0.03);
+    background: var(--bg-card-hover);
   }
-
-  .repo-icon {
-    color: rgba(0, 0, 0, 0.5);
-  }
-
-  .repo-name {
-    color: #5a59a8;
-  }
-
-  .repo-description {
-    color: rgba(0, 0, 0, 0.6);
-  }
-
-  .repo-language {
-    color: rgba(0, 0, 0, 0.7);
-  }
-
+  .repo-icon,
   .repo-stat {
-    color: rgba(0, 0, 0, 0.5);
+    color: var(--text-muted);
+  }
+  .repo-name {
+    color: var(--color-primary-dark);
+  }
+  .repo-description {
+    color: var(--text-muted);
+  }
+  .repo-language {
+    color: var(--text-secondary);
   }
 }
