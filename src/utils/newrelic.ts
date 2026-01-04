@@ -1,9 +1,15 @@
 /**
  * New Relic Browser Agent Utility
  * Error monitoring and performance tracking
+ *
+ * Uses MicroAgent instead of BrowserAgent for smaller bundle size (~80% reduction).
+ * MicroAgent supports: Page View, Page Action, and Error events (manual only).
+ * This is sufficient for our use case of error monitoring and custom events.
+ *
+ * @see https://www.npmjs.com/package/@newrelic/browser-agent#deploying-one-or-more-micro-agents-per-page
  */
 
-import { BrowserAgent } from '@newrelic/browser-agent/loaders/browser-agent';
+import { MicroAgent } from '@newrelic/browser-agent/loaders/micro-agent';
 import { env } from '@/config/env';
 
 // Type definitions for New Relic API
@@ -11,7 +17,7 @@ interface NewRelicCustomAttributes {
   [key: string]: string | number | boolean | undefined;
 }
 
-let agent: BrowserAgent | null = null;
+let agent: MicroAgent | null = null;
 let isInitialized = false;
 const monitoringEnabled = __ENABLE_ERROR_MONITORING__;
 const shouldLog = import.meta.env.DEV && __ENABLE_DEBUG_TOOLS__;
@@ -50,11 +56,15 @@ export function initializeNewRelic(): void {
   }
 
   try {
-    agent = new BrowserAgent({
+    agent = new MicroAgent({
       init: {
         distributed_tracing: { enabled: true },
         privacy: { cookies_enabled: true },
         ajax: { deny_list: env.monitoring.newrelic.ajaxDenyList },
+        // MicroAgent requires explicit feature configuration
+        jserrors: { enabled: true, autoStart: true },
+        metrics: { enabled: true, autoStart: true },
+        generic_events: { enabled: true, autoStart: true },
       },
       info: {
         beacon: 'bam.nr-data.net',

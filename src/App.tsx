@@ -1,37 +1,51 @@
+/**
+ * Main Application Component
+ * Portfolio with parallax scrolling and animated sections
+ */
+
 import '@/App.css';
-import { env } from '@/config/env';
 import SEO from '@/components/SEO';
 import PWAUpdatePrompt from '@/components/pwa-update-prompt';
+import Navigation from '@/components/Navigation';
+import Hero from '@/components/sections/Hero';
+import About from '@/components/sections/About';
+import Projects from '@/components/sections/Projects';
+import Skills from '@/components/sections/Skills';
+import Experience from '@/components/sections/Experience';
+import GitHub from '@/components/sections/GitHub';
+import Contact from '@/components/sections/Contact';
+import Footer from '@/components/Footer';
+import { useScrollPosition } from '@/hooks/useScrollPosition';
 
-export default function App() {
+export default function App(): React.ReactElement {
+  const { scrollY } = useScrollPosition();
+
   return (
     <>
       <SEO />
       <PWAUpdatePrompt />
 
-      {/* skip link for keyboard users */}
+      {/* Skip link for keyboard users */}
       <a href="#main" className="skip-link">
         Skip to main content
       </a>
 
-      <header role="banner">{/* nav bar - todo */}</header>
+      {/* Fixed Navigation */}
+      <Navigation scrollY={scrollY} />
 
+      {/* Main Content */}
       <main id="main" role="main">
-        <h1>{env.app.title}</h1>
-
-        <div>
-          <img
-            src="/jp-100.webp"
-            srcSet="/jp-100.webp 100w, /jp-200.webp 200w, /jp-400.webp 400w"
-            sizes="100px"
-            width={100}
-            height={100}
-            alt="JP"
-          />
-        </div>
+        <Hero scrollY={scrollY} />
+        <About />
+        <Projects />
+        <Skills />
+        <Experience />
+        <GitHub />
+        <Contact />
       </main>
 
-      <footer role="contentinfo">{/* footer - todo */}</footer>
+      {/* Footer */}
+      <Footer />
     </>
   );
 }

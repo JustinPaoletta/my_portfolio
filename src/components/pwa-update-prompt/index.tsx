@@ -2,24 +2,53 @@ import { usePWA } from '@/hooks/usePWA';
 import './PWAUpdatePrompt.css';
 
 /**
- * Component to prompt user when a PWA update is available
- * or when the app is ready for offline use
+ * Component to prompt user when a PWA update is available,
+ * when the app is ready for offline use, or when the app can be installed
  */
-export default function PWAUpdatePrompt() {
-  const { needRefresh, offlineReady, updateServiceWorker, closePrompt } =
-    usePWA();
+export default function PWAUpdatePrompt(): React.ReactElement | null {
+  const {
+    needRefresh,
+    offlineReady,
+    canInstall,
+    isInstalling,
+    updateServiceWorker,
+    promptInstall,
+    closePrompt,
+  } = usePWA();
 
-  // Don't render anything if no updates and not offline ready
-  if (!needRefresh && !offlineReady) {
+  // Don't render anything if no updates, not offline ready, and can't install
+  if (!needRefresh && !offlineReady && !canInstall) {
     return null;
   }
+
+  const handleInstall = (): void => {
+    void promptInstall();
+  };
 
   return (
     <div className="pwa-toast" role="alert" aria-live="polite">
       <div className="pwa-toast-content">
+        {/* Install prompt - highest priority */}
+        {canInstall && !needRefresh && (
+          <div className="pwa-toast-message">
+            <span className="pwa-toast-icon" aria-hidden="true">
+              📲
+            </span>
+            <div>
+              <p className="pwa-toast-title">Install App</p>
+              <p className="pwa-toast-description">
+                Add this app to your home screen for quick access
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Update available */}
         {needRefresh && (
           <div className="pwa-toast-message">
-            <span className="pwa-toast-icon">🔄</span>
+            <span className="pwa-toast-icon" aria-hidden="true">
+              🔄
+            </span>
             <div>
               <p className="pwa-toast-title">Update Available</p>
               <p className="pwa-toast-description">
@@ -29,9 +58,12 @@ export default function PWAUpdatePrompt() {
           </div>
         )}
 
-        {offlineReady && !needRefresh && (
+        {/* Offline ready - only show if nothing else is showing */}
+        {offlineReady && !needRefresh && !canInstall && (
           <div className="pwa-toast-message">
-            <span className="pwa-toast-icon">✅</span>
+            <span className="pwa-toast-icon" aria-hidden="true">
+              ✅
+            </span>
             <div>
               <p className="pwa-toast-title">Ready for Offline Use</p>
               <p className="pwa-toast-description">
@@ -42,6 +74,19 @@ export default function PWAUpdatePrompt() {
         )}
 
         <div className="pwa-toast-actions">
+          {/* Install button */}
+          {canInstall && !needRefresh && (
+            <button
+              className="pwa-toast-button pwa-toast-button-install"
+              onClick={handleInstall}
+              disabled={isInstalling}
+              aria-label="Install app to your device"
+            >
+              {isInstalling ? 'Installing...' : 'Install'}
+            </button>
+          )}
+
+          {/* Reload button for updates */}
           {needRefresh && (
             <button
               className="pwa-toast-button pwa-toast-button-primary"
@@ -51,12 +96,16 @@ export default function PWAUpdatePrompt() {
               Reload
             </button>
           )}
+
+          {/* Close/Dismiss button */}
           <button
             className="pwa-toast-button pwa-toast-button-secondary"
             onClick={closePrompt}
-            aria-label="Close update notification"
+            aria-label={
+              canInstall ? 'Dismiss install prompt' : 'Close notification'
+            }
           >
-            Close
+            {canInstall && !needRefresh ? 'Not Now' : 'Close'}
           </button>
         </div>
       </div>

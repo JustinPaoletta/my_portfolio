@@ -14,6 +14,29 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 // extend vitest's expect with jest-dom matchers
 expect.extend(matchers);
 
+// Mock IntersectionObserver for jsdom (not available in Node.js environment)
+class MockIntersectionObserver implements IntersectionObserver {
+  readonly root: Element | Document | null = null;
+  readonly rootMargin: string = '';
+  readonly thresholds: ReadonlyArray<number> = [];
+
+  constructor(
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _callback: IntersectionObserverCallback,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _options?: IntersectionObserverInit
+  ) {}
+
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+  takeRecords(): IntersectionObserverEntry[] {
+    return [];
+  }
+}
+
+window.IntersectionObserver = MockIntersectionObserver;
+
 afterEach(() => {
   cleanup();
 });

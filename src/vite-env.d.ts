@@ -28,6 +28,9 @@ interface ImportMetaEnv {
   readonly VITE_LINKEDIN_URL: string;
   readonly VITE_EMAIL: string;
 
+  // GitHub Integration
+  readonly VITE_GITHUB_USERNAME: string;
+
   // PWA & SEO (Optional)
   readonly VITE_SITE_URL?: string;
 }

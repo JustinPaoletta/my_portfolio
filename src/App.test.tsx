@@ -15,11 +15,11 @@ describe('App', () => {
   it('renders the JP image with correct attributes', () => {
     render(<App />);
 
-    const jpImage = screen.getByAltText(/JP/i);
+    const jpImage = screen.getByAltText(/Justin Paoletta/i);
     expect(jpImage).toBeInTheDocument();
-    expect(jpImage).toHaveAttribute('width', '100');
-    expect(jpImage).toHaveAttribute('height', '100');
-    expect(jpImage).toHaveAttribute('src', '/jp-100.webp');
+    expect(jpImage).toHaveAttribute('width', '160');
+    expect(jpImage).toHaveAttribute('height', '160');
+    expect(jpImage).toHaveAttribute('src', '/jp-200.webp');
   });
 
   it('renders skip link for keyboard navigation', () => {
@@ -35,7 +35,9 @@ describe('App', () => {
   it('renders semantic HTML structure', () => {
     render(<App />);
 
-    expect(screen.getByRole('banner')).toBeInTheDocument(); // header
+    expect(
+      screen.getByRole('navigation', { name: /main navigation/i })
+    ).toBeInTheDocument(); // main nav
     expect(screen.getByRole('main')).toBeInTheDocument(); // main
     expect(screen.getByRole('contentinfo')).toBeInTheDocument(); // footer
   });

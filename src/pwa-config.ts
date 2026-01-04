@@ -177,7 +177,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   },
 
   devOptions: {
-    enabled: false, // Enable if you want to test PWA in development
+    enabled: true, // Enable if you want to test PWA in development
     type: 'module',
   },
 };
