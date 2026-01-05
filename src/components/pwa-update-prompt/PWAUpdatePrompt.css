@@ -133,11 +133,11 @@
 
 /* Install button - uses a distinct green color */
 .pwa-toast-button-install {
-  background: #059669; /* emerald-600: white text contrast ≥ 4.5:1 */
+  background: #047857; /* emerald-700: white text contrast ~5.1:1 (WCAG AA compliant) */
   color: #ffffff;
 }
 .pwa-toast-button-install:hover {
-  background: #047857; /* emerald-700 */
+  background: #065f46; /* emerald-800: even better contrast ~6.3:1 */
 }
 .pwa-toast-button-install:disabled {
   background: #9ca3af; /* gray-400 */

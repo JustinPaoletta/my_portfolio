@@ -93,6 +93,7 @@ function ContributionGraph({
                   <div
                     key={`${weekIndex}-${dayIndex}`}
                     className={`contribution-day level-${getLevelClass(day.contributionLevel)}`}
+                    role="img"
                     style={
                       {
                         '--delay': `${(weekIndex * 7 + dayIndex) * 0.002}s`,
