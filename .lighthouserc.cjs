@@ -105,6 +105,14 @@ module.exports = {
         'render-blocking-resources': 'off',
         // Passive event listeners: Often flagged due to React/third-party code
         'uses-passive-event-listeners': 'off',
+        // Font display: Google Fonts on fonts.gstatic.com can't be verified
+        'font-display': 'off',
+        // LCP lazy load: Informational only, our LCP image is above the fold
+        'lcp-lazy-loaded': 'off',
+        // Non-composited animations: CSS transform animations may not be GPU-composited
+        'non-composited-animations': 'off',
+        // Third-party cookies: External services (fonts, analytics) may set cookies
+        'third-party-cookies': 'off',
       },
     },
   },

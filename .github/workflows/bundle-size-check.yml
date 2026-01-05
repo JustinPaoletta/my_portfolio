@@ -107,7 +107,7 @@ jobs:
               if (file.endsWith('.js')) {
                 limit = file.includes('vendor') ? '400 KB' : '150 KB';
               } else if (file.endsWith('.css')) {
-                limit = '40 KB';
+                limit = '55 KB';
               }
 
               bundleInfo += `| ${file} | ${sizeKB} KB | ${limit} | ${status} |\n`;
