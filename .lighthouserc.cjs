@@ -103,6 +103,8 @@ module.exports = {
         'server-response-time': 'off',
         'mainthread-work-breakdown': 'off',
         'render-blocking-resources': 'off',
+        // Passive event listeners: Often flagged due to React/third-party code
+        'uses-passive-event-listeners': 'off',
       },
     },
   },
