@@ -110,9 +110,10 @@ function Navigation({ scrollY }: NavigationProps): React.ReactElement {
     >
       <div className="nav-container">
         {/* Logo */}
-        <a href="#hero" className="nav-logo" aria-label="Go to top">
+        <a href="#hero" className="nav-logo">
           <span className="logo-text">JP</span>
           <span className="logo-dot" aria-hidden="true" />
+          <span className="visually-hidden">- Go to top</span>
         </a>
 
         {/* Desktop Navigation */}

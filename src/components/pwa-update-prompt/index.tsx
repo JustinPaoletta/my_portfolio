@@ -80,7 +80,6 @@ export default function PWAUpdatePrompt(): React.ReactElement | null {
               className="pwa-toast-button pwa-toast-button-install"
               onClick={handleInstall}
               disabled={isInstalling}
-              aria-label="Install app to your device"
             >
               {isInstalling ? 'Installing...' : 'Install'}
             </button>
@@ -91,7 +90,6 @@ export default function PWAUpdatePrompt(): React.ReactElement | null {
             <button
               className="pwa-toast-button pwa-toast-button-primary"
               onClick={() => updateServiceWorker(true)}
-              aria-label="Reload to update app"
             >
               Reload
             </button>
@@ -101,9 +99,6 @@ export default function PWAUpdatePrompt(): React.ReactElement | null {
           <button
             className="pwa-toast-button pwa-toast-button-secondary"
             onClick={closePrompt}
-            aria-label={
-              canInstall ? 'Dismiss install prompt' : 'Close notification'
-            }
           >
             {canInstall && !needRefresh ? 'Not Now' : 'Close'}
           </button>

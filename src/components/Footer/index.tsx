@@ -14,9 +14,10 @@ function Footer(): React.ReactElement {
       <div className="footer-container">
         <div className="footer-content">
           <div className="footer-brand">
-            <a href="#hero" className="footer-logo" aria-label="Go to top">
+            <a href="#hero" className="footer-logo">
               <span className="logo-text">JP</span>
               <span className="logo-dot" aria-hidden="true" />
+              <span className="visually-hidden">- Go to top</span>
             </a>
             <p className="footer-tagline">
               Building the future, one line of code at a time.
