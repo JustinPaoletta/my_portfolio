@@ -130,3 +130,23 @@
     color: #f3f4f6;
   }
 }
+
+/* Install button - uses a distinct green color */
+.pwa-toast-button-install {
+  background: #047857; /* emerald-700: white text contrast ~5.1:1 (WCAG AA compliant) */
+  color: #ffffff;
+}
+.pwa-toast-button-install:hover {
+  background: #065f46; /* emerald-800: even better contrast ~6.3:1 */
+}
+.pwa-toast-button-install:disabled {
+  background: #9ca3af; /* gray-400 */
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+@media (prefers-color-scheme: dark) {
+  .pwa-toast-button-install:disabled {
+    background: #4b5563; /* gray-600 */
+  }
+}

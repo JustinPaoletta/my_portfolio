@@ -177,6 +177,15 @@ const envSchema = v.object({
     ),
     v.literal(''),
   ]),
+
+  VITE_GITHUB_USERNAME: v.pipe(
+    v.string(),
+    v.minLength(1, 'GitHub username is required'),
+    v.regex(
+      /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/,
+      'GitHub username must be valid (alphanumeric, max 39 chars)'
+    )
+  ),
 });
 
 function validateEnv(): v.InferOutput<typeof envSchema> {
@@ -265,6 +274,9 @@ export const env = {
     github: validatedEnv.VITE_GITHUB_URL,
     linkedin: validatedEnv.VITE_LINKEDIN_URL,
     email: validatedEnv.VITE_EMAIL,
+  },
+  github: {
+    username: validatedEnv.VITE_GITHUB_USERNAME,
   },
   site: {
     url: validatedEnv.VITE_SITE_URL || undefined,
