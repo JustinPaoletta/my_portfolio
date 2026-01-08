@@ -23,7 +23,7 @@ object-src 'none';
 style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
 img-src 'self' data: https:;
 font-src 'self' data: https://fonts.gstatic.com;
-connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net;
+connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net https://api.github.com;
 frame-src 'self' https://vercel.live;
 base-uri 'self';
 form-action 'self';
@@ -77,6 +77,7 @@ upgrade-insecure-requests;
   - `cloud.umami.is` & `api-gateway.umami.dev` - Umami analytics
   - `vercel.live` - Vercel live preview
   - `bam.nr-data.net` - New Relic error monitoring
+  - `api.github.com` - GitHub API for fetching profile and repository data
 
 ### `frame-src 'self' https://vercel.live`
 
