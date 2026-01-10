@@ -164,6 +164,26 @@ VITE_EMAIL=your.email@example.com
 - LinkedIn URL: Must be valid URL containing 'linkedin.com'
 - Email: Must be valid email format
 
+### GitHub API Proxy (Optional)
+
+```bash
+# Enable the GitHub API proxy for real contribution data
+# Only set to 'true' on Vercel where serverless functions are available
+# Defaults to 'false' (uses mock data in local dev and CI)
+VITE_GITHUB_API_ENABLED=false
+```
+
+**Validation:**
+
+- Accepts: `true`, `false`, `1`, `0`
+- Defaults to `false`
+
+**When to set:**
+
+- Set to `true` only in **Vercel environment variables** where the `/api/github` serverless function is available
+- Keep as `false` (or unset) for local development and CI to avoid 404 errors
+- When `false`, the app uses mock contribution data and derives pinned repos from top starred repos
+
 ### PWA & SEO (Optional)
 
 ```bash
@@ -301,6 +321,9 @@ For GitHub Actions workflows (Lighthouse CI, Bundle Size Check, etc.), environme
 - `VITE_GITHUB_URL` - Your GitHub profile URL
 - `VITE_LINKEDIN_URL` - Your LinkedIn profile URL
 - `VITE_EMAIL` - Your email address
+- `VITE_GITHUB_USERNAME` - Your GitHub username
+
+**Note:** Do NOT set `VITE_GITHUB_API_ENABLED=true` in GitHub Secrets. The API proxy only works on Vercel, so CI should use `false` (or leave unset) to avoid 404 errors during Lighthouse testing.
 
 **Optional Secrets for CI/CD:**
 

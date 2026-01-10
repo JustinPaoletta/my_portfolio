@@ -71,8 +71,20 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
 /**
  * Fetch GitHub data from our serverless API proxy
  * This fetches real contribution data and pinned repos via the GraphQL API
+ *
+ * Note: The API proxy only works on Vercel (serverless functions).
+ * In local dev or Lighthouse CI (static server), this will throw immediately
+ * to avoid browser console 404 errors.
  */
 export async function fetchGitHubGraphQLData(): Promise<GitHubApiResponse> {
+  // Skip API call if proxy is not available (CI, local dev)
+  // This prevents browser console 404 errors during Lighthouse CI testing
+  if (!env.github.apiEnabled) {
+    throw new Error(
+      'GitHub API proxy not available (VITE_GITHUB_API_ENABLED=false)'
+    );
+  }
+
   const response = await fetch(`/api/github?username=${username}`);
 
   if (!response.ok) {

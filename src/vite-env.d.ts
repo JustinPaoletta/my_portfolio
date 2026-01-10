@@ -30,6 +30,7 @@ interface ImportMetaEnv {
 
   // GitHub Integration
   readonly VITE_GITHUB_USERNAME: string;
+  readonly VITE_GITHUB_API_ENABLED?: string;
 
   // PWA & SEO (Optional)
   readonly VITE_SITE_URL?: string;
