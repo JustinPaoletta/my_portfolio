@@ -46,3 +46,5 @@ stats.html
 
 # Local npm cache
 .npm-cache/
+.vercel
+.env*.local

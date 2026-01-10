@@ -14,6 +14,12 @@ import type {
 const GITHUB_API_BASE = 'https://api.github.com';
 const username = env.github.username;
 
+/** Response type from our serverless API */
+interface GitHubApiResponse {
+  contributions: ContributionCalendar;
+  pinnedRepos: PinnedRepository[];
+}
+
 /**
  * Fetch GitHub user profile
  */
@@ -63,9 +69,28 @@ export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
 }
 
 /**
+ * Fetch GitHub data from our serverless API proxy
+ * This fetches real contribution data and pinned repos via the GraphQL API
+ */
+export async function fetchGitHubGraphQLData(): Promise<GitHubApiResponse> {
+  const response = await fetch(`/api/github?username=${username}`);
+
+  if (!response.ok) {
+    const errorData = (await response.json().catch(() => ({}))) as {
+      error?: string;
+    };
+    throw new Error(
+      errorData.error ||
+        `Failed to fetch GitHub data: ${response.status} ${response.statusText}`
+    );
+  }
+
+  return response.json() as Promise<GitHubApiResponse>;
+}
+
+/**
  * Generate mock contribution data for display
- * Note: Real contribution data requires GraphQL API with authentication
- * This provides a realistic visual representation
+ * Used as fallback when API is unavailable (e.g., missing token, rate limited)
  */
 export function generateMockContributions(): ContributionCalendar {
   const weeks: ContributionCalendar['weeks'] = [];

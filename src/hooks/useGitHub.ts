@@ -8,6 +8,7 @@ import type { GitHubStats } from '@/types/github';
 import {
   fetchGitHubUser,
   fetchGitHubRepos,
+  fetchGitHubGraphQLData,
   generateMockContributions,
   createPinnedFromRepos,
 } from '@/services/github';
@@ -83,17 +84,37 @@ export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
     setStats((prev) => ({ ...prev, loading: true, error: null }));
 
     try {
-      // Fetch user and repos in parallel
+      // Fetch user and repos from REST API (public, no auth needed)
       const [user, repos] = await Promise.all([
         fetchGitHubUser(),
         fetchGitHubRepos(),
       ]);
 
-      // Generate mock contributions (would need GraphQL API for real data)
-      const contributions = generateMockContributions();
+      // Try to fetch real contribution data and pinned repos from our API proxy
+      // Falls back to mock data if the API is unavailable
+      let contributions;
+      let pinnedRepos;
 
-      // Create pinned repos from top starred repos
-      const pinnedRepos = createPinnedFromRepos(repos);
+      try {
+        const graphqlData = await fetchGitHubGraphQLData();
+        contributions = graphqlData.contributions;
+        // Use real pinned repos if available, otherwise fall back to top starred
+        pinnedRepos =
+          graphqlData.pinnedRepos.length > 0
+            ? graphqlData.pinnedRepos
+            : createPinnedFromRepos(repos);
+      } catch (graphqlError) {
+        // GraphQL API unavailable (missing token, rate limited, etc.)
+        // Fall back to mock contributions and top starred repos
+        if (import.meta.env.DEV) {
+          console.warn(
+            '[GitHub] GraphQL API unavailable, using fallback data:',
+            graphqlError
+          );
+        }
+        contributions = generateMockContributions();
+        pinnedRepos = createPinnedFromRepos(repos);
+      }
 
       const newStats: GitHubStats = {
         user,
