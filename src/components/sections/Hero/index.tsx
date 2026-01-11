@@ -82,10 +82,14 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
           <span className="title-text">Problem Solver</span>
         </p>
 
-        <p className="hero-tagline">
-          Building elegant solutions to complex problems. Passionate about
-          creating performant, accessible, and beautiful web experiences.
-        </p>
+        <div className="hero-tagline">
+          <p>I solve complex business challenges through thoughtful code,</p>
+          <p>to deliver reliable solutions with precision and expertise.</p>
+          <p className="hero-tagline-subtext">
+            Always crafting creative projects that fuel my love of learning and
+            growth.
+          </p>
+        </div>
 
         <div className="hero-cta">
           <a href="#projects" className="cta-primary">
