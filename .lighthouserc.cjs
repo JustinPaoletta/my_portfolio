@@ -155,7 +155,7 @@ module.exports = {
         'max-potential-fid': 'off',
         'uses-long-cache-ttl': 'off',
         // TTI: Highly variable in CI environments
-        'interactive': 'off',
+        interactive: 'off',
 
         // ============================================================
         // DISABLED: THIRD-PARTY/EXTERNAL RESOURCES

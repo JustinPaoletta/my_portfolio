@@ -8,13 +8,12 @@ import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import { useGitHub } from '@/hooks/useGitHub';
 import { env } from '@/config/env';
 import ContributionGraph from './ContributionGraph';
-import PinnedRepos from './PinnedRepos';
 import './GitHub.css';
 
 function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
-  const { user, pinnedRepos, contributions, loading, error } = useGitHub();
+  const { user, contributions, loading, error } = useGitHub();
 
   return (
     <section
@@ -99,11 +98,6 @@ function GitHub(): React.ReactElement {
             loading={loading}
             isVisible={isVisible}
           />
-        )}
-
-        {/* Pinned Repositories */}
-        {pinnedRepos.length > 0 && (
-          <PinnedRepos repos={pinnedRepos} isVisible={isVisible} />
         )}
 
         {/* Loading State */}
