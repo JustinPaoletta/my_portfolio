@@ -91,7 +91,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   },
 
   workbox: {
-    // Cache configuration
+    // Cache configuration - precache static assets for offline support
     globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
     runtimeCaching: [
       {
@@ -177,7 +177,9 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   },
 
   devOptions: {
-    enabled: true, // Enable if you want to test PWA in development
+    // Disable PWA in development - no service worker generated, no warnings
+    // Set to true only when you need to test PWA features locally
+    enabled: false,
     type: 'module',
   },
 };

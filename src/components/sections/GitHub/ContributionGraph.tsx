@@ -3,6 +3,7 @@
  * Visual representation of GitHub contributions
  */
 
+import { useRef, useEffect, useState } from 'react';
 import type { ContributionCalendar } from '@/types/github';
 import './ContributionGraph.css';
 
@@ -33,18 +34,89 @@ function ContributionGraph({
   loading,
   isVisible,
 }: ContributionGraphProps): React.ReactElement {
-  // Get unique months from weeks for labels
+  const graphContentRef = useRef<HTMLDivElement>(null);
+  const [weekWidth, setWeekWidth] = useState<number>(13); // Default 13px (11px + 2px gap)
+  const totalWeeks = contributions.weeks.length;
+
+  // Calculate dynamic week width based on container width
+  useEffect(() => {
+    const updateWeekWidth = (): void => {
+      if (!graphContentRef.current) return;
+
+      const containerWidth = graphContentRef.current.offsetWidth;
+      // Calculate width per week: (container width - gaps) / number of weeks
+      // Each gap is 2px, and there are (totalWeeks - 1) gaps
+      const totalGapWidth = (totalWeeks - 1) * 2;
+      const availableWidth = containerWidth - totalGapWidth;
+      const calculatedWeekWidth = availableWidth / totalWeeks;
+
+      // Ensure minimum width (at least 11px for the day square)
+      setWeekWidth(Math.max(calculatedWeekWidth, 11));
+    };
+
+    updateWeekWidth();
+
+    const resizeObserver = new ResizeObserver(updateWeekWidth);
+    if (graphContentRef.current) {
+      resizeObserver.observe(graphContentRef.current);
+    }
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, [totalWeeks, isVisible]);
+
+  // Calculate which day labels to show and their row positions
+  // We show Mon, Wed, Fri (day indices 1, 3, 5)
+  // The grid rows are indexed by day of week (0-6), so we need to map
+  // the desired days to their actual row positions
+  const dayLabelIndices = [1, 3, 5]; // Mon, Wed, Fri
+  const dayLabelsWithPosition = dayLabelIndices
+    .map((targetDayIndex) => {
+      // Find which row (dayIndex within week) corresponds to this day of week
+      // We need to check the first week to see the mapping
+      const firstWeek = contributions.weeks[0];
+      if (!firstWeek) return null;
+
+      const rowIndex = firstWeek.contributionDays.findIndex(
+        (day) => new Date(day.date).getDay() === targetDayIndex
+      );
+
+      if (rowIndex === -1) return null;
+
+      return { day: DAYS[targetDayIndex], rowIndex };
+    })
+    .filter((item): item is { day: string; rowIndex: number } => item !== null);
+
+  // Get unique months with accurate positioning
+  // Show month label at the start of the week that contains the 1st of the month
   const monthLabels: { month: string; weekIndex: number }[] = [];
   let lastMonth = -1;
 
   contributions.weeks.forEach((week, weekIndex) => {
-    const firstDay = week.contributionDays[0];
-    if (firstDay) {
-      const date = new Date(firstDay.date);
-      const month = date.getMonth();
-      if (month !== lastMonth) {
-        monthLabels.push({ month: MONTHS[month], weekIndex });
-        lastMonth = month;
+    // Check if this week contains the 1st of a new month
+    const hasFirstOfMonth = week.contributionDays.some((day) => {
+      const date = new Date(day.date);
+      return date.getDate() === 1;
+    });
+
+    if (hasFirstOfMonth) {
+      // Find the first day of the month in this week
+      const firstDayOfMonth = week.contributionDays.find((day) => {
+        const date = new Date(day.date);
+        return date.getDate() === 1;
+      });
+
+      if (firstDayOfMonth) {
+        const date = new Date(firstDayOfMonth.date);
+        const month = date.getMonth();
+        if (month !== lastMonth) {
+          monthLabels.push({
+            month: MONTHS[month],
+            weekIndex,
+          });
+          lastMonth = month;
+        }
       }
     }
   });
@@ -63,30 +135,54 @@ function ContributionGraph({
 
       <div className="graph-container">
         {/* Day labels */}
-        <div className="day-labels" aria-hidden="true">
-          {DAYS.filter((_, i) => i % 2 === 1).map((day) => (
-            <span key={day} className="day-label">
+        <div
+          className="day-labels"
+          aria-hidden="true"
+          style={
+            {
+              '--day-size': `${weekWidth}px`,
+            } as React.CSSProperties
+          }
+        >
+          {dayLabelsWithPosition.map(({ day, rowIndex }) => (
+            <span
+              key={day}
+              className="day-label"
+              style={{ gridRow: rowIndex + 1 }}
+            >
               {day}
             </span>
           ))}
         </div>
 
-        <div className="graph-content">
+        <div className="graph-content" ref={graphContentRef}>
           {/* Month labels */}
           <div className="month-labels" aria-hidden="true">
-            {monthLabels.map(({ month, weekIndex }) => (
-              <span
-                key={`${month}-${weekIndex}`}
-                className="month-label"
-                style={{ gridColumn: weekIndex + 1 }}
-              >
-                {month}
-              </span>
-            ))}
+            {monthLabels.map(({ month, weekIndex }) => {
+              // Calculate left position: each week column width + gap
+              // Position at the start of the week where the month begins
+              const leftPosition = weekIndex * (weekWidth + 2); // weekWidth + 2px gap
+              return (
+                <span
+                  key={`${month}-${weekIndex}`}
+                  className="month-label"
+                  style={{ left: `${leftPosition}px` }}
+                >
+                  {month}
+                </span>
+              );
+            })}
           </div>
 
           {/* Contribution grid */}
-          <div className="contribution-grid">
+          <div
+            className="contribution-grid"
+            style={
+              {
+                '--week-width': `${weekWidth}px`,
+              } as React.CSSProperties
+            }
+          >
             {contributions.weeks.map((week, weekIndex) => (
               <div key={weekIndex} className="contribution-week">
                 {week.contributionDays.map((day, dayIndex) => (

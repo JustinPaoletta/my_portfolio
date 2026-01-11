@@ -42,6 +42,8 @@ jobs:
       VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN || '' }}
       # GitHub username (required for GitHub section)
       VITE_GITHUB_USERNAME: ${{ secrets.VITE_GITHUB_USERNAME || 'octocat' }}
+      # GitHub API proxy - disabled in CI (only works on Vercel with serverless functions)
+      VITE_GITHUB_API_ENABLED: 'false'
 
     steps:
       - name: Checkout code

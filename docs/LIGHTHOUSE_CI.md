@@ -53,6 +53,7 @@ The Lighthouse CI configuration is in `.lighthouserc.cjs`:
 
 The following audits are disabled to reduce false positives:
 
+- **errors-in-console** - API proxy 404s are expected in CI (no serverless functions available)
 - **bf-cache** - Back/forward cache often fails with monitoring libraries
 - **csp-xss** - CSP is configured in `vercel.json`, not tested by LHCI's static server
 - **unused-javascript** - Expected with React and New Relic monitoring

@@ -27,19 +27,43 @@ function Contact(): React.ReactElement {
     'idle' | 'success' | 'error'
   >('idle');
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitStatus('idle');
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = (await response.json()) as {
+        success?: boolean;
+        error?: string;
+      };
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send message');
+      }
+
       setSubmitStatus('success');
       setFormData({ name: '', email: '', message: '' });
 
       // Reset status after 5 seconds
       setTimeout(() => setSubmitStatus('idle'), 5000);
-    }, 1500);
+    } catch (error) {
+      console.error('Contact form error:', error);
+      setSubmitStatus('error');
+
+      // Reset error status after 5 seconds
+      setTimeout(() => setSubmitStatus('idle'), 5000);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -255,6 +279,31 @@ function Contact(): React.ReactElement {
                   />
                 </svg>
                 Message sent successfully! I&apos;ll get back to you soon.
+              </div>
+            )}
+
+            {submitStatus === 'error' && (
+              <div className="form-error" role="alert">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                  <line
+                    x1="12"
+                    y1="8"
+                    x2="12"
+                    y2="12"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                  <line
+                    x1="12"
+                    y1="16"
+                    x2="12.01"
+                    y2="16"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                Failed to send message. Please try again or email me directly.
               </div>
             )}
           </form>

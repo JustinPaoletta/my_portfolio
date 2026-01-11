@@ -186,6 +186,12 @@ const envSchema = v.object({
       'GitHub username must be valid (alphanumeric, max 39 chars)'
     )
   ),
+
+  VITE_GITHUB_API_ENABLED: v.pipe(
+    v.fallback(v.optional(v.string()), 'false'),
+    v.transform((val) => val === 'true' || val === '1'),
+    v.boolean()
+  ),
 });
 
 function validateEnv(): v.InferOutput<typeof envSchema> {
@@ -277,6 +283,7 @@ export const env = {
   },
   github: {
     username: validatedEnv.VITE_GITHUB_USERNAME,
+    apiEnabled: validatedEnv.VITE_GITHUB_API_ENABLED,
   },
   site: {
     url: validatedEnv.VITE_SITE_URL || undefined,
