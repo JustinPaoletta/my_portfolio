@@ -90,6 +90,8 @@ module.exports = {
         // ============================================================
         // DISABLED: SECURITY/BROWSER ENVIRONMENT SPECIFIC
         // ============================================================
+        // Console errors: API proxy 404s are expected in CI (no serverless functions)
+        'errors-in-console': 'off',
         // BF-cache: Often fails due to unload handlers in monitoring libs
         'bf-cache': 'off',
         // CSP-XSS: LHCI's static server doesn't send HTTP headers

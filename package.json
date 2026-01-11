@@ -19,7 +19,7 @@
     "release:patch": "commit-and-tag-version --release-as patch",
     "sitemap:generate": "tsx plugins/vite-plugin-sitemap.ts",
     "start:dev": "npx vite",
-    "start:vercel": "npx vercel dev",
+    "start:vercel": "DOTENV_CONFIG_PATH=.env.local npx vercel dev",
     "start:prod": "npm run build && npx vite preview --strictPort --port 4173",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
