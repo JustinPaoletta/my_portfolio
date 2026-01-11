@@ -35,7 +35,7 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
   }, []);
 
   // Parallax effect for hero content
-  const parallaxOffset = scrollY * 0.4;
+  const parallaxOffset = scrollY * 0.25;
 
   return (
     <section
@@ -75,11 +75,11 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
         </h1>
 
         <p className="hero-title">
-          <span className="title-text">Full Stack Developer</span>
+          <span className="title-text">Software Engineer</span>
           <span className="title-divider" aria-hidden="true">
             •
           </span>
-          <span className="title-text">Software Engineer</span>
+          <span className="title-text">Problem Solver</span>
         </p>
 
         <p className="hero-tagline">
@@ -146,10 +146,20 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
       </div>
 
       <div className="scroll-indicator" aria-hidden="true">
-        <div className="scroll-mouse">
-          <div className="scroll-wheel" />
-        </div>
-        <span className="scroll-text">Scroll</span>
+        <svg
+          className="scroll-chevron"
+          viewBox="0 0 24 24"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M6 9l6 6 6-6"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
       </div>
     </section>
   );
