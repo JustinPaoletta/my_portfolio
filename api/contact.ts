@@ -174,7 +174,7 @@ export default async function handler(
 
   // Validate form data
   const validation = validateFormData(req.body);
-  if (!validation.valid) {
+  if (validation.valid === false) {
     res.status(400).json({ error: validation.error });
     return;
   }
