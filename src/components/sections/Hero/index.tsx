@@ -68,20 +68,6 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
         className="hero-content"
         style={{ transform: `translateY(${parallaxOffset}px)` }}
       >
-        <div className="hero-avatar-wrapper">
-          <img
-            src="/jp-200.webp"
-            srcSet="/jp-100.webp 100w, /jp-200.webp 200w, /jp-400.webp 400w"
-            sizes="(max-width: 768px) 120px, 160px"
-            width={160}
-            height={160}
-            alt="Justin Paoletta - Software Engineer"
-            className="hero-avatar"
-          />
-          <div className="avatar-ring" aria-hidden="true" />
-          <div className="avatar-glow" aria-hidden="true" />
-        </div>
-
         <span className="hero-greeting">Hello, I&apos;m</span>
 
         <h1 id="hero-heading" className="hero-name">

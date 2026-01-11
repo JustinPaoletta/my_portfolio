@@ -16,78 +16,86 @@ interface Project {
   liveUrl?: string;
   githubUrl?: string;
   featured: boolean;
+  inDevelopment?: boolean;
 }
 
 const projects: Project[] = [
   {
     id: 'project-1',
-    title: 'Cloud Dashboard',
+    title: 'Bitstockerz',
     description:
-      'A comprehensive cloud infrastructure monitoring dashboard with real-time metrics, alerting, and cost optimization insights. Built with performance and scalability in mind.',
+      'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
     image:
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=800&h=600&fit=crop',
-    techStack: ['React', 'TypeScript', 'D3.js', 'Node.js', 'PostgreSQL'],
-    liveUrl: '#',
+      'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
+    techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: '#',
     featured: true,
+    inDevelopment: true,
   },
   {
     id: 'project-2',
-    title: 'E-Commerce Platform',
+    title: 'Angular Component Library',
     description:
-      'Full-stack e-commerce solution with modern payment integration, inventory management, and analytics. Optimized for high traffic and conversion.',
-    image:
-      'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&h=600&fit=crop',
-    techStack: ['Next.js', 'Stripe', 'Prisma', 'Tailwind CSS', 'Redis'],
-    liveUrl: '#',
+      'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
+    image: 'https://cdn.worldvectorlogo.com/logos/angular-icon-1.svg',
+    techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     githubUrl: '#',
     featured: true,
+    inDevelopment: true,
   },
   {
     id: 'project-3',
-    title: 'AI Content Generator',
+    title: 'StarForge',
     description:
-      'An intelligent content creation tool leveraging GPT models for blog posts, social media, and marketing copy. Features collaborative editing and version control.',
-    image:
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=800&h=600&fit=crop',
-    techStack: ['Python', 'FastAPI', 'OpenAI', 'React', 'MongoDB'],
-    liveUrl: '#',
+      'A cosmic strategy game built in Godot where you forge life and weapons from stellar matter. Use heat, pressure, and gravitational collapse to out-engineer hostile alien forces and expand your control across an ever-growing cosmos.',
+    image: '/starforge.png',
+    techStack: ['Godot', 'GDScript', 'Game Design', 'Procedural Generation'],
     githubUrl: '#',
     featured: true,
+    inDevelopment: true,
   },
   {
     id: 'project-4',
-    title: 'DevOps Automation Suite',
+    title: 'Coverage IQ',
     description:
-      'CI/CD pipeline automation with infrastructure as code, container orchestration, and deployment strategies for modern cloud-native applications.',
+      'Coverage IQ is a mobile companion app designed to help Madden players make smarter defensive play calls in real time. It breaks down offensive formations, situational context, and coverage concepts to recommend effective counters—explaining not just what to call, but why it works. Built with a coach-first mindset, Coverage IQ focuses on decision-making, user responsibility, and practical adjustments that translate directly to better on-field results.',
     image:
-      'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800&h=600&fit=crop',
-    techStack: ['Go', 'Kubernetes', 'Terraform', 'GitHub Actions', 'AWS'],
-    liveUrl: '#',
+      'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop',
+    techStack: [
+      'React Native',
+      'TypeScript',
+      'Node.js',
+      'SQLite',
+      'Mobile Development',
+    ],
     githubUrl: '#',
     featured: false,
   },
   {
     id: 'project-5',
-    title: 'Real-Time Chat App',
+    title: 'SideQuest: Pittsburgh',
     description:
-      'Scalable messaging platform with end-to-end encryption, file sharing, and video calling capabilities. Built for reliability and privacy.',
+      'SideQuest: Pittsburgh is a local-first discovery app built to surface the weird, fun, and off-the-beaten-path things to do around the city—places and experiences you don\'t find by sorting Yelp reviews or scrolling influencer posts. Instead of ranking popularity, SideQuest prioritizes local knowledge, vibe, and serendipity. Users explore hidden food spots, low-key entertainment, micro-events, and neighborhood oddities through human-centered tags like "locals only," "feels illegal but isn\'t," and "I can\'t believe this is here." Designed as a love letter to Pittsburgh, the app treats exploration like a series of side quests—small, intentional adventures that make your own city feel new again.',
     image:
-      'https://images.unsplash.com/photo-1611606063065-ee7946f0787a?w=800&h=600&fit=crop',
-    techStack: ['Socket.io', 'WebRTC', 'Express', 'React', 'Redis'],
-    liveUrl: '#',
+      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     githubUrl: '#',
     featured: false,
   },
   {
     id: 'project-6',
-    title: 'Analytics Dashboard',
+    title: 'Easy Eats',
     description:
-      'Business intelligence dashboard with customizable widgets, data visualization, and automated reporting. Transforms complex data into actionable insights.',
+      'Easy Eats is a lightweight food-tracking app I built for personal use after struggling with the friction and overhead of existing calorie and macro trackers. By focusing on reusable recipes and repeatable portions instead of daily ingredient entry, the app reduces cognitive load and makes consistent, healthy eating easier to maintain over time.',
     image:
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=600&fit=crop',
-    techStack: ['Vue.js', 'Chart.js', 'Python', 'Apache Kafka', 'ClickHouse'],
-    liveUrl: '#',
+      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
+    techStack: [
+      'React',
+      'TypeScript',
+      'SQLite',
+      'Nutrition API',
+      'Mobile-First',
+    ],
     githubUrl: '#',
     featured: false,
   },
@@ -114,7 +122,7 @@ function Projects(): React.ReactElement {
             Featured Projects
           </h2>
           <p className="section-subtitle">
-            A selection of my recent work and personal projects
+            Exploratory engineering projects I'm tinkering with.
           </p>
         </header>
 
@@ -137,7 +145,29 @@ function Projects(): React.ReactElement {
                 />
                 <div className="project-overlay">
                   <div className="project-links">
-                    {project.liveUrl && (
+                    {project.inDevelopment && (
+                      <span
+                        className="project-status"
+                        aria-label="Project in development"
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                          <path
+                            d="M12 6v6l4 2"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>In Development</span>
+                      </span>
+                    )}
+                    {project.liveUrl && !project.inDevelopment && (
                       <a
                         href={project.liveUrl}
                         target="_blank"

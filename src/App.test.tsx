@@ -1,10 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen } from '@/test/test-utils';
+import { render, screen, act } from '@/test/test-utils';
 import App from './App';
 
 describe('App', () => {
-  it('renders the heading with app title from env', () => {
-    render(<App />);
+  it('renders the heading with app title from env', async () => {
+    await act(async () => {
+      render(<App />);
+    });
     // App title comes from environment variable VITE_APP_TITLE
     // In tests, this is set to "Test App" via vitest.config.ts defaults
     const heading = screen.getByRole('heading', { level: 1 });
@@ -12,18 +14,22 @@ describe('App', () => {
     expect(heading).toHaveTextContent(/./); // Ensures heading has some text
   });
 
-  it('renders the JP image with correct attributes', () => {
-    render(<App />);
+  it('renders the JP image with correct attributes', async () => {
+    await act(async () => {
+      render(<App />);
+    });
 
-    const jpImage = screen.getByAltText(/Justin Paoletta/i);
+    const jpImage = screen.getByAltText(/Justin working on code/i);
     expect(jpImage).toBeInTheDocument();
-    expect(jpImage).toHaveAttribute('width', '160');
-    expect(jpImage).toHaveAttribute('height', '160');
-    expect(jpImage).toHaveAttribute('src', '/jp-200.webp');
+    expect(jpImage).toHaveAttribute('width', '400');
+    expect(jpImage).toHaveAttribute('height', '400');
+    expect(jpImage).toHaveAttribute('src', '/jp-400.webp');
   });
 
-  it('renders skip link for keyboard navigation', () => {
-    render(<App />);
+  it('renders skip link for keyboard navigation', async () => {
+    await act(async () => {
+      render(<App />);
+    });
 
     const skipLink = screen.getByRole('link', {
       name: /skip to main content/i,
@@ -32,8 +38,10 @@ describe('App', () => {
     expect(skipLink).toHaveAttribute('href', '#main');
   });
 
-  it('renders semantic HTML structure', () => {
-    render(<App />);
+  it('renders semantic HTML structure', async () => {
+    await act(async () => {
+      render(<App />);
+    });
 
     expect(
       screen.getByRole('navigation', { name: /main navigation/i })

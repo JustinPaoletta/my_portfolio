@@ -29,25 +29,41 @@ function About(): React.ReactElement {
         <div className="about-content">
           <div className="about-text">
             <p className="about-intro">
-              I&apos;m a passionate software engineer with a love for building
-              products that make a difference. My journey in tech started with
-              curiosity about how things work, and it has evolved into a career
-              focused on creating elegant, scalable solutions.
+              I began my career in technology at Apple (well, technically
+              RadioShack, but that was in its dying days), where I worked as a
+              Senior Tech Support Advisor. It was a solid role, but I
+              wasn&apos;t getting the creative fulfillment I wanted from my
+              day-to-day work. I wanted to build things, think more deeply, and
+              solve problems rather than simply support existing systems.
             </p>
 
             <p>
-              With expertise spanning from frontend frameworks to backend
-              systems, I enjoy tackling complex challenges and turning ideas
-              into reality. I believe in writing clean, maintainable code and
-              creating experiences that users love.
+              That curiosity pushed me to start learning how to code. I began
+              with a simple website to share science lessons I was doing with my
+              nephew and quickly realized how much I enjoyed building things
+              from scratch and understanding how they worked. After being
+              accepted into Hack Reactor, I made the decision to leave my role
+              at Apple and fully immerse myself in software engineering. Around
+              that same time, the COVID-19 pandemic accelerated the
+              industry&apos;s shift to remote work and coincided with a major
+              hiring boom. Six years later, I often tell people it was one of
+              the best decisions I&apos;ve ever made.
             </p>
 
             <p>
-              When I&apos;m not coding, you can find me exploring new
-              technologies, contributing to open-source projects, or sharing
-              knowledge with the developer community. I&apos;m always eager to
-              learn and grow, staying current with the ever-evolving tech
-              landscape.
+              Today, my experience is primarily frontend-focused, and I know my
+              way around backend systems well enough to build and support
+              complete features end to end. I gravitate toward clean,
+              maintainable solutions that scale without becoming fragile, and I
+              care deeply about thoughtful design, reducing unnecessary
+              complexity, and building software that people actually enjoy
+              using.
+            </p>
+
+            <p>
+              When I&apos;m not coding, I&apos;m usually spending time with my
+              wife and our dogs, gaming, watching sports, or catching up on the
+              latest space and science news.
             </p>
 
             <div className="about-highlights">

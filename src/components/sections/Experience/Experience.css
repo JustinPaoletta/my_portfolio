@@ -195,6 +195,23 @@
   margin: 0 0 1rem;
 }
 
+.item-description a {
+  color: #7877c6;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.item-description a:hover {
+  color: #a8a8ff;
+  text-decoration: underline;
+}
+
+.item-description a:focus-visible {
+  outline: 2px solid #7877c6;
+  outline-offset: 2px;
+}
+
 .item-highlights {
   list-style: none;
   padding: 0;
@@ -343,6 +360,12 @@
   }
   .item-highlights li {
     color: var(--text-secondary);
+  }
+  .item-description a {
+    color: var(--color-primary-dark);
+  }
+  .item-description a:hover {
+    color: var(--color-primary-darker);
   }
   .tech-badge {
     background: rgba(120, 119, 198, 0.08);

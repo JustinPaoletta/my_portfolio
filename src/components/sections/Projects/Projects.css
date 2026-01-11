@@ -114,6 +114,26 @@
   height: 18px;
 }
 
+/* In Development Status */
+.project-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1rem;
+  background: rgba(251, 191, 36, 0.15);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(251, 191, 36, 0.4);
+  border-radius: 8px;
+  color: #fbbf24;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.project-status svg {
+  width: 16px;
+  height: 16px;
+}
+
 /* Project Content */
 .project-content {
   padding: 1rem 0;
@@ -358,5 +378,10 @@
   }
   .tech-tag-small:not(:last-child)::after {
     color: rgba(0, 0, 0, 0.3);
+  }
+  .project-status {
+    background: rgba(217, 119, 6, 0.15);
+    border-color: rgba(217, 119, 6, 0.4);
+    color: #b45309;
   }
 }
