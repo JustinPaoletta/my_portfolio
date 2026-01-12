@@ -310,6 +310,8 @@
 
   .about-center {
     order: -1;
+    transform: translateX(0);
+    max-width: 100%;
   }
 
   .about-image-container {
@@ -348,6 +350,8 @@
 
   .about-center {
     gap: 1.5rem;
+    transform: translateX(0);
+    max-width: 100%;
   }
 
   .about-highlights {
@@ -374,7 +378,9 @@
   }
 
   .values-grid {
+    grid-template-columns: 1fr;
     gap: 1rem;
+    max-width: 100%;
   }
 
   .value-card {

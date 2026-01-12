@@ -71,12 +71,14 @@ function About(): React.ReactElement {
                 <span className="highlight-label">Years Experience</span>
               </div>
               <div className="highlight-item">
-                <span className="highlight-number">50+</span>
-                <span className="highlight-label">Projects Completed</span>
+                <span className="highlight-number">180+</span>
+                <span className="highlight-label">Jira Tickets Completed</span>
               </div>
               <div className="highlight-item">
-                <span className="highlight-number">20+</span>
-                <span className="highlight-label">Technologies</span>
+                <span className="highlight-number">1500+</span>
+                <span className="highlight-label">
+                  Diet Dews Converted to Code
+                </span>
               </div>
             </div>
           </div>
