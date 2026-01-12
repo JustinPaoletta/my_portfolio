@@ -58,7 +58,7 @@ const projects: Project[] = [
     id: 'project-4',
     title: 'Coverage IQ',
     description:
-      'Coverage IQ is a mobile companion app designed to help Madden players make smarter defensive play calls in real time. It breaks down offensive formations, situational context, and coverage concepts to recommend effective counters—explaining not just what to call, but why it works. Built with a coach-first mindset, Coverage IQ focuses on decision-making, user responsibility, and practical adjustments that translate directly to better on-field results.',
+      'Coverage IQ is a mobile companion app designed to help Madden players make smarter defensive play calls in real time. It breaks down offensive formations, situational context, and coverage concepts to recommend effective counters, explaining not just what to call, but why it works. Built with a coach-first mindset, Coverage IQ focuses on decision-making, user responsibility, and practical adjustments that translate directly to better on-field results.',
     image:
       'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop',
     techStack: [
@@ -75,7 +75,7 @@ const projects: Project[] = [
     id: 'project-5',
     title: 'SideQuest: Pittsburgh',
     description:
-      'SideQuest: Pittsburgh is a local-first discovery app built to surface the weird, fun, and off-the-beaten-path things to do around the city—places and experiences you don\'t find by sorting Yelp reviews or scrolling influencer posts. Instead of ranking popularity, SideQuest prioritizes local knowledge, vibe, and serendipity. Users explore hidden food spots, low-key entertainment, micro-events, and neighborhood oddities through human-centered tags like "locals only," "feels illegal but isn\'t," and "I can\'t believe this is here." Designed as a love letter to Pittsburgh, the app treats exploration like a series of side quests—small, intentional adventures that make your own city feel new again.',
+      'SideQuest: Pittsburgh is a discovery app for finding the weird, fun, and off-the-beaten-path things to do around the city. Instead of ranking by popularity like Yelp, it surfaces hidden spots, low-key entertainment, micro-events, and neighborhood oddities. The app works offline-first and focuses on local knowledge over influencer recommendations.',
     image:
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],

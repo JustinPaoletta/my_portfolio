@@ -79,34 +79,26 @@ function Skills(): React.ReactElement {
           </p>
         </header>
 
-        <div className="skills-grid">
+        <div className="skills-table">
           {skillCategories.map((category, categoryIndex) => (
-            <div
-              key={category.name}
-              className="skill-category"
-              style={
-                {
-                  '--cat-delay': `${categoryIndex * 0.15}s`,
-                } as React.CSSProperties
-              }
-            >
-              <h3 className="category-title">{category.name}</h3>
-              <div className="skills-list">
+            <div key={category.name} className="table-section">
+              <h3 className="table-section-title">{category.name}</h3>
+              <div className="skills-table-grid">
                 {category.skills.map((skill, skillIndex) => (
                   <div
                     key={skill.name}
-                    className="skill-item"
+                    className="skill-table-item"
                     style={
                       {
-                        '--skill-delay': `${categoryIndex * 0.15 + skillIndex * 0.05}s`,
+                        '--skill-delay': `${categoryIndex * 0.1 + skillIndex * 0.02}s`,
                         '--skill-color': skill.color,
                       } as React.CSSProperties
                     }
                   >
-                    <span className="skill-icon" aria-hidden="true">
+                    <span className="skill-table-icon" aria-hidden="true">
                       {skill.icon}
                     </span>
-                    <span className="skill-name">{skill.name}</span>
+                    <span className="skill-table-name">{skill.name}</span>
                   </div>
                 ))}
               </div>

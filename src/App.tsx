@@ -14,6 +14,7 @@ import Skills from '@/components/sections/Skills';
 import Experience from '@/components/sections/Experience';
 import GitHub from '@/components/sections/GitHub';
 import Contact from '@/components/sections/Contact';
+import PetDogs from '@/components/sections/PetDogs';
 import Footer from '@/components/Footer';
 import { useScrollPosition } from '@/hooks/useScrollPosition';
 
@@ -42,6 +43,7 @@ export default function App(): React.ReactElement {
         <Experience />
         <GitHub />
         <Contact />
+        <PetDogs />
       </main>
 
       {/* Footer */}

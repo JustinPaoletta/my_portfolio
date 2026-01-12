@@ -94,7 +94,12 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     // Cache configuration - precache static assets for offline support
     globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
     // Exclude large assets from precaching to avoid exceeding size limits
-    globIgnores: ['**/starforge.png'],
+    globIgnores: [
+      '**/starforge.png',
+      '**/tito.png',
+      '**/rosie.png',
+      '**/nala.png',
+    ],
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
