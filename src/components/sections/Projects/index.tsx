@@ -48,7 +48,7 @@ const projects: Project[] = [
     title: 'StarForge',
     description:
       'A cosmic strategy game built in Godot where you forge life and weapons from stellar matter. Use heat, pressure, and gravitational collapse to out-engineer hostile alien forces and expand your control across an ever-growing cosmos.',
-    image: '/starforge.png',
+    image: '/starforge.webp',
     techStack: ['Godot', 'GDScript', 'Game Design', 'Procedural Generation'],
     githubUrl: '#',
     featured: true,
