@@ -8,7 +8,7 @@ This project enforces **strict bundle size limits** to ensure fast load times an
 | ----------------- | ------ | --------------------- |
 | **App Chunks**    | 150 KB | Your application code |
 | **Vendor Chunks** | 400 KB | Third-party libraries |
-| **CSS Files**     | 40 KB  | Stylesheets           |
+| **CSS Files**     | 60 KB  | Stylesheets           |
 | **Total Bundle**  | 650 KB | All assets combined   |
 
 ## 🚦 How It Works
@@ -41,7 +41,7 @@ const BUNDLE_SIZE_LIMITS = {
   appChunk: 150, // KB - your application code
   vendorChunk: 400, // KB - third-party libraries
   totalSize: 650, // KB - entire bundle
-  cssFile: 40, // KB - stylesheets
+  cssFile: 60, // KB - stylesheets
 };
 ```
 
