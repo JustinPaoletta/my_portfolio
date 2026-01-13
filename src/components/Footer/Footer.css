@@ -13,12 +13,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(120, 119, 198, 0.3),
-    transparent
-  );
+  background: var(--bg-gradient-border);
 }
 
 .footer-container {
