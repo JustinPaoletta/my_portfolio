@@ -3,8 +3,7 @@
  * Base styles and animations for the portfolio
  */
 
-/* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Google Fonts loaded via link tag in index.html */
 
 /* Root Variables - Dark Theme Default */
 :root {
@@ -43,19 +42,6 @@
     --border-hover: rgba(120, 119, 198, 0.2);
   }
 }
-
-/* Temporary force dark mode - uncomment to force dark theme */
-/*
-:root {
-  --text-primary: rgba(255, 255, 255, 0.95) !important;
-  --text-secondary: rgba(255, 255, 255, 0.7) !important;
-  --text-muted: rgba(255, 255, 255, 0.7) !important;
-  --bg-card: rgba(255, 255, 255, 0.02) !important;
-  --bg-card-hover: rgba(255, 255, 255, 0.05) !important;
-  color: rgba(255, 255, 255, 0.95) !important;
-  background-color: #121218 !important;
-}
-*/
 
 /* Global Styles */
 #root {
