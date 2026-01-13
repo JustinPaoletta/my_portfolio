@@ -27,6 +27,30 @@
   --bg-card-hover: rgba(255, 255, 255, 0.05);
   --border-subtle: rgba(255, 255, 255, 0.08);
   --border-hover: rgba(120, 119, 198, 0.3);
+
+  /* Reusable background gradients */
+  --bg-gradient-primary: radial-gradient(
+    ellipse 80% 50% at 50% -20%,
+    rgba(120, 119, 198, 0.15),
+    transparent
+  );
+  --bg-gradient-accent: radial-gradient(
+    ellipse 60% 40% at 80% 60%,
+    rgba(255, 107, 107, 0.08),
+    transparent
+  );
+  --bg-gradient-subtle: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(120, 119, 198, 0.03) 50%,
+    transparent 100%
+  );
+  --bg-gradient-border: linear-gradient(
+    90deg,
+    transparent,
+    rgba(120, 119, 198, 0.3),
+    transparent
+  );
 }
 
 /* Light Theme Overrides */

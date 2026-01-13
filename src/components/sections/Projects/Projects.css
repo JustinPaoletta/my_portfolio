@@ -3,12 +3,7 @@
 .projects-section {
   padding: 6rem 2rem;
   position: relative;
-  background: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(120, 119, 198, 0.03) 50%,
-    transparent 100%
-  );
+  background: var(--bg-gradient-subtle);
 }
 
 /* Featured Projects */
