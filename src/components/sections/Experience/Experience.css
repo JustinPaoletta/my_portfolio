@@ -21,8 +21,8 @@
   opacity: 0;
   transform: translateY(30px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
+    opacity 0.3s ease,
+    transform 0.3s ease;
 }
 
 .experience-section.visible .experience-column {
@@ -31,7 +31,6 @@
 }
 
 .experience-section.visible .education-column {
-  transition-delay: 0.2s;
 }
 
 /* Column Title */
@@ -79,9 +78,8 @@
   opacity: 0;
   transform: translateX(-20px);
   transition:
-    opacity 0.6s ease,
-    transform 0.6s ease;
-  transition-delay: var(--delay);
+    opacity 0.13s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.13s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .experience-section.visible .timeline-item {
@@ -115,7 +113,7 @@
   inset: -4px;
   border-radius: 50%;
   border: 2px solid #7877c6;
-  animation: pulse 2s ease-out infinite;
+  animation: pulse 1s ease-out infinite;
 }
 
 @keyframes pulse {
@@ -135,7 +133,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 16px;
   padding: 1.5rem;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .timeline-content:hover {
@@ -199,7 +197,7 @@
   color: #7877c6;
   text-decoration: none;
   font-weight: 500;
-  transition: color 0.3s ease;
+  transition: color 0.15s ease;
 }
 
 .item-description a:hover {
@@ -267,7 +265,7 @@
   color: rgba(255, 255, 255, 0.9);
   text-decoration: none;
   font-weight: 500;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .resume-button:hover {

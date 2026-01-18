@@ -3,7 +3,7 @@
 .pet-dogs-section {
   padding: 6rem 2rem;
   position: relative;
-  transition: padding 0.3s ease;
+  transition: padding 0.15s ease;
 }
 
 .pet-dogs-section.collapsed {
@@ -69,8 +69,8 @@
   opacity: 0;
   transform: translateY(30px);
   transition:
-    opacity 0.6s ease 0.3s,
-    transform 0.6s ease 0.3s;
+    opacity 0.3s ease 0.15s,
+    transform 0.3s ease 0.15s;
 }
 
 .pet-dogs-section.visible .dogs-grid {
@@ -87,7 +87,7 @@
   display: flex;
   gap: 2rem;
   align-items: center;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
   position: relative;
   overflow: hidden;
 }
@@ -101,7 +101,7 @@
   height: 3px;
   background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #7877c6);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.15s ease;
 }
 
 .dog-card:hover {
@@ -130,7 +130,7 @@
   height: auto;
   object-fit: contain;
   border-radius: 1rem;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .dog-card:hover .dog-image {
@@ -203,7 +203,7 @@
   font-weight: 600;
   font-size: 0.875rem;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.1s ease;
   text-transform: uppercase;
   letter-spacing: 0.025em;
   min-width: 120px;
@@ -248,8 +248,8 @@
   opacity: 0;
   transform: translateY(20px);
   transition:
-    opacity 0.6s ease 0.5s,
-    transform 0.6s ease 0.5s;
+    opacity 0.3s ease 0.25s,
+    transform 0.3s ease 0.25s;
 }
 
 .pet-dogs-section.visible .pet-dogs-message {

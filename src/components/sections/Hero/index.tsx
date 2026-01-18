@@ -3,7 +3,7 @@
  * Main introduction with name, title, and brief intro
  */
 
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useState, useRef, useMemo } from 'react';
 import { env } from '@/config/env';
 import './Hero.css';
 
@@ -23,16 +23,11 @@ function generateParticlePositions(
 }
 
 function Hero({ scrollY }: HeroProps): React.ReactElement {
-  const [isVisible, setIsVisible] = useState(false);
+  const [isVisible] = useState(true);
   const sectionRef = useRef<HTMLElement>(null);
 
   // Memoize particle positions so they don't change on re-render
   const particlePositions = useMemo(() => generateParticlePositions(20), []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => setIsVisible(true), 100);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Parallax effect for hero content
   const parallaxOffset = scrollY * 0.25;

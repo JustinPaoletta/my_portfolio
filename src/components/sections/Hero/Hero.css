@@ -73,7 +73,7 @@
   border-radius: 50%;
   left: var(--x);
   top: var(--y);
-  animation: float 6s ease-in-out infinite;
+  animation: float 3s ease-in-out infinite;
   animation-delay: var(--delay);
   opacity: 0.4;
 }
@@ -99,11 +99,12 @@
   align-items: center;
   text-align: center;
   max-width: 800px;
+  will-change: transform;
   opacity: 0;
   transform: translateY(30px);
   transition:
-    opacity 0.8s ease,
-    transform 0.8s ease;
+    opacity 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-section.visible .hero-content {
@@ -125,7 +126,7 @@
   position: relative;
   z-index: 2;
   border: 3px solid rgba(255, 255, 255, 0.1);
-  transition: transform 0.3s ease;
+  transition: transform 0.15s ease;
 }
 
 .hero-avatar-wrapper:hover .hero-avatar {
@@ -137,7 +138,7 @@
   inset: -6px;
   border-radius: 50%;
   border: 2px solid #7877c6;
-  animation: rotate 8s linear infinite;
+  animation: rotate 4s linear infinite;
 }
 
 @keyframes rotate {
@@ -171,8 +172,7 @@
   text-transform: uppercase;
   margin-bottom: 0.5rem;
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.3s;
+  animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .hero-name {
@@ -186,8 +186,7 @@
   color: transparent;
   line-height: 1.1;
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.4s;
+  animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .hero-title {
@@ -198,8 +197,7 @@
   flex-wrap: wrap;
   margin: 0 0 1.5rem;
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.5s;
+  animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .title-text {
@@ -217,8 +215,7 @@
   max-width: 600px;
   margin: 0 0 2.5rem;
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.6s;
+  animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .hero-tagline p {
@@ -246,8 +243,7 @@
   justify-content: center;
   margin-bottom: 2.5rem;
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.7s;
+  animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .cta-primary,
@@ -260,7 +256,7 @@
   font-weight: 600;
   font-size: 1rem;
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .cta-primary {
@@ -286,7 +282,7 @@
 .cta-icon {
   width: 18px;
   height: 18px;
-  transition: transform 0.3s ease;
+  transition: transform 0.15s ease;
 }
 
 .cta-primary:hover .cta-icon {
@@ -316,8 +312,7 @@
   display: flex;
   gap: 1rem;
   opacity: 0;
-  animation: fadeInUp 0.6s ease forwards;
-  animation-delay: 0.8s;
+  animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
 
 .social-link {
@@ -330,7 +325,7 @@
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: rgba(255, 255, 255, 0.7);
-  transition: all 0.3s ease;
+  transition: all 0.15s ease;
 }
 
 .social-link:hover {
@@ -361,18 +356,18 @@
   justify-content: center;
   opacity: 0;
   animation:
-    fadeIn 0.6s ease forwards,
-    bounce 2s ease-in-out infinite;
-  animation-delay: 1.5s, 2s;
+    fadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    bounce 1s ease-in-out infinite;
+  animation-delay: 0s, 0.25s;
 }
 
 .scroll-chevron {
   width: 24px;
   height: 24px;
   color: rgba(255, 255, 255, 0.6);
-  transition: all 0.3s ease;
-  animation: chevron-bounce 2s ease-in-out infinite;
-  animation-delay: 2s;
+  transition: all 0.15s ease;
+  animation: chevron-bounce 1s ease-in-out infinite;
+  animation-delay: 1s;
 }
 
 @keyframes chevron-bounce {
