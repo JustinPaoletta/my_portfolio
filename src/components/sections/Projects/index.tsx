@@ -25,8 +25,7 @@ const projects: Project[] = [
     title: 'Bitstockerz',
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
-    image:
-      'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=800&h=600&fit=crop',
+    image: '/bitcoin.webp',
     techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: '#',
     featured: true,
@@ -34,10 +33,10 @@ const projects: Project[] = [
   },
   {
     id: 'project-2',
-    title: 'Angular Component Library',
+    title: '@jp-angular-ui',
     description:
       'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
-    image: 'https://cdn.worldvectorlogo.com/logos/angular-icon-1.svg',
+    image: '/ui-ux-elements.webp',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     githubUrl: '#',
     featured: true,

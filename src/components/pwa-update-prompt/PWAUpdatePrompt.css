@@ -11,7 +11,7 @@
     0 10px 25px rgba(0, 0, 0, 0.15);
   padding: 16px;
   z-index: 9999;
-  animation: slideInUp 0.3s ease-out;
+  animation: slideInUp 0.15s ease-out;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -95,9 +95,9 @@
   font-weight: 500;
   cursor: pointer;
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
-    transform 0.2s ease;
+    background-color 0.1s ease,
+    border-color 0.1s ease,
+    transform 0.1s ease;
 }
 
 /* Focus visibility */

@@ -84,7 +84,7 @@ function PetDogs(): React.ReactElement {
             aria-controls="dogs-content"
             aria-label={showDogs ? 'Hide dogs' : 'Show dogs'}
           >
-            <span className="section-label">Can I pet dat dawwgg?</span>
+            <span className="section-label">Can I Pet That Dawg?</span>
           </button>
           {showDogs && (
             <h2 id="pet-dogs-heading" className="section-title">

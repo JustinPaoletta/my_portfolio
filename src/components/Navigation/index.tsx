@@ -30,7 +30,7 @@ function Navigation({ scrollY }: NavigationProps): React.ReactElement {
   const [activeSection, setActiveSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const isScrolled = scrollY > 50;
+  const isScrolled = scrollY > 0;
 
   // Track active section based on scroll position
   useEffect(() => {

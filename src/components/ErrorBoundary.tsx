@@ -194,7 +194,7 @@ class ErrorBoundary extends Component<Props, State> {
                   borderRadius: '0.375rem',
                   fontWeight: '500',
                   cursor: 'pointer',
-                  transition: 'background-color 0.2s',
+                  transition: 'background-color 0.1s',
                 }}
                 onMouseOver={(e) =>
                   (e.currentTarget.style.backgroundColor = '#2563eb')
@@ -221,7 +221,7 @@ class ErrorBoundary extends Component<Props, State> {
                   borderRadius: '0.375rem',
                   fontWeight: '500',
                   cursor: 'pointer',
-                  transition: 'background-color 0.2s',
+                  transition: 'background-color 0.1s',
                 }}
                 onMouseOver={(e) =>
                   (e.currentTarget.style.backgroundColor = '#4b5563')

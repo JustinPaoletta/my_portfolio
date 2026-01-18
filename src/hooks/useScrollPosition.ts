@@ -30,22 +30,36 @@ export function useScrollPosition(): ScrollPosition {
   const prevScrollY = useRef(
     typeof window !== 'undefined' ? window.scrollY : 0
   );
+  const rafId = useRef<number | null>(null);
+  const ticking = useRef(false);
 
   const handleScroll = useCallback((): void => {
-    const currentScrollY = window.scrollY;
-    const currentScrollX = window.scrollX;
-    const prevY = prevScrollY.current;
+    if (!ticking.current) {
+      rafId.current = requestAnimationFrame(() => {
+        const currentScrollY = window.scrollY;
+        const currentScrollX = window.scrollX;
+        const prevY = prevScrollY.current;
 
-    const direction: 'up' | 'down' | null =
-      currentScrollY > prevY ? 'down' : currentScrollY < prevY ? 'up' : null;
+        const direction: 'up' | 'down' | null =
+          currentScrollY > prevY
+            ? 'down'
+            : currentScrollY < prevY
+              ? 'up'
+              : null;
 
-    prevScrollY.current = currentScrollY;
+        prevScrollY.current = currentScrollY;
 
-    setScrollPosition({
-      scrollY: currentScrollY,
-      scrollX: currentScrollX,
-      scrollDirection: direction,
-    });
+        setScrollPosition({
+          scrollY: currentScrollY,
+          scrollX: currentScrollX,
+          scrollDirection: direction,
+        });
+
+        ticking.current = false;
+      });
+
+      ticking.current = true;
+    }
   }, []);
 
   useEffect(() => {
@@ -54,6 +68,9 @@ export function useScrollPosition(): ScrollPosition {
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
+      if (rafId.current !== null) {
+        cancelAnimationFrame(rafId.current);
+      }
     };
   }, [handleScroll]);
 
