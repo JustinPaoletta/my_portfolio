@@ -10,44 +10,52 @@ import { pwaConfig } from './src/pwa-config';
 /**
  * Plugin to exclude API directory from Vite processing
  * API files are serverless functions that only run on Vercel
+ *
+ * IMPORTANT: Only matches files in the project's root api/ directory,
+ * not any path containing /api/ (e.g., @newrelic's /assets/api/ paths)
  */
 function excludeApiDirectory(): Plugin {
   const apiDir = path.resolve(__dirname, 'api');
+
+  // Helper to check if a path is within our api directory
+  const isProjectApiFile = (filePath: string): boolean => {
+    if (!filePath) return false;
+    const normalized = path.normalize(filePath);
+    // Check if it starts with our api directory or is a relative import to it
+    return (
+      normalized.startsWith(apiDir) ||
+      normalized.startsWith('./api/') ||
+      normalized.startsWith('.\\api\\') ||
+      normalized === './api' ||
+      normalized === 'api'
+    );
+  };
+
   return {
     name: 'exclude-api-directory',
     enforce: 'pre',
     resolveId(id, importer) {
-      // Exclude API directory files from Vite processing
+      // Only exclude files that are actually in our project's api/ directory
       const isApiFile =
-        id.includes('/api/') ||
-        id.includes('\\api\\') ||
-        id.startsWith('./api/') ||
-        id.startsWith('../api/') ||
-        (importer &&
-          (importer.includes('/api/') || importer.includes('\\api\\'))) ||
-        id.startsWith(apiDir) ||
-        (importer && importer.startsWith(apiDir));
+        isProjectApiFile(id) || (importer && isProjectApiFile(importer));
 
       if (isApiFile) {
         return { id, external: true };
       }
-      // Exclude @upstash/redis from client bundle (only when imported from API files)
+
+      // Exclude @upstash/redis from client bundle (only when imported from our API files)
       if (
         (id === '@upstash/redis' || id.startsWith('@upstash/redis/')) &&
         importer &&
-        importer.includes('/api/')
+        isProjectApiFile(importer)
       ) {
         return { id, external: true };
       }
       return null;
     },
     load(id) {
-      // Skip loading API files
-      if (
-        id.includes('/api/') ||
-        id.includes('\\api\\') ||
-        id.startsWith(apiDir)
-      ) {
+      // Skip loading files from our api directory
+      if (isProjectApiFile(id)) {
         return '';
       }
       return null;
