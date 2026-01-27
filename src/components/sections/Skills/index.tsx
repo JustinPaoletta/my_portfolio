@@ -1,9 +1,9 @@
 /**
  * Skills Section
- * Technologies and tools showcase
+ * Technologies and tools showcase with category tabs
  */
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
 import './Skills.css';
 
@@ -22,37 +22,37 @@ const skillCategories: SkillCategory[] = [
   {
     name: 'Frontend',
     skills: [
-      { name: 'Angular', icon: '🅰️', color: '#DD0031' },
-      { name: 'React', icon: '⚛️', color: '#61DAFB' },
-      { name: 'TypeScript', icon: '📘', color: '#3178C6' },
-      { name: 'JavaScript', icon: '🟨', color: '#F7DF1E' },
-      { name: 'RxJS', icon: '🔮', color: '#B7178C' },
-      { name: 'HTML5', icon: '📄', color: '#E34F26' },
-      { name: 'CSS3', icon: '🎭', color: '#1572B6' },
-      { name: 'AngularJS', icon: '🅰️', color: '#E23237' },
+      { name: 'Angular', icon: '/icons/angular.svg', color: '#DD0031' },
+      { name: 'React', icon: '/icons/react.svg', color: '#61DAFB' },
+      { name: 'TypeScript', icon: '/icons/typescript.svg', color: '#3178C6' },
+      { name: 'JavaScript', icon: '/icons/javascript.svg', color: '#F7DF1E' },
+      { name: 'RxJS', icon: '/icons/rxjs.svg', color: '#B7178C' },
+      { name: 'HTML5', icon: '/icons/html5.svg', color: '#E34F26' },
+      { name: 'CSS3', icon: '/icons/css3.svg', color: '#1572B6' },
+      { name: 'AngularJS', icon: '/icons/angularjs.svg', color: '#E23237' },
     ],
   },
   {
     name: 'Backend',
     skills: [
-      { name: 'Node.js', icon: '🟢', color: '#339933' },
-      { name: 'Express', icon: '🚂', color: '#000000' },
-      { name: 'PostgreSQL', icon: '🐘', color: '#4169E1' },
-      { name: 'Java', icon: '☕', color: '#ED8B00' },
-      { name: 'REST APIs', icon: '🔗', color: '#FF6B6B' },
+      { name: 'Node.js', icon: '/icons/nodejs.svg', color: '#339933' },
+      { name: 'Express', icon: '/icons/express.svg', color: '#000000' },
+      { name: 'PostgreSQL', icon: '/icons/postgresql.svg', color: '#4169E1' },
+      { name: 'Java', icon: '/icons/java.svg', color: '#ED8B00' },
+      { name: 'REST APIs', icon: '/icons/rest-api.svg', color: '#FF6B6B' },
     ],
   },
   {
     name: 'DevOps & Tools',
     skills: [
-      { name: 'Git', icon: '📦', color: '#F05032' },
-      { name: 'GitHub', icon: '🐙', color: '#181717' },
-      { name: 'Docker', icon: '🐳', color: '#2496ED' },
-      { name: 'AWS', icon: '☁️', color: '#FF9900' },
-      { name: 'Jenkins', icon: '🔧', color: '#D24939' },
-      { name: 'CI/CD', icon: '🔄', color: '#2088FF' },
-      { name: 'Jira', icon: '📋', color: '#0052CC' },
-      { name: 'Confluence', icon: '📚', color: '#172B4D' },
+      { name: 'Git', icon: '/icons/git.svg', color: '#F05032' },
+      { name: 'GitHub', icon: '/icons/github.svg', color: '#181717' },
+      { name: 'Docker', icon: '/icons/docker.svg', color: '#2496ED' },
+      { name: 'AWS', icon: '/icons/aws.svg', color: '#FF9900' },
+      { name: 'Jenkins', icon: '/icons/jenkins.svg', color: '#D24939' },
+      { name: 'CI/CD', icon: '/icons/cicd.svg', color: '#2088FF' },
+      { name: 'Jira', icon: '/icons/jira.svg', color: '#0052CC' },
+      { name: 'Confluence', icon: '/icons/confluence.svg', color: '#172B4D' },
     ],
   },
 ];
@@ -60,6 +60,11 @@ const skillCategories: SkillCategory[] = [
 function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
+  const [activeTab, setActiveTab] = useState(0);
+
+  const handleTabChange = (index: number): void => {
+    setActiveTab(index);
+  };
 
   return (
     <section
@@ -79,26 +84,73 @@ function Skills(): React.ReactElement {
           </p>
         </header>
 
-        <div className="skills-table">
+        <div className="skills-tabs-container">
+          <div
+            className="tabs-list"
+            role="tablist"
+            aria-label="Skill categories"
+          >
+            {skillCategories.map((category, index) => (
+              <button
+                key={category.name}
+                className={`tab-button ${activeTab === index ? 'active' : ''}`}
+                role="tab"
+                aria-selected={activeTab === index}
+                aria-controls={`tabpanel-${index}`}
+                id={`tab-${index}`}
+                onClick={() => handleTabChange(index)}
+                onKeyDown={(e) => {
+                  if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    setActiveTab((prev) => (prev + 1) % skillCategories.length);
+                  } else if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    setActiveTab(
+                      (prev) =>
+                        (prev - 1 + skillCategories.length) %
+                        skillCategories.length
+                    );
+                  }
+                }}
+              >
+                {category.name}
+              </button>
+            ))}
+          </div>
+
           {skillCategories.map((category, categoryIndex) => (
-            <div key={category.name} className="table-section">
-              <h3 className="table-section-title">{category.name}</h3>
-              <div className="skills-table-grid">
+            <div
+              key={category.name}
+              id={`tabpanel-${categoryIndex}`}
+              role="tabpanel"
+              aria-labelledby={`tab-${categoryIndex}`}
+              className={`tab-panel ${activeTab === categoryIndex ? 'active' : ''}`}
+            >
+              <div className="skills-grid">
                 {category.skills.map((skill, skillIndex) => (
                   <div
                     key={skill.name}
-                    className="skill-table-item"
+                    className="skill-item"
                     style={
                       {
-                        '--skill-delay': `${categoryIndex * 0.1 + skillIndex * 0.02}s`,
+                        '--skill-delay': `${skillIndex * 0.05}s`,
                         '--skill-color': skill.color,
                       } as React.CSSProperties
                     }
                   >
-                    <span className="skill-table-icon" aria-hidden="true">
-                      {skill.icon}
-                    </span>
-                    <span className="skill-table-name">{skill.name}</span>
+                    <div
+                      className="skill-item-icon"
+                      style={{ color: skill.color }}
+                    >
+                      <img
+                        src={skill.icon}
+                        alt={`${skill.name} icon`}
+                        width="48"
+                        height="48"
+                        loading="lazy"
+                      />
+                    </div>
+                    <span className="skill-item-name">{skill.name}</span>
                   </div>
                 ))}
               </div>
@@ -106,7 +158,6 @@ function Skills(): React.ReactElement {
           ))}
         </div>
 
-        {/* Additional Skills */}
         <div className="additional-skills">
           <h3 className="additional-title">Also Experienced With</h3>
           <div className="skill-tags">

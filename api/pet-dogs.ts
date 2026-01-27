@@ -1,10 +1,11 @@
 /**
  * Vercel Serverless Function: Pet Dogs Stats Tracker
  *
- * Tracks treats and scritches counts for each dog using Vercel KV.
+ * Tracks treats and scritches counts for each dog using Upstash Redis.
  * Stores data server-side and persists across sessions.
  *
- * Endpoint: POST /api/pet-dogs
+ * Endpoint: POST /api/pet-dogs (increment stats)
+ * Endpoint: GET /api/pet-dogs (fetch current stats)
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
@@ -79,12 +80,12 @@ export default async function handler(
   // GET request - return current stats
   if (req.method === 'GET') {
     try {
-      // Dynamic import of @vercel/kv (only load if available)
-      let kv: typeof import('@vercel/kv');
+      // Dynamic import of @upstash/redis (only load if available)
+      let redis: typeof import('@upstash/redis');
       try {
-        kv = await import('@vercel/kv');
+        redis = await import('@upstash/redis');
       } catch {
-        // KV not available, return empty stats
+        // Redis not available, return empty stats
         res.status(200).json({
           stats: {
             Nala: { treats: 0, scritches: 0 },
@@ -95,6 +96,26 @@ export default async function handler(
         return;
       }
 
+      // Use Vercel KV environment variable names (KV_REST_API_URL, KV_REST_API_TOKEN)
+      const redisUrl = process.env.KV_REST_API_URL;
+      const redisToken = process.env.KV_REST_API_TOKEN;
+
+      if (!redisUrl || !redisToken) {
+        // Redis not configured, return empty stats
+        res.status(200).json({
+          stats: {
+            Nala: { treats: 0, scritches: 0 },
+            Rosie: { treats: 0, scritches: 0 },
+            Tito: { treats: 0, scritches: 0 },
+          },
+        });
+        return;
+      }
+
+      const client = new redis.Redis({
+        url: redisUrl,
+        token: redisToken,
+      });
       const stats: Record<string, DogStats> = {
         Nala: { treats: 0, scritches: 0 },
         Rosie: { treats: 0, scritches: 0 },
@@ -103,7 +124,7 @@ export default async function handler(
 
       // Load stats for each dog
       for (const dogName of ['Nala', 'Rosie', 'Tito']) {
-        const stored = await kv.default.get<DogStats>(`pet-dogs:${dogName}`);
+        const stored = await client.get<DogStats>(`pet-dogs:${dogName}`);
         if (stored) {
           stats[dogName] = stored;
         }
@@ -127,24 +148,42 @@ export default async function handler(
   const { dogName, action } = validation.data;
 
   try {
-    // Dynamic import of @vercel/kv (only load if available)
-    let kv: typeof import('@vercel/kv');
+    // Dynamic import of @upstash/redis (only load if available)
+    let redis: typeof import('@upstash/redis');
     try {
-      kv = await import('@vercel/kv');
+      redis = await import('@upstash/redis');
     } catch {
-      // KV not configured - return success but don't persist
-      console.warn('Vercel KV not configured - stats not persisted');
+      // Redis not configured - return success but don't persist
+      console.warn('Upstash Redis not configured - stats not persisted');
       res.status(200).json({
         success: true,
-        message: 'Stats updated (KV not configured)',
+        message: 'Stats updated (Redis not configured)',
       });
       return;
     }
 
+    // Use Vercel KV environment variable names (KV_REST_API_URL, KV_REST_API_TOKEN)
+    const redisUrl = process.env.KV_REST_API_URL;
+    const redisToken = process.env.KV_REST_API_TOKEN;
+
+    if (!redisUrl || !redisToken) {
+      // Redis not configured - return success but don't persist
+      console.warn('Upstash Redis not configured - stats not persisted');
+      res.status(200).json({
+        success: true,
+        message: 'Stats updated (Redis not configured)',
+      });
+      return;
+    }
+
+    const client = new redis.Redis({
+      url: redisUrl,
+      token: redisToken,
+    });
     const key = `pet-dogs:${dogName}`;
 
     // Get current stats
-    const currentStats = (await kv.default.get<DogStats>(key)) || {
+    const currentStats = (await client.get<DogStats>(key)) || {
       treats: 0,
       scritches: 0,
     };
@@ -157,7 +196,7 @@ export default async function handler(
     };
 
     // Save updated stats
-    await kv.default.set(key, updatedStats);
+    await client.set(key, updatedStats);
 
     res.status(200).json({
       success: true,

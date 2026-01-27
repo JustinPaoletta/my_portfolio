@@ -231,13 +231,17 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   padding: 1.25rem;
-  transition: all 0.15s ease;
+  padding-top: 1.75rem;
+  transition:
+    all 0.5s ease,
+    padding-top 0.5s ease;
   height: 120px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   text-align: center;
+  overflow: hidden;
 }
 
 .value-card:hover {
@@ -246,6 +250,7 @@
   transform: translateY(-4px);
   height: auto;
   min-height: 160px;
+  padding-top: 1.25rem;
 }
 
 .value-icon {
@@ -282,7 +287,7 @@
   opacity: 0;
   max-height: 0;
   overflow: hidden;
-  transition: all 0.15s ease;
+  transition: all 0.5s ease;
   flex-shrink: 0;
 }
 

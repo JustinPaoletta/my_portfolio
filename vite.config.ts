@@ -7,6 +7,62 @@ import { sitemapPlugin } from './plugins/vite-plugin-sitemap';
 import { inlineCssPlugin } from './plugins/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
 
+/**
+ * Plugin to exclude API directory from Vite processing
+ * API files are serverless functions that only run on Vercel
+ *
+ * IMPORTANT: Only matches files in the project's root api/ directory,
+ * not any path containing /api/ (e.g., @newrelic's /assets/api/ paths)
+ */
+function excludeApiDirectory(): Plugin {
+  const apiDir = path.resolve(__dirname, 'api');
+
+  // Helper to check if a path is within our api directory
+  const isProjectApiFile = (filePath: string): boolean => {
+    if (!filePath) return false;
+    const normalized = path.normalize(filePath);
+    // Check if it starts with our api directory or is a relative import to it
+    return (
+      normalized.startsWith(apiDir) ||
+      normalized.startsWith('./api/') ||
+      normalized.startsWith('.\\api\\') ||
+      normalized === './api' ||
+      normalized === 'api'
+    );
+  };
+
+  return {
+    name: 'exclude-api-directory',
+    enforce: 'pre',
+    resolveId(id, importer) {
+      // Only exclude files that are actually in our project's api/ directory
+      const isApiFile =
+        isProjectApiFile(id) || (importer && isProjectApiFile(importer));
+
+      if (isApiFile) {
+        return { id, external: true };
+      }
+
+      // Exclude @upstash/redis from client bundle (only when imported from our API files)
+      if (
+        (id === '@upstash/redis' || id.startsWith('@upstash/redis/')) &&
+        importer &&
+        isProjectApiFile(importer)
+      ) {
+        return { id, external: true };
+      }
+      return null;
+    },
+    load(id) {
+      // Skip loading files from our api directory
+      if (isProjectApiFile(id)) {
+        return '';
+      }
+      return null;
+    },
+  };
+}
+
 const BUNDLE_SIZE_LIMITS = {
   appChunk: 150,
   vendorChunk: 400,
@@ -96,6 +152,7 @@ export default defineConfig(({ mode }) => {
   return {
     base: '/',
     plugins: [
+      excludeApiDirectory(),
       react(),
       VitePWA(pwaConfig),
       bundleSizeLimit(),
@@ -109,6 +166,15 @@ export default defineConfig(({ mode }) => {
     },
     resolve: {
       alias: { '@': path.resolve(__dirname, './src') },
+    },
+    server: {
+      fs: {
+        // Deny access to API directory (serverless functions only)
+        deny: [path.resolve(__dirname, 'api')],
+      },
+    },
+    optimizeDeps: {
+      exclude: ['@upstash/redis'],
     },
     build: {
       chunkSizeWarningLimit: 400,
