@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@newrelic/browser-agent": "^1.306.0",
+    "@upstash/redis": "^1.36.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-helmet-async": "^2.0.5",

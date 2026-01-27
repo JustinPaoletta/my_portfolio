@@ -1,10 +1,17 @@
 /**
  * ContributionGraph Component
  * Visual representation of GitHub contributions
+ * Responsive: shows different number of weeks based on viewport size
  */
 
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useMemo } from 'react';
 import type { ContributionCalendar } from '@/types/github';
+import {
+  useBreakpoint,
+  CONTRIBUTION_WEEKS_CONFIG,
+  SHOW_DAY_LABELS,
+  SHOW_FULL_DAY_LABELS,
+} from '@/hooks/useBreakpoint';
 import './ContributionGraph.css';
 
 interface ContributionGraphProps {
@@ -27,7 +34,10 @@ const MONTHS = [
   'Nov',
   'Dec',
 ];
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+// Full and abbreviated day names
+const DAYS_FULL = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DAYS_ABBR = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 function ContributionGraph({
   contributions,
@@ -36,7 +46,37 @@ function ContributionGraph({
 }: ContributionGraphProps): React.ReactElement {
   const graphContentRef = useRef<HTMLDivElement>(null);
   const [weekWidth, setWeekWidth] = useState<number>(13); // Default 13px (11px + 2px gap)
-  const totalWeeks = contributions.weeks.length;
+  const breakpoint = useBreakpoint();
+
+  // Get visible weeks based on breakpoint (slice from end to show most recent)
+  const visibleWeeksCount = CONTRIBUTION_WEEKS_CONFIG[breakpoint];
+  const visibleWeeks = useMemo(() => {
+    const startIndex = Math.max(
+      0,
+      contributions.weeks.length - visibleWeeksCount
+    );
+    return contributions.weeks.slice(startIndex);
+  }, [contributions.weeks, visibleWeeksCount]);
+
+  const totalWeeks = visibleWeeks.length;
+
+  // Calculate contributions for visible period only
+  const visibleContributions = useMemo(() => {
+    return visibleWeeks.reduce((total, week) => {
+      return (
+        total +
+        week.contributionDays.reduce(
+          (weekTotal, day) => weekTotal + day.contributionCount,
+          0
+        )
+      );
+    }, 0);
+  }, [visibleWeeks]);
+
+  // Determine which day labels to use
+  const showDayLabels = SHOW_DAY_LABELS[breakpoint];
+  const useFullDayLabels = SHOW_FULL_DAY_LABELS[breakpoint];
+  const DAYS = useFullDayLabels ? DAYS_FULL : DAYS_ABBR;
 
   // Calculate dynamic week width based on container width
   useEffect(() => {
@@ -68,92 +108,114 @@ function ContributionGraph({
 
   // Calculate which day labels to show and their row positions
   // We show Mon, Wed, Fri (day indices 1, 3, 5)
-  // The grid rows are indexed by day of week (0-6), so we need to map
-  // the desired days to their actual row positions
   const dayLabelIndices = [1, 3, 5]; // Mon, Wed, Fri
-  const dayLabelsWithPosition = dayLabelIndices
-    .map((targetDayIndex) => {
-      // Find which row (dayIndex within week) corresponds to this day of week
-      // We need to check the first week to see the mapping
-      const firstWeek = contributions.weeks[0];
-      if (!firstWeek) return null;
+  const dayLabelsWithPosition = useMemo(() => {
+    return dayLabelIndices
+      .map((targetDayIndex) => {
+        // Find which row (dayIndex within week) corresponds to this day of week
+        // We need to check the first week to see the mapping
+        const firstWeek = visibleWeeks[0];
+        if (!firstWeek) return null;
 
-      const rowIndex = firstWeek.contributionDays.findIndex(
-        (day) => new Date(day.date).getDay() === targetDayIndex
+        const rowIndex = firstWeek.contributionDays.findIndex(
+          (day) => new Date(day.date).getDay() === targetDayIndex
+        );
+
+        if (rowIndex === -1) return null;
+
+        return { day: DAYS[targetDayIndex], rowIndex };
+      })
+      .filter(
+        (item): item is { day: string; rowIndex: number } => item !== null
       );
+  }, [visibleWeeks, DAYS]);
 
-      if (rowIndex === -1) return null;
+  // Get unique months with accurate positioning for visible weeks
+  const monthLabels = useMemo(() => {
+    const labels: { month: string; weekIndex: number }[] = [];
+    let lastMonth = -1;
 
-      return { day: DAYS[targetDayIndex], rowIndex };
-    })
-    .filter((item): item is { day: string; rowIndex: number } => item !== null);
-
-  // Get unique months with accurate positioning
-  // Show month label at the start of the week that contains the 1st of the month
-  const monthLabels: { month: string; weekIndex: number }[] = [];
-  let lastMonth = -1;
-
-  contributions.weeks.forEach((week, weekIndex) => {
-    // Check if this week contains the 1st of a new month
-    const hasFirstOfMonth = week.contributionDays.some((day) => {
-      const date = new Date(day.date);
-      return date.getDate() === 1;
-    });
-
-    if (hasFirstOfMonth) {
-      // Find the first day of the month in this week
-      const firstDayOfMonth = week.contributionDays.find((day) => {
+    visibleWeeks.forEach((week, weekIndex) => {
+      // Check if this week contains the 1st of a new month
+      const hasFirstOfMonth = week.contributionDays.some((day) => {
         const date = new Date(day.date);
         return date.getDate() === 1;
       });
 
-      if (firstDayOfMonth) {
-        const date = new Date(firstDayOfMonth.date);
-        const month = date.getMonth();
-        if (month !== lastMonth) {
-          monthLabels.push({
-            month: MONTHS[month],
-            weekIndex,
-          });
-          lastMonth = month;
+      if (hasFirstOfMonth) {
+        // Find the first day of the month in this week
+        const firstDayOfMonth = week.contributionDays.find((day) => {
+          const date = new Date(day.date);
+          return date.getDate() === 1;
+        });
+
+        if (firstDayOfMonth) {
+          const date = new Date(firstDayOfMonth.date);
+          const month = date.getMonth();
+          if (month !== lastMonth) {
+            labels.push({
+              month: MONTHS[month],
+              weekIndex,
+            });
+            lastMonth = month;
+          }
         }
       }
-    }
-  });
+    });
+
+    return labels;
+  }, [visibleWeeks]);
+
+  // Generate time period description for accessibility
+  const timePeriodDescription = useMemo(() => {
+    if (visibleWeeks.length === 0) return 'no data';
+
+    const firstDay = visibleWeeks[0]?.contributionDays[0];
+    const lastWeek = visibleWeeks[visibleWeeks.length - 1];
+    const lastDay =
+      lastWeek?.contributionDays[lastWeek.contributionDays.length - 1];
+
+    if (!firstDay || !lastDay) return 'recent activity';
+
+    const months = Math.round(visibleWeeks.length / 4.33);
+    return `the last ${months} month${months !== 1 ? 's' : ''}`;
+  }, [visibleWeeks]);
 
   return (
     <div
       className={`contribution-graph ${isVisible ? 'visible' : ''} ${loading ? 'loading' : ''}`}
-      aria-label={`GitHub contribution graph showing ${contributions.totalContributions} contributions in the last year`}
+      aria-label={`GitHub contribution graph showing ${visibleContributions.toLocaleString()} contributions in ${timePeriodDescription}`}
     >
       <div className="graph-header">
         <h3 className="graph-title">
-          {contributions.totalContributions.toLocaleString()} contributions in
-          the last year
+          {visibleContributions.toLocaleString()} contributions in{' '}
+          {timePeriodDescription}
         </h3>
       </div>
 
       <div className="graph-container">
-        {/* Day labels */}
-        <div
-          className="day-labels"
-          aria-hidden="true"
-          style={
-            {
-              '--day-size': `${weekWidth}px`,
-            } as React.CSSProperties
-          }
-        >
-          {dayLabelsWithPosition.map(({ day, rowIndex }) => (
-            <span
-              key={day}
-              className="day-label"
-              style={{ gridRow: rowIndex + 1 }}
-            >
-              {day}
-            </span>
-          ))}
-        </div>
+        {/* Day labels - conditionally rendered based on breakpoint */}
+        {showDayLabels && (
+          <div
+            className="day-labels"
+            aria-hidden="true"
+            style={
+              {
+                '--day-size': `${weekWidth}px`,
+              } as React.CSSProperties
+            }
+          >
+            {dayLabelsWithPosition.map(({ day, rowIndex }) => (
+              <span
+                key={`${day}-${rowIndex}`}
+                className="day-label"
+                style={{ gridRow: rowIndex + 1 }}
+              >
+                {day}
+              </span>
+            ))}
+          </div>
+        )}
 
         <div className="graph-content" ref={graphContentRef}>
           {/* Month labels */}
@@ -183,7 +245,7 @@ function ContributionGraph({
               } as React.CSSProperties
             }
           >
-            {contributions.weeks.map((week, weekIndex) => (
+            {visibleWeeks.map((week, weekIndex) => (
               <div key={weekIndex} className="contribution-week">
                 {week.contributionDays.map((day, dayIndex) => (
                   <div

@@ -29,15 +29,15 @@ const initialDogsData = [
 const dogMetadata: Record<string, Omit<Dog, 'name' | 'stats'>> = {
   Nala: {
     image: '/nala.webp',
-    alt: 'Nala, a beautiful golden retriever looking happy',
+    alt: 'Nala, a beautiful Australian Cattle Dog, Australian Shepherd, German Shepherd mix looking happy',
   },
   Rosie: {
     image: '/rosie.webp',
-    alt: 'Rosie, a sweet Australian shepherd with a gentle expression',
+    alt: 'Rosie, a sweet Bloodhound Beagle mix with a gentle expression',
   },
   Tito: {
     image: '/tito.webp',
-    alt: 'Tito, a playful rescue dog with lots of energy',
+    alt: 'Tito, a playful Chihuahua Pomeranian Dachshund mix with lots of energy',
   },
 };
 
@@ -97,6 +97,20 @@ function PetDogs(): React.ReactElement {
           <div id="dogs-content" className="dogs-grid">
             {dogs.map((dog) => (
               <article key={dog.name} className="dog-card">
+                {dog.name === 'Nala' && (
+                  <div
+                    className="foster-banner"
+                    role="status"
+                    aria-label="Nala is a foster dog up for adoption"
+                  >
+                    <span className="foster-banner-icon" aria-hidden="true">
+                      🏠
+                    </span>
+                    <span className="foster-banner-text">
+                      <strong>Foster Dog</strong> - Up for Adoption!
+                    </span>
+                  </div>
+                )}
                 <div className="dog-image-container">
                   <img
                     src={dog.image}
@@ -147,9 +161,10 @@ function PetDogs(): React.ReactElement {
         {showDogs && (
           <div className="pet-dogs-message" role="status" aria-live="polite">
             <p>
-              These are my three rescue dogs - Nala (golden retriever), Rosie
-              (Australian shepherd), and Tito (mystery mix). They love treats
-              and belly rubs! Feel free to give them some virtual love. 🐾
+              These are my three rescue dogs - Nala (Australian Cattle Dog,
+              Australian Shepherd, German Shepherd mix), Rosie (Bloodhound
+              Beagle mix), and Tito (Chihuahua Pomeranian Dachshund mix). They
+              love treats and scritches, so give them some virtual love.
             </p>
           </div>
         )}
