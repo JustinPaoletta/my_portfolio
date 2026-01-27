@@ -98,11 +98,7 @@ function PetDogs(): React.ReactElement {
             {dogs.map((dog) => (
               <article key={dog.name} className="dog-card">
                 {dog.name === 'Nala' && (
-                  <div
-                    className="foster-banner"
-                    role="status"
-                    aria-label="Nala is a foster dog up for adoption"
-                  >
+                  <div className="foster-banner" role="status">
                     <span className="foster-banner-icon" aria-hidden="true">
                       🏠
                     </span>
