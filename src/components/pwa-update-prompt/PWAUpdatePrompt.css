@@ -1,6 +1,7 @@
 .pwa-toast {
   position: fixed;
-  bottom: 20px;
+  /* Position above the theme switcher (48px height + 24px spacing + 20px base) */
+  bottom: 92px;
   right: 20px;
   max-width: 400px;
   background: var(--bg-card);

@@ -117,6 +117,7 @@ module.exports = {
         'dom-size-insight': 'off',
         'render-blocking-insight': 'off',
         'network-dependency-tree-insight': 'off',
+        'forced-reflow-insight': 'off',
 
         // ============================================================
         // DISABLED: IMAGE OPTIMIZATION
