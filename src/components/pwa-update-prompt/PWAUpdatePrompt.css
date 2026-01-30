@@ -1,26 +1,17 @@
 .pwa-toast {
   position: fixed;
-  bottom: 20px;
+  /* Position above the theme switcher (48px height + 24px spacing + 20px base) */
+  bottom: 92px;
   right: 20px;
   max-width: 400px;
-  background: #ffffff;
-  color: #111827; /* ensure dark text on white toast */
-  border-radius: 12px;
-  box-shadow:
-    0 4px 6px rgba(0, 0, 0, 0.1),
-    0 10px 25px rgba(0, 0, 0, 0.15);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border-radius: 12px; /* Restored radius */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
   padding: 16px;
   z-index: 9999;
+  border: 1px solid var(--border-subtle);
   animation: slideInUp 0.15s ease-out;
-}
-
-@media (prefers-color-scheme: dark) {
-  .pwa-toast {
-    background: #2a2a2a;
-    color: #f3f4f6; /* light gray for comfortable contrast on dark */
-    /* Optional: subtle border to separate from page bg */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
 }
 
 @keyframes slideInUp {
@@ -34,20 +25,9 @@
   }
 }
 
-/* Respect motion prefs */
-@media (prefers-reduced-motion: reduce) {
-  .pwa-toast {
-    animation: none;
-  }
-  .pwa-toast-button:hover,
-  .pwa-toast-button:active {
-    transform: none;
-  }
-}
-
 .pwa-toast-content {
   display: flex;
-  flex-direction: column;
+  flexdirection: column;
   gap: 12px;
 }
 .pwa-toast-message {
@@ -57,96 +37,52 @@
 }
 .pwa-toast-icon {
   font-size: 24px;
-  flex-shrink: 0;
-  line-height: 1;
+  color: var(--color-primary);
 }
 .pwa-toast-title {
   font-weight: 600;
   font-size: 16px;
   margin: 0 0 4px 0;
-  line-height: 1.3;
 }
-
-/* Avoid opacity lowering effective contrast */
 .pwa-toast-description {
   font-size: 14px;
-  margin: 0;
+  color: var(--text-secondary);
   line-height: 1.5;
-  color: #374151; /* light theme: gray-700 on white passes */
-}
-@media (prefers-color-scheme: dark) {
-  .pwa-toast-description {
-    color: #d1d5db;
-  } /* dark theme: gray-300 on #2a2a2a passes */
 }
 
 .pwa-toast-actions {
   display: flex;
-  gap: 8px;
+  /* Increased gap for touch target spacing requirements */
+  gap: 12px;
   margin-top: 4px;
 }
 
 .pwa-toast-button {
   flex: 1;
-  padding: 10px 16px;
+  /* Minimum 44x44px touch target for accessibility */
+  min-height: 44px;
+  min-width: 44px;
+  padding: 12px 16px;
   border: 1px solid transparent;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition:
-    background-color 0.1s ease,
-    border-color 0.1s ease,
-    transform 0.1s ease;
+  transition: all 0.1s ease;
 }
 
-/* Focus visibility */
-.pwa-toast-button:focus-visible {
-  outline: 3px solid #fbbf24; /* amber ring stands out on both themes */
-  outline-offset: 2px;
-}
-
-/* Primary: darker shade for contrast with white text */
 .pwa-toast-button-primary {
-  background: #1d4ed8; /* blue-700: white text contrast ≥ 4.5:1 */
+  /* Use a consistent dark background for guaranteed contrast */
+  background: #1a1a1a;
   color: #ffffff;
 }
-.pwa-toast-button-primary:hover {
-  background: #1e40af;
-} /* blue-800 */
-
-/* Secondary */
 .pwa-toast-button-secondary {
-  background: #e5e5e5;
-  color: #111827; /* strong contrast on light */
+  background: var(--bg-card-hover);
+  color: var(--text-primary);
+  border-color: var(--border-subtle);
 }
-.pwa-toast-button-secondary:hover {
-  background: #d5d5d5;
-}
-
-@media (prefers-color-scheme: dark) {
-  .pwa-toast-button-secondary {
-    background: #3a3a3a;
-    color: #f3f4f6;
-  }
-}
-
-/* Install button - uses a distinct green color */
 .pwa-toast-button-install {
-  background: #047857; /* emerald-700: white text contrast ~5.1:1 (WCAG AA compliant) */
+  /* Use a consistent dark teal for guaranteed 4.5:1+ contrast with white */
+  background: #0a7ea4;
   color: #ffffff;
-}
-.pwa-toast-button-install:hover {
-  background: #065f46; /* emerald-800: even better contrast ~6.3:1 */
-}
-.pwa-toast-button-install:disabled {
-  background: #9ca3af; /* gray-400 */
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-@media (prefers-color-scheme: dark) {
-  .pwa-toast-button-install:disabled {
-    background: #4b5563; /* gray-600 */
-  }
 }

@@ -1,10 +1,18 @@
 /**
  * Skills Section
  * Technologies and tools showcase with category tabs
+ * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef, useState } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { motion, useInView } from 'framer-motion';
+import {
+  fadeUpVariants,
+  staggerContainerVariants,
+  fastStaggerContainerVariants,
+  sectionHeaderVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import './Skills.css';
 
 interface SkillCategory {
@@ -59,7 +67,7 @@ const skillCategories: SkillCategory[] = [
 
 function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
+  const isInView = useInView(sectionRef, defaultViewport);
   const [activeTab, setActiveTab] = useState(0);
 
   const handleTabChange = (index: number): void => {
@@ -70,21 +78,37 @@ function Skills(): React.ReactElement {
     <section
       ref={sectionRef}
       id="skills"
-      className={`skills-section ${isVisible ? 'visible' : ''}`}
+      className="skills-section"
       aria-labelledby="skills-heading"
     >
       <div className="section-container">
-        <header className="section-header">
-          <span className="section-label">Expertise</span>
-          <h2 id="skills-heading" className="section-title">
+        <motion.header
+          className="section-header"
+          variants={sectionHeaderVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.span className="section-label" variants={fadeUpVariants}>
+            Expertise
+          </motion.span>
+          <motion.h2
+            id="skills-heading"
+            className="section-title"
+            variants={fadeUpVariants}
+          >
             Skills & Technologies
-          </h2>
-          <p className="section-subtitle">
+          </motion.h2>
+          <motion.p className="section-subtitle" variants={fadeUpVariants}>
             The tools and technologies I use to bring ideas to life
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
-        <div className="skills-tabs-container">
+        <motion.div
+          className="skills-tabs-container"
+          variants={fadeUpVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
           <div
             className="tabs-list"
             role="tablist"
@@ -126,22 +150,19 @@ function Skills(): React.ReactElement {
               aria-labelledby={`tab-${categoryIndex}`}
               className={`tab-panel ${activeTab === categoryIndex ? 'active' : ''}`}
             >
-              <div className="skills-grid">
-                {category.skills.map((skill, skillIndex) => (
-                  <div
+              <motion.div
+                className="skills-grid"
+                variants={staggerContainerVariants}
+                initial="hidden"
+                animate={activeTab === categoryIndex ? 'visible' : 'hidden'}
+              >
+                {category.skills.map((skill) => (
+                  <motion.div
                     key={skill.name}
                     className="skill-item"
-                    style={
-                      {
-                        '--skill-delay': `${skillIndex * 0.05}s`,
-                        '--skill-color': skill.color,
-                      } as React.CSSProperties
-                    }
+                    variants={fadeUpVariants}
                   >
-                    <div
-                      className="skill-item-icon"
-                      style={{ color: skill.color }}
-                    >
+                    <div className="skill-item-icon">
                       <img
                         src={skill.icon}
                         alt={`${skill.name} icon`}
@@ -151,16 +172,26 @@ function Skills(): React.ReactElement {
                       />
                     </div>
                     <span className="skill-item-name">{skill.name}</span>
-                  </div>
+                  </motion.div>
                 ))}
-              </div>
+              </motion.div>
             </div>
           ))}
-        </div>
+        </motion.div>
 
-        <div className="additional-skills">
+        <motion.div
+          className="additional-skills"
+          variants={fadeUpVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
           <h3 className="additional-title">Also Experienced With</h3>
-          <div className="skill-tags">
+          <motion.div
+            className="skill-tags"
+            variants={fastStaggerContainerVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             {[
               'Micro-frontends',
               'State Management',
@@ -176,19 +207,17 @@ function Skills(): React.ReactElement {
               'Debugging',
               'Performance',
               'Accessibility',
-            ].map((skill, index) => (
-              <span
+            ].map((skill) => (
+              <motion.span
                 key={skill}
                 className="skill-tag"
-                style={
-                  { '--tag-delay': `${index * 0.03}s` } as React.CSSProperties
-                }
+                variants={fadeUpVariants}
               >
                 {skill}
-              </span>
+              </motion.span>
             ))}
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </section>
   );

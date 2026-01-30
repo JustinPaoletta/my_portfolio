@@ -1,10 +1,17 @@
 /**
  * Projects Section
  * Showcase of best work with descriptions, tech stack, and links
+ * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { motion, useInView } from 'framer-motion';
+import {
+  fadeUpVariants,
+  staggerContainerVariants,
+  sectionHeaderVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import './Projects.css';
 
 interface Project {
@@ -102,7 +109,7 @@ const projects: Project[] = [
 
 function Projects(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
+  const isInView = useInView(sectionRef, defaultViewport);
 
   const featuredProjects = projects.filter((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);
@@ -111,27 +118,43 @@ function Projects(): React.ReactElement {
     <section
       ref={sectionRef}
       id="projects"
-      className={`projects-section ${isVisible ? 'visible' : ''}`}
+      className="projects-section"
       aria-labelledby="projects-heading"
     >
       <div className="section-container">
-        <header className="section-header">
-          <span className="section-label">Portfolio</span>
-          <h2 id="projects-heading" className="section-title">
+        <motion.header
+          className="section-header"
+          variants={sectionHeaderVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.span className="section-label" variants={fadeUpVariants}>
+            Portfolio
+          </motion.span>
+          <motion.h2
+            id="projects-heading"
+            className="section-title"
+            variants={fadeUpVariants}
+          >
             Featured Projects
-          </h2>
-          <p className="section-subtitle">
+          </motion.h2>
+          <motion.p className="section-subtitle" variants={fadeUpVariants}>
             Exploratory engineering projects I'm tinkering with.
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
         {/* Featured Projects */}
-        <div className="featured-projects">
-          {featuredProjects.map((project, index) => (
-            <article
+        <motion.div
+          className="featured-projects"
+          variants={staggerContainerVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          {featuredProjects.map((project) => (
+            <motion.article
               key={project.id}
               className="featured-project"
-              style={{ '--delay': `${index * 0.15}s` } as React.CSSProperties}
+              variants={fadeUpVariants}
             >
               <div className="project-image-wrapper">
                 <img
@@ -237,22 +260,30 @@ function Projects(): React.ReactElement {
                   ))}
                 </div>
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
 
         {/* Other Projects */}
-        <h3 className="other-projects-title">Other Projects</h3>
-        <div className="other-projects">
-          {otherProjects.map((project, index) => (
-            <article
+        <motion.h3
+          className="other-projects-title"
+          variants={fadeUpVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          Other Projects
+        </motion.h3>
+        <motion.div
+          className="other-projects"
+          variants={staggerContainerVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          {otherProjects.map((project) => (
+            <motion.article
               key={project.id}
               className="project-card"
-              style={
-                {
-                  '--delay': `${(index + featuredProjects.length) * 0.1}s`,
-                } as React.CSSProperties
-              }
+              variants={fadeUpVariants}
             >
               <div className="card-header">
                 <svg
@@ -316,9 +347,9 @@ function Projects(): React.ReactElement {
                   </span>
                 ))}
               </div>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

@@ -1,57 +1,87 @@
 /**
  * GitHub Section
  * Displays contribution graph and pinned repositories
+ * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { motion, useInView } from 'framer-motion';
 import { useGitHub } from '@/hooks/useGitHub';
 import { env } from '@/config/env';
+import {
+  fadeUpVariants,
+  staggerContainerVariants,
+  sectionHeaderVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import ContributionGraph from './ContributionGraph';
 import './GitHub.css';
 
 function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
+  const isInView = useInView(sectionRef, defaultViewport);
   const { user, contributions, loading, error } = useGitHub();
 
   return (
     <section
       ref={sectionRef}
       id="github"
-      className={`github-section ${isVisible ? 'visible' : ''}`}
+      className="github-section"
       aria-labelledby="github-heading"
     >
       <div className="section-container">
-        <header className="section-header">
-          <span className="section-label">Open Source</span>
-          <h2 id="github-heading" className="section-title">
+        <motion.header
+          className="section-header"
+          variants={sectionHeaderVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.span className="section-label" variants={fadeUpVariants}>
+            Open Source
+          </motion.span>
+          <motion.h2
+            id="github-heading"
+            className="section-title"
+            variants={fadeUpVariants}
+          >
             GitHub Activity
-          </h2>
-          <p className="section-subtitle">
+          </motion.h2>
+          <motion.p className="section-subtitle" variants={fadeUpVariants}>
             My contributions and open-source projects
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
         {error && (
-          <div className="github-error" role="alert">
+          <motion.div
+            className="github-error"
+            role="alert"
+            variants={fadeUpVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <circle cx="12" cy="12" r="10" strokeWidth="2" />
               <line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
               <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
             </svg>
             <span>Unable to load GitHub data. Please try again later.</span>
-          </div>
+          </motion.div>
         )}
 
         {/* GitHub Stats Overview */}
         {user && (
-          <div className="github-stats-bar">
-            <a
+          <motion.div
+            className="github-stats-bar"
+            variants={staggerContainerVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
+            <motion.a
               href={env.social.github}
               target="_blank"
               rel="noopener noreferrer"
               className="github-profile-link"
+              variants={fadeUpVariants}
             >
               <img
                 src={user.avatar_url}
@@ -64,9 +94,9 @@ function GitHub(): React.ReactElement {
                 <span className="github-name">{user.name || user.login}</span>
                 <span className="github-username">@{user.login}</span>
               </div>
-            </a>
+            </motion.a>
 
-            <div className="github-stats">
+            <motion.div className="github-stats" variants={fadeUpVariants}>
               <div className="stat-item">
                 <span className="stat-value">{user.public_repos}</span>
                 <span className="stat-label">Repos</span>
@@ -87,17 +117,23 @@ function GitHub(): React.ReactElement {
                   <span className="stat-label">Contributions</span>
                 </div>
               )}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         )}
 
         {/* Contribution Graph */}
         {contributions && (
-          <ContributionGraph
-            contributions={contributions}
-            loading={loading}
-            isVisible={isVisible}
-          />
+          <motion.div
+            variants={fadeUpVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
+            <ContributionGraph
+              contributions={contributions}
+              loading={loading}
+              isVisible={isInView}
+            />
+          </motion.div>
         )}
 
         {/* Loading State */}
@@ -109,7 +145,12 @@ function GitHub(): React.ReactElement {
         )}
 
         {/* View Profile CTA */}
-        <div className="github-cta">
+        <motion.div
+          className="github-cta"
+          variants={fadeUpVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
           <a
             href={env.social.github}
             target="_blank"
@@ -135,7 +176,7 @@ function GitHub(): React.ReactElement {
               />
             </svg>
           </a>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

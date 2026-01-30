@@ -16,9 +16,7 @@ function Footer(): React.ReactElement {
             <span className="logo-dot" aria-hidden="true" />
             <span className="visually-hidden">- Go to top</span>
           </a>
-          <p className="footer-tagline">
-            From ideas to prompts, to production-ready software.
-          </p>
+          <p className="footer-tagline">Ideas → Prompts → Production</p>
         </div>
         <p className="copyright">
           © {currentYear} Justin Paoletta. All rights reserved.

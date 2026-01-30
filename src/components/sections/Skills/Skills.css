@@ -15,7 +15,7 @@
   height: 800px;
   background: radial-gradient(
     circle,
-    rgba(120, 119, 198, 0.08) 0%,
+    rgba(139, 115, 85, 0.08) 0%,
     transparent 70%
   );
   transform: translate(-50%, -50%);
@@ -37,41 +37,23 @@
 
 .tab-button {
   padding: 0.875rem 2rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 50px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-serif);
   font-size: 1rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   cursor: pointer;
   transition: all 0.2s ease;
-  opacity: 0;
-  transform: translateY(10px);
-}
-
-.skills-section.visible .tab-button {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.skills-section.visible .tab-button:nth-child(1) {
-  transition-delay: 0.1s;
-}
-
-.skills-section.visible .tab-button:nth-child(2) {
-  transition-delay: 0.2s;
-}
-
-.skills-section.visible .tab-button:nth-child(3) {
-  transition-delay: 0.3s;
+  /* Animation handled by Framer Motion */
 }
 
 .tab-button:hover,
 .tab-button:focus {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(120, 119, 198, 0.3);
-  color: rgba(255, 255, 255, 0.9);
+  background: var(--bg-card-hover);
+  border-color: var(--border-hover);
+  color: var(--text-primary);
   outline: none;
 }
 
@@ -81,7 +63,7 @@
 }
 
 .tab-button.active {
-  background: rgba(120, 119, 198, 0.15);
+  background: rgba(139, 115, 85, 0.15);
   border-color: var(--color-primary);
   color: var(--color-primary-light);
   font-weight: 600;
@@ -116,25 +98,18 @@
   align-items: center;
   gap: 0.875rem;
   padding: 1.75rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 16px;
   transition: all 0.25s ease;
-  opacity: 0;
-  transform: translateY(10px) scale(0.95);
   cursor: default;
-}
-
-.skills-section.visible .tab-panel.active .skill-item {
-  opacity: 1;
-  transform: translateY(0) scale(1);
-  transition-delay: var(--skill-delay, 0s);
+  /* Animation handled by Framer Motion */
 }
 
 .skill-item:hover,
 .skill-item:focus {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: var(--skill-color, var(--color-primary));
+  background: var(--bg-card-hover);
+  border-color: var(--color-primary);
   transform: translateY(-4px) scale(1.02);
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
@@ -145,7 +120,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--bg-main);
   border-radius: 16px;
   transition: transform 0.25s ease;
   padding: 0.75rem;
@@ -168,37 +143,29 @@
 .skill-item:hover .skill-item-icon,
 .skill-item:focus .skill-item-icon {
   transform: scale(1.1) rotate(5deg);
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--bg-card-hover);
 }
 
 .skill-item-name {
   font-size: 1rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-primary);
   text-align: center;
 }
 
 /* Additional Skills */
 .additional-skills {
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.3s ease 0.25s,
-    transform 0.3s ease 0.25s;
-}
-
-.skills-section.visible .additional-skills {
-  opacity: 1;
-  transform: translateY(0);
+  margin-top: 4rem;
+  /* Animation handled by Framer Motion */
 }
 
 .additional-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-serif);
   font-size: 1.125rem;
   font-weight: 600;
   text-align: center;
   margin: 0 0 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
 }
 
 .skill-tags {
@@ -210,26 +177,19 @@
 
 .skill-tag {
   padding: 0.5rem 1.25rem;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 50px;
   font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   transition: all 0.15s ease;
-  opacity: 0;
-  transform: scale(0.9);
-}
-
-.skills-section.visible .skill-tag {
-  opacity: 1;
-  transform: scale(1);
-  transition-delay: var(--tag-delay, 0s);
+  /* Animation handled by Framer Motion */
 }
 
 .skill-tag:hover {
-  background: rgba(120, 119, 198, 0.15);
-  border-color: rgba(120, 119, 198, 0.4);
-  color: #a8a8ff;
+  background: rgba(139, 115, 85, 0.15);
+  border-color: var(--color-primary);
+  color: var(--color-primary-light);
   transform: translateY(-2px);
 }
 
@@ -261,74 +221,5 @@
     width: 64px;
     height: 64px;
     padding: 0.625rem;
-  }
-}
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
-  .skills-section::before {
-    background: radial-gradient(
-      circle,
-      rgba(120, 119, 198, 0.05) 0%,
-      transparent 70%
-    );
-  }
-
-  .tab-button {
-    background: var(--bg-card);
-    border-color: var(--border-subtle);
-    color: var(--text-secondary);
-  }
-
-  .tab-button:hover,
-  .tab-button:focus {
-    background: var(--bg-card-hover);
-    border-color: var(--border-hover);
-  }
-
-  .tab-button.active {
-    background: rgba(120, 119, 198, 0.1);
-    border-color: var(--color-primary);
-    color: var(--color-primary-dark);
-  }
-
-  .skill-item {
-    background: var(--bg-card);
-    border-color: var(--border-subtle);
-  }
-
-  .skill-item:hover,
-  .skill-item:focus {
-    background: var(--bg-card-hover);
-    border-color: var(--skill-color, var(--color-primary));
-  }
-
-  .skill-item-name {
-    color: var(--text-primary);
-  }
-
-  .skill-item-icon img {
-    opacity: 0.8;
-  }
-
-  .skill-item:hover .skill-item-icon img,
-  .skill-item:focus .skill-item-icon img {
-    opacity: 1;
-  }
-
-  .skill-tag {
-    background: var(--bg-card);
-    border-color: var(--border-subtle);
-  }
-
-  .skill-tag:hover {
-    background: rgba(120, 119, 198, 0.1);
-    border-color: var(--border-hover);
-    color: var(--color-primary-dark);
-  }
-
-  .additional-title,
-  .skill-tag {
-    color: var(--text-secondary);
   }
 }

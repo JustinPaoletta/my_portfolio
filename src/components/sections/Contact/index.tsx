@@ -1,11 +1,20 @@
 /**
  * Contact Section
  * Contact form and social links
+ * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef, useState, type FormEvent } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { motion, useInView } from 'framer-motion';
 import { env } from '@/config/env';
+import {
+  fadeUpVariants,
+  fadeLeftVariants,
+  fadeRightVariants,
+  staggerContainerVariants,
+  sectionHeaderVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import './Contact.css';
 
 interface FormState {
@@ -16,7 +25,7 @@ interface FormState {
 
 function Contact(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
+  const isInView = useInView(sectionRef, defaultViewport);
   const [formData, setFormData] = useState<FormState>({
     name: '',
     email: '',
@@ -77,7 +86,7 @@ function Contact(): React.ReactElement {
     <section
       ref={sectionRef}
       id="contact"
-      className={`contact-section ${isVisible ? 'visible' : ''}`}
+      className="contact-section"
       aria-labelledby="contact-heading"
     >
       <div className="contact-background" aria-hidden="true">
@@ -85,54 +94,70 @@ function Contact(): React.ReactElement {
       </div>
 
       <div className="section-container">
-        <header className="section-header">
-          <span className="section-label">Contact</span>
-          <h2 id="contact-heading" className="section-title">
+        <motion.header
+          className="section-header"
+          variants={sectionHeaderVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.span className="section-label" variants={fadeUpVariants}>
+            Contact
+          </motion.span>
+          <motion.h2
+            id="contact-heading"
+            className="section-title"
+            variants={fadeUpVariants}
+          >
             Get In Touch
-          </h2>
-          <p className="section-subtitle">
+          </motion.h2>
+          <motion.p className="section-subtitle" variants={fadeUpVariants}>
             Have a project in mind or just want to chat? I&apos;d love to hear
             from you.
-          </p>
-        </header>
+          </motion.p>
+        </motion.header>
 
         <div className="contact-content">
           {/* Contact Info */}
-          <div className="contact-info">
+          <motion.div
+            className="contact-info"
+            variants={fadeLeftVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <p className="contact-intro">
               I&apos;m always open to discussing new projects, creative ideas,
               or opportunities to be part of your vision. Feel free to reach out
               through any of these channels.
             </p>
 
-            <div className="contact-methods">
-              <a href={`mailto:${env.social.email}`} className="contact-method">
+            <motion.div
+              className="contact-methods"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
+              <motion.a
+                href={`mailto:${env.social.email}`}
+                className="contact-method"
+                variants={fadeUpVariants}
+              >
                 <div className="method-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path
-                      d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                    />
-                    <polyline
-                      points="22,6 12,13 2,6"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
+                  <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
                   </svg>
                 </div>
                 <div className="method-content">
                   <span className="method-label">Email</span>
                   <span className="method-value">{env.social.email}</span>
                 </div>
-              </a>
+              </motion.a>
 
-              <a
+              <motion.a
                 href={env.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-method"
+                variants={fadeUpVariants}
               >
                 <div className="method-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -143,13 +168,14 @@ function Contact(): React.ReactElement {
                   <span className="method-label">LinkedIn</span>
                   <span className="method-value">Let&apos;s connect</span>
                 </div>
-              </a>
+              </motion.a>
 
-              <a
+              <motion.a
                 href={env.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-method"
+                variants={fadeUpVariants}
               >
                 <div className="method-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -160,21 +186,32 @@ function Contact(): React.ReactElement {
                   <span className="method-label">GitHub</span>
                   <span className="method-value">Check out my code</span>
                 </div>
-              </a>
-            </div>
+              </motion.a>
+            </motion.div>
 
-            <div className="availability">
+            <motion.div
+              className="availability"
+              variants={fadeUpVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
               <div className="availability-indicator" aria-hidden="true">
                 <span className="indicator-dot" />
               </div>
               <span className="availability-text">
                 Currently available for freelance & full-time opportunities
               </span>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Contact Form */}
-          <form className="contact-form" onSubmit={handleSubmit}>
+          <motion.form
+            className="contact-form"
+            onSubmit={handleSubmit}
+            variants={fadeRightVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <div className="form-group">
               <label htmlFor="name" className="form-label">
                 Your Name
@@ -306,7 +343,7 @@ function Contact(): React.ReactElement {
                 Failed to send message. Please try again or email me directly.
               </div>
             )}
-          </form>
+          </motion.form>
         </div>
       </div>
     </section>

@@ -7,65 +7,53 @@
 
 /* Root Variables - Dark Theme Default */
 :root {
-  --font-sans: 'Space Grotesk', system-ui, -apple-system, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-serif: 'Fraunces', serif;
+  --font-mono:
+    'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
 
-  --color-primary: #7877c6;
-  --color-primary-light: #a8a8ff;
-  --color-primary-dark: #5a59a8;
-  --color-accent: #ff6b6b;
-  --color-accent-teal: #4ecdc4;
+  /**
+   * Theme Colors - Injected dynamically by ThemeProvider
+   * These fallback values match the "Warm Minimalist" default theme
+   * See src/config/themes.ts for available themes
+   */
+  --color-primary: #8b7355;
+  --color-primary-light: #a68d6d;
+  --color-primary-dark: #63523d;
+  --color-accent: #c46647;
+  --color-accent-teal: #6b8e8e;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Theme-aware colors */
-  --text-primary: rgba(255, 255, 255, 0.95);
-  --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.7);
-  --bg-card: rgba(255, 255, 255, 0.02);
-  --bg-card-hover: rgba(255, 255, 255, 0.05);
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-hover: rgba(120, 119, 198, 0.3);
+  /* Theme-aware colors - Dark Mode (Warm Off-Black) */
+  --text-primary: #fdfbf7;
+  --text-secondary: rgba(253, 251, 247, 0.7);
+  --text-muted: rgba(253, 251, 247, 0.5);
+  --bg-main: #1a1918;
+  --bg-card: rgba(253, 251, 247, 0.03);
+  --bg-card-hover: rgba(253, 251, 247, 0.06);
+  --border-subtle: rgba(253, 251, 247, 0.1);
+  --border-hover: rgba(139, 115, 85, 0.4);
 
-  /* Reusable background gradients */
+  /* Reusable background gradients - Simplified */
   --bg-gradient-primary: radial-gradient(
-    ellipse 80% 50% at 50% -20%,
-    rgba(120, 119, 198, 0.15),
+    ellipse 80% 50% at 50% -10%,
+    rgba(139, 115, 85, 0.1),
     transparent
   );
   --bg-gradient-accent: radial-gradient(
     ellipse 60% 40% at 80% 60%,
-    rgba(255, 107, 107, 0.08),
-    transparent
-  );
-  --bg-gradient-subtle: linear-gradient(
-    180deg,
-    transparent 0%,
-    rgba(120, 119, 198, 0.03) 50%,
-    transparent 100%
-  );
-  --bg-gradient-border: linear-gradient(
-    90deg,
-    transparent,
-    rgba(120, 119, 198, 0.3),
+    rgba(196, 102, 71, 0.05),
     transparent
   );
 }
 
-/* Light Theme Overrides */
-@media (prefers-color-scheme: light) {
-  :root {
-    --color-primary-dark: #5a59a8;
-    --text-primary: rgba(0, 0, 0, 0.9);
-    --text-secondary: rgba(0, 0, 0, 0.7);
-    --text-muted: rgba(0, 0, 0, 0.7);
-    --bg-card: rgba(0, 0, 0, 0.02);
-    --bg-card-hover: rgba(0, 0, 0, 0.04);
-    --border-subtle: rgba(0, 0, 0, 0.08);
-    --border-hover: rgba(120, 119, 198, 0.2);
-  }
-}
+/**
+ * Light/Dark mode colors are now injected dynamically by ThemeProvider
+ * based on user preference and the selected theme.
+ * See src/hooks/useTheme.tsx for implementation.
+ */
 
 /* Global Styles */
 #root {
@@ -134,16 +122,7 @@ h6 {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin-bottom: 0.75rem;
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.13s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.13s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.visible .section-label {
-  opacity: 1;
-  transform: translateY(0);
+  /* GPU-accelerated by Framer Motion */
 }
 
 .section-title {
@@ -152,38 +131,21 @@ h6 {
   font-weight: 700;
   margin: 0;
   color: inherit;
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.13s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.13s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.visible .section-title {
-  opacity: 1;
-  transform: translateY(0);
+  /* GPU-accelerated by Framer Motion */
 }
 
 .section-subtitle {
   font-size: 1.125rem;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--text-secondary);
   max-width: 500px;
   margin: 1rem auto 0;
-  opacity: 0;
-  transform: translateY(20px);
-  transition:
-    opacity 0.13s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.13s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.visible .section-subtitle {
-  opacity: 1;
-  transform: translateY(0);
+  /* GPU-accelerated by Framer Motion */
 }
 
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 80px; /* Account for fixed navigation */
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -232,27 +194,21 @@ html {
   outline-offset: 2px;
 }
 
-/* Light mode adjustments */
-@media (prefers-color-scheme: light) {
-  .section-subtitle {
-    color: rgba(0, 0, 0, 0.6);
-  }
+/* Light mode adjustments - using data attribute set by ThemeProvider */
+[data-color-mode='light'] ::selection {
+  background: rgba(120, 119, 198, 0.2);
+}
 
-  ::selection {
-    background: rgba(120, 119, 198, 0.2);
-  }
+[data-color-mode='light'] ::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.02);
+}
 
-  ::-webkit-scrollbar-track {
-    background: rgba(0, 0, 0, 0.02);
-  }
+[data-color-mode='light'] ::-webkit-scrollbar-thumb {
+  background: rgba(120, 119, 198, 0.2);
+}
 
-  ::-webkit-scrollbar-thumb {
-    background: rgba(120, 119, 198, 0.2);
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(120, 119, 198, 0.4);
-  }
+[data-color-mode='light'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(120, 119, 198, 0.4);
 }
 
 /* Mobile adjustments */

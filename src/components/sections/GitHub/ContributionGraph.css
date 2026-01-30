@@ -1,8 +1,8 @@
 /* ContributionGraph Styles - Mobile First */
 
 .contribution-graph {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 16px;
   padding: 1rem;
   margin-bottom: 2rem;
@@ -11,17 +11,12 @@
   transition:
     opacity 0.3s ease 0.1s,
     transform 0.3s ease 0.1s;
-  /* Allow overflow for hover scale effects on contribution days */
   overflow: visible;
 }
 
 .contribution-graph.visible {
   opacity: 1;
   transform: translateY(0);
-}
-
-.contribution-graph.loading {
-  opacity: 0.5;
 }
 
 .graph-header {
@@ -31,7 +26,7 @@
 .graph-title {
   font-size: 0.85rem;
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -47,7 +42,7 @@
 
 .day-label {
   font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-muted);
   line-height: var(--day-size, 11px);
   text-align: right;
   padding-right: 2px;
@@ -60,7 +55,6 @@
   flex: 1;
   overflow: visible;
   min-width: 0;
-  /* Prevent layout shifts from hover effects */
   isolation: isolate;
 }
 
@@ -75,7 +69,7 @@
 .month-label {
   position: absolute;
   font-size: 0.6rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
@@ -84,7 +78,7 @@
   gap: 2px;
   width: 100%;
   overflow: visible;
-  padding-bottom: 4px; /* Accommodate hover scale effect */
+  padding-bottom: 4px;
   contain: layout;
 }
 
@@ -122,25 +116,21 @@
   z-index: 10;
 }
 
-/* Contribution levels - dark theme */
+/* Levels - using sage colors */
 .contribution-day.level-0 {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-main);
 }
-
 .contribution-day.level-1 {
-  background: #0e4429;
+  background: rgba(107, 142, 142, 0.2);
 }
-
 .contribution-day.level-2 {
-  background: #006d32;
+  background: rgba(107, 142, 142, 0.4);
 }
-
 .contribution-day.level-3 {
-  background: #26a641;
+  background: rgba(107, 142, 142, 0.7);
 }
-
 .contribution-day.level-4 {
-  background: #39d353;
+  background: var(--color-accent-teal);
 }
 
 /* Legend */
@@ -154,7 +144,7 @@
 
 .legend-label {
   font-size: 0.65rem;
-  color: rgba(255, 255, 255, 0.7);
+  color: var(--text-muted);
 }
 
 .legend-levels {
@@ -169,30 +159,22 @@
 }
 
 .legend-level.level-0 {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-main);
 }
-
 .legend-level.level-1 {
-  background: #0e4429;
+  background: rgba(107, 142, 142, 0.2);
 }
-
 .legend-level.level-2 {
-  background: #006d32;
+  background: rgba(107, 142, 142, 0.4);
 }
-
 .legend-level.level-3 {
-  background: #26a641;
+  background: rgba(107, 142, 142, 0.7);
 }
-
 .legend-level.level-4 {
-  background: #39d353;
+  background: var(--color-accent-teal);
 }
 
-/* ========================================
-   RESPONSIVE BREAKPOINTS (Mobile-First)
-   ======================================== */
-
-/* Small screens (481px+) - Show abbreviated day labels */
+/* Responsive Breakpoints */
 @media (min-width: 481px) {
   .graph-container {
     gap: 0.35rem;
@@ -213,7 +195,6 @@
   }
 }
 
-/* Medium screens (641px+) - More spacing */
 @media (min-width: 641px) {
   .contribution-graph {
     padding: 1.25rem;
@@ -251,7 +232,6 @@
   }
 }
 
-/* Large screens (769px+) - Full day labels */
 @media (min-width: 769px) {
   .contribution-graph {
     padding: 1.5rem;
@@ -285,54 +265,5 @@
 
   .legend-label {
     font-size: 0.7rem;
-  }
-}
-
-/* Extra large screens (1025px+) - Full year view */
-@media (min-width: 1025px) {
-  /* Styles are inherited from 769px+ breakpoint */
-  /* Full 52 weeks displayed via JS */
-}
-
-/* ========================================
-   LIGHT MODE
-   ======================================== */
-
-@media (prefers-color-scheme: light) {
-  .contribution-graph {
-    background: var(--bg-card);
-    border-color: var(--border-subtle);
-  }
-
-  .graph-title,
-  .day-label,
-  .month-label,
-  .legend-label {
-    color: var(--text-muted);
-  }
-
-  .contribution-day.level-0,
-  .legend-level.level-0 {
-    background: rgba(0, 0, 0, 0.06);
-  }
-
-  .contribution-day.level-1,
-  .legend-level.level-1 {
-    background: #9be9a8;
-  }
-
-  .contribution-day.level-2,
-  .legend-level.level-2 {
-    background: #40c463;
-  }
-
-  .contribution-day.level-3,
-  .legend-level.level-3 {
-    background: #30a14e;
-  }
-
-  .contribution-day.level-4,
-  .legend-level.level-4 {
-    background: #216e39;
   }
 }

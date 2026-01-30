@@ -1,10 +1,19 @@
 /**
  * Experience Section
  * Work history and education timeline
+ * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { motion, useInView } from 'framer-motion';
+import {
+  fadeUpVariants,
+  fadeLeftVariants,
+  fadeRightVariants,
+  staggerContainerVariants,
+  sectionHeaderVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import './Experience.css';
 
 interface ExperienceItem {
@@ -125,7 +134,7 @@ const experiences: ExperienceItem[] = [
 
 function Experience(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.1 });
+  const isInView = useInView(sectionRef, defaultViewport);
 
   const workExperiences = experiences.filter((e) => e.type === 'work');
   const education = experiences.filter((e) => e.type === 'education');
@@ -134,20 +143,36 @@ function Experience(): React.ReactElement {
     <section
       ref={sectionRef}
       id="experience"
-      className={`experience-section ${isVisible ? 'visible' : ''}`}
+      className="experience-section"
       aria-labelledby="experience-heading"
     >
       <div className="section-container">
-        <header className="section-header">
-          <span className="section-label">Career</span>
-          <h2 id="experience-heading" className="section-title">
+        <motion.header
+          className="section-header"
+          variants={sectionHeaderVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.span className="section-label" variants={fadeUpVariants}>
+            Career
+          </motion.span>
+          <motion.h2
+            id="experience-heading"
+            className="section-title"
+            variants={fadeUpVariants}
+          >
             Experience & Education
-          </h2>
-        </header>
+          </motion.h2>
+        </motion.header>
 
         <div className="experience-content">
           {/* Work Experience */}
-          <div className="experience-column">
+          <motion.div
+            className="experience-column"
+            variants={fadeLeftVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <h3 className="column-title">
               <svg
                 className="column-icon"
@@ -172,14 +197,17 @@ function Experience(): React.ReactElement {
               Work Experience
             </h3>
 
-            <div className="timeline">
-              {workExperiences.map((exp, index) => (
-                <article
+            <motion.div
+              className="timeline"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
+              {workExperiences.map((exp) => (
+                <motion.article
                   key={exp.id}
                   className={`timeline-item ${exp.current ? 'current' : ''}`}
-                  style={
-                    { '--delay': `${index * 0.15}s` } as React.CSSProperties
-                  }
+                  variants={fadeUpVariants}
                 >
                   <div className="timeline-marker" aria-hidden="true">
                     {exp.current && (
@@ -211,13 +239,18 @@ function Experience(): React.ReactElement {
                       </div>
                     )}
                   </div>
-                </article>
+                </motion.article>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Education */}
-          <div className="experience-column education-column">
+          <motion.div
+            className="experience-column education-column"
+            variants={fadeRightVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <h3 className="column-title">
               <svg
                 className="column-icon"
@@ -232,16 +265,17 @@ function Experience(): React.ReactElement {
               Education
             </h3>
 
-            <div className="timeline">
-              {education.map((edu, index) => (
-                <article
+            <motion.div
+              className="timeline"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
+              {education.map((edu) => (
+                <motion.article
                   key={edu.id}
                   className="timeline-item"
-                  style={
-                    {
-                      '--delay': `${(workExperiences.length + index) * 0.15}s`,
-                    } as React.CSSProperties
-                  }
+                  variants={fadeUpVariants}
                 >
                   <div className="timeline-marker" aria-hidden="true" />
                   <div className="timeline-content">
@@ -260,12 +294,17 @@ function Experience(): React.ReactElement {
                       ))}
                     </ul>
                   </div>
-                </article>
+                </motion.article>
               ))}
-            </div>
+            </motion.div>
 
             {/* Resume Download */}
-            <div className="resume-cta">
+            <motion.div
+              className="resume-cta"
+              variants={fadeUpVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
               <a
                 href="/Justin Paoletta_Software Engineer.pdf"
                 download="Justin_Paoletta_Resume.pdf"
@@ -300,8 +339,8 @@ function Experience(): React.ReactElement {
                 </svg>
                 Download Resume
               </a>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>
