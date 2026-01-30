@@ -1,15 +1,13 @@
 /**
  * Hero Section
  * Main introduction with name, title, and brief intro
+ * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useState, useRef, useMemo } from 'react';
+import { useMemo } from 'react';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import { env } from '@/config/env';
 import './Hero.css';
-
-interface HeroProps {
-  scrollY: number;
-}
 
 // Pre-generate particle positions to avoid impure Math.random() in render
 function generateParticlePositions(
@@ -22,21 +20,26 @@ function generateParticlePositions(
   }));
 }
 
-function Hero({ scrollY }: HeroProps): React.ReactElement {
-  const [isVisible] = useState(true);
-  const sectionRef = useRef<HTMLElement>(null);
+function Hero(): React.ReactElement {
+  // Framer Motion scroll hooks for smooth parallax
+  const { scrollY } = useScroll();
+
+  // Transform scroll position to parallax offset with smooth spring physics
+  // As user scrolls from 0 to 500px, content moves 0 to 125px (0.25 multiplier)
+  const parallaxY = useTransform(scrollY, [0, 500], [0, 125], {
+    clamp: false,
+  });
+
+  // Fade out content as user scrolls
+  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
 
   // Memoize particle positions so they don't change on re-render
   const particlePositions = useMemo(() => generateParticlePositions(20), []);
 
-  // Parallax effect for hero content
-  const parallaxOffset = scrollY * 0.25;
-
   return (
     <section
-      ref={sectionRef}
       id="hero"
-      className={`hero-section ${isVisible ? 'visible' : ''}`}
+      className="hero-section visible"
       aria-labelledby="hero-heading"
     >
       <div className="hero-background" aria-hidden="true">
@@ -59,9 +62,12 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
         </div>
       </div>
 
-      <div
+      <motion.div
         className="hero-content"
-        style={{ transform: `translateY(${parallaxOffset}px)` }}
+        style={{
+          y: parallaxY,
+          opacity,
+        }}
       >
         <span className="hero-greeting">Hello, I&apos;m</span>
 
@@ -142,24 +148,7 @@ function Hero({ scrollY }: HeroProps): React.ReactElement {
             </svg>
           </a>
         </div>
-      </div>
-
-      <div className="scroll-indicator" aria-hidden="true">
-        <svg
-          className="scroll-chevron"
-          viewBox="0 0 24 24"
-          fill="none"
-          aria-hidden="true"
-        >
-          <path
-            d="M6 9l6 6 6-6"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+      </motion.div>
     </section>
   );
 }

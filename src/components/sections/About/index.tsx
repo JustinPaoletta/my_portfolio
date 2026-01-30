@@ -1,33 +1,57 @@
 /**
  * About Section
- * Background and story
+ * Background and story with Framer Motion animations
  */
 
+import { motion, useInView } from 'framer-motion';
 import { useRef } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import {
+  fadeUpVariants,
+  fadeLeftVariants,
+  fadeRightVariants,
+  staggerContainerVariants,
+  sectionHeaderVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import './About.css';
 
 function About(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.2 });
+  const isInView = useInView(sectionRef, defaultViewport);
 
   return (
     <section
       ref={sectionRef}
       id="about"
-      className={`about-section ${isVisible ? 'visible' : ''}`}
+      className="about-section"
       aria-labelledby="about-heading"
     >
       <div className="section-container">
-        <header className="section-header">
-          <span className="section-label">About Me</span>
-          <h2 id="about-heading" className="section-title">
+        <motion.header
+          className="section-header"
+          variants={sectionHeaderVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
+          <motion.span className="section-label" variants={fadeUpVariants}>
+            About Me
+          </motion.span>
+          <motion.h2
+            id="about-heading"
+            className="section-title"
+            variants={fadeUpVariants}
+          >
             My Journey
-          </h2>
-        </header>
+          </motion.h2>
+        </motion.header>
 
         <div className="about-content">
-          <div className="about-text">
+          <motion.div
+            className="about-text"
+            variants={fadeLeftVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <p className="about-intro">
               I began my career in technology at Apple, where I worked as a
               Senior Tech Support Advisor. It was a solid role, but I
@@ -65,25 +89,35 @@ function About(): React.ReactElement {
               latest space and science news.
             </p>
 
-            <div className="about-highlights">
-              <div className="highlight-item">
+            <motion.div
+              className="about-highlights"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
+              <motion.div className="highlight-item" variants={fadeUpVariants}>
                 <span className="highlight-number">5+</span>
                 <span className="highlight-label">Years Experience</span>
-              </div>
-              <div className="highlight-item">
+              </motion.div>
+              <motion.div className="highlight-item" variants={fadeUpVariants}>
                 <span className="highlight-number">180+</span>
                 <span className="highlight-label">Jira Tickets Completed</span>
-              </div>
-              <div className="highlight-item">
+              </motion.div>
+              <motion.div className="highlight-item" variants={fadeUpVariants}>
                 <span className="highlight-number">1500+</span>
                 <span className="highlight-label">
                   Diet Dews Converted to Code
                 </span>
-              </div>
-            </div>
-          </div>
+              </motion.div>
+            </motion.div>
+          </motion.div>
 
-          <div className="about-center">
+          <motion.div
+            className="about-center"
+            variants={fadeRightVariants}
+            initial="hidden"
+            animate={isInView ? 'visible' : 'hidden'}
+          >
             <div className="about-image-container">
               <div className="about-image-wrapper">
                 <img
@@ -97,10 +131,18 @@ function About(): React.ReactElement {
               </div>
             </div>
 
-            <div className="about-values">
+            <motion.div
+              className="about-values"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
               <h3 className="values-title">Core Principles</h3>
               <div className="values-grid">
-                <article className="value-card">
+                <motion.article
+                  className="value-card"
+                  variants={fadeUpVariants}
+                >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <circle cx="12" cy="12" r="10" strokeWidth="2" />
@@ -112,13 +154,20 @@ function About(): React.ReactElement {
                     </svg>
                   </div>
                   <h4>Quality Over Speed</h4>
-                  <p>
-                    Taking the time to build things right, with attention to
-                    detail and long-term maintainability.
-                  </p>
-                </article>
+                  <div className="value-card-content">
+                    <div className="value-card-content-inner">
+                      <p>
+                        Taking the time to build things right, with attention to
+                        detail and long-term maintainability.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
 
-                <article className="value-card">
+                <motion.article
+                  className="value-card"
+                  variants={fadeUpVariants}
+                >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path
@@ -132,13 +181,20 @@ function About(): React.ReactElement {
                     </svg>
                   </div>
                   <h4>Collaboration</h4>
-                  <p>
-                    Working together to achieve great results. The best
-                    solutions come from diverse perspectives.
-                  </p>
-                </article>
+                  <div className="value-card-content">
+                    <div className="value-card-content-inner">
+                      <p>
+                        Working together to achieve great results. The best
+                        solutions come from diverse perspectives.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
 
-                <article className="value-card">
+                <motion.article
+                  className="value-card"
+                  variants={fadeUpVariants}
+                >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path
@@ -153,13 +209,20 @@ function About(): React.ReactElement {
                     </svg>
                   </div>
                   <h4>Continuous Learning</h4>
-                  <p>
-                    Staying curious and always exploring new technologies,
-                    patterns, and approaches.
-                  </p>
-                </article>
+                  <div className="value-card-content">
+                    <div className="value-card-content-inner">
+                      <p>
+                        Staying curious and always exploring new technologies,
+                        patterns, and approaches.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
 
-                <article className="value-card">
+                <motion.article
+                  className="value-card"
+                  variants={fadeUpVariants}
+                >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <path
@@ -169,14 +232,18 @@ function About(): React.ReactElement {
                     </svg>
                   </div>
                   <h4>Accessibility</h4>
-                  <p>
-                    Building inclusive experiences that work for everyone,
-                    regardless of ability.
-                  </p>
-                </article>
+                  <div className="value-card-content">
+                    <div className="value-card-content-inner">
+                      <p>
+                        Building inclusive experiences that work for everyone,
+                        regardless of ability.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
     </section>

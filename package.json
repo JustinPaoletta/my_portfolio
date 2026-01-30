@@ -33,8 +33,9 @@
     "type-check:watch": "tsc -b --noEmit --watch"
   },
   "dependencies": {
-    "@upstash/redis": "^1.36.1",
     "@newrelic/browser-agent": "^1.308.0",
+    "@upstash/redis": "^1.36.1",
+    "framer-motion": "^12.29.2",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-helmet-async": "^2.0.5",

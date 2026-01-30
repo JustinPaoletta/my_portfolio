@@ -106,8 +106,9 @@ class ErrorBoundary extends Component<Props, State> {
             alignItems: 'center',
             justifyContent: 'center',
             padding: '2rem',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
-            backgroundColor: '#f9fafb',
+            fontFamily: "'Inter', system-ui, -apple-system, sans-serif",
+            backgroundColor: '#1a1918',
+            color: '#fdfbf7',
           }}
           role="alert"
           aria-live="assertive"
@@ -116,17 +117,19 @@ class ErrorBoundary extends Component<Props, State> {
             style={{
               maxWidth: '32rem',
               textAlign: 'center',
-              backgroundColor: 'white',
-              padding: '2rem',
-              borderRadius: '0.5rem',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
+              backgroundColor: 'rgba(253, 251, 247, 0.03)',
+              padding: '3rem 2rem',
+              borderRadius: '4px',
+              border: '1px solid rgba(253, 251, 247, 0.1)',
+              boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
             }}
           >
             <h1
               style={{
-                fontSize: '1.5rem',
-                fontWeight: 'bold',
-                color: '#dc2626',
+                fontFamily: "'Fraunces', serif",
+                fontSize: '2rem',
+                fontWeight: '700',
+                color: '#c46647',
                 marginBottom: '1rem',
               }}
             >
@@ -134,8 +137,8 @@ class ErrorBoundary extends Component<Props, State> {
             </h1>
             <p
               style={{
-                color: '#6b7280',
-                marginBottom: '1.5rem',
+                color: 'rgba(253, 251, 247, 0.7)',
+                marginBottom: '2rem',
                 lineHeight: '1.6',
               }}
             >
@@ -144,19 +147,19 @@ class ErrorBoundary extends Component<Props, State> {
             {import.meta.env.DEV && this.state.error && (
               <details
                 style={{
-                  marginBottom: '1.5rem',
+                  marginBottom: '2rem',
                   textAlign: 'left',
-                  backgroundColor: '#fef2f2',
+                  backgroundColor: 'rgba(196, 102, 71, 0.05)',
                   padding: '1rem',
-                  borderRadius: '0.375rem',
-                  border: '1px solid #fecaca',
+                  borderRadius: '4px',
+                  border: '1px solid rgba(196, 102, 71, 0.2)',
                 }}
               >
                 <summary
                   style={{
                     cursor: 'pointer',
                     fontWeight: '600',
-                    color: '#dc2626',
+                    color: '#c46647',
                     marginBottom: '0.5rem',
                   }}
                 >
@@ -165,10 +168,12 @@ class ErrorBoundary extends Component<Props, State> {
                 <pre
                   style={{
                     fontSize: '0.875rem',
-                    color: '#991b1b',
+                    color: 'rgba(253, 251, 247, 0.8)',
                     overflow: 'auto',
                     whiteSpace: 'pre-wrap',
                     wordBreak: 'break-word',
+                    fontFamily:
+                      'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace',
                   }}
                 >
                   {this.state.error.toString()}
@@ -187,26 +192,26 @@ class ErrorBoundary extends Component<Props, State> {
               <button
                 onClick={this.handleReset}
                 style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#3b82f6',
-                  color: 'white',
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: '#8b7355',
+                  color: '#fdfbf7',
                   border: 'none',
-                  borderRadius: '0.375rem',
-                  fontWeight: '500',
+                  borderRadius: '4px',
+                  fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'background-color 0.1s',
+                  transition: 'all 0.15s ease',
                 }}
                 onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#2563eb')
+                  (e.currentTarget.style.backgroundColor = '#63523d')
                 }
                 onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#3b82f6')
+                  (e.currentTarget.style.backgroundColor = '#8b7355')
                 }
                 onFocus={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#2563eb')
+                  (e.currentTarget.style.backgroundColor = '#63523d')
                 }
                 onBlur={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#3b82f6')
+                  (e.currentTarget.style.backgroundColor = '#8b7355')
                 }
               >
                 Try Again
@@ -214,27 +219,35 @@ class ErrorBoundary extends Component<Props, State> {
               <button
                 onClick={() => window.location.reload()}
                 style={{
-                  padding: '0.5rem 1rem',
-                  backgroundColor: '#6b7280',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '0.375rem',
-                  fontWeight: '500',
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: 'transparent',
+                  color: '#fdfbf7',
+                  border: '1px solid rgba(253, 251, 247, 0.1)',
+                  borderRadius: '4px',
+                  fontWeight: '600',
                   cursor: 'pointer',
-                  transition: 'background-color 0.1s',
+                  transition: 'all 0.15s ease',
                 }}
-                onMouseOver={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#4b5563')
-                }
-                onMouseOut={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#6b7280')
-                }
-                onFocus={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#4b5563')
-                }
-                onBlur={(e) =>
-                  (e.currentTarget.style.backgroundColor = '#6b7280')
-                }
+                onMouseOver={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    'rgba(253, 251, 247, 0.05)';
+                  e.currentTarget.style.borderColor = '#8b7355';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor =
+                    'rgba(253, 251, 247, 0.1)';
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.backgroundColor =
+                    'rgba(253, 251, 247, 0.05)';
+                  e.currentTarget.style.borderColor = '#8b7355';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.borderColor =
+                    'rgba(253, 251, 247, 0.1)';
+                }}
               >
                 Reload Page
               </button>

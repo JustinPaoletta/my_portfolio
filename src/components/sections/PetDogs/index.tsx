@@ -1,11 +1,17 @@
 /**
  * Pet Dogs Section
  * Interactive section to pet my dogs with treats and scritches
+ * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef, useState } from 'react';
-import { useIntersectionObserver } from '@/hooks/useIntersectionObserver';
+import { motion, useInView, AnimatePresence } from 'framer-motion';
 import { usePetDogs } from '@/hooks/usePetDogs';
+import {
+  fadeUpVariants,
+  staggerContainerVariants,
+  defaultViewport,
+} from '@/utils/animations';
 import './PetDogs.css';
 
 interface DogStats {
@@ -43,7 +49,7 @@ const dogMetadata: Record<string, Omit<Dog, 'name' | 'stats'>> = {
 
 function PetDogs(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisible = useIntersectionObserver(sectionRef, { threshold: 0.2 });
+  const isInView = useInView(sectionRef, defaultViewport);
   const [showDogs, setShowDogs] = useState(false);
 
   const [dogsData, updateStats] = usePetDogs(initialDogsData);
@@ -71,11 +77,16 @@ function PetDogs(): React.ReactElement {
     <section
       ref={sectionRef}
       id="pet-dogs"
-      className={`pet-dogs-section ${isVisible ? 'visible' : ''} ${showDogs ? 'expanded' : 'collapsed'}`}
+      className={`pet-dogs-section ${showDogs ? 'expanded' : 'collapsed'}`}
       aria-labelledby="pet-dogs-heading"
     >
       <div className="section-container">
-        <header className="section-header">
+        <motion.header
+          className="section-header"
+          variants={fadeUpVariants}
+          initial="hidden"
+          animate={isInView ? 'visible' : 'hidden'}
+        >
           <button
             type="button"
             className="pet-dogs-toggle"
@@ -86,84 +97,96 @@ function PetDogs(): React.ReactElement {
           >
             <span className="section-label">Can I Pet That Dawg?</span>
           </button>
+          <AnimatePresence mode="wait">
+            {showDogs && (
+              <motion.p
+                id="pet-dogs-heading"
+                className="section-description"
+                variants={fadeUpVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+              >
+                <strong>You sure can!</strong> Meet my 3 rescue dogs{' '}
+                <strong>Nala</strong>, <strong>Rosie</strong>, and{' '}
+                <strong>Tito</strong>, give them all the virtual love ya got.
+              </motion.p>
+            )}
+          </AnimatePresence>
+        </motion.header>
+
+        <AnimatePresence mode="wait">
           {showDogs && (
-            <h2 id="pet-dogs-heading" className="section-title">
-              Yes! Give Them Some Love ❤️
-            </h2>
+            <motion.div
+              id="dogs-content"
+              className="dogs-grid"
+              variants={staggerContainerVariants}
+              initial="hidden"
+              animate="visible"
+              exit="exit"
+              layout
+            >
+              {dogs.map((dog) => (
+                <motion.article
+                  key={dog.name}
+                  className="dog-card"
+                  variants={fadeUpVariants}
+                  layout
+                >
+                  {dog.name === 'Nala' && (
+                    <div className="foster-banner" role="status">
+                      Foster Dog
+                    </div>
+                  )}
+                  <div className="dog-image-container">
+                    <img
+                      src={dog.image}
+                      alt={dog.alt}
+                      className="dog-image"
+                      width={120}
+                      height={120}
+                    />
+                    <div className="dog-name">{dog.name}</div>
+                  </div>
+
+                  <div className="dog-content">
+                    <div className="dog-stats">
+                      <div className="stat-item">
+                        <span className="stat-label">Treats:</span>
+                        <span className="stat-count">{dog.stats.treats}</span>
+                      </div>
+                      <div className="stat-item">
+                        <span className="stat-label">Scritches:</span>
+                        <span className="stat-count">
+                          {dog.stats.scritches}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="dog-actions">
+                      <button
+                        type="button"
+                        className="action-button treat-button"
+                        onClick={() => handleTreat(dog.name)}
+                        aria-label={`Give ${dog.name} a treat`}
+                      >
+                        🦴 Give Treat
+                      </button>
+                      <button
+                        type="button"
+                        className="action-button scritch-button"
+                        onClick={() => handleScritch(dog.name)}
+                        aria-label={`Give ${dog.name} some scritches`}
+                      >
+                        ✋ Give Scritches
+                      </button>
+                    </div>
+                  </div>
+                </motion.article>
+              ))}
+            </motion.div>
           )}
-        </header>
-
-        {showDogs && (
-          <div id="dogs-content" className="dogs-grid">
-            {dogs.map((dog) => (
-              <article key={dog.name} className="dog-card">
-                {dog.name === 'Nala' && (
-                  <div className="foster-banner" role="status">
-                    <span className="foster-banner-icon" aria-hidden="true">
-                      🏠
-                    </span>
-                    <span className="foster-banner-text">
-                      <strong>Foster Dog</strong> - Up for Adoption!
-                    </span>
-                  </div>
-                )}
-                <div className="dog-image-container">
-                  <img
-                    src={dog.image}
-                    alt={dog.alt}
-                    className="dog-image"
-                    width={200}
-                    height={200}
-                  />
-                  <div className="dog-name">{dog.name}</div>
-                </div>
-
-                <div className="dog-content">
-                  <div className="dog-stats">
-                    <div className="stat-item">
-                      <span className="stat-label">Treats:</span>
-                      <span className="stat-count">{dog.stats.treats}</span>
-                    </div>
-                    <div className="stat-item">
-                      <span className="stat-label">Scritches:</span>
-                      <span className="stat-count">{dog.stats.scritches}</span>
-                    </div>
-                  </div>
-
-                  <div className="dog-actions">
-                    <button
-                      type="button"
-                      className="action-button treat-button"
-                      onClick={() => handleTreat(dog.name)}
-                      aria-label={`Give ${dog.name} a treat`}
-                    >
-                      🦴 Give Treat
-                    </button>
-                    <button
-                      type="button"
-                      className="action-button scritch-button"
-                      onClick={() => handleScritch(dog.name)}
-                      aria-label={`Give ${dog.name} some scritches`}
-                    >
-                      ✋ Give Scritches
-                    </button>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        )}
-
-        {showDogs && (
-          <div className="pet-dogs-message" role="status" aria-live="polite">
-            <p>
-              These are my three rescue dogs - Nala (Australian Cattle Dog,
-              Australian Shepherd, German Shepherd mix), Rosie (Bloodhound
-              Beagle mix), and Tito (Chihuahua Pomeranian Dachshund mix). They
-              love treats and scritches, so give them some virtual love.
-            </p>
-          </div>
-        )}
+        </AnimatePresence>
       </div>
     </section>
   );

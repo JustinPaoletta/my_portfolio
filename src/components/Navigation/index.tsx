@@ -1,9 +1,11 @@
 /**
  * Navigation Component
  * Responsive navigation with smooth scrolling
+ * Uses Framer Motion for scroll detection
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useScroll, useMotionValueEvent } from 'framer-motion';
 import { env } from '@/config/env';
 import './Navigation.css';
 
@@ -22,15 +24,18 @@ const navItems: NavItem[] = [
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
 
-interface NavigationProps {
-  scrollY: number;
-}
-
-function Navigation({ scrollY }: NavigationProps): React.ReactElement {
+function Navigation(): React.ReactElement {
   const [activeSection, setActiveSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-  const isScrolled = scrollY > 0;
+  // Use Framer Motion's scroll hook
+  const { scrollY } = useScroll();
+
+  // Listen to scroll changes efficiently
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    setIsScrolled(latest > 0);
+  });
 
   // Track active section based on scroll position
   useEffect(() => {

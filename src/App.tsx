@@ -16,13 +16,12 @@ import GitHub from '@/components/sections/GitHub';
 import Contact from '@/components/sections/Contact';
 import PetDogs from '@/components/sections/PetDogs';
 import Footer from '@/components/Footer';
-import { useScrollPosition } from '@/hooks/useScrollPosition';
+import { ThemeProvider } from '@/hooks/useTheme';
+import ThemeSwitcher from '@/components/ThemeSwitcher';
 
 export default function App(): React.ReactElement {
-  const { scrollY } = useScrollPosition();
-
   return (
-    <>
+    <ThemeProvider>
       <SEO />
       <PWAUpdatePrompt />
 
@@ -32,11 +31,14 @@ export default function App(): React.ReactElement {
       </a>
 
       {/* Fixed Navigation */}
-      <Navigation scrollY={scrollY} />
+      <Navigation />
+
+      {/* Theme Switcher - Fixed position for easy testing */}
+      <ThemeSwitcher />
 
       {/* Main Content */}
       <main id="main" role="main">
-        <Hero scrollY={scrollY} />
+        <Hero />
         <About />
         <Projects />
         <Skills />
@@ -48,6 +50,6 @@ export default function App(): React.ReactElement {
 
       {/* Footer */}
       <Footer />
-    </>
+    </ThemeProvider>
   );
 }
