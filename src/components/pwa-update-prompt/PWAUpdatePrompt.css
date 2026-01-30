@@ -69,8 +69,8 @@
 }
 
 .pwa-toast-button-primary {
-  background: var(--color-primary);
-  /* Use white for better contrast on colored backgrounds */
+  /* Use a consistent dark background for guaranteed contrast */
+  background: #1a1a1a;
   color: #ffffff;
 }
 .pwa-toast-button-secondary {
@@ -79,7 +79,7 @@
   border-color: var(--border-subtle);
 }
 .pwa-toast-button-install {
-  background: var(--color-accent-teal);
-  /* Use white for better contrast on colored backgrounds */
+  /* Use a consistent dark teal for guaranteed 4.5:1+ contrast with white */
+  background: #0a7ea4;
   color: #ffffff;
 }
