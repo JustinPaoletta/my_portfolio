@@ -51,14 +51,16 @@
 
 .pwa-toast-actions {
   display: flex;
-  gap: 8px;
+  /* Increased gap for touch target spacing requirements */
+  gap: 12px;
   margin-top: 4px;
 }
 
 .pwa-toast-button {
   flex: 1;
-  /* Minimum 44px touch target for accessibility */
+  /* Minimum 44x44px touch target for accessibility */
   min-height: 44px;
+  min-width: 44px;
   padding: 12px 16px;
   border: 1px solid transparent;
   border-radius: 8px;
