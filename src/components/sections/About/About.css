@@ -235,7 +235,7 @@
 .value-icon {
   width: 48px;
   height: 48px;
-  background: rgba(139, 115, 85, 0.1);
+  background: rgba(var(--color-primary-rgb), 0.1);
   border-radius: 12px;
   display: flex;
   align-items: center;

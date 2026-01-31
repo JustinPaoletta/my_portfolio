@@ -4,10 +4,11 @@
   bottom: 92px;
   right: 20px;
   max-width: 400px;
-  background: var(--bg-card);
+  /* Use opaque background instead of semi-transparent bg-card */
+  background: var(--bg-main);
   color: var(--text-primary);
-  border-radius: 12px; /* Restored radius */
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
   padding: 16px;
   z-index: 9999;
   border: 1px solid var(--border-subtle);
@@ -27,7 +28,7 @@
 
 .pwa-toast-content {
   display: flex;
-  flexdirection: column;
+  flex-direction: column;
   gap: 12px;
 }
 .pwa-toast-message {

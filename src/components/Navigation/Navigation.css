@@ -11,9 +11,9 @@
 }
 
 .navigation.scrolled {
-  background: rgba(26, 25, 24, 0.9);
+  background: var(--nav-bg-scrolled, rgba(26, 25, 24, 0.95));
   backdrop-filter: blur(20px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   padding: 0.75rem 2rem;
 }
 
@@ -27,7 +27,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(139, 115, 85, 0.2),
+    var(--border-subtle),
     transparent
   );
 }
@@ -171,7 +171,7 @@
 
 .nav-social-link:hover {
   color: var(--color-primary);
-  background: rgba(139, 115, 85, 0.1);
+  background: rgba(var(--color-primary-rgb), 0.1);
 }
 
 .nav-social-link:focus-visible {
