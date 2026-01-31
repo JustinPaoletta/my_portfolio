@@ -99,7 +99,7 @@
   height: 18px;
 }
 
-/* In Development Status */
+/* Project Status Badge (planning, design, development, testing, beta) */
 .project-status {
   display: inline-flex;
   align-items: center;
@@ -168,12 +168,15 @@
 }
 
 .other-projects {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 1.5rem;
 }
 
 .project-card {
+  flex: 1 1 min(320px, 100%);
+  max-width: 400px;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: 16px;
@@ -284,7 +287,7 @@
   }
 
   .other-projects {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 }
 
@@ -301,7 +304,7 @@
     font-size: 1.5rem;
   }
 
-  .other-projects {
-    grid-template-columns: 1fr;
+  .project-card {
+    flex: 1 1 100%;
   }
 }
