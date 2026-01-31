@@ -14,6 +14,24 @@ import {
 } from '@/utils/animations';
 import './Projects.css';
 
+/** Project lifecycle stages for status badge display */
+export type ProjectStatus =
+  | 'planning'
+  | 'design'
+  | 'development'
+  | 'testing'
+  | 'beta'
+  | 'live';
+
+const STATUS_LABELS: Record<ProjectStatus, string> = {
+  planning: 'Planning',
+  design: 'Design',
+  development: 'In Development',
+  testing: 'Testing',
+  beta: 'Beta',
+  live: 'Live',
+};
+
 interface Project {
   id: string;
   title: string;
@@ -23,31 +41,31 @@ interface Project {
   liveUrl?: string;
   githubUrl?: string;
   featured: boolean;
-  inDevelopment?: boolean;
+  status?: ProjectStatus;
 }
 
 const projects: Project[] = [
   {
     id: 'project-1',
-    title: 'Bitstockerz',
+    title: 'BitStockerz',
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
-    image: '/bitcoin.webp',
+    image: '/bitstockerz.webp',
     techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: '#',
     featured: true,
-    inDevelopment: true,
+    status: 'development',
   },
   {
     id: 'project-2',
     title: '@jp-angular-ui',
     description:
       'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
-    image: '/ui-ux-elements.webp',
+    image: '/jp-angular-ui.webp',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     githubUrl: '#',
     featured: true,
-    inDevelopment: true,
+    status: 'planning',
   },
   {
     id: 'project-3',
@@ -58,24 +76,7 @@ const projects: Project[] = [
     techStack: ['Godot', 'GDScript', 'Game Design', 'Procedural Generation'],
     githubUrl: '#',
     featured: true,
-    inDevelopment: true,
-  },
-  {
-    id: 'project-4',
-    title: 'Coverage IQ',
-    description:
-      'Coverage IQ is a mobile companion app designed to help Madden players make smarter defensive play calls in real time. It breaks down offensive formations, situational context, and coverage concepts to recommend effective counters, explaining not just what to call, but why it works. Built with a coach-first mindset, Coverage IQ focuses on decision-making, user responsibility, and practical adjustments that translate directly to better on-field results.',
-    image:
-      'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop',
-    techStack: [
-      'React Native',
-      'TypeScript',
-      'Node.js',
-      'SQLite',
-      'Mobile Development',
-    ],
-    githubUrl: '#',
-    featured: false,
+    status: 'planning',
   },
   {
     id: 'project-5',
@@ -167,10 +168,10 @@ function Projects(): React.ReactElement {
                 />
                 <div className="project-overlay">
                   <div className="project-links">
-                    {project.inDevelopment && (
+                    {project.status && project.status !== 'live' && (
                       <span
-                        className="project-status"
-                        aria-label="Project in development"
+                        className={`project-status project-status--${project.status}`}
+                        aria-label={`Project ${STATUS_LABELS[project.status].toLowerCase()}`}
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -186,48 +187,49 @@ function Projects(): React.ReactElement {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <span>In Development</span>
+                        <span>{STATUS_LABELS[project.status]}</span>
                       </span>
                     )}
-                    {project.liveUrl && !project.inDevelopment && (
-                      <a
-                        href={project.liveUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="project-link"
-                        aria-label={`View ${project.title} live demo`}
-                      >
-                        <svg
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          aria-hidden="true"
+                    {project.liveUrl &&
+                      (!project.status || project.status === 'live') && (
+                        <a
+                          href={project.liveUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="project-link"
+                          aria-label={`View ${project.title} live demo`}
                         >
-                          <path
-                            d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <polyline
-                            points="15 3 21 3 21 9"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                          <line
-                            x1="10"
-                            y1="14"
-                            x2="21"
-                            y2="3"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                        <span>Live Demo</span>
-                      </a>
-                    )}
+                          <svg
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            aria-hidden="true"
+                          >
+                            <path
+                              d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <polyline
+                              points="15 3 21 3 21 9"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                            <line
+                              x1="10"
+                              y1="14"
+                              x2="21"
+                              y2="3"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            />
+                          </svg>
+                          <span>Live Demo</span>
+                        </a>
+                      )}
                     {project.githubUrl && (
                       <a
                         href={project.githubUrl}

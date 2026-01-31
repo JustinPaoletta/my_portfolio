@@ -15,7 +15,7 @@
   height: 800px;
   background: radial-gradient(
     circle,
-    rgba(139, 115, 85, 0.08) 0%,
+    rgba(var(--color-primary-rgb), 0.08) 0%,
     transparent 70%
   );
   transform: translate(-50%, -50%);
@@ -63,9 +63,9 @@
 }
 
 .tab-button.active {
-  background: rgba(139, 115, 85, 0.15);
+  background: rgba(var(--color-primary-rgb), 0.15);
   border-color: var(--color-primary);
-  color: var(--color-primary-light);
+  color: var(--color-primary-contrast);
   font-weight: 600;
 }
 
@@ -187,9 +187,9 @@
 }
 
 .skill-tag:hover {
-  background: rgba(139, 115, 85, 0.15);
+  background: rgba(var(--color-primary-rgb), 0.15);
   border-color: var(--color-primary);
-  color: var(--color-primary-light);
+  color: var(--color-primary-contrast);
   transform: translateY(-2px);
 }
 

@@ -1,17 +1,12 @@
 /**
  * Pet Dogs Section
  * Interactive section to pet my dogs with treats and scritches
- * Uses Framer Motion for smooth scroll animations
  */
 
-import { useRef, useState } from 'react';
-import { motion, useInView, AnimatePresence } from 'framer-motion';
+import { useRef, useState, useCallback } from 'react';
+import { motion, useInView } from 'framer-motion';
 import { usePetDogs } from '@/hooks/usePetDogs';
-import {
-  fadeUpVariants,
-  staggerContainerVariants,
-  defaultViewport,
-} from '@/utils/animations';
+import { defaultViewport } from '@/utils/animations';
 import './PetDogs.css';
 
 interface DogStats {
@@ -54,24 +49,41 @@ function PetDogs(): React.ReactElement {
 
   const [dogsData, updateStats] = usePetDogs(initialDogsData);
 
-  // Merge persisted stats with full dog data (image, alt, etc.)
   const dogs: Dog[] = dogsData.map((dogData) => ({
     name: dogData.name,
     ...dogMetadata[dogData.name],
     stats: dogData.stats,
   }));
 
-  const handleTreat = (dogName: string): void => {
-    updateStats(dogName, 'treats');
-  };
+  const handleTreat = useCallback(
+    (dogName: string): void => {
+      updateStats(dogName, 'treats');
+    },
+    [updateStats]
+  );
 
-  const handleScritch = (dogName: string): void => {
-    updateStats(dogName, 'scritches');
-  };
+  const handleScritch = useCallback(
+    (dogName: string): void => {
+      updateStats(dogName, 'scritches');
+    },
+    [updateStats]
+  );
 
-  const toggleDogs = (): void => {
+  const toggleDogs = useCallback((): void => {
     setShowDogs((prev) => !prev);
-  };
+  }, []);
+
+  const [carouselIndex, setCarouselIndex] = useState(0);
+
+  const handlePrev = useCallback((): void => {
+    setCarouselIndex((i) => (i === 0 ? dogs.length - 1 : i - 1));
+  }, [dogs.length]);
+
+  const handleNext = useCallback((): void => {
+    setCarouselIndex((i) => (i === dogs.length - 1 ? 0 : i + 1));
+  }, [dogs.length]);
+
+  const currentDog = dogs[carouselIndex];
 
   return (
     <section
@@ -81,64 +93,35 @@ function PetDogs(): React.ReactElement {
       aria-labelledby="pet-dogs-heading"
     >
       <div className="section-container">
-        <motion.header
-          className="section-header"
-          variants={fadeUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
-          <button
+        <header className="section-header">
+          <motion.button
             type="button"
             className="pet-dogs-toggle"
             onClick={toggleDogs}
             aria-expanded={showDogs}
             aria-controls="dogs-content"
             aria-label={showDogs ? 'Hide dogs' : 'Show dogs'}
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
           >
-            <span className="section-label">Can I Pet That Dawg?</span>
-          </button>
-          <AnimatePresence mode="wait">
-            {showDogs && (
-              <motion.p
-                id="pet-dogs-heading"
-                className="section-description"
-                variants={fadeUpVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-              >
-                <strong>You sure can!</strong> Meet my 3 rescue dogs{' '}
-                <strong>Nala</strong>, <strong>Rosie</strong>, and{' '}
-                <strong>Tito</strong>, give them all the virtual love ya got.
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </motion.header>
+            Can I Pet That Dawg?
+          </motion.button>
+        </header>
 
-        <AnimatePresence mode="wait">
-          {showDogs && (
-            <motion.div
-              id="dogs-content"
-              className="dogs-grid"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate="visible"
-              exit="exit"
-              layout
-            >
+        {showDogs && (
+          <div id="dogs-content" className="dogs-content">
+            <p id="pet-dogs-heading" className="dogs-description">
+              <strong>You sure can!</strong> Meet my 3 rescue dogs{' '}
+              <strong>Nala</strong>, <strong>Rosie</strong>, and{' '}
+              <strong>Tito</strong>, give them all the virtual love ya got.
+            </p>
+
+            {/* Desktop: 3-column grid */}
+            <div className="dogs-grid">
               {dogs.map((dog) => (
-                <motion.article
-                  key={dog.name}
-                  className="dog-card"
-                  variants={fadeUpVariants}
-                  layout
-                >
-                  {dog.name === 'Nala' && (
-                    <div className="foster-banner" role="status">
-                      Foster Dog
-                    </div>
-                  )}
-                  <div className="dog-image-container">
+                <article key={dog.name} className="dog-card">
+                  <div className="dog-image-wrapper">
                     <img
                       src={dog.image}
                       alt={dog.alt}
@@ -146,47 +129,134 @@ function PetDogs(): React.ReactElement {
                       width={120}
                       height={120}
                     />
-                    <div className="dog-name">{dog.name}</div>
                   </div>
-
-                  <div className="dog-content">
-                    <div className="dog-stats">
-                      <div className="stat-item">
-                        <span className="stat-label">Treats:</span>
-                        <span className="stat-count">{dog.stats.treats}</span>
-                      </div>
-                      <div className="stat-item">
-                        <span className="stat-label">Scritches:</span>
-                        <span className="stat-count">
-                          {dog.stats.scritches}
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="dog-actions">
-                      <button
-                        type="button"
-                        className="action-button treat-button"
-                        onClick={() => handleTreat(dog.name)}
-                        aria-label={`Give ${dog.name} a treat`}
-                      >
-                        🦴 Give Treat
-                      </button>
-                      <button
-                        type="button"
-                        className="action-button scritch-button"
-                        onClick={() => handleScritch(dog.name)}
-                        aria-label={`Give ${dog.name} some scritches`}
-                      >
-                        ✋ Give Scritches
-                      </button>
-                    </div>
+                  <div className="dog-name-row">
+                    <h3 className="dog-name">{dog.name}</h3>
+                    {dog.name === 'Nala' && (
+                      <span className="dog-badge" role="status">
+                        Foster
+                      </span>
+                    )}
                   </div>
-                </motion.article>
+                  <div className="dog-stats">
+                    <span aria-label={`Treats: ${dog.stats.treats}`}>
+                      🦴 {dog.stats.treats}
+                    </span>
+                    <span aria-label={`Scritches: ${dog.stats.scritches}`}>
+                      ✋ {dog.stats.scritches}
+                    </span>
+                  </div>
+                  <div className="dog-actions">
+                    <button
+                      type="button"
+                      onClick={() => handleTreat(dog.name)}
+                      aria-label={`Give ${dog.name} a treat`}
+                    >
+                      Give a Treat
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleScritch(dog.name)}
+                      aria-label={`Give ${dog.name} some scritches`}
+                    >
+                      Give Scritches
+                    </button>
+                  </div>
+                </article>
               ))}
-            </motion.div>
-          )}
-        </AnimatePresence>
+            </div>
+
+            {/* Mobile: carousel with single card and nav buttons */}
+            <div className="dogs-carousel">
+              <button
+                type="button"
+                className="carousel-btn carousel-prev"
+                onClick={handlePrev}
+                aria-label="Previous dog"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden={true}
+                >
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </button>
+              {currentDog && (
+                <article className="dog-card">
+                  <div className="dog-image-wrapper">
+                    <img
+                      src={currentDog.image}
+                      alt={currentDog.alt}
+                      width={120}
+                      height={120}
+                    />
+                  </div>
+                  <div className="dog-name-row">
+                    <h3 className="dog-name">{currentDog.name}</h3>
+                    {currentDog.name === 'Nala' && (
+                      <span className="dog-badge" role="status">
+                        Foster
+                      </span>
+                    )}
+                  </div>
+                  <div className="dog-stats">
+                    <span aria-label={`Treats: ${currentDog.stats.treats}`}>
+                      🦴 {currentDog.stats.treats}
+                    </span>
+                    <span
+                      aria-label={`Scritches: ${currentDog.stats.scritches}`}
+                    >
+                      ✋ {currentDog.stats.scritches}
+                    </span>
+                  </div>
+                  <div className="dog-actions">
+                    <button
+                      type="button"
+                      onClick={() => handleTreat(currentDog.name)}
+                      aria-label={`Give ${currentDog.name} a treat`}
+                    >
+                      Give a Treat
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleScritch(currentDog.name)}
+                      aria-label={`Give ${currentDog.name} some scritches`}
+                    >
+                      Give Scritches
+                    </button>
+                  </div>
+                </article>
+              )}
+              <button
+                type="button"
+                className="carousel-btn carousel-next"
+                onClick={handleNext}
+                aria-label="Next dog"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden={true}
+                >
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </section>
   );

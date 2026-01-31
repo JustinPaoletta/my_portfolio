@@ -45,6 +45,20 @@ function getSystemPreference(): 'dark' | 'light' {
 }
 
 /**
+ * Parse a hex color to RGB components
+ */
+function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  return result
+    ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+      }
+    : null;
+}
+
+/**
  * Apply theme colors to CSS custom properties on :root
  */
 function applyThemeToDocument(
@@ -62,6 +76,39 @@ function applyThemeToDocument(
   root.style.setProperty('--color-accent', colors.accent);
   root.style.setProperty('--color-accent-teal', colors.accentTeal);
 
+  // Generate RGB values for the primary color to enable rgba() usage in CSS
+  const primaryRgb = hexToRgb(colors.primary);
+  const primaryDarkRgb = hexToRgb(colors.primaryDark);
+  const accentRgb = hexToRgb(colors.accent);
+
+  if (primaryRgb) {
+    root.style.setProperty(
+      '--color-primary-rgb',
+      `${primaryRgb.r}, ${primaryRgb.g}, ${primaryRgb.b}`
+    );
+  }
+
+  if (primaryDarkRgb) {
+    root.style.setProperty(
+      '--color-primary-dark-rgb',
+      `${primaryDarkRgb.r}, ${primaryDarkRgb.g}, ${primaryDarkRgb.b}`
+    );
+  }
+
+  if (accentRgb) {
+    root.style.setProperty(
+      '--color-accent-rgb',
+      `${accentRgb.r}, ${accentRgb.g}, ${accentRgb.b}`
+    );
+  }
+
+  // Set contrast-safe text color for elements on primary-colored backgrounds
+  // In dark mode, use lighter text; in light mode, use darker text
+  root.style.setProperty(
+    '--color-primary-contrast',
+    resolvedMode === 'dark' ? colors.primaryLight : colors.primaryDark
+  );
+
   // Apply mode-specific colors
   root.style.setProperty('--text-primary', modeColors.textPrimary);
   root.style.setProperty('--text-secondary', modeColors.textSecondary);
@@ -71,6 +118,7 @@ function applyThemeToDocument(
   root.style.setProperty('--bg-card-hover', modeColors.bgCardHover);
   root.style.setProperty('--border-subtle', modeColors.borderSubtle);
   root.style.setProperty('--border-hover', modeColors.borderHover);
+  root.style.setProperty('--nav-bg-scrolled', modeColors.navBgScrolled);
 
   // Set data attribute for CSS fallbacks
   root.dataset.theme = theme.name;
