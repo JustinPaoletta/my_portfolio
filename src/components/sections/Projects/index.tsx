@@ -29,10 +29,10 @@ interface Project {
 const projects: Project[] = [
   {
     id: 'project-1',
-    title: 'Bitstockerz',
+    title: 'BitStockerz',
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
-    image: '/bitcoin.webp',
+    image: '/bitstockerz.webp',
     techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: '#',
     featured: true,
@@ -43,7 +43,7 @@ const projects: Project[] = [
     title: '@jp-angular-ui',
     description:
       'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
-    image: '/ui-ux-elements.webp',
+    image: '/jp-angular-ui.webp',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     githubUrl: '#',
     featured: true,
@@ -59,23 +59,6 @@ const projects: Project[] = [
     githubUrl: '#',
     featured: true,
     inDevelopment: true,
-  },
-  {
-    id: 'project-4',
-    title: 'Coverage IQ',
-    description:
-      'Coverage IQ is a mobile companion app designed to help Madden players make smarter defensive play calls in real time. It breaks down offensive formations, situational context, and coverage concepts to recommend effective counters, explaining not just what to call, but why it works. Built with a coach-first mindset, Coverage IQ focuses on decision-making, user responsibility, and practical adjustments that translate directly to better on-field results.',
-    image:
-      'https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=800&h=600&fit=crop',
-    techStack: [
-      'React Native',
-      'TypeScript',
-      'Node.js',
-      'SQLite',
-      'Mobile Development',
-    ],
-    githubUrl: '#',
-    featured: false,
   },
   {
     id: 'project-5',

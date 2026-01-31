@@ -121,13 +121,15 @@ function PetDogs(): React.ReactElement {
             <div className="dogs-grid">
               {dogs.map((dog) => (
                 <article key={dog.name} className="dog-card">
-                  <img
-                    src={dog.image}
-                    alt={dog.alt}
-                    className="dog-image"
-                    width={120}
-                    height={120}
-                  />
+                  <div className="dog-image-wrapper">
+                    <img
+                      src={dog.image}
+                      alt={dog.alt}
+                      className="dog-image"
+                      width={120}
+                      height={120}
+                    />
+                  </div>
                   <div className="dog-name-row">
                     <h3 className="dog-name">{dog.name}</h3>
                     {dog.name === 'Nala' && (
@@ -188,13 +190,14 @@ function PetDogs(): React.ReactElement {
               </button>
               {currentDog && (
                 <article className="dog-card">
-                  <img
-                    src={currentDog.image}
-                    alt={currentDog.alt}
-                    className="dog-image"
-                    width={120}
-                    height={120}
-                  />
+                  <div className="dog-image-wrapper">
+                    <img
+                      src={currentDog.image}
+                      alt={currentDog.alt}
+                      width={120}
+                      height={120}
+                    />
+                  </div>
                   <div className="dog-name-row">
                     <h3 className="dog-name">{currentDog.name}</h3>
                     {currentDog.name === 'Nala' && (
