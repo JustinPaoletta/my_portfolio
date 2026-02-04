@@ -4,14 +4,15 @@
  */
 
 import React, { useState, useCallback } from 'react';
+import { Monitor, Moon, Palette, Sun } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import type { ColorMode } from '@/config/themes';
 import './ThemeSwitcher.css';
 
-const modeIcons: Record<ColorMode, string> = {
-  light: '☀️',
-  dark: '🌙',
-  system: '💻',
+const modeIcons: Record<ColorMode, React.ReactElement> = {
+  light: <Sun size={20} aria-hidden />,
+  dark: <Moon size={20} aria-hidden />,
+  system: <Monitor size={20} aria-hidden />,
 };
 
 const modeLabels: Record<ColorMode, string> = {
@@ -21,8 +22,7 @@ const modeLabels: Record<ColorMode, string> = {
 };
 
 export default function ThemeSwitcher(): React.ReactElement {
-  const { themeName, setTheme, themes, colorMode, setColorMode, resolvedMode } =
-    useTheme();
+  const { themeName, setTheme, themes, colorMode, setColorMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOpen = useCallback(() => {
@@ -79,7 +79,7 @@ export default function ThemeSwitcher(): React.ReactElement {
         aria-haspopup="dialog"
       >
         <span className="theme-icon" aria-hidden="true">
-          {resolvedMode === 'dark' ? '🌙' : '☀️'}
+          <Palette size={20} />
         </span>
         <span className="theme-label">Theme</span>
       </button>
