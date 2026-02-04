@@ -4,8 +4,14 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useMemo } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { useMemo, useRef } from 'react';
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion';
 import { env } from '@/config/env';
 import './Hero.css';
 
@@ -21,23 +27,43 @@ function generateParticlePositions(
 }
 
 function Hero(): React.ReactElement {
+  const sectionRef = useRef<HTMLElement>(null);
+  const prefersReducedMotion = useReducedMotion();
+  const disableParallax = prefersReducedMotion;
+
   // Framer Motion scroll hooks for smooth parallax
-  const { scrollY } = useScroll();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
 
   // Transform scroll position to parallax offset with smooth spring physics
   // As user scrolls from 0 to 500px, content moves 0 to 125px (0.25 multiplier)
-  const parallaxY = useTransform(scrollY, [0, 500], [0, 125], {
-    clamp: false,
+  const parallaxRange = useTransform(scrollYProgress, [0, 1], [0, 125], {
+    clamp: true,
+  });
+  const parallaxY = useSpring(parallaxRange, {
+    stiffness: 120,
+    damping: 30,
+    mass: 0.6,
   });
 
   // Fade out content as user scrolls
-  const opacity = useTransform(scrollY, [0, 400], [1, 0]);
+  const opacityRange = useTransform(scrollYProgress, [0, 0.9], [1, 0], {
+    clamp: true,
+  });
+  const opacity = useSpring(opacityRange, {
+    stiffness: 120,
+    damping: 30,
+    mass: 0.6,
+  });
 
   // Memoize particle positions so they don't change on re-render
   const particlePositions = useMemo(() => generateParticlePositions(20), []);
 
   return (
     <section
+      ref={sectionRef}
       id="hero"
       className="hero-section visible"
       aria-labelledby="hero-heading"
@@ -65,8 +91,8 @@ function Hero(): React.ReactElement {
       <motion.div
         className="hero-content"
         style={{
-          y: parallaxY,
-          opacity,
+          y: disableParallax ? 0 : parallaxY,
+          opacity: disableParallax ? 1 : opacity,
         }}
       >
         <span className="hero-greeting">Hello, I&apos;m</span>
