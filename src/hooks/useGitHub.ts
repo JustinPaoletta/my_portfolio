@@ -12,6 +12,7 @@ import {
   generateMockContributions,
   createPinnedFromRepos,
 } from '@/services/github';
+import { normalizeContributionCalendar } from '@/utils/contributions';
 
 const CACHE_KEY = 'github_stats_cache';
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
@@ -32,6 +33,13 @@ function getCachedData(): GitHubStats | null {
     if (isExpired) {
       localStorage.removeItem(CACHE_KEY);
       return null;
+    }
+
+    if (parsed.data.contributions) {
+      return {
+        ...parsed.data,
+        contributions: normalizeContributionCalendar(parsed.data.contributions),
+      };
     }
 
     return parsed.data;
@@ -116,11 +124,15 @@ export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
         pinnedRepos = createPinnedFromRepos(repos);
       }
 
+      const normalizedContributions = contributions
+        ? normalizeContributionCalendar(contributions)
+        : null;
+
       const newStats: GitHubStats = {
         user,
         repos,
         pinnedRepos,
-        contributions,
+        contributions: normalizedContributions,
         loading: false,
         error: null,
       };
