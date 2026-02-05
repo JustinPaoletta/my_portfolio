@@ -146,9 +146,9 @@ export const themes: Record<string, Theme> = {
       navBgScrolled: 'rgba(253, 248, 255, 0.95)',
     },
   },
-  dewMe: {
-    name: 'dewMe',
-    label: 'Dew Me',
+  dewTheDew: {
+    name: 'dewTheDew',
+    label: 'Dew the Dew',
     colors: {
       primary: '#b8e020', // Brighter lime - 9:1 on #0a0f0a
       primaryLight: '#d0f040',
