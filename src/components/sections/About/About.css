@@ -1,7 +1,7 @@
 /* About Section Styles */
 
 .about-section {
-  padding: 6rem 2rem;
+  padding: 6rem 2rem 4rem;
   position: relative;
 }
 
@@ -37,8 +37,11 @@
   transform: translateX(6px);
 }
 
-.about-text {
-  /* Animation handled by Framer Motion */
+.about-story {
+  max-height: var(--about-story-max-height, none);
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  scrollbar-gutter: stable;
 }
 
 .about-intro {
@@ -54,12 +57,50 @@
   margin-bottom: 1.25rem;
 }
 
+/* Thoughts on AI */
+.about-ai {
+  margin-top: 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background: var(--bg-card);
+  text-align: left;
+}
+
+.about-ai-title {
+  font-family: var(--font-serif);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.75rem;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.about-ai-lede {
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.about-ai p {
+  margin: 0 0 1rem;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.about-ai p:last-child {
+  margin-bottom: 0;
+}
+
 /* Highlights */
 .about-highlights {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 1.5rem;
-  margin-top: 2.5rem;
+  width: 100%;
+  max-width: 520px;
+  margin: 2.5rem auto 0;
   padding-top: 2rem;
   border-top: 1px solid var(--border-subtle);
 }
@@ -71,22 +112,15 @@
 .highlight-number {
   display: block;
   font-family: var(--font-serif);
-  font-size: 2.5rem;
+  font-size: 1.7rem;
   font-weight: 700;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-accent) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-primary);
   line-height: 1;
   margin-bottom: 0.5rem;
 }
 
 .highlight-label {
-  font-size: 0.875rem;
+  font-size: 0.6rem;
   color: var(--text-muted);
   letter-spacing: 0.05em;
 }
@@ -119,7 +153,6 @@
   inset: -8px;
   border: 2px solid var(--border-hover);
   border-radius: 20px;
-  transform: translate(6px, 12px);
   z-index: 0;
 }
 
@@ -145,11 +178,7 @@
   flex-shrink: 0;
   width: 48px;
   height: 48px;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-primary-dark) 100%
-  );
+  background: var(--color-primary);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -202,9 +231,10 @@
   display: grid;
   grid-template-columns: 1fr;
   gap: 0.75rem;
-  max-width: 280px;
+  max-width: 320px;
   width: 100%;
   justify-items: center;
+  margin: 0 auto;
 }
 
 .value-card {
@@ -329,11 +359,21 @@
 
 @media (max-width: 640px) {
   .about-section {
-    padding: 4rem 1.5rem;
+    padding: 4rem 1.5rem 3rem;
   }
 
   .about-content {
     gap: 2rem;
+  }
+
+  .about-ai {
+    padding: 1.25rem;
+  }
+
+  .about-story {
+    max-height: none;
+    overflow: visible;
+    padding-right: 0;
   }
 
   .about-center {
@@ -355,7 +395,7 @@
   }
 
   .highlight-number {
-    font-size: 2rem;
+    font-size: 1.35rem;
     margin-bottom: 0;
   }
 

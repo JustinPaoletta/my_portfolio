@@ -14,34 +14,34 @@
 
   /**
    * Theme Colors - Injected dynamically by ThemeProvider
-   * These fallback values match the "breezy" default theme
+   * These fallback values match the "engineer" default theme
    * See src/config/themes.ts for available themes
    */
-  --color-primary: #d3bc8d;
-  --color-primary-light: #e5d4a8;
-  --color-primary-dark: #a08860;
-  --color-accent: #c9b037;
-  --color-accent-teal: #9a8a5a;
+  --color-primary: #00d4ff;
+  --color-primary-light: #5ce1ff;
+  --color-primary-dark: #007a94;
+  --color-accent: #00d4ff;
+  --color-accent-teal: #ff3864;
 
   /* RGB values for use in rgba() - set dynamically by ThemeProvider */
-  --color-primary-rgb: 211, 188, 141;
-  --color-primary-dark-rgb: 160, 136, 96;
-  --color-accent-rgb: 201, 176, 55;
+  --color-primary-rgb: 0, 212, 255;
+  --color-primary-dark-rgb: 0, 122, 148;
+  --color-accent-rgb: 0, 212, 255;
 
   /* Contrast-safe text color for primary-colored elements - adapts to mode */
-  --color-primary-contrast: #e5d4a8;
+  --color-primary-contrast: #5ce1ff;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
 
-  /* Theme-aware colors - Dark Mode (Warm Off-Black) */
-  --text-primary: #fdfbf7;
-  --text-secondary: rgba(253, 251, 247, 0.7);
-  --text-muted: rgba(253, 251, 247, 0.5);
-  --bg-main: #1a1918;
-  --bg-card: rgba(253, 251, 247, 0.03);
-  --bg-card-hover: rgba(253, 251, 247, 0.06);
-  --border-subtle: rgba(253, 251, 247, 0.1);
+  /* Theme-aware colors - Dark Mode (Engineer) */
+  --text-primary: #f0fff0;
+  --text-secondary: #c8e8c8;
+  --text-muted: #94b894;
+  --bg-main: #0a0e12;
+  --bg-card: rgba(0, 212, 255, 0.05);
+  --bg-card-hover: rgba(0, 212, 255, 0.1);
+  --border-subtle: rgba(0, 212, 255, 0.25);
   --border-hover: rgba(var(--color-primary-rgb), 0.4);
 
   /* Reusable background gradients - Simplified */

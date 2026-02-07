@@ -6,6 +6,7 @@
 
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { useTheme } from '@/hooks/useTheme';
 import {
   fadeUpVariants,
   staggerContainerVariants,
@@ -47,7 +48,7 @@ const skillCategories: SkillCategory[] = [
       { name: 'Express', icon: '/icons/express.svg', color: '#000000' },
       { name: 'PostgreSQL', icon: '/icons/postgresql.svg', color: '#4169E1' },
       { name: 'Java', icon: '/icons/java.svg', color: '#ED8B00' },
-      { name: 'REST APIs', icon: '/icons/rest-api.svg', color: '#FF6B6B' },
+      { name: 'Postman', icon: '/icons/postman.webp', color: '#FF6C37' },
     ],
   },
   {
@@ -58,9 +59,11 @@ const skillCategories: SkillCategory[] = [
       { name: 'Docker', icon: '/icons/docker.svg', color: '#2496ED' },
       { name: 'AWS', icon: '/icons/aws.svg', color: '#FF9900' },
       { name: 'Jenkins', icon: '/icons/jenkins.svg', color: '#D24939' },
-      { name: 'CI/CD', icon: '/icons/cicd.svg', color: '#2088FF' },
       { name: 'Jira', icon: '/icons/jira.svg', color: '#0052CC' },
       { name: 'Confluence', icon: '/icons/confluence.svg', color: '#172B4D' },
+      { name: 'Claude Code', icon: '/icons/claude.webp', color: '#8C6A4A' },
+      { name: 'Cursor', icon: '/icons/cursor.png', color: '#4A6A8C' },
+      { name: 'Codex', icon: '/icons/codex.png', color: '#4A8C6A' },
     ],
   },
 ];
@@ -69,6 +72,7 @@ function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, defaultViewport);
   const [activeTab, setActiveTab] = useState(0);
+  const { resolvedMode } = useTheme();
 
   const handleTabChange = (index: number): void => {
     setActiveTab(index);
@@ -98,9 +102,6 @@ function Skills(): React.ReactElement {
           >
             Skills & Technologies
           </motion.h2>
-          <motion.p className="section-subtitle" variants={fadeUpVariants}>
-            The tools and technologies I use to bring ideas to life
-          </motion.p>
         </motion.header>
 
         <motion.div
@@ -160,11 +161,16 @@ function Skills(): React.ReactElement {
                   <motion.div
                     key={skill.name}
                     className="skill-item"
+                    data-skill={skill.name.toLowerCase().replace(/\s+/g, '-')}
                     variants={fadeUpVariants}
                   >
                     <div className="skill-item-icon">
                       <img
-                        src={skill.icon}
+                        src={
+                          skill.name === 'AWS' && resolvedMode === 'dark'
+                            ? '/icons/aws-dark.svg'
+                            : skill.icon
+                        }
                         alt={`${skill.name} icon`}
                         width="48"
                         height="48"
@@ -193,6 +199,8 @@ function Skills(): React.ReactElement {
             animate={isInView ? 'visible' : 'hidden'}
           >
             {[
+              'REST APIs',
+              'CI/CD',
               'Micro-frontends',
               'State Management',
               'Design Systems',

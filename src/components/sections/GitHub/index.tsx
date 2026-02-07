@@ -10,7 +10,7 @@ import { useGitHub } from '@/hooks/useGitHub';
 import { env } from '@/config/env';
 import {
   fadeUpVariants,
-  staggerContainerVariants,
+  fadeOnlyVariants,
   sectionHeaderVariants,
   defaultViewport,
 } from '@/utils/animations';
@@ -37,7 +37,7 @@ function GitHub(): React.ReactElement {
           animate={isInView ? 'visible' : 'hidden'}
         >
           <motion.span className="section-label" variants={fadeUpVariants}>
-            Open Source
+            Let's Code
           </motion.span>
           <motion.h2
             id="github-heading"
@@ -46,9 +46,6 @@ function GitHub(): React.ReactElement {
           >
             GitHub Activity
           </motion.h2>
-          <motion.p className="section-subtitle" variants={fadeUpVariants}>
-            My contributions and open-source projects
-          </motion.p>
         </motion.header>
 
         {error && (
@@ -72,16 +69,15 @@ function GitHub(): React.ReactElement {
         {user && (
           <motion.div
             className="github-stats-bar"
-            variants={staggerContainerVariants}
+            variants={fadeOnlyVariants}
             initial="hidden"
             animate={isInView ? 'visible' : 'hidden'}
           >
-            <motion.a
+            <a
               href={env.social.github}
               target="_blank"
               rel="noopener noreferrer"
               className="github-profile-link"
-              variants={fadeUpVariants}
             >
               <img
                 src={user.avatar_url}
@@ -94,9 +90,9 @@ function GitHub(): React.ReactElement {
                 <span className="github-name">{user.name || user.login}</span>
                 <span className="github-username">@{user.login}</span>
               </div>
-            </motion.a>
+            </a>
 
-            <motion.div className="github-stats" variants={fadeUpVariants}>
+            <div className="github-stats">
               <div className="stat-item">
                 <span className="stat-value">{user.public_repos}</span>
                 <span className="stat-label">Repos</span>
@@ -117,7 +113,7 @@ function GitHub(): React.ReactElement {
                   <span className="stat-label">Contributions</span>
                 </div>
               )}
-            </motion.div>
+            </div>
           </motion.div>
         )}
 

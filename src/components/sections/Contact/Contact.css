@@ -15,11 +15,7 @@
 .contact-gradient {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse 60% 40% at 20% 100%,
-    rgba(var(--color-primary-rgb), 0.1),
-    transparent
-  );
+  background: none;
 }
 
 .contact-content {
@@ -75,11 +71,7 @@
 .method-icon {
   width: 48px;
   height: 48px;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-primary-dark) 100%
-  );
+  background: var(--color-primary);
   border-radius: 12px;
   display: flex;
   align-items: center;
@@ -154,6 +146,11 @@
   border-radius: 50%;
 }
 
+:root[data-theme='dewTheDew'][data-color-mode='dark'] .indicator-dot,
+:root[data-theme='dewTheDew'][data-color-mode='dark'] .indicator-dot::before {
+  background: #ffffff;
+}
+
 @keyframes pulse-dot {
   0% {
     transform: scale(1);
@@ -173,6 +170,10 @@
   font-size: 0.9rem;
   color: var(--color-accent-teal);
   font-weight: 500;
+}
+
+:root[data-theme='dewTheDew'][data-color-mode='dark'] .availability-text {
+  color: #ffffff;
 }
 
 /* Contact Form */
@@ -232,11 +233,7 @@
   gap: 0.75rem;
   width: 100%;
   padding: 1rem 2rem;
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-primary-dark) 100%
-  );
+  background: var(--color-primary);
   border: none;
   border-radius: 12px;
   color: var(--bg-main);

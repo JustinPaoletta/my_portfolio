@@ -154,7 +154,7 @@ function Experience(): React.ReactElement {
           animate={isInView ? 'visible' : 'hidden'}
         >
           <motion.span className="section-label" variants={fadeUpVariants}>
-            Career
+            Professional
           </motion.span>
           <motion.h2
             id="experience-heading"
@@ -312,6 +312,7 @@ function Experience(): React.ReactElement {
                 aria-label="Download resume as PDF"
               >
                 <svg
+                  className="resume-button-icon"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -319,12 +320,12 @@ function Experience(): React.ReactElement {
                 >
                   <path
                     d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
                   />
                   <polyline
                     points="7 10 12 15 17 10"
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
                   />
@@ -333,7 +334,7 @@ function Experience(): React.ReactElement {
                     y1="15"
                     x2="12"
                     y2="3"
-                    strokeWidth="2"
+                    strokeWidth="1.5"
                     strokeLinecap="round"
                   />
                 </svg>

@@ -3,7 +3,7 @@
 .github-section {
   padding: 6rem 2rem;
   position: relative;
-  background: var(--bg-gradient-subtle);
+  background: var(--bg-main);
 }
 
 /* GitHub Error */
@@ -102,14 +102,7 @@
 }
 
 .stat-item.highlight .stat-value {
-  background: linear-gradient(
-    135deg,
-    var(--color-accent-teal) 0%,
-    var(--color-primary) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+  color: var(--color-primary);
 }
 
 .stat-label {

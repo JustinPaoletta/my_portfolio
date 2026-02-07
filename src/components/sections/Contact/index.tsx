@@ -110,10 +110,6 @@ function Contact(): React.ReactElement {
           >
             Get In Touch
           </motion.h2>
-          <motion.p className="section-subtitle" variants={fadeUpVariants}>
-            Have a project in mind or just want to chat? I&apos;d love to hear
-            from you.
-          </motion.p>
         </motion.header>
 
         <div className="contact-content">

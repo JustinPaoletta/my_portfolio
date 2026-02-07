@@ -4,7 +4,7 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useMemo, useRef } from 'react';
+import { useRef } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -13,21 +13,39 @@ import {
   useTransform,
 } from 'framer-motion';
 import { env } from '@/config/env';
+import { useTheme } from '@/hooks/useTheme';
 import './Hero.css';
 
-// Pre-generate particle positions to avoid impure Math.random() in render
-function generateParticlePositions(
-  count: number
-): Array<{ x: number; y: number }> {
-  return Array.from({ length: count }, (_, i) => ({
-    // Use deterministic positions based on index for consistent rendering
-    x: ((i * 37) % 100) + ((i * 13) % 10),
-    y: ((i * 53) % 100) + ((i * 7) % 10),
-  }));
-}
+const tracePaths = [
+  { id: 'trace-1', d: 'M80 140H360V260H620' },
+  { id: 'trace-2', d: 'M120 760H420V560H740V420H980' },
+  { id: 'trace-3', d: 'M200 200V360H360V520H520' },
+  { id: 'trace-4', d: 'M520 140H720V300H980V180H1240' },
+  { id: 'trace-5', d: 'M900 760H1120V600H1320V420' },
+  { id: 'trace-6', d: 'M1080 120V280H1240V480H1460' },
+  { id: 'trace-7', d: 'M320 680H520V800H820' },
+  { id: 'trace-8', d: 'M680 520V700H940V820H1220' },
+  { id: 'trace-9', d: 'M300 80V220H460V360H620' },
+  { id: 'trace-10', d: 'M760 100V220H940V360H1100' },
+  { id: 'trace-11', d: 'M140 460H340V340H540V260' },
+  { id: 'trace-12', d: 'M360 620V500H560V380H820' },
+  { id: 'trace-13', d: 'M60 300H200V140H420' },
+  { id: 'trace-14', d: 'M140 860H360V700H600' },
+  { id: 'trace-15', d: 'M420 420H620V560H860' },
+  { id: 'trace-16', d: 'M520 60H820V160H1040' },
+  { id: 'trace-17', d: 'M980 260H1200V120H1420' },
+  { id: 'trace-18', d: 'M1040 680H1280V760H1500' },
+  { id: 'trace-19', d: 'M620 860H900V720H1120' },
+  { id: 'trace-20', d: 'M860 360V520H1120V620' },
+  { id: 'trace-21', d: 'M240 520H440V640H660' },
+  { id: 'trace-22', d: 'M820 460H1060V340H1280' },
+  { id: 'trace-23', d: 'M100 560V700H260' },
+  { id: 'trace-24', d: 'M1180 520V700H1380' },
+];
 
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
+  const { themeName } = useTheme();
   const prefersReducedMotion = useReducedMotion();
   const disableParallax = prefersReducedMotion;
 
@@ -58,9 +76,6 @@ function Hero(): React.ReactElement {
     mass: 0.6,
   });
 
-  // Memoize particle positions so they don't change on re-render
-  const particlePositions = useMemo(() => generateParticlePositions(20), []);
-
   return (
     <section
       ref={sectionRef}
@@ -69,22 +84,70 @@ function Hero(): React.ReactElement {
       aria-labelledby="hero-heading"
     >
       <div className="hero-background" aria-hidden="true">
-        <div className="hero-gradient" />
-        <div className="hero-grid" />
-        <div className="hero-particles">
-          {particlePositions.map((pos, i) => (
-            <div
-              key={i}
-              className="particle"
-              style={
-                {
-                  '--delay': `${i * 0.2}s`,
-                  '--x': `${pos.x}%`,
-                  '--y': `${pos.y}%`,
-                } as React.CSSProperties
-              }
-            />
-          ))}
+        {themeName === 'breezy' && (
+          <video
+            className="hero-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="auto"
+            aria-hidden="true"
+            tabIndex={-1}
+          >
+            <source src="/brees.mp4" type="video/mp4" />
+          </video>
+        )}
+        <div className="star-layer star-layer-back" />
+        <div className="nebula-layer nebula-layer-1" />
+        <div className="nebula-layer nebula-layer-2" />
+        <div className="nebula-layer nebula-layer-3" />
+        <div className="nebula-layer nebula-layer-4" />
+        <div className="star-layer star-layer-front" />
+        <div className="dew-bubbles dew-bubbles--1" />
+        <div className="dew-bubbles dew-bubbles--2" />
+        <div className="dew-bubbles dew-bubbles--3" />
+        <div className="hero-circuit">
+          <div className="circuit-board" />
+          <div className="circuit-traces" />
+          <div className="circuit-nodes" />
+          <div className="circuit-electrons">
+            <svg
+              className="electron-svg"
+              viewBox="0 0 1600 900"
+              preserveAspectRatio="xMidYMid slice"
+              aria-hidden="true"
+            >
+              <defs>
+                {tracePaths.map((trace) => (
+                  <path key={trace.id} id={trace.id} d={trace.d} />
+                ))}
+              </defs>
+              {tracePaths.map((trace, index) => {
+                const duration = 5.8 + (index % 5) * 0.5;
+                const begin = (index * 0.35) % 3.2;
+                const reverse = index % 4 === 0;
+                return (
+                  <circle key={trace.id} className="electron-dot" r="3">
+                    <animateMotion
+                      dur={`${duration.toFixed(1)}s`}
+                      repeatCount="indefinite"
+                      begin={`${begin.toFixed(2)}s`}
+                      {...(reverse
+                        ? {
+                            keyPoints: '1;0',
+                            keyTimes: '0;1',
+                            calcMode: 'linear',
+                          }
+                        : {})}
+                    >
+                      <mpath href={`#${trace.id}`} />
+                    </animateMotion>
+                  </circle>
+                );
+              })}
+            </svg>
+          </div>
         </div>
       </div>
 
@@ -95,26 +158,83 @@ function Hero(): React.ReactElement {
           opacity: disableParallax ? 1 : opacity,
         }}
       >
-        <span className="hero-greeting">Hello, I&apos;m</span>
+        <div className="hero-text-stack">
+          <span className="hero-greeting">Hello, I&apos;m</span>
 
-        <h1 id="hero-heading" className="hero-name">
-          Justin Paoletta
-        </h1>
+          <h1
+            id="hero-heading"
+            className="hero-name"
+            aria-label="Justin Paoletta"
+          >
+            <span className="hero-name-text" aria-hidden="true">
+              Justin Paoletta
+            </span>
+            <svg
+              className="hero-name-svg"
+              viewBox="0 0 1000 200"
+              preserveAspectRatio="xMidYMid meet"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient
+                  id="hero-name-gradient"
+                  x1="0%"
+                  y1="0%"
+                  x2="100%"
+                  y2="0%"
+                >
+                  <stop offset="0%" stopColor="var(--text-primary)" />
+                  <stop offset="55%" stopColor="var(--color-primary-light)" />
+                  <stop offset="100%" stopColor="var(--color-accent)" />
+                </linearGradient>
+              </defs>
+              <text
+                x="0"
+                y="72%"
+                textAnchor="start"
+                textLength="1000"
+                lengthAdjust="spacingAndGlyphs"
+                className="hero-name-svg-text"
+              >
+                Justin Paoletta
+              </text>
+            </svg>
+            <img
+              className="hero-astronaut"
+              src="/astro.png"
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+            />
+          </h1>
 
-        <p className="hero-title">
-          <span className="title-text">Software Engineer</span>
-          <span className="title-divider" aria-hidden="true">
-            •
-          </span>
-          <span className="title-text">Problem Solver</span>
-        </p>
+          <p className="hero-title">
+            <span className="title-text">Software Engineer</span>
+            <span className="title-divider" aria-hidden="true">
+              •
+            </span>
+            <span className="title-text">Problem Solver</span>
+            <span className="title-divider" aria-hidden="true">
+              •
+            </span>
+            <span className="title-text">Fixer of Things</span>
+          </p>
+        </div>
+
+        <img
+          className="hero-dew-text"
+          src="/dew_text.png"
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+        />
 
         <div className="hero-tagline">
           <p>I solve complex business challenges through thoughtful code,</p>
-          <p>to deliver reliable solutions with precision and expertise.</p>
-          <p className="hero-tagline-subtext">
-            Always crafting creative projects that fuel my love of learning and
-            growth.
+          <p>
+            and deliver fast reliable solutions with precision and expertise.
           </p>
         </div>
 

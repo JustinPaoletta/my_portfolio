@@ -5,7 +5,11 @@
 
 .theme-switcher {
   position: fixed;
-  bottom: 20px;
+  --theme-switcher-base-bottom: 20px;
+  --theme-switcher-offset: 0px;
+  bottom: calc(
+    var(--theme-switcher-base-bottom) + var(--theme-switcher-offset)
+  );
   right: 20px;
   z-index: 1000;
   font-family: var(--font-sans);
@@ -215,7 +219,7 @@
 /* Mobile positioning - matches navigation breakpoint at 768px */
 @media (max-width: 768px) {
   .theme-switcher {
-    bottom: 16px;
+    --theme-switcher-base-bottom: 16px;
     right: 16px;
   }
 

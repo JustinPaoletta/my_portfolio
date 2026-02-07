@@ -134,6 +134,9 @@ function getInitialTheme(): ThemeName {
   }
 
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
+  if (stored === 'boSox') {
+    return 'minimal';
+  }
   if (stored && stored in themes) {
     return stored as ThemeName;
   }
