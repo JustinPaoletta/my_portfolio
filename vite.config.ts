@@ -180,6 +180,7 @@ export default defineConfig(({ mode }) => {
       transformer: 'lightningcss',
     },
     build: {
+      emptyOutDir: true,
       chunkSizeWarningLimit: 400,
       sourcemap: isAnalyze,
       minify: 'esbuild',

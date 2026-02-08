@@ -211,7 +211,7 @@
   border-radius: 20px;
   font-size: 0.75rem;
   font-family: var(--font-mono);
-  color: var(--color-primary-contrast);
+  color: var(--text-primary);
 }
 
 .resume-cta {

@@ -242,7 +242,7 @@
   &:hover {
     background: rgba(var(--color-primary-rgb), 0.15);
     border-color: var(--color-primary-ink);
-    color: var(--color-primary-contrast);
+    color: var(--text-primary);
     transform: translateY(-2px);
   }
 }

@@ -13,6 +13,8 @@
   --color-primary-dark-rgb: 0, 122, 148;
   --color-accent-rgb: 0, 212, 255;
   --color-primary-contrast: #5ce1ff;
+  --color-accent-ink: #007a94;
+  --color-on-primary: #000000;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --text-primary: #f0fff0;

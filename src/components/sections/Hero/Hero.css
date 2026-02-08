@@ -121,6 +121,7 @@
 
 .circuit-board,
 .circuit-traces,
+.circuit-chip-svg,
 .circuit-nodes,
 .circuit-electrons {
   position: absolute;
@@ -217,6 +218,57 @@
   filter: blur(1.4px);
 }
 
+.circuit-chip-svg {
+  pointer-events: none;
+  opacity: 0.75;
+  mix-blend-mode: screen;
+}
+
+.circuit-chip-svg svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chip-svg {
+  filter: drop-shadow(0 0 14px rgba(var(--color-primary-rgb), 0.35));
+}
+
+.chip-body {
+  fill: rgba(var(--color-primary-rgb), 0.18);
+  stroke: rgba(var(--color-primary-rgb), 0.55);
+  stroke-width: 1.4;
+}
+
+.chip-core {
+  fill: rgba(var(--color-accent-rgb), 0.22);
+  stroke: rgba(var(--color-primary-rgb), 0.7);
+  stroke-width: 1.2;
+}
+
+.chip-marker {
+  fill: transparent;
+  stroke: rgba(var(--color-accent-rgb), 0.8);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 8px rgba(var(--color-accent-rgb), 0.6));
+}
+
+.chip-pin,
+.chip-pin-diagonal {
+  stroke: rgba(var(--color-primary-rgb), 0.75);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.chip-pin-diagonal {
+  opacity: 0.9;
+  stroke: rgba(220, 230, 240, 0.9);
+}
+
+:root[data-theme='engineer'][data-color-mode='light'] .circuit-chip-svg {
+  opacity: 0.6;
+}
+
 .circuit-nodes {
   background-color: var(--node-color);
   -webkit-mask-image: var(--node-mask);
@@ -249,38 +301,6 @@
   fill: var(--node-color);
   filter: drop-shadow(0 0 6px var(--node-glow))
     drop-shadow(0 0 10px var(--trace-glow));
-}
-
-.node-pulse-layer {
-  pointer-events: none;
-}
-
-.node-pulse {
-  fill: var(--node-color);
-  opacity: 0;
-  filter: drop-shadow(0 0 6px var(--node-glow))
-    drop-shadow(0 0 10px var(--trace-glow));
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: nodePulse var(--pulse-duration, 6s) linear infinite;
-  animation-delay: calc(var(--pulse-offset, 0s) * -1);
-}
-
-@keyframes nodePulse {
-  0%,
-  70%,
-  100% {
-    opacity: 0;
-    transform: scale(0.6);
-  }
-  10% {
-    opacity: 0.95;
-    transform: scale(1.4);
-  }
-  20% {
-    opacity: 0.4;
-    transform: scale(1);
-  }
 }
 
 .hero-content {
@@ -429,7 +449,7 @@
 .title-text {
   font-size: clamp(1rem, 3vw, 1.25rem);
   color: var(--text-secondary);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .title-divider {
@@ -449,6 +469,7 @@
   color: var(--text-secondary);
   line-height: 1.7;
   margin: 0 0 0.5rem;
+  font-weight: 500;
 }
 
 .hero-tagline p:last-child {
@@ -486,12 +507,12 @@
 
 .cta-primary {
   background: var(--color-primary);
-  color: var(--bg-main);
+  color: var(--color-on-primary);
   box-shadow: 0 6px 18px rgba(var(--color-primary-rgb), 0.28);
 }
 
 .cta-primary:hover {
-  color: var(--bg-main);
+  color: var(--color-on-primary);
   transform: translateY(-2px);
   box-shadow: 0 10px 26px rgba(var(--color-primary-rgb), 0.35);
 }
@@ -644,6 +665,91 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .hero-tagline {
+    max-width: 48ch;
+    margin: 0 auto 2.5rem;
+  }
+
+  .hero-tagline p {
+    text-wrap: balance;
+  }
+}
+
+@media (max-width: 540px) {
+  .hero-content {
+    max-width: 92vw;
+  }
+
+  .hero-greeting {
+    font-size: 0.75rem;
+    letter-spacing: 0.14em;
+  }
+
+  .hero-name {
+    font-size: clamp(2.2rem, 11vw, 3.4rem);
+    line-height: 1.05;
+  }
+
+  .hero-title {
+    margin-bottom: 1.1rem;
+    gap: 0.35rem;
+    line-height: 1.35;
+  }
+
+  .title-text {
+    font-size: 1.125rem;
+    font-weight: 650;
+    letter-spacing: 0.015em;
+  }
+
+  .hero-tagline {
+    max-width: 32ch;
+    margin: 0 auto 2rem;
+  }
+
+  .hero-tagline p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    text-wrap: balance;
+    margin-bottom: 0.4rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .hero-section {
+    padding: 1.25rem;
+    padding-top: max(72px, 1.25rem);
+  }
+
+  .hero-greeting {
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+  }
+
+  .hero-name {
+    font-size: clamp(2rem, 12vw, 3.1rem);
+  }
+
+  .hero-title {
+    gap: 0.2rem;
+  }
+
+  .title-text {
+    font-size: 1.05rem;
+    font-weight: 650;
+  }
+
+  .hero-tagline {
+    max-width: 30ch;
+  }
+
+  .hero-tagline p {
+    font-size: 0.9rem;
+    line-height: 1.55;
+  }
+}
+
 @media (max-height: 700px) {
   .hero-section {
     justify-content: flex-start;
@@ -670,4 +776,16 @@
   );
   -webkit-background-clip: text;
   background-clip: text;
+}
+
+[data-color-mode='light'] .hero-name-text {
+  background: linear-gradient(
+    135deg,
+    var(--text-primary) 0%,
+    var(--text-secondary) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }

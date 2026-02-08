@@ -13,7 +13,7 @@
   background: rgba(var(--color-accent-rgb), 0.1);
   border: 1px solid rgba(var(--color-accent-rgb), 0.3);
   border-radius: 12px;
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   margin-bottom: 2rem;
 
   svg {

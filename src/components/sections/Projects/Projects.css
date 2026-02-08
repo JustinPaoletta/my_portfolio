@@ -103,7 +103,7 @@
   backdrop-filter: blur(10px);
   border: 1px solid rgba(var(--color-accent-rgb), 0.4);
   border-radius: 8px;
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   font-size: 0.875rem;
   font-weight: 500;
 
@@ -145,7 +145,7 @@
   border: 1px solid var(--border-hover);
   border-radius: 20px;
   font-size: 0.8rem;
-  color: var(--color-primary-contrast);
+  color: var(--text-primary);
   font-family: var(--font-mono);
 }
 

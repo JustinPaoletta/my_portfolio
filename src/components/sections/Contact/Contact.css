@@ -76,7 +76,7 @@
     svg {
       width: 24px;
       height: 24px;
-      color: var(--bg-main);
+      color: var(--color-on-primary);
     }
   }
 
@@ -141,7 +141,7 @@
 
   .availability-text {
     font-size: 0.9rem;
-    color: var(--color-accent-teal);
+    color: var(--text-primary);
     font-weight: 500;
   }
 }
@@ -230,7 +230,7 @@
   background: var(--color-primary);
   border: none;
   border-radius: 12px;
-  color: var(--bg-main);
+  color: var(--color-on-primary);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -286,7 +286,7 @@
   background: rgba(107, 142, 142, 0.1);
   border: 1px solid rgba(107, 142, 142, 0.3);
   border-radius: 12px;
-  color: var(--color-accent-teal);
+  color: var(--text-primary);
   font-size: 0.9rem;
 }
 
@@ -299,7 +299,7 @@
   background: rgba(var(--color-accent-rgb), 0.1);
   border: 1px solid rgba(var(--color-accent-rgb), 0.3);
   border-radius: 12px;
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   font-size: 0.9rem;
 }
 

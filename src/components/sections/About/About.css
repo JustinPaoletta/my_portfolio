@@ -189,7 +189,7 @@
     svg {
       width: 24px;
       height: 24px;
-      color: var(--bg-main);
+      color: var(--color-on-primary);
     }
   }
 

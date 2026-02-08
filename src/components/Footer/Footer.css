@@ -80,7 +80,7 @@
 
 .heart {
   display: inline-block;
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   animation: heartbeat 0.75s ease-in-out infinite;
 }
 

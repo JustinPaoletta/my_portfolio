@@ -272,6 +272,12 @@
   opacity: 1;
 }
 
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-name-text {
+  background: none;
+  color: #f7f2ff;
+  -webkit-text-fill-color: #f7f2ff;
+}
+
 :root[data-theme='cosmic'] .hero-name-svg {
   display: none;
 }

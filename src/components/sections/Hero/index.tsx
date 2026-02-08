@@ -17,79 +17,89 @@ import { useTheme } from '@/hooks/useTheme';
 import './Hero.css';
 
 const tracePaths = [
-  { id: 'trace-top-1', d: 'M660 300 L660 250 L627 170 L627 110' },
-  { id: 'trace-top-2', d: 'M685 300 L685 250 L658 170 L658 110' },
-  { id: 'trace-top-3', d: 'M711 300 L711 250 L690 170 L690 110' },
-  { id: 'trace-top-4', d: 'M736 300 L736 250 L721 170 L721 110' },
-  { id: 'trace-top-5', d: 'M762 300 L762 250 L753 170 L753 110' },
-  { id: 'trace-top-6', d: 'M787 300 L787 250 L784 170 L784 110' },
-  { id: 'trace-top-7', d: 'M813 300 L813 250 L816 170 L816 110' },
-  { id: 'trace-top-8', d: 'M838 300 L838 250 L847 170 L847 110' },
-  { id: 'trace-top-9', d: 'M864 300 L864 250 L879 170 L879 110' },
-  { id: 'trace-top-10', d: 'M889 300 L889 250 L910 170 L910 110' },
-  { id: 'trace-top-11', d: 'M915 300 L915 250 L942 170 L942 110' },
-  { id: 'trace-top-12', d: 'M940 300 L940 250 L973 170 L973 110' },
-  { id: 'trace-bottom-1', d: 'M660 600 L660 650 L627 730 L627 810' },
-  { id: 'trace-bottom-2', d: 'M685 600 L685 650 L658 730 L658 810' },
-  { id: 'trace-bottom-3', d: 'M711 600 L711 650 L690 730 L690 810' },
-  { id: 'trace-bottom-4', d: 'M736 600 L736 650 L721 730 L721 810' },
-  { id: 'trace-bottom-5', d: 'M762 600 L762 650 L753 730 L753 810' },
-  { id: 'trace-bottom-6', d: 'M787 600 L787 650 L784 730 L784 810' },
-  { id: 'trace-bottom-7', d: 'M813 600 L813 650 L816 730 L816 810' },
-  { id: 'trace-bottom-8', d: 'M838 600 L838 650 L847 730 L847 810' },
-  { id: 'trace-bottom-9', d: 'M864 600 L864 650 L879 730 L879 810' },
-  { id: 'trace-bottom-10', d: 'M889 600 L889 650 L910 730 L910 810' },
-  { id: 'trace-bottom-11', d: 'M915 600 L915 650 L942 730 L942 810' },
-  { id: 'trace-bottom-12', d: 'M940 600 L940 650 L973 730 L973 810' },
-  { id: 'trace-left-1', d: 'M650 310 L590 310 L510 283 L200 283 L140 343' },
-  { id: 'trace-left-2', d: 'M650 341 L590 341 L510 320 L200 320 L140 380' },
-  { id: 'trace-left-3', d: 'M650 372 L590 372 L510 357 L200 357 L140 417' },
-  { id: 'trace-left-4', d: 'M650 403 L590 403 L510 394 L200 394 L140 454' },
-  { id: 'trace-left-5', d: 'M650 434 L590 434 L510 431 L200 431 L140 491' },
-  { id: 'trace-left-6', d: 'M650 466 L590 466 L510 469 L200 469 L140 529' },
-  { id: 'trace-left-7', d: 'M650 497 L590 497 L510 506 L200 506 L140 566' },
-  { id: 'trace-left-8', d: 'M650 528 L590 528 L510 543 L200 543 L140 603' },
-  { id: 'trace-left-9', d: 'M650 559 L590 559 L510 580 L200 580 L140 640' },
-  { id: 'trace-left-10', d: 'M650 590 L590 590 L510 617 L200 617 L140 677' },
+  { id: 'trace-top-2', d: 'M687.5 300 L687.5 250 L660.5 170 L660.5 110' },
+  { id: 'trace-top-3', d: 'M712.5 300 L712.5 250 L691.5 170 L691.5 110' },
+  { id: 'trace-top-4', d: 'M737.5 300 L737.5 250 L722.5 170 L722.5 110' },
+  { id: 'trace-top-5', d: 'M762.5 300 L762.5 250 L753.5 170 L753.5 110' },
+  { id: 'trace-top-6', d: 'M787.5 300 L787.5 250 L784.5 170 L784.5 110' },
+  { id: 'trace-top-7', d: 'M812.5 300 L812.5 250 L815.5 170 L815.5 110' },
+  { id: 'trace-top-8', d: 'M837.5 300 L837.5 250 L846.5 170 L846.5 110' },
+  { id: 'trace-top-9', d: 'M862.5 300 L862.5 250 L877.5 170 L877.5 110' },
+  { id: 'trace-top-10', d: 'M887.5 300 L887.5 250 L908.5 170 L908.5 110' },
+  { id: 'trace-top-11', d: 'M912.5 300 L912.5 250 L939.5 170 L939.5 110' },
+  { id: 'trace-bottom-2', d: 'M687.5 600 L687.5 650 L660.5 730 L660.5 810' },
+  { id: 'trace-bottom-3', d: 'M712.5 600 L712.5 650 L691.5 730 L691.5 810' },
+  { id: 'trace-bottom-4', d: 'M737.5 600 L737.5 650 L722.5 730 L722.5 810' },
+  { id: 'trace-bottom-5', d: 'M762.5 600 L762.5 650 L753.5 730 L753.5 810' },
+  { id: 'trace-bottom-6', d: 'M787.5 600 L787.5 650 L784.5 730 L784.5 810' },
+  { id: 'trace-bottom-7', d: 'M812.5 600 L812.5 650 L815.5 730 L815.5 810' },
+  { id: 'trace-bottom-8', d: 'M837.5 600 L837.5 650 L846.5 730 L846.5 810' },
+  { id: 'trace-bottom-9', d: 'M862.5 600 L862.5 650 L877.5 730 L877.5 810' },
+  { id: 'trace-bottom-10', d: 'M887.5 600 L887.5 650 L908.5 730 L908.5 810' },
+  { id: 'trace-bottom-11', d: 'M912.5 600 L912.5 650 L939.5 730 L939.5 810' },
   {
-    id: 'trace-right-1',
-    d: 'M950 310 L1010 310 L1090 283 L1400 283 L1460 223',
+    id: 'trace-left-2',
+    d: 'M650 362.5 L590 362.5 L510 341.5 L200 341.5 L140 401.5',
+  },
+  {
+    id: 'trace-left-3',
+    d: 'M650 387.5 L590 387.5 L510 372.5 L200 372.5 L140 432.5',
+  },
+  {
+    id: 'trace-left-4',
+    d: 'M650 412.5 L590 412.5 L510 403.5 L200 403.5 L140 463.5',
+  },
+  {
+    id: 'trace-left-5',
+    d: 'M650 437.5 L590 437.5 L510 434.5 L200 434.5 L140 494.5',
+  },
+  {
+    id: 'trace-left-6',
+    d: 'M650 462.5 L590 462.5 L510 465.5 L200 465.5 L140 525.5',
+  },
+  {
+    id: 'trace-left-7',
+    d: 'M650 487.5 L590 487.5 L510 496.5 L200 496.5 L140 556.5',
+  },
+  {
+    id: 'trace-left-8',
+    d: 'M650 512.5 L590 512.5 L510 527.5 L200 527.5 L140 587.5',
+  },
+  {
+    id: 'trace-left-9',
+    d: 'M650 537.5 L590 537.5 L510 558.5 L200 558.5 L140 618.5',
   },
   {
     id: 'trace-right-2',
-    d: 'M950 341 L1010 341 L1090 320 L1400 320 L1460 260',
+    d: 'M 950 537.5 L 1010 537.5 L 1090 558.5 L 1400 558.5 L 1460 498.5',
   },
   {
     id: 'trace-right-3',
-    d: 'M950 372 L1010 372 L1090 357 L1400 357 L1460 297',
+    d: 'M 950 512.5 L 1010 512.5 L 1090 527.5 L 1400 527.5 L 1460 467.5',
   },
   {
     id: 'trace-right-4',
-    d: 'M950 403 L1010 403 L1090 394 L1400 394 L1460 334',
+    d: 'M 950 487.5 L 1010 487.5 L 1090 496.5 L 1400 496.5 L 1460 436.5',
   },
   {
     id: 'trace-right-5',
-    d: 'M950 434 L1010 434 L1090 431 L1400 431 L1460 371',
+    d: 'M 950 462.5 L 1010 462.5 L 1090 465.5 L 1400 465.5 L 1460 405.5',
   },
   {
     id: 'trace-right-6',
-    d: 'M950 466 L1010 466 L1090 469 L1400 469 L1460 409',
+    d: 'M 950 437.5 L 1010 437.5 L 1090 434.5 L 1400 434.5 L 1460 374.5',
   },
   {
     id: 'trace-right-7',
-    d: 'M950 497 L1010 497 L1090 506 L1400 506 L1460 446',
+    d: 'M 950 412.5 L 1010 412.5 L 1090 403.5 L 1400 403.5 L 1460 343.5',
   },
   {
     id: 'trace-right-8',
-    d: 'M950 528 L1010 528 L1090 543 L1400 543 L1460 483',
+    d: 'M 950 387.5 L 1010 387.5 L 1090 372.5 L 1400 372.5 L 1460 312.5',
   },
   {
     id: 'trace-right-9',
-    d: 'M950 559 L1010 559 L1090 580 L1400 580 L1460 520',
-  },
-  {
-    id: 'trace-right-10',
-    d: 'M950 590 L1010 590 L1090 617 L1400 617 L1460 557',
+    d: 'M 950 362.5 L 1010 362.5 L 1090 341.5 L 1400 341.5 L 1460 281.5',
   },
 ];
 
@@ -98,7 +108,25 @@ type TracePoint = {
   y: number;
 };
 
-const extractTracePoints = (d: string): TracePoint[] => {
+type TraceSegment = {
+  start: TracePoint;
+  end: TracePoint;
+};
+
+const chip = {
+  x: 650,
+  y: 300,
+  size: 300,
+  radius: 14,
+  coreSize: 150,
+  coreRadius: 10,
+  pinLength: 28,
+  diagonalLength: 18,
+};
+
+const chipCoreOffset = (chip.size - chip.coreSize) / 2;
+
+const getFirstTwoPoints = (d: string): TracePoint[] => {
   const tokens = d.match(/[ML]|-?\d+(?:\.\d+)?/g);
   if (!tokens) {
     return [];
@@ -128,16 +156,39 @@ const extractTracePoints = (d: string): TracePoint[] => {
     }
 
     points.push({ x, y });
+    if (points.length >= 2) {
+      break;
+    }
     i += 2;
   }
 
   return points;
 };
 
-const traceNodes = tracePaths.map((trace) => ({
-  id: trace.id,
-  points: extractTracePoints(trace.d),
-}));
+const getSuffix = (id: string): number => {
+  const match = id.match(/-(\d+)$/);
+  return match ? Number(match[1]) : 0;
+};
+
+const buildPinSegments = (prefix: string): TraceSegment[] =>
+  tracePaths
+    .filter((trace) => trace.id.startsWith(prefix))
+    .sort((a, b) => getSuffix(a.id) - getSuffix(b.id))
+    .map((trace) => {
+      const points = getFirstTwoPoints(trace.d);
+      if (points.length < 2) {
+        return null;
+      }
+      return { start: points[0], end: points[1] };
+    })
+    .filter((segment): segment is TraceSegment => Boolean(segment));
+
+const chipPins = {
+  top: buildPinSegments('trace-top-'),
+  bottom: buildPinSegments('trace-bottom-'),
+  left: buildPinSegments('trace-left-'),
+  right: buildPinSegments('trace-right-'),
+};
 
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
@@ -223,6 +274,106 @@ function Hero(): React.ReactElement {
         <div className="hero-circuit">
           <div className="circuit-board" />
           <div className="circuit-traces" />
+          <div className="circuit-chip-svg" aria-hidden="true">
+            <svg
+              viewBox="0 0 1600 900"
+              preserveAspectRatio="xMidYMid slice"
+              aria-hidden="true"
+            >
+              <g className="chip-svg">
+                <rect
+                  className="chip-body"
+                  x={chip.x}
+                  y={chip.y}
+                  width={chip.size}
+                  height={chip.size}
+                  rx={chip.radius}
+                />
+                <rect
+                  className="chip-core"
+                  x={chip.x + chipCoreOffset}
+                  y={chip.y + chipCoreOffset}
+                  width={chip.coreSize}
+                  height={chip.coreSize}
+                  rx={chip.coreRadius}
+                />
+                <circle
+                  className="chip-marker"
+                  cx={chip.x + chip.size - 24}
+                  cy={chip.y + 24}
+                  r="8"
+                />
+                {chipPins.top.map((segment, index) => (
+                  <line
+                    key={`chip-top-${index}`}
+                    className="chip-pin"
+                    x1={segment.start.x}
+                    y1={segment.start.y}
+                    x2={segment.end.x}
+                    y2={segment.end.y}
+                  />
+                ))}
+                {chipPins.bottom.map((segment, index) => (
+                  <line
+                    key={`chip-bottom-${index}`}
+                    className="chip-pin"
+                    x1={segment.start.x}
+                    y1={segment.start.y}
+                    x2={segment.end.x}
+                    y2={segment.end.y}
+                  />
+                ))}
+                {chipPins.left.map((segment, index) => (
+                  <line
+                    key={`chip-left-${index}`}
+                    className="chip-pin"
+                    x1={segment.start.x}
+                    y1={segment.start.y}
+                    x2={segment.end.x}
+                    y2={segment.end.y}
+                  />
+                ))}
+                {chipPins.right.map((segment, index) => (
+                  <line
+                    key={`chip-right-${index}`}
+                    className="chip-pin"
+                    x1={segment.start.x}
+                    y1={segment.start.y}
+                    x2={segment.end.x}
+                    y2={segment.end.y}
+                  />
+                ))}
+                <line
+                  className="chip-pin-diagonal"
+                  x1={chip.x}
+                  y1={chip.y}
+                  x2={chip.x - chip.diagonalLength}
+                  y2={chip.y - chip.diagonalLength}
+                />
+                <line
+                  className="chip-pin-diagonal"
+                  x1={chip.x + chip.size}
+                  y1={chip.y}
+                  x2={chip.x + chip.size + chip.diagonalLength}
+                  y2={chip.y - chip.diagonalLength}
+                />
+                <line
+                  className="chip-pin-diagonal"
+                  x1={chip.x}
+                  y1={chip.y + chip.size}
+                  x2={chip.x - chip.diagonalLength}
+                  y2={chip.y + chip.size + chip.diagonalLength}
+                />
+                <line
+                  className="chip-pin-diagonal"
+                  x1={chip.x + chip.size}
+                  y1={chip.y + chip.size}
+                  x2={chip.x + chip.size + chip.diagonalLength}
+                  y2={chip.y + chip.size + chip.diagonalLength}
+                />
+              </g>
+            </svg>
+          </div>
           <div className="circuit-nodes" />
           <div className="circuit-electrons">
             <svg
@@ -236,36 +387,6 @@ function Hero(): React.ReactElement {
                   <path key={trace.id} id={trace.id} d={trace.d} />
                 ))}
               </defs>
-              <g className="node-pulse-layer">
-                {traceNodes.flatMap((trace, index) => {
-                  const duration = 5.8 + (index % 5) * 0.5;
-                  const begin = (index * 0.35) % 3.2;
-                  const reverse = index % 4 === 0;
-                  const nodeCount = trace.points.length;
-
-                  return trace.points.map((point, nodeIndex) => {
-                    const fraction =
-                      nodeCount > 1 ? nodeIndex / (nodeCount - 1) : 0;
-                    const progress = reverse ? 1 - fraction : fraction;
-                    const offset = begin + duration * progress;
-                    const style = {
-                      '--pulse-duration': `${duration.toFixed(1)}s`,
-                      '--pulse-offset': `${offset.toFixed(2)}s`,
-                    } as React.CSSProperties;
-
-                    return (
-                      <circle
-                        key={`${trace.id}-node-${nodeIndex}`}
-                        className="node-pulse"
-                        cx={point.x}
-                        cy={point.y}
-                        r="3"
-                        style={style}
-                      />
-                    );
-                  });
-                })}
-              </g>
               {tracePaths.map((trace, index) => {
                 const duration = 5.8 + (index % 5) * 0.5;
                 const begin = (index * 0.35) % 3.2;
@@ -342,14 +463,16 @@ function Hero(): React.ReactElement {
                 Justin Paoletta
               </text>
             </svg>
-            <img
-              className="hero-astronaut"
-              src="/astro.png"
-              alt=""
-              aria-hidden="true"
-              loading="eager"
-              decoding="async"
-            />
+            {themeName === 'cosmic' && (
+              <img
+                className="hero-astronaut"
+                src="/astro.webp"
+                alt=""
+                aria-hidden="true"
+                loading="eager"
+                decoding="async"
+              />
+            )}
           </h1>
 
           <p className="hero-title">
@@ -365,14 +488,16 @@ function Hero(): React.ReactElement {
           </p>
         </div>
 
-        <img
-          className="hero-dew-text"
-          src="/dew_text.png"
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-        />
+        {themeName === 'dewTheDew' && (
+          <img
+            className="hero-dew-text"
+            src="/dew_text.webp"
+            alt=""
+            aria-hidden="true"
+            loading="eager"
+            decoding="async"
+          />
+        )}
 
         <div className="hero-tagline">
           <p>I solve complex business challenges through thoughtful code,</p>
