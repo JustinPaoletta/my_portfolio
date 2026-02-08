@@ -19,6 +19,8 @@ import {
 
 const THEME_STORAGE_KEY = 'portfolio-theme';
 const MODE_STORAGE_KEY = 'portfolio-color-mode';
+const hasOwnTheme = (value: string): value is ThemeName =>
+  Object.prototype.hasOwnProperty.call(themes, value);
 
 interface ThemeContextValue {
   theme: Theme;
@@ -242,13 +244,7 @@ function getThemeFromQuery(): ThemeName | null {
   if (!themeParam) {
     return null;
   }
-  if (themeParam === 'boSox') {
-    return 'minimal';
-  }
-  if (themeParam in themes) {
-    return themeParam as ThemeName;
-  }
-  return null;
+  return hasOwnTheme(themeParam) ? themeParam : null;
 }
 
 function getInitialTheme(): ThemeName {
@@ -263,11 +259,8 @@ function getInitialTheme(): ThemeName {
   }
 
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored === 'boSox') {
-    return 'minimal';
-  }
-  if (stored && stored in themes) {
-    return stored as ThemeName;
+  if (stored && hasOwnTheme(stored)) {
+    return stored;
   }
 
   return defaultTheme;
@@ -354,7 +347,7 @@ export function ThemeProvider({
   }, [theme, themeName, colorMode, resolvedMode]);
 
   const setTheme = useCallback((name: ThemeName) => {
-    if (name in themes) {
+    if (hasOwnTheme(name)) {
       setThemeName(name);
     } else if (import.meta.env.DEV) {
       console.warn(`[Theme] Unknown theme: ${name}`);
