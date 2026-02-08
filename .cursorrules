@@ -442,7 +442,7 @@ async function fetchData(): Promise<Data> {
 - App chunks: < 150 KB
 - Vendor chunks: < 400 KB
 - Total bundle: < 650 KB
-- CSS files: < 40 KB
+- CSS files: < 70 KB
 
 ### Lighthouse CI
 - Performance score target: ≥ 85

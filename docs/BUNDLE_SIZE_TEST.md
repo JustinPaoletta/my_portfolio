@@ -15,7 +15,7 @@ const BUNDLE_SIZE_LIMITS = {
   appChunk: 5, // Lowered from 150 to 5 KB
   vendorChunk: 400,
   totalSize: 650,
-  cssFile: 40,
+  cssFile: 70,
 };
 ```
 
@@ -52,7 +52,7 @@ const BUNDLE_SIZE_LIMITS = {
   appChunk: 150,
   vendorChunk: 400,
   totalSize: 650,
-  cssFile: 40,
+  cssFile: 70,
 };
 ```
 

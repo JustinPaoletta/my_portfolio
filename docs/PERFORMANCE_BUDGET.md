@@ -8,7 +8,7 @@ This project enforces **strict bundle size limits** to ensure fast load times an
 | ----------------- | ------ | --------------------- |
 | **App Chunks**    | 150 KB | Your application code |
 | **Vendor Chunks** | 400 KB | Third-party libraries |
-| **CSS Files**     | 60 KB  | Stylesheets           |
+| **CSS Files**     | 70 KB  | Stylesheets           |
 | **Total Bundle**  | 650 KB | All assets combined   |
 
 ## 🚦 How It Works
@@ -24,7 +24,7 @@ The build will **automatically fail** if any bundle exceeds these limits. This h
 As of last build:
 
 ```
-✅ CSS: 1.52 KB (limit: 40 KB)
+✅ CSS: 1.52 KB (limit: 70 KB)
 ✅ App code: 6.13 KB (limit: 150 KB)
 ✅ Vendor (React): 194.92 KB (limit: 400 KB)
 ✅ Total: 211.40 KB (limit: 650 KB)
@@ -41,7 +41,7 @@ const BUNDLE_SIZE_LIMITS = {
   appChunk: 150, // KB - your application code
   vendorChunk: 400, // KB - third-party libraries
   totalSize: 650, // KB - entire bundle
-  cssFile: 60, // KB - stylesheets
+  cssFile: 70, // KB - stylesheets
 };
 ```
 
