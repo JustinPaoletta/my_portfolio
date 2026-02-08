@@ -1,19 +1,17 @@
-/* Footer Styles */
-
 .footer {
   position: relative;
   padding: 2rem;
   overflow: hidden;
-}
 
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: var(--border-subtle);
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--border-subtle);
+  }
 }
 
 .footer-container {
@@ -27,7 +25,6 @@
   gap: 2rem;
 }
 
-/* Brand */
 .footer-brand {
   display: flex;
   align-items: center;
@@ -45,30 +42,16 @@
   font-weight: 700;
   font-size: 1.5rem;
   flex-shrink: 0;
-}
 
-.footer-logo:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 4px;
-  border-radius: 4px;
-}
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
 
-.footer-logo .logo-text {
-  background: linear-gradient(
-    135deg,
-    var(--color-primary) 0%,
-    var(--color-primary-light) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.footer-logo .logo-dot {
-  width: 8px;
-  height: 8px;
-  background: var(--color-accent);
-  border-radius: 50%;
+  .logo-text {
+    color: var(--color-primary-ink);
+  }
 }
 
 .footer-tagline {
@@ -76,6 +59,17 @@
   font-size: 0.95rem;
   line-height: 1.6;
   margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.footer-tagline-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  color: var(--color-primary-ink);
+  flex-shrink: 0;
 }
 
 .copyright {
@@ -86,7 +80,7 @@
 
 .heart {
   display: inline-block;
-  color: var(--color-accent);
+  color: var(--color-accent-ink);
   animation: heartbeat 0.75s ease-in-out infinite;
 }
 
@@ -100,7 +94,6 @@
   }
 }
 
-/* Decoration */
 .footer-decoration {
   position: absolute;
   inset: 0;
@@ -109,32 +102,24 @@
 }
 
 .decoration-gradient {
-  position: absolute;
-  bottom: -50%;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 800px;
-  height: 400px;
-  background: radial-gradient(
-    ellipse,
-    rgba(var(--color-primary-rgb), 0.08) 0%,
-    transparent 70%
-  );
+  display: none;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .footer {
     padding: 1.5rem;
   }
+
   .footer-container {
     flex-direction: column;
     gap: 1.5rem;
     text-align: center;
   }
+
   .footer-brand {
     max-width: none;
   }
+
   .footer-logo {
     justify-content: center;
   }

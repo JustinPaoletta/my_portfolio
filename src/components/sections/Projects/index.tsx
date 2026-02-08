@@ -137,14 +137,11 @@ function Projects(): React.ReactElement {
             className="section-title"
             variants={fadeUpVariants}
           >
-            Featured Projects
+            My Projects
           </motion.h2>
-          <motion.p className="section-subtitle" variants={fadeUpVariants}>
-            Exploratory engineering projects I'm tinkering with.
-          </motion.p>
         </motion.header>
 
-        {/* Featured Projects */}
+        {/* My Projects */}
         <motion.div
           className="featured-projects"
           variants={staggerContainerVariants}

@@ -3,8 +3,9 @@
  * Background and story with Framer Motion animations
  */
 
+import { Brain, BookOpen, MessageCircle } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   fadeUpVariants,
   fadeLeftVariants,
@@ -17,7 +18,139 @@ import './About.css';
 
 function About(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const storyRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, defaultViewport);
+
+  useEffect(() => {
+    const content = contentRef.current;
+    if (!content) {
+      return;
+    }
+
+    let rafId: number | null = null;
+
+    const measureExpandedHeight = () => {
+      if (!content) {
+        return;
+      }
+
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        content.style.minHeight = '';
+        return;
+      }
+
+      const leftColumn =
+        content.querySelector<HTMLElement>('.about-text') || null;
+      const rightColumn =
+        content.querySelector<HTMLElement>('.about-center') || null;
+      const cards = content.querySelectorAll<HTMLElement>('.value-card');
+
+      if (!leftColumn || !rightColumn || !cards.length) {
+        content.style.minHeight = '';
+        return;
+      }
+
+      content.style.minHeight = '';
+      const leftHeight = leftColumn.getBoundingClientRect().height;
+      const rightHeight = rightColumn.getBoundingClientRect().height;
+      let maxExtra = 0;
+
+      cards.forEach((card) => {
+        const inner = card.querySelector<HTMLElement>(
+          '.value-card-content-inner'
+        );
+        if (!inner) {
+          return;
+        }
+        maxExtra = Math.max(maxExtra, inner.scrollHeight);
+      });
+
+      const expandedRightHeight = rightHeight + maxExtra;
+      const targetHeight = Math.max(leftHeight, expandedRightHeight);
+      content.style.minHeight = `${targetHeight}px`;
+    };
+
+    const scheduleMeasure = () => {
+      if (rafId !== null) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(() => {
+        measureExpandedHeight();
+        rafId = null;
+      });
+    };
+
+    measureExpandedHeight();
+    window.addEventListener('resize', scheduleMeasure);
+    window.addEventListener('load', scheduleMeasure);
+
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('resize', scheduleMeasure);
+      window.removeEventListener('load', scheduleMeasure);
+      content.style.minHeight = '';
+    };
+  }, []);
+
+  useEffect(() => {
+    const story = storyRef.current;
+    if (!story) {
+      return;
+    }
+
+    let rafId: number | null = null;
+
+    const updateStoryHeight = (): void => {
+      if (window.matchMedia('(max-width: 640px)').matches) {
+        story.style.removeProperty('--about-story-max-height');
+        return;
+      }
+
+      const paragraphs = story.querySelectorAll<HTMLParagraphElement>('p');
+      if (paragraphs.length < 2) {
+        story.style.removeProperty('--about-story-max-height');
+        return;
+      }
+
+      const first = paragraphs[0];
+      const second = paragraphs[1];
+      const firstStyle = window.getComputedStyle(first);
+      const secondStyle = window.getComputedStyle(second);
+      const firstMargin = Number.parseFloat(firstStyle.marginBottom) || 0;
+      const secondMargin = Number.parseFloat(secondStyle.marginBottom) || 0;
+      const totalHeight =
+        first.getBoundingClientRect().height +
+        firstMargin +
+        second.getBoundingClientRect().height +
+        secondMargin;
+
+      story.style.setProperty('--about-story-max-height', `${totalHeight}px`);
+    };
+
+    const scheduleUpdate = (): void => {
+      if (rafId !== null) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(() => {
+        updateStoryHeight();
+        rafId = null;
+      });
+    };
+
+    updateStoryHeight();
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('resize', scheduleUpdate);
+      story.style.removeProperty('--about-story-max-height');
+    };
+  }, []);
 
   return (
     <section
@@ -41,53 +174,51 @@ function About(): React.ReactElement {
             className="section-title"
             variants={fadeUpVariants}
           >
-            My Journey
+            My Career
           </motion.h2>
         </motion.header>
 
-        <div className="about-content">
+        <div className="about-content" ref={contentRef}>
           <motion.div
             className="about-text"
             variants={fadeLeftVariants}
             initial="hidden"
             animate={isInView ? 'visible' : 'hidden'}
           >
-            <p className="about-intro">
-              I began my career in technology at Apple, where I worked as a
-              Senior Tech Support Advisor. It was a solid role, but I
-              wasn&apos;t getting the creative fulfillment I wanted from my
-              day-to-day work. I wanted to build things, think more deeply, and
-              solve problems rather than simply support existing systems.
-            </p>
+            <div className="about-story" ref={storyRef}>
+              <p className="about-intro">
+                I began my career in technology as a Senior Technical Advisor
+                for AppleCare. It was a solid role, and a great company, but I
+                wanted something more challenging. Instead of collecting data
+                and passing it off to someone else to solve the root problem, I
+                wanted to get to dive into the software myself and figure out
+                solutions.
+              </p>
 
-            <p>
-              That curiosity pushed me to start learning how to code. I began
-              with a simple website to share science lessons I was doing with my
-              nephew and quickly realized how much I enjoyed building things
-              from scratch and understanding how they worked. After being
-              accepted into Hack Reactor, I made the decision to leave my role
-              at Apple and fully immerse myself in software engineering. Around
-              that same time, the COVID-19 pandemic accelerated the
-              industry&apos;s shift to remote work and coincided with a major
-              hiring boom. Six years later, I often tell people it was one of
-              the best decisions I&apos;ve ever made.
-            </p>
+              <p>
+                The drive to challenge myself and really understand how things
+                work led me to learn how to code. The first site I built was
+                simple, mostly html, css, and a little bit of javascript. I
+                enjoyed the experience and the creative freedom of building it
+                so much so, that I decided to make a career change. In 2020, the
+                year of the COVID-19 pandemic, I quit my job and joined the
+                HRR45 cohort at Hack Reactor. It was from there, I learned the
+                fundamentals of building full stack web applications and gained
+                the experience and foundation needed for a successful career in
+                software development.
+              </p>
 
-            <p>
-              Today, my experience is primarily frontend-focused, and I know my
-              way around backend systems well enough to build and support
-              complete features end to end. I gravitate toward clean,
-              maintainable solutions that scale without becoming fragile, and I
-              care deeply about thoughtful design, reducing unnecessary
-              complexity, and building software that people actually enjoy
-              using.
-            </p>
-
-            <p>
-              When I&apos;m not coding, I&apos;m usually spending time with my
-              wife and our dogs, gaming, watching sports, or catching up on the
-              latest space and science news.
-            </p>
+              <p>
+                Today, I&apos;m primarily frontend-focused, working as a UI
+                Engineer for accesso. I know my way around backend systems well
+                enough too though, that I can build/support features end to end.
+                I focus on the quality of what I produce and advocate for
+                maintainable solutions that scale without breaking. I care
+                deeply about thoughtful design, reducing unnecessary complexity,
+                and building software that people will find useful and enjoy
+                using.
+              </p>
+            </div>
 
             <motion.div
               className="about-highlights"
@@ -100,7 +231,7 @@ function About(): React.ReactElement {
                 <span className="highlight-label">Years Experience</span>
               </motion.div>
               <motion.div className="highlight-item" variants={fadeUpVariants}>
-                <span className="highlight-number">180+</span>
+                <span className="highlight-number">300+</span>
                 <span className="highlight-label">Jira Tickets Completed</span>
               </motion.div>
               <motion.div className="highlight-item" variants={fadeUpVariants}>
@@ -109,6 +240,56 @@ function About(): React.ReactElement {
                   Diet Dews Converted to Code
                 </span>
               </motion.div>
+            </motion.div>
+
+            <motion.div
+              className="about-ai"
+              variants={fadeUpVariants}
+              initial="hidden"
+              animate={isInView ? 'visible' : 'hidden'}
+            >
+              <h3 className="about-ai-title">
+                Thoughts on AI
+                <MessageCircle className="about-ai-icon" aria-hidden="true" />
+              </h3>
+              <p className="about-ai-lede">
+                Artificial intelligence is arguably the most significant
+                invention of my lifetime. At its core, it&apos;s simple, it
+                predicts the next most likely token. The complexity that emerges
+                from such a simple concept though is where its utility lies. It
+                reminds me of{' '}
+                <a
+                  href="https://conwaylife.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  John Conway&apos;s Game of Life
+                </a>
+                .
+              </p>
+              <p>
+                Its practical value is obvious. Used properly, we can learn
+                faster, plan more efficiently and code higher quality software
+                with incredible speed. We need to approach it with caution
+                though, it&apos;s not an oracle, and it doesn&apos;t consciously
+                &ldquo;think&rdquo; like we do. It builds statistical models and
+                finds patterns, but it has no awareness, or understanding, its
+                mathematics.
+              </p>
+              <p>
+                I work daily with{' '}
+                <a
+                  href="https://www.anthropic.com/claude"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Claude Code
+                </a>
+                , I validate its claims, test its outputs, and treat it as a
+                tool rather than an all knowing authority, and my productivity
+                has multiplied. It&apos;s reshaping what&apos;s possible for a
+                single developer to build, or break, so code responsibly.
+              </p>
             </motion.div>
           </motion.div>
 
@@ -153,12 +334,12 @@ function About(): React.ReactElement {
                       />
                     </svg>
                   </div>
-                  <h4>Quality Over Speed</h4>
+                  <h4>Quality</h4>
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Taking the time to build things right, with attention to
-                        detail and long-term maintainability.
+                        First set up proper guardrails, then build fast with
+                        less risk.
                       </p>
                     </div>
                   </div>
@@ -196,23 +377,13 @@ function About(): React.ReactElement {
                   variants={fadeUpVariants}
                 >
                   <div className="value-icon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path
-                        d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                      />
-                      <path
-                        d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
-                        strokeWidth="2"
-                      />
-                    </svg>
+                    <Brain strokeWidth={2} size={24} />
                   </div>
                   <h4>Continuous Learning</h4>
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Staying curious and always exploring new technologies,
+                        Staying curious, always exploring new technologies,
                         patterns, and approaches.
                       </p>
                     </div>
@@ -235,8 +406,26 @@ function About(): React.ReactElement {
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Building inclusive experiences that work for everyone,
-                        regardless of ability.
+                        Building inclusive experiences that work for everyone.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
+
+                <motion.article
+                  className="value-card"
+                  variants={fadeUpVariants}
+                >
+                  <div className="value-icon" aria-hidden="true">
+                    <BookOpen strokeWidth={2} size={24} />
+                  </div>
+                  <h4>Documentation</h4>
+                  <div className="value-card-content">
+                    <div className="value-card-content-inner">
+                      <p>
+                        Always create docs that give AI agents and developers
+                        the context they need to understand projects fast and
+                        start contributing immediately.
                       </p>
                     </div>
                   </div>

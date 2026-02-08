@@ -1,47 +1,60 @@
-/* Pet Dogs Section - Minimal base styles */
-
 .pet-dogs-section {
   padding: 4rem 2rem;
-}
 
-.pet-dogs-section.collapsed {
-  padding: 2rem;
-}
+  &.collapsed {
+    padding: 2rem;
 
-.pet-dogs-section .section-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
+    .section-header {
+      margin-bottom: 0;
+    }
+  }
 
-.pet-dogs-section.collapsed .section-header {
-  margin-bottom: 0;
+  .section-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
 }
 
 .pet-dogs-toggle {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  background: var(--bg-card);
-  color: var(--color-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.35rem 0.25rem;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-secondary);
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  font-weight: 500;
-  letter-spacing: 0.15em;
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
+  position: relative;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary-ink);
+    transform: translateY(-1px);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.4);
+    border-radius: 999px;
+  }
 }
 
-.pet-dogs-toggle:hover {
-  border-color: var(--color-primary);
+.pet-dogs-icon {
+  width: 1.1rem;
+  height: 1.1rem;
+  color: var(--color-primary-ink);
+  stroke-width: 1.8;
+  transform: rotate(-45deg);
 }
 
-.pet-dogs-toggle:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Content */
 .dogs-content {
   max-width: 900px;
   margin: 0 auto;
@@ -55,19 +68,22 @@
   margin-bottom: 2rem;
 }
 
-/* Grid - simple 3-column layout (desktop) */
 .dogs-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(260px, 1fr));
   gap: 1.5rem;
 }
 
-/* Carousel - hidden on desktop */
 .dogs-carousel {
   display: none;
+
+  .dog-card {
+    min-width: 0;
+    width: 100%;
+    max-width: 320px;
+  }
 }
 
-/* Card - min-width prevents shrinking */
 .dog-card {
   position: relative;
   min-width: 260px;
@@ -96,9 +112,9 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary);
+  color: var(--color-primary-ink);
   background: var(--bg-main);
-  border: 1px solid var(--color-primary);
+  border: 1px solid var(--color-primary-ink);
   padding: 0.2rem 0.5rem;
   border-radius: 4px;
   white-space: nowrap;
@@ -135,31 +151,30 @@
   flex-direction: column;
   gap: 0.5rem;
   width: 100%;
+
+  button {
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    background: var(--bg-main);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      border-color: var(--color-primary-ink);
+      background: var(--bg-card-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--color-primary-ink);
+      outline-offset: 2px;
+    }
+  }
 }
 
-.dog-actions button {
-  padding: 0.5rem 1rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 6px;
-  background: var(--bg-main);
-  color: var(--text-primary);
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-}
-
-.dog-actions button:hover {
-  border-color: var(--color-primary);
-  background: var(--bg-card-hover);
-}
-
-.dog-actions button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-/* Responsive - carousel at 900px and below */
 @media (max-width: 900px) {
   .dogs-content {
     overflow: visible;
@@ -199,22 +214,16 @@
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-  }
 
-  .carousel-btn:hover {
-    border-color: var(--color-primary);
-    background: var(--bg-card-hover);
-  }
+    &:hover {
+      border-color: var(--color-primary-ink);
+      background: var(--bg-card-hover);
+    }
 
-  .carousel-btn:focus-visible {
-    outline: 2px solid var(--color-primary);
-    outline-offset: 2px;
-  }
-
-  .dogs-carousel .dog-card {
-    min-width: 0;
-    width: 100%;
-    max-width: 320px;
+    &:focus-visible {
+      outline: 2px solid var(--color-primary-ink);
+      outline-offset: 2px;
+    }
   }
 
   .carousel-prev {
@@ -234,10 +243,10 @@
   .carousel-btn {
     width: 2.1rem;
     height: 2.1rem;
-  }
 
-  .carousel-btn svg {
-    width: 16px;
-    height: 16px;
+    svg {
+      width: 16px;
+      height: 16px;
+    }
   }
 }

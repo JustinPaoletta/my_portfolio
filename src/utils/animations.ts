@@ -75,6 +75,20 @@ export const fadeRightVariants: Variants = {
 };
 
 /**
+ * Fade only - opacity transition without position shift
+ * Use when y-offset causes unwanted layout flash on scroll-into-view
+ */
+export const fadeOnlyVariants: Variants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: smoothTransition,
+  },
+};
+
+/**
  * Scale up animation - elements scale from smaller size
  */
 export const scaleUpVariants: Variants = {

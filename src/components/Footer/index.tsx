@@ -2,6 +2,7 @@
  * Footer Component
  * Site footer with copyright
  */
+import { ArrowRight } from 'lucide-react';
 import './Footer.css';
 
 function Footer(): React.ReactElement {
@@ -13,10 +14,15 @@ function Footer(): React.ReactElement {
         <div className="footer-brand">
           <a href="#hero" className="footer-logo">
             <span className="logo-text">JP</span>
-            <span className="logo-dot" aria-hidden="true" />
             <span className="visually-hidden">- Go to top</span>
           </a>
-          <p className="footer-tagline">Ideas → Prompts → Production</p>
+          <p className="footer-tagline">
+            <span>Ideas</span>
+            <ArrowRight className="footer-tagline-icon" aria-hidden="true" />
+            <span>Prompts</span>
+            <ArrowRight className="footer-tagline-icon" aria-hidden="true" />
+            <span>Production</span>
+          </p>
         </div>
         <p className="copyright">
           © {currentYear} Justin Paoletta. All rights reserved.

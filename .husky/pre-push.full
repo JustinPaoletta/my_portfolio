@@ -12,6 +12,12 @@ tsc -b || {
   exit 1
 }
 
+echo "Running production build (bundle size check)..."
+npm run build || {
+  echo "❌ Build failed. Fix type errors or bundle size limits before pushing."
+  exit 1
+}
+
 echo "Running linter on all committed files..."
 npm run lint:fix || {
   echo "❌ Linting failed. Fix linting errors before pushing."

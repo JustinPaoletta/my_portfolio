@@ -1,9 +1,10 @@
 /**
  * Pet Dogs Section
- * Interactive section to pet my dogs with treats and scritches
+ * Interactive section to give treats and scritches to my dogs
  */
 
 import { useRef, useState, useCallback } from 'react';
+import { PawPrint } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { defaultViewport } from '@/utils/animations';
@@ -105,6 +106,7 @@ function PetDogs(): React.ReactElement {
             animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
             transition={{ duration: 0.4, ease: 'easeOut' }}
           >
+            <PawPrint className="pet-dogs-icon" aria-hidden="true" />
             Can I Pet That Dawg?
           </motion.button>
         </header>
@@ -112,7 +114,7 @@ function PetDogs(): React.ReactElement {
         {showDogs && (
           <div id="dogs-content" className="dogs-content">
             <p id="pet-dogs-heading" className="dogs-description">
-              <strong>You sure can!</strong> Meet my 3 rescue dogs{' '}
+              <strong>Sure you can!</strong> Meet my 3 rescue dogs{' '}
               <strong>Nala</strong>, <strong>Rosie</strong>, and{' '}
               <strong>Tito</strong>, give them all the virtual love ya got.
             </p>

@@ -3,7 +3,7 @@
  * Provides UI to switch between different color themes and dark/light modes
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { Monitor, Moon, Palette, Sun } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import type { ColorMode } from '@/config/themes';
@@ -24,6 +24,61 @@ const modeLabels: Record<ColorMode, string> = {
 export default function ThemeSwitcher(): React.ReactElement {
   const { themeName, setTheme, themes, colorMode, setColorMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const switcherRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const switcher = switcherRef.current;
+    if (!switcher) {
+      return;
+    }
+
+    const footer =
+      document.querySelector<HTMLElement>('footer.footer') ||
+      document.querySelector<HTMLElement>('footer[role="contentinfo"]') ||
+      document.querySelector<HTMLElement>('footer');
+
+    if (!footer) {
+      return;
+    }
+
+    const extraGap = 24;
+    let rafId: number | null = null;
+
+    const updateOffset = (): void => {
+      rafId = null;
+      const rect = footer.getBoundingClientRect();
+      const viewportHeight = window.innerHeight || 0;
+      const baseValue = getComputedStyle(switcher).getPropertyValue(
+        '--theme-switcher-base-bottom'
+      );
+      const baseBottom = Number.parseFloat(baseValue) || 0;
+      const desiredBottom = Math.max(
+        baseBottom,
+        viewportHeight - rect.top + extraGap
+      );
+      const offset = Math.max(0, desiredBottom - baseBottom);
+      switcher.style.setProperty('--theme-switcher-offset', `${offset}px`);
+    };
+
+    const scheduleUpdate = (): void => {
+      if (rafId !== null) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(updateOffset);
+    };
+
+    updateOffset();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+    };
+  }, []);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev);
@@ -68,7 +123,7 @@ export default function ThemeSwitcher(): React.ReactElement {
   }, []);
 
   return (
-    <div className={`theme-switcher ${isOpen ? 'open' : ''}`}>
+    <div className={`theme-switcher ${isOpen ? 'open' : ''}`} ref={switcherRef}>
       <button
         className="theme-switcher-toggle"
         onClick={toggleOpen}

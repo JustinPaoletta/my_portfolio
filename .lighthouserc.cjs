@@ -6,6 +6,13 @@ module.exports = {
     collect: {
       buildCommand: 'npm run build',
       staticDistDir: './dist',
+      url: [
+        '/?theme=engineer&mode=light',
+        '/?theme=cosmic&mode=light',
+        '/?theme=dewTheDew&mode=light',
+        '/?theme=minimal&mode=light',
+        '/?theme=breezy&mode=light',
+      ],
       numberOfRuns: 3,
       settings: {
         // Chrome flags must be inside settings (per LHCI docs)

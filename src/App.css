@@ -1,50 +1,30 @@
-/**
- * App Global Styles
- * Base styles and animations for the portfolio
- */
-
-/* Google Fonts loaded via link tag in index.html */
-
-/* Root Variables - Dark Theme Default */
 :root {
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   --font-serif: 'Fraunces', serif;
   --font-mono:
     'ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', monospace;
-
-  /**
-   * Theme Colors - Injected dynamically by ThemeProvider
-   * These fallback values match the "breezy" default theme
-   * See src/config/themes.ts for available themes
-   */
-  --color-primary: #d3bc8d;
-  --color-primary-light: #e5d4a8;
-  --color-primary-dark: #a08860;
-  --color-accent: #c9b037;
-  --color-accent-teal: #9a8a5a;
-
-  /* RGB values for use in rgba() - set dynamically by ThemeProvider */
-  --color-primary-rgb: 211, 188, 141;
-  --color-primary-dark-rgb: 160, 136, 96;
-  --color-accent-rgb: 201, 176, 55;
-
-  /* Contrast-safe text color for primary-colored elements - adapts to mode */
-  --color-primary-contrast: #e5d4a8;
-
+  --color-primary: #00d4ff;
+  --color-primary-light: #5ce1ff;
+  --color-primary-dark: #007a94;
+  --color-primary-ink: var(--color-primary);
+  --color-accent: #00d4ff;
+  --color-accent-teal: #ff3864;
+  --color-primary-rgb: 0, 212, 255;
+  --color-primary-dark-rgb: 0, 122, 148;
+  --color-accent-rgb: 0, 212, 255;
+  --color-primary-contrast: #5ce1ff;
+  --color-accent-ink: #007a94;
+  --color-on-primary: #000000;
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-
-  /* Theme-aware colors - Dark Mode (Warm Off-Black) */
-  --text-primary: #fdfbf7;
-  --text-secondary: rgba(253, 251, 247, 0.7);
-  --text-muted: rgba(253, 251, 247, 0.5);
-  --bg-main: #1a1918;
-  --bg-card: rgba(253, 251, 247, 0.03);
-  --bg-card-hover: rgba(253, 251, 247, 0.06);
-  --border-subtle: rgba(253, 251, 247, 0.1);
+  --text-primary: #f0fff0;
+  --text-secondary: #c8e8c8;
+  --text-muted: #94b894;
+  --bg-main: #0a0e12;
+  --bg-card: rgba(0, 212, 255, 0.05);
+  --bg-card-hover: rgba(0, 212, 255, 0.1);
+  --border-subtle: rgba(0, 212, 255, 0.25);
   --border-hover: rgba(var(--color-primary-rgb), 0.4);
-
-  /* Reusable background gradients - Simplified */
   --bg-gradient-primary: radial-gradient(
     ellipse 80% 50% at 50% -10%,
     rgba(var(--color-primary-rgb), 0.1),
@@ -57,13 +37,6 @@
   );
 }
 
-/**
- * Light/Dark mode colors are now injected dynamically by ThemeProvider
- * based on user preference and the selected theme.
- * See src/hooks/useTheme.tsx for implementation.
- */
-
-/* Global Styles */
 #root {
   max-width: none;
   margin: 0;
@@ -72,7 +45,6 @@
   min-height: 100vh;
 }
 
-/* Typography */
 h1,
 h2,
 h3,
@@ -84,7 +56,6 @@ h6 {
   line-height: 1.2;
 }
 
-/* Skip Link */
 .skip-link {
   position: absolute;
   top: -9999px;
@@ -99,19 +70,18 @@ h6 {
   opacity: 0;
   pointer-events: none;
   font-family: var(--font-sans);
+
+  &:focus {
+    position: fixed;
+    top: 0;
+    left: 0;
+    opacity: 1;
+    pointer-events: auto;
+    outline: 3px solid #ffffff;
+    outline-offset: 2px;
+  }
 }
 
-.skip-link:focus {
-  position: fixed;
-  top: 0;
-  left: 0;
-  opacity: 1;
-  pointer-events: auto;
-  outline: 3px solid #ffffff;
-  outline-offset: 2px;
-}
-
-/* Section shared styles */
 .section-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -126,11 +96,10 @@ h6 {
   display: inline-block;
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--color-primary);
+  color: var(--color-primary-ink);
   letter-spacing: 0.15em;
   text-transform: uppercase;
   margin-bottom: 0.75rem;
-  /* GPU-accelerated by Framer Motion */
 }
 
 .section-title {
@@ -139,7 +108,6 @@ h6 {
   font-weight: 700;
   margin: 0;
   color: inherit;
-  /* GPU-accelerated by Framer Motion */
 }
 
 .section-subtitle {
@@ -147,13 +115,11 @@ h6 {
   color: var(--text-secondary);
   max-width: 500px;
   margin: 1rem auto 0;
-  /* GPU-accelerated by Framer Motion */
 }
 
-/* Smooth scrolling */
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 80px; /* Account for fixed navigation */
+  scroll-padding-top: 80px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -171,13 +137,11 @@ html {
   }
 }
 
-/* Selection styling */
 ::selection {
   background: rgba(var(--color-primary-rgb), 0.3);
   color: inherit;
 }
 
-/* Scrollbar styling */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -190,36 +154,35 @@ html {
 ::-webkit-scrollbar-thumb {
   background: rgba(var(--color-primary-rgb), 0.3);
   border-radius: 5px;
+
+  &:hover {
+    background: rgba(var(--color-primary-rgb), 0.5);
+  }
 }
 
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--color-primary-rgb), 0.5);
-}
-
-/* Focus visible styles for better accessibility */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary-ink);
   outline-offset: 2px;
 }
 
-/* Light mode adjustments - using data attribute set by ThemeProvider */
-[data-color-mode='light'] ::selection {
-  background: rgba(var(--color-primary-rgb), 0.2);
+[data-color-mode='light'] {
+  ::selection {
+    background: rgba(var(--color-primary-rgb), 0.2);
+  }
+
+  ::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(var(--color-primary-rgb), 0.2);
+
+    &:hover {
+      background: rgba(var(--color-primary-rgb), 0.4);
+    }
+  }
 }
 
-[data-color-mode='light'] ::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.02);
-}
-
-[data-color-mode='light'] ::-webkit-scrollbar-thumb {
-  background: rgba(var(--color-primary-rgb), 0.2);
-}
-
-[data-color-mode='light'] ::-webkit-scrollbar-thumb:hover {
-  background: rgba(var(--color-primary-rgb), 0.4);
-}
-
-/* Mobile adjustments */
 @media (max-width: 768px) {
   .section-header {
     margin-bottom: 3rem;

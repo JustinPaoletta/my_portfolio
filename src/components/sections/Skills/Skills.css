@@ -1,28 +1,21 @@
-/* Skills Section Styles */
-
 .skills-section {
   padding: 6rem 2rem;
   position: relative;
   overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 800px;
+    height: 800px;
+    background: none;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
 }
 
-.skills-section::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 800px;
-  height: 800px;
-  background: radial-gradient(
-    circle,
-    rgba(var(--color-primary-rgb), 0.08) 0%,
-    transparent 70%
-  );
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-}
-
-/* Category Tabs */
 .skills-tabs-container {
   margin-bottom: 4rem;
 }
@@ -30,43 +23,83 @@
 .tabs-list {
   display: flex;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.25rem;
   margin-bottom: 3rem;
   flex-wrap: wrap;
+  position: relative;
+  padding-bottom: 0.75rem;
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0.25rem;
+    height: 1px;
+    background: rgba(var(--color-primary-rgb), 0.2);
+    pointer-events: none;
+  }
 }
 
 .tab-button {
-  padding: 0.875rem 2rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 50px;
-  font-family: var(--font-serif);
-  font-size: 1rem;
+  position: relative;
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
   font-weight: 500;
-  color: var(--text-secondary);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
   cursor: pointer;
-  transition: all 0.2s ease;
-  /* Animation handled by Framer Motion */
-}
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease,
+    transform 0.2s ease;
 
-.tab-button:hover,
-.tab-button:focus {
-  background: var(--bg-card-hover);
-  border-color: var(--border-hover);
-  color: var(--text-primary);
-  outline: none;
-}
+  &:hover,
+  &:focus {
+    color: var(--text-secondary);
+    outline: none;
+  }
 
-.tab-button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
+  &:focus-visible {
+    box-shadow: 0 2px 0 0 rgba(var(--color-primary-rgb), 0.6);
+  }
 
-.tab-button.active {
-  background: rgba(var(--color-primary-rgb), 0.15);
-  border-color: var(--color-primary);
-  color: var(--color-primary-contrast);
-  font-weight: 600;
+  &.active {
+    color: var(--color-primary-ink);
+    font-weight: 600;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.35rem;
+    height: 2px;
+    background: var(--color-primary);
+    transform: scaleX(0.2);
+    transform-origin: center;
+    opacity: 0;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  &.active::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  &:hover::after,
+  &:focus-visible::after {
+    opacity: 0.8;
+    transform: scaleX(0.6);
+  }
 }
 
 .tab-panel {
@@ -76,12 +109,12 @@
   transition:
     opacity 0.3s ease,
     transform 0.3s ease;
-}
 
-.tab-panel.active {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
+  &.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .skills-grid {
@@ -103,15 +136,47 @@
   border-radius: 16px;
   transition: all 0.25s ease;
   cursor: default;
-  /* Animation handled by Framer Motion */
+
+  &:hover,
+  &:focus {
+    background: var(--bg-card-hover);
+    border-color: var(--color-primary-ink);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  }
+
+  &:hover .skill-item-icon,
+  &:focus .skill-item-icon {
+    transform: scale(1.1) rotate(5deg);
+    background: var(--bg-card-hover);
+  }
+
+  &:hover .skill-item-icon img,
+  &:focus .skill-item-icon img {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+
+  .skill-item-name {
+    font-size: 1rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    text-align: center;
+  }
 }
 
-.skill-item:hover,
-.skill-item:focus {
-  background: var(--bg-card-hover);
-  border-color: var(--color-primary);
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+.skill-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.skill-item.skill-link {
+  cursor: pointer;
+}
+
+.skill-tag.skill-link:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.5);
 }
 
 .skill-item-icon {
@@ -124,45 +189,34 @@
   border-radius: 16px;
   transition: transform 0.25s ease;
   padding: 0.75rem;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.85;
+    transition: all 0.25s ease;
+  }
 }
 
-.skill-item-icon img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  opacity: 0.85;
-  transition: all 0.25s ease;
+[data-color-mode='dark'] {
+  .skill-item[data-skill='express'] .skill-item-icon img,
+  .skill-item[data-skill='github'] .skill-item-icon img,
+  .skill-item[data-skill='vercel'] .skill-item-icon img,
+  .skill-item[data-skill='chatgpt'] .skill-item-icon img,
+  .skill-item[data-skill='github-copilot'] .skill-item-icon img {
+    filter: invert(1);
+  }
 }
 
-.skill-item:hover .skill-item-icon img,
-.skill-item:focus .skill-item-icon img {
-  opacity: 1;
-  transform: scale(1.05);
-}
-
-.skill-item:hover .skill-item-icon,
-.skill-item:focus .skill-item-icon {
-  transform: scale(1.1) rotate(5deg);
-  background: var(--bg-card-hover);
-}
-
-.skill-item-name {
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--text-primary);
-  text-align: center;
-}
-
-/* Additional Skills */
 .additional-skills {
   margin-top: 4rem;
-  /* Animation handled by Framer Motion */
 }
 
 .additional-title {
   font-family: var(--font-serif);
   font-size: 1.125rem;
-  font-weight: 600;
+  font-weight: 500;
   text-align: center;
   margin: 0 0 1.5rem;
   color: var(--text-secondary);
@@ -183,29 +237,29 @@
   font-size: 0.875rem;
   color: var(--text-secondary);
   transition: all 0.15s ease;
-  /* Animation handled by Framer Motion */
+  text-decoration: none;
+
+  &:hover {
+    background: rgba(var(--color-primary-rgb), 0.15);
+    border-color: var(--color-primary-ink);
+    color: var(--text-primary);
+    transform: translateY(-2px);
+  }
 }
 
-.skill-tag:hover {
-  background: rgba(var(--color-primary-rgb), 0.15);
-  border-color: var(--color-primary);
-  color: var(--color-primary-contrast);
-  transform: translateY(-2px);
-}
-
-/* Responsive */
 @media (max-width: 768px) {
   .skills-section {
     padding: 4rem 1.5rem;
   }
 
   .tabs-list {
-    gap: 0.5rem;
+    gap: 0.25rem;
   }
 
   .tab-button {
-    padding: 0.75rem 1.5rem;
-    font-size: 0.9375rem;
+    padding: 0.5rem 0.65rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.12em;
   }
 
   .skills-grid {
