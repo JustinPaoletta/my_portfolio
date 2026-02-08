@@ -496,6 +496,9 @@ function Hero(): React.ReactElement {
             aria-hidden="true"
             loading="eager"
             decoding="async"
+            fetchPriority="high"
+            width={1024}
+            height={1024}
           />
         )}
 

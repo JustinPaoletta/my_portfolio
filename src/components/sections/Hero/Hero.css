@@ -511,6 +511,10 @@
   box-shadow: 0 6px 18px rgba(var(--color-primary-rgb), 0.28);
 }
 
+:root[data-color-mode='light'] .cta-primary {
+  color: var(--color-on-primary);
+}
+
 .cta-primary:hover {
   color: var(--color-on-primary);
   transform: translateY(-2px);
@@ -537,6 +541,10 @@
   color: var(--text-primary);
   border: 1px solid var(--border-subtle);
   backdrop-filter: blur(10px);
+}
+
+:root[data-color-mode='light'] .cta-secondary {
+  color: var(--text-primary);
 }
 
 .cta-secondary:hover {
