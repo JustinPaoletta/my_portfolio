@@ -204,6 +204,7 @@ function Hero(): React.ReactElement {
   const [breezyVideoActive, setBreezyVideoActive] = useState(false);
   const [breezyVideoFadeIn, setBreezyVideoFadeIn] = useState(false);
   const [breezySequenceComplete, setBreezySequenceComplete] = useState(false);
+  const [breezyVideoReady, setBreezyVideoReady] = useState(false);
   const breezyPoster = breezyPosterSource;
 
   useEffect(() => {
@@ -224,17 +225,52 @@ function Hero(): React.ReactElement {
 
   useEffect(() => {
     if (themeName !== 'breezy') {
+      setBreezyVideoReady(false);
+      return;
+    }
+    if (prefersReducedMotion) {
+      setBreezyVideoReady(false);
+      return;
+    }
+    let ready = false;
+    const markReady = () => {
+      if (ready) {
+        return;
+      }
+      ready = true;
+      setBreezyVideoReady(true);
+    };
+    const opts: AddEventListenerOptions = { passive: true, once: true };
+    window.addEventListener('pointerdown', markReady, opts);
+    window.addEventListener('keydown', markReady, opts);
+    window.addEventListener('touchstart', markReady, opts);
+    window.addEventListener('wheel', markReady, opts);
+    window.addEventListener('pointermove', markReady, opts);
+    return () => {
+      window.removeEventListener('pointerdown', markReady);
+      window.removeEventListener('keydown', markReady);
+      window.removeEventListener('touchstart', markReady);
+      window.removeEventListener('wheel', markReady);
+      window.removeEventListener('pointermove', markReady);
+    };
+  }, [themeName, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (themeName !== 'breezy') {
       return;
     }
     setBreezyVideoIndex(0);
     setBreezySequenceComplete(false);
     setBreezyVideoActive(false);
     setBreezyVideoFadeIn(false);
+    if (!breezyVideoReady) {
+      return;
+    }
     const timer = window.setTimeout(() => {
       setBreezyVideoActive(true);
     }, breezyPreDelayMs);
     return () => window.clearTimeout(timer);
-  }, [themeName]);
+  }, [themeName, breezyVideoReady]);
 
   useEffect(() => {
     if (!breezyVideoActive || breezySequenceComplete) {
@@ -306,6 +342,7 @@ function Hero(): React.ReactElement {
     >
       <div className="hero-background" aria-hidden="true">
         {themeName === 'breezy' &&
+          breezyVideoReady &&
           breezyVideoActive &&
           !breezySequenceComplete && (
             <video
@@ -314,7 +351,7 @@ function Hero(): React.ReactElement {
               autoPlay
               muted
               playsInline
-              preload="metadata"
+              preload="none"
               aria-hidden="true"
               tabIndex={-1}
               onEnded={handleBreezyVideoEnded}
@@ -578,7 +615,9 @@ function Hero(): React.ReactElement {
         <div className="hero-tagline">
           <p>I solve complex business challenges through thoughtful code,</p>
           <p>
-            and deliver fast reliable solutions with precision and expertise.
+            {themeName === 'breezy'
+              ? 'and deliver fast reliable solutions with Brees-like precision.'
+              : 'and deliver fast reliable solutions with precision and expertise.'}
           </p>
         </div>
 
