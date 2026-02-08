@@ -206,6 +206,7 @@ function Hero(): React.ReactElement {
   const [breezySequenceComplete, setBreezySequenceComplete] = useState(false);
   const [breezyVideoReady, setBreezyVideoReady] = useState(false);
   const breezyPoster = breezyPosterSource;
+  const shouldAnimateBreezyMedia = themeName === 'breezy' && breezyVideoReady;
 
   useEffect(() => {
     const loaders: Record<string, () => Promise<unknown>> = {
@@ -337,7 +338,7 @@ function Hero(): React.ReactElement {
     <section
       ref={sectionRef}
       id="hero"
-      className="hero-section visible"
+      className={`hero-section visible${shouldAnimateBreezyMedia ? ' hero-media-ready' : ''}`}
       aria-labelledby="hero-heading"
     >
       <div className="hero-background" aria-hidden="true">

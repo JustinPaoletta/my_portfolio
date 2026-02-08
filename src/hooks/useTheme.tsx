@@ -227,6 +227,19 @@ function applyThemeToDocument(
   root.style.setProperty('--border-hover', modeColors.borderHover);
   root.style.setProperty('--nav-bg-scrolled', modeColors.navBgScrolled);
 
+  const contributionGridBg = mixColors(
+    modeColors.bgMain,
+    modeColors.textMuted,
+    resolvedMode === 'dark' ? 0.24 : 0.22
+  );
+  const contributionEmpty =
+    resolvedMode === 'dark'
+      ? mixColors(modeColors.bgMain, modeColors.textMuted, 0.08)
+      : modeColors.bgMain;
+
+  root.style.setProperty('--contrib-grid-bg', contributionGridBg);
+  root.style.setProperty('--contrib-empty', contributionEmpty);
+
   // Set data attribute for CSS fallbacks
   root.dataset.theme = theme.name;
   root.dataset.colorMode = resolvedMode;
