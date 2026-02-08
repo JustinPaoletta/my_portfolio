@@ -3,7 +3,7 @@
  * Background and story with Framer Motion animations
  */
 
-import { Brain, BookOpen } from 'lucide-react';
+import { Brain, BookOpen, MessageCircle } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import {
@@ -248,7 +248,10 @@ function About(): React.ReactElement {
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
             >
-              <h3 className="about-ai-title">Thoughts on AI</h3>
+              <h3 className="about-ai-title">
+                Thoughts on AI
+                <MessageCircle className="about-ai-icon" aria-hidden="true" />
+              </h3>
               <p className="about-ai-lede">
                 Artificial intelligence is arguably the most significant
                 invention of my lifetime. At its core, it&apos;s simple, it
@@ -420,8 +423,9 @@ function About(): React.ReactElement {
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Clear docs that scale context, reduce handoffs, and keep
-                        teams aligned.
+                        Always create docs that give AI agents and developers
+                        the context they need to understand projects fast and
+                        start contributing immediately.
                       </p>
                     </div>
                   </div>

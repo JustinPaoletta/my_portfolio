@@ -1,0 +1,9 @@
+:root[data-theme='breezy'] .hero-video {
+  opacity: 0.28;
+  filter: grayscale(0.15) saturate(0.9) contrast(1.05);
+}
+
+:root[data-theme='breezy'][data-color-mode='light'] .hero-video {
+  opacity: 0.18;
+  filter: grayscale(0.35) saturate(0.75) contrast(1.05);
+}

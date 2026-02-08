@@ -21,6 +21,7 @@ interface ExperienceItem {
   type: 'work' | 'education';
   title: string;
   organization: string;
+  organizationUrl?: string;
   location: string;
   period: string;
   current?: boolean;
@@ -35,6 +36,7 @@ const experiences: ExperienceItem[] = [
     type: 'work',
     title: 'UI Engineer',
     organization: 'accesso',
+    organizationUrl: 'https://www.accesso.com',
     location: 'Orlando, FL (Remote)',
     period: 'May 2021 – Present',
     current: true,
@@ -86,6 +88,7 @@ const experiences: ExperienceItem[] = [
     type: 'work',
     title: 'Software Engineer',
     organization: '4C Strategies',
+    organizationUrl: 'https://www.4cstrategies.com',
     location: 'Orlando, FL',
     period: 'Aug 2020 – Apr 2021',
     current: false,
@@ -102,6 +105,7 @@ const experiences: ExperienceItem[] = [
     type: 'education',
     title: 'Advanced Software Engineering Immersive',
     organization: 'Hack Reactor',
+    organizationUrl: 'https://www.hackreactor.com',
     location: '(Remote)',
     period: '2020',
     description:
@@ -121,6 +125,7 @@ const experiences: ExperienceItem[] = [
     type: 'education',
     title: 'Bachelor of Science (B.S.) in Psychology',
     organization: 'University of Central Florida',
+    organizationUrl: 'https://www.ucf.edu',
     location: 'Orlando, FL',
     period: '2008-2012',
     description:
@@ -138,6 +143,22 @@ function Experience(): React.ReactElement {
 
   const workExperiences = experiences.filter((e) => e.type === 'work');
   const education = experiences.filter((e) => e.type === 'education');
+  const renderOrganization = (
+    organization: string,
+    organizationUrl?: string
+  ): React.ReactNode =>
+    organizationUrl ? (
+      <a
+        className="org-name"
+        href={organizationUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        {organization}
+      </a>
+    ) : (
+      <span className="org-name">{organization}</span>
+    );
 
   return (
     <section
@@ -220,7 +241,10 @@ function Experience(): React.ReactElement {
                       <span className="item-period">{exp.period}</span>
                     </header>
                     <div className="item-org">
-                      <span className="org-name">{exp.organization}</span>
+                      {renderOrganization(
+                        exp.organization,
+                        exp.organizationUrl
+                      )}
                       <span className="org-location">{exp.location}</span>
                     </div>
                     <p className="item-description">{exp.description}</p>
@@ -284,7 +308,10 @@ function Experience(): React.ReactElement {
                       <span className="item-period">{edu.period}</span>
                     </header>
                     <div className="item-org">
-                      <span className="org-name">{edu.organization}</span>
+                      {renderOrganization(
+                        edu.organization,
+                        edu.organizationUrl
+                      )}
                       <span className="org-location">{edu.location}</span>
                     </div>
                     <p className="item-description">{edu.description}</p>

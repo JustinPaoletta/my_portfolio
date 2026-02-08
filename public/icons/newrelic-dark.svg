@@ -1,0 +1,19 @@
+<svg
+  viewBox="0 0 88 102"
+  xmlns="http://www.w3.org/2000/svg"
+  role="img"
+  aria-label="New Relic logo"
+>
+  <path
+    fill="#00AC69"
+    d="M71.06 35.169v31.257L43.993 82.058v19.537L87.99 76.198v-50.8z"
+  />
+  <path
+    fill="#1CE783"
+    d="M43.994 19.543 71.06 35.17l16.93-9.772L43.994 0 0 25.397l16.923 9.772z"
+  />
+  <path
+    fill="#FFFFFF"
+    d="M27.071 60.572V91.83l16.923 9.765V50.8L0 25.397V44.94z"
+  />
+</svg>

@@ -1,6 +1,6 @@
 /**
  * Pet Dogs Section
- * Interactive section to pet my dogs with treats and scritches
+ * Interactive section to give treats and scritches to my dogs
  */
 
 import { useRef, useState, useCallback } from 'react';

@@ -115,7 +115,7 @@ export const themes: Record<string, Theme> = {
   },
   dewTheDew: {
     name: 'dewTheDew',
-    label: 'Dew the Dew',
+    label: 'Dew The Dew',
     colors: {
       primary: '#57ff48', // Mountain Dew green
       primaryLight: '#e7e7e7', // Light neutral from palette

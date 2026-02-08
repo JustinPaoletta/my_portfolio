@@ -4,7 +4,7 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -17,37 +17,150 @@ import { useTheme } from '@/hooks/useTheme';
 import './Hero.css';
 
 const tracePaths = [
-  { id: 'trace-1', d: 'M80 140H360V260H620' },
-  { id: 'trace-2', d: 'M120 760H420V560H740V420H980' },
-  { id: 'trace-3', d: 'M200 200V360H360V520H520' },
-  { id: 'trace-4', d: 'M520 140H720V300H980V180H1240' },
-  { id: 'trace-5', d: 'M900 760H1120V600H1320V420' },
-  { id: 'trace-6', d: 'M1080 120V280H1240V480H1460' },
-  { id: 'trace-7', d: 'M320 680H520V800H820' },
-  { id: 'trace-8', d: 'M680 520V700H940V820H1220' },
-  { id: 'trace-9', d: 'M300 80V220H460V360H620' },
-  { id: 'trace-10', d: 'M760 100V220H940V360H1100' },
-  { id: 'trace-11', d: 'M140 460H340V340H540V260' },
-  { id: 'trace-12', d: 'M360 620V500H560V380H820' },
-  { id: 'trace-13', d: 'M60 300H200V140H420' },
-  { id: 'trace-14', d: 'M140 860H360V700H600' },
-  { id: 'trace-15', d: 'M420 420H620V560H860' },
-  { id: 'trace-16', d: 'M520 60H820V160H1040' },
-  { id: 'trace-17', d: 'M980 260H1200V120H1420' },
-  { id: 'trace-18', d: 'M1040 680H1280V760H1500' },
-  { id: 'trace-19', d: 'M620 860H900V720H1120' },
-  { id: 'trace-20', d: 'M860 360V520H1120V620' },
-  { id: 'trace-21', d: 'M240 520H440V640H660' },
-  { id: 'trace-22', d: 'M820 460H1060V340H1280' },
-  { id: 'trace-23', d: 'M100 560V700H260' },
-  { id: 'trace-24', d: 'M1180 520V700H1380' },
+  { id: 'trace-top-1', d: 'M660 300 L660 250 L627 170 L627 110' },
+  { id: 'trace-top-2', d: 'M685 300 L685 250 L658 170 L658 110' },
+  { id: 'trace-top-3', d: 'M711 300 L711 250 L690 170 L690 110' },
+  { id: 'trace-top-4', d: 'M736 300 L736 250 L721 170 L721 110' },
+  { id: 'trace-top-5', d: 'M762 300 L762 250 L753 170 L753 110' },
+  { id: 'trace-top-6', d: 'M787 300 L787 250 L784 170 L784 110' },
+  { id: 'trace-top-7', d: 'M813 300 L813 250 L816 170 L816 110' },
+  { id: 'trace-top-8', d: 'M838 300 L838 250 L847 170 L847 110' },
+  { id: 'trace-top-9', d: 'M864 300 L864 250 L879 170 L879 110' },
+  { id: 'trace-top-10', d: 'M889 300 L889 250 L910 170 L910 110' },
+  { id: 'trace-top-11', d: 'M915 300 L915 250 L942 170 L942 110' },
+  { id: 'trace-top-12', d: 'M940 300 L940 250 L973 170 L973 110' },
+  { id: 'trace-bottom-1', d: 'M660 600 L660 650 L627 730 L627 810' },
+  { id: 'trace-bottom-2', d: 'M685 600 L685 650 L658 730 L658 810' },
+  { id: 'trace-bottom-3', d: 'M711 600 L711 650 L690 730 L690 810' },
+  { id: 'trace-bottom-4', d: 'M736 600 L736 650 L721 730 L721 810' },
+  { id: 'trace-bottom-5', d: 'M762 600 L762 650 L753 730 L753 810' },
+  { id: 'trace-bottom-6', d: 'M787 600 L787 650 L784 730 L784 810' },
+  { id: 'trace-bottom-7', d: 'M813 600 L813 650 L816 730 L816 810' },
+  { id: 'trace-bottom-8', d: 'M838 600 L838 650 L847 730 L847 810' },
+  { id: 'trace-bottom-9', d: 'M864 600 L864 650 L879 730 L879 810' },
+  { id: 'trace-bottom-10', d: 'M889 600 L889 650 L910 730 L910 810' },
+  { id: 'trace-bottom-11', d: 'M915 600 L915 650 L942 730 L942 810' },
+  { id: 'trace-bottom-12', d: 'M940 600 L940 650 L973 730 L973 810' },
+  { id: 'trace-left-1', d: 'M650 310 L590 310 L510 283 L200 283 L140 343' },
+  { id: 'trace-left-2', d: 'M650 341 L590 341 L510 320 L200 320 L140 380' },
+  { id: 'trace-left-3', d: 'M650 372 L590 372 L510 357 L200 357 L140 417' },
+  { id: 'trace-left-4', d: 'M650 403 L590 403 L510 394 L200 394 L140 454' },
+  { id: 'trace-left-5', d: 'M650 434 L590 434 L510 431 L200 431 L140 491' },
+  { id: 'trace-left-6', d: 'M650 466 L590 466 L510 469 L200 469 L140 529' },
+  { id: 'trace-left-7', d: 'M650 497 L590 497 L510 506 L200 506 L140 566' },
+  { id: 'trace-left-8', d: 'M650 528 L590 528 L510 543 L200 543 L140 603' },
+  { id: 'trace-left-9', d: 'M650 559 L590 559 L510 580 L200 580 L140 640' },
+  { id: 'trace-left-10', d: 'M650 590 L590 590 L510 617 L200 617 L140 677' },
+  {
+    id: 'trace-right-1',
+    d: 'M950 310 L1010 310 L1090 283 L1400 283 L1460 223',
+  },
+  {
+    id: 'trace-right-2',
+    d: 'M950 341 L1010 341 L1090 320 L1400 320 L1460 260',
+  },
+  {
+    id: 'trace-right-3',
+    d: 'M950 372 L1010 372 L1090 357 L1400 357 L1460 297',
+  },
+  {
+    id: 'trace-right-4',
+    d: 'M950 403 L1010 403 L1090 394 L1400 394 L1460 334',
+  },
+  {
+    id: 'trace-right-5',
+    d: 'M950 434 L1010 434 L1090 431 L1400 431 L1460 371',
+  },
+  {
+    id: 'trace-right-6',
+    d: 'M950 466 L1010 466 L1090 469 L1400 469 L1460 409',
+  },
+  {
+    id: 'trace-right-7',
+    d: 'M950 497 L1010 497 L1090 506 L1400 506 L1460 446',
+  },
+  {
+    id: 'trace-right-8',
+    d: 'M950 528 L1010 528 L1090 543 L1400 543 L1460 483',
+  },
+  {
+    id: 'trace-right-9',
+    d: 'M950 559 L1010 559 L1090 580 L1400 580 L1460 520',
+  },
+  {
+    id: 'trace-right-10',
+    d: 'M950 590 L1010 590 L1090 617 L1400 617 L1460 557',
+  },
 ];
+
+type TracePoint = {
+  x: number;
+  y: number;
+};
+
+const extractTracePoints = (d: string): TracePoint[] => {
+  const tokens = d.match(/[ML]|-?\d+(?:\.\d+)?/g);
+  if (!tokens) {
+    return [];
+  }
+
+  const points: TracePoint[] = [];
+  let i = 0;
+  let command = '';
+
+  while (i < tokens.length) {
+    const token = tokens[i];
+    if (token === 'M' || token === 'L') {
+      command = token;
+      i += 1;
+      continue;
+    }
+
+    if (!command) {
+      i += 1;
+      continue;
+    }
+
+    const x = Number(token);
+    const y = Number(tokens[i + 1]);
+    if (Number.isNaN(x) || Number.isNaN(y)) {
+      break;
+    }
+
+    points.push({ x, y });
+    i += 2;
+  }
+
+  return points;
+};
+
+const traceNodes = tracePaths.map((trace) => ({
+  id: trace.id,
+  points: extractTracePoints(trace.d),
+}));
 
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
+  const loadedThemeStyles = useRef(new Set<string>());
   const { themeName } = useTheme();
   const prefersReducedMotion = useReducedMotion();
   const disableParallax = prefersReducedMotion;
+
+  useEffect(() => {
+    const loaders: Record<string, () => Promise<unknown>> = {
+      cosmic: () => import('./Hero.cosmic.css'),
+      dewTheDew: () => import('./Hero.dew.css'),
+      breezy: () => import('./Hero.breezy.css'),
+    };
+
+    const loadThemeStyles = loaders[themeName];
+    if (!loadThemeStyles || loadedThemeStyles.current.has(themeName)) {
+      return;
+    }
+
+    loadThemeStyles();
+    loadedThemeStyles.current.add(themeName);
+  }, [themeName]);
 
   // Framer Motion scroll hooks for smooth parallax
   const { scrollYProgress } = useScroll({
@@ -123,6 +236,36 @@ function Hero(): React.ReactElement {
                   <path key={trace.id} id={trace.id} d={trace.d} />
                 ))}
               </defs>
+              <g className="node-pulse-layer">
+                {traceNodes.flatMap((trace, index) => {
+                  const duration = 5.8 + (index % 5) * 0.5;
+                  const begin = (index * 0.35) % 3.2;
+                  const reverse = index % 4 === 0;
+                  const nodeCount = trace.points.length;
+
+                  return trace.points.map((point, nodeIndex) => {
+                    const fraction =
+                      nodeCount > 1 ? nodeIndex / (nodeCount - 1) : 0;
+                    const progress = reverse ? 1 - fraction : fraction;
+                    const offset = begin + duration * progress;
+                    const style = {
+                      '--pulse-duration': `${duration.toFixed(1)}s`,
+                      '--pulse-offset': `${offset.toFixed(2)}s`,
+                    } as React.CSSProperties;
+
+                    return (
+                      <circle
+                        key={`${trace.id}-node-${nodeIndex}`}
+                        className="node-pulse"
+                        cx={point.x}
+                        cy={point.y}
+                        r="3"
+                        style={style}
+                      />
+                    );
+                  });
+                })}
+              </g>
               {tracePaths.map((trace, index) => {
                 const duration = 5.8 + (index % 5) * 0.5;
                 const begin = (index * 0.35) % 3.2;

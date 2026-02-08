@@ -1,0 +1,224 @@
+@keyframes bubble-stream-fast {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -180px;
+  }
+}
+
+@keyframes bubble-stream-medium {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -210px;
+  }
+}
+
+@keyframes bubble-stream-slow {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 -240px;
+  }
+}
+
+@keyframes liquid-sheen {
+  0%,
+  100% {
+    transform: translate3d(0, -2%, 0) scale(1);
+    opacity: 0.45;
+  }
+  50% {
+    transform: translate3d(-3%, 3%, 0) scale(1.05);
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='dewTheDew'] .dew-bubbles {
+    animation: none;
+  }
+
+  :root[data-theme='dewTheDew'] .hero-background::before {
+    animation: none;
+  }
+}
+
+:root[data-theme='dewTheDew'] .hero-background {
+  background:
+    radial-gradient(
+      900px 700px at 20% 15%,
+      rgba(255, 255, 255, 0.06),
+      transparent 65%
+    ),
+    radial-gradient(
+      800px 600px at 80% 85%,
+      rgba(255, 255, 255, 0.04),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(var(--color-primary-rgb), 0.55) 0%,
+      rgba(var(--color-primary-rgb), 0.5) 100%
+    ),
+    linear-gradient(180deg, rgba(8, 12, 8, 0.45) 0%, rgba(8, 12, 8, 0.65) 100%);
+  background-blend-mode: screen, screen, normal, multiply;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+:root[data-theme='dewTheDew'] .hero-background::before {
+  content: '';
+  position: absolute;
+  inset: -20% -10%;
+  z-index: 0;
+  background:
+    radial-gradient(
+      1200px 700px at 15% 10%,
+      rgba(255, 255, 255, 0.48),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 600px at 85% 30%,
+      rgba(255, 255, 255, 0.36),
+      transparent 65%
+    ),
+    linear-gradient(
+      140deg,
+      rgba(255, 255, 255, 0.26),
+      transparent 45%,
+      rgba(255, 255, 255, 0.2) 70%,
+      transparent 85%
+    ),
+    linear-gradient(
+      170deg,
+      transparent 32%,
+      rgba(255, 255, 255, 0.45) 44%,
+      rgba(255, 255, 255, 0.15) 52%,
+      transparent 62%
+    );
+  opacity: 0.55;
+  mix-blend-mode: screen;
+  filter: none;
+  animation: liquid-sheen 14s ease-in-out infinite;
+  pointer-events: none;
+}
+
+:root[data-theme='dewTheDew'] .hero-background::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-image: url('/hero/noise.svg');
+  background-size: 110px 110px;
+  opacity: 0.2;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+:root[data-theme='dewTheDew'] .dew-bubbles {
+  display: block;
+  z-index: 1;
+}
+
+:root[data-theme='dewTheDew'] .dew-bubbles--1 {
+  background-image: url('/hero/dew-bubbles-1.svg');
+  background-size: 160px 180px;
+  opacity: 0.65;
+  animation: bubble-stream-fast 2.25s linear infinite;
+}
+
+:root[data-theme='dewTheDew'] .dew-bubbles--2 {
+  background-image: url('/hero/dew-bubbles-2.svg');
+  background-size: 180px 210px;
+  opacity: 0.45;
+  animation: bubble-stream-medium 3.25s linear infinite;
+}
+
+:root[data-theme='dewTheDew'] .dew-bubbles--3 {
+  background-image: url('/hero/dew-bubbles-3.svg');
+  background-size: 200px 240px;
+  opacity: 0.32;
+  animation: bubble-stream-slow 4.5s linear infinite;
+}
+
+:root[data-theme='dewTheDew'] .hero-tagline p {
+  font-weight: 700;
+}
+
+:root[data-theme='dewTheDew'] .hero-dew-text {
+  display: block;
+}
+
+:root[data-theme='dewTheDew'] .hero-text-stack {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+:root[data-theme='dewTheDew'] .hero-greeting {
+  font-family: 'Teko', var(--font-sans);
+  color: #f5fff5;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  text-shadow:
+    0 2px 0 rgba(14, 84, 3, 0.85),
+    0 8px 16px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='dewTheDew'] .hero-name {
+  font-family: 'Teko', var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  text-shadow: none;
+}
+
+:root[data-theme='dewTheDew'] .hero-name-text {
+  background: none;
+  color: #f7fff7;
+  -webkit-text-fill-color: #f7fff7;
+  -webkit-background-clip: border-box;
+  background-clip: border-box;
+  display: inline-block;
+  transform: skewX(-12deg);
+  -webkit-text-stroke: 2px #0e5403;
+  text-shadow:
+    0 4px 0 rgba(14, 84, 3, 0.9),
+    0 14px 22px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='dewTheDew'] .title-text,
+:root[data-theme='dewTheDew'] .title-divider {
+  font-family: 'Teko', var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  display: inline-block;
+  transform: skewX(-10deg);
+  color: #eaffea;
+  text-shadow:
+    0 2px 0 rgba(14, 84, 3, 0.75),
+    0 8px 14px rgba(0, 0, 0, 0.3);
+}
+
+:root[data-theme='dewTheDew'] .title-divider {
+  color: var(--color-accent);
+  text-shadow:
+    0 2px 0 rgba(0, 0, 0, 0.45),
+    0 8px 14px rgba(0, 0, 0, 0.35);
+}
+
+:root[data-theme='dewTheDew'] .cta-secondary {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(255, 255, 255, 0.2);
+}

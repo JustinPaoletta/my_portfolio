@@ -8,6 +8,13 @@ tsc -b || {
   exit 1
 }
 
+echo "Running production build (type-check + bundle size)..."
+npm run build || {
+  echo "❌ Build failed. Fix type errors or bundle size limits before pushing."
+  echo "  Bundle size limits: vite.config.ts (e.g. CSS ≤ 60 KB, total ≤ 650 KB)"
+  exit 1
+}
+
 echo "Running unit tests..."
 npm run test:unit || {
   echo "❌ Unit tests failed. Fix the tests before pushing."

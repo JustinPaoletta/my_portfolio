@@ -176,11 +176,14 @@ export default defineConfig(({ mode }) => {
     optimizeDeps: {
       exclude: ['@upstash/redis'],
     },
+    css: {
+      transformer: 'lightningcss',
+    },
     build: {
       chunkSizeWarningLimit: 400,
       sourcemap: isAnalyze,
       minify: 'esbuild',
-      cssMinify: true,
+      cssMinify: 'lightningcss',
       cssCodeSplit: true,
       assetsInlineLimit: 4096,
       rollupOptions: {

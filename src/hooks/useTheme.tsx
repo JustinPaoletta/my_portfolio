@@ -109,6 +109,12 @@ function applyThemeToDocument(
     resolvedMode === 'dark' ? colors.primaryLight : colors.primaryDark
   );
 
+  // Accent ink color for text and outlines (preserve dark mode, darken in light mode)
+  root.style.setProperty(
+    '--color-primary-ink',
+    resolvedMode === 'dark' ? colors.primary : colors.primaryDark
+  );
+
   // Apply mode-specific colors
   root.style.setProperty('--text-primary', modeColors.textPrimary);
   root.style.setProperty('--text-secondary', modeColors.textSecondary);
