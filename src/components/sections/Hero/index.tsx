@@ -4,7 +4,7 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -124,6 +124,10 @@ const chip = {
   diagonalLength: 18,
 };
 
+const breezyVideoSources = ['/brees_1.mp4', '/brees_2.mp4'];
+const breezyPosterSource = '/poster_breezy.webp';
+const breezyPreDelayMs = 600;
+
 const chipCoreOffset = (chip.size - chip.coreSize) / 2;
 
 const getFirstTwoPoints = (d: string): TracePoint[] => {
@@ -196,6 +200,11 @@ function Hero(): React.ReactElement {
   const { themeName } = useTheme();
   const prefersReducedMotion = useReducedMotion();
   const disableParallax = prefersReducedMotion;
+  const [breezyVideoIndex, setBreezyVideoIndex] = useState(0);
+  const [breezyVideoActive, setBreezyVideoActive] = useState(false);
+  const [breezyVideoFadeIn, setBreezyVideoFadeIn] = useState(false);
+  const [breezySequenceComplete, setBreezySequenceComplete] = useState(false);
+  const breezyPoster = breezyPosterSource;
 
   useEffect(() => {
     const loaders: Record<string, () => Promise<unknown>> = {
@@ -212,6 +221,54 @@ function Hero(): React.ReactElement {
     loadThemeStyles();
     loadedThemeStyles.current.add(themeName);
   }, [themeName]);
+
+  useEffect(() => {
+    if (themeName !== 'breezy') {
+      return;
+    }
+    setBreezyVideoIndex(0);
+    setBreezySequenceComplete(false);
+    setBreezyVideoActive(false);
+    setBreezyVideoFadeIn(false);
+    const timer = window.setTimeout(() => {
+      setBreezyVideoActive(true);
+    }, breezyPreDelayMs);
+    return () => window.clearTimeout(timer);
+  }, [themeName]);
+
+  useEffect(() => {
+    if (!breezyVideoActive || breezySequenceComplete) {
+      return;
+    }
+    setBreezyVideoFadeIn(false);
+    const raf = window.requestAnimationFrame(() => {
+      setBreezyVideoFadeIn(true);
+    });
+    return () => window.cancelAnimationFrame(raf);
+  }, [breezyVideoActive, breezyVideoIndex, breezySequenceComplete]);
+
+  useEffect(() => {
+    if (themeName !== 'breezy') {
+      return;
+    }
+    const posterPrefetch = new Image();
+    posterPrefetch.src = breezyPosterSource;
+  }, [themeName]);
+
+  const handleBreezyVideoEnded = () => {
+    setBreezyVideoIndex((prev) => {
+      const nextIndex = prev + 1;
+      if (nextIndex >= breezyVideoSources.length) {
+        setBreezySequenceComplete(true);
+        setBreezyVideoActive(false);
+        setBreezyVideoFadeIn(false);
+        return prev;
+      }
+      setBreezyVideoActive(true);
+      setBreezyVideoFadeIn(false);
+      return nextIndex;
+    });
+  };
 
   // Framer Motion scroll hooks for smooth parallax
   const { scrollYProgress } = useScroll({
@@ -248,19 +305,35 @@ function Hero(): React.ReactElement {
       aria-labelledby="hero-heading"
     >
       <div className="hero-background" aria-hidden="true">
+        {themeName === 'breezy' &&
+          breezyVideoActive &&
+          !breezySequenceComplete && (
+            <video
+              key={breezyVideoIndex}
+              className={`hero-video${breezyVideoFadeIn ? ' is-active' : ''}`}
+              autoPlay
+              muted
+              playsInline
+              preload="metadata"
+              aria-hidden="true"
+              tabIndex={-1}
+              onEnded={handleBreezyVideoEnded}
+            >
+              <source
+                src={breezyVideoSources[breezyVideoIndex]}
+                type="video/mp4"
+              />
+            </video>
+          )}
         {themeName === 'breezy' && (
-          <video
-            className="hero-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
+          <img
+            className={`hero-video-poster${breezyVideoActive && !breezySequenceComplete ? ' is-hidden' : ''}`}
+            src={breezyPoster}
+            alt=""
             aria-hidden="true"
-            tabIndex={-1}
-          >
-            <source src="/brees.mp4" type="video/mp4" />
-          </video>
+            loading="eager"
+            decoding="async"
+          />
         )}
         <div className="star-layer star-layer-back" />
         <div className="nebula-layer nebula-layer-1" />
