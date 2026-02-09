@@ -35,7 +35,7 @@
     "type-check:watch": "tsc -b --noEmit --watch"
   },
   "dependencies": {
-    "@newrelic/browser-agent": "^1.308.0",
+    "@newrelic/browser-agent": "^1.309.0",
     "@upstash/redis": "^1.36.1",
     "framer-motion": "^12.30.0",
     "lucide-react": "^0.563.0",
