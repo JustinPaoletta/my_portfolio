@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload LHCI artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: lhci
           path: .lighthouseci
