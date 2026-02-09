@@ -4,7 +4,7 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -124,6 +124,10 @@ const chip = {
   diagonalLength: 18,
 };
 
+const breezyVideoSources = ['/brees_1.mp4', '/brees_2.mp4'];
+const breezyPosterSource = '/poster_breezy.webp';
+const breezyPreDelayMs = 600;
+
 const chipCoreOffset = (chip.size - chip.coreSize) / 2;
 
 const getFirstTwoPoints = (d: string): TracePoint[] => {
@@ -196,6 +200,13 @@ function Hero(): React.ReactElement {
   const { themeName } = useTheme();
   const prefersReducedMotion = useReducedMotion();
   const disableParallax = prefersReducedMotion;
+  const [breezyVideoIndex, setBreezyVideoIndex] = useState(0);
+  const [breezyVideoActive, setBreezyVideoActive] = useState(false);
+  const [breezyVideoFadeIn, setBreezyVideoFadeIn] = useState(false);
+  const [breezySequenceComplete, setBreezySequenceComplete] = useState(false);
+  const [breezyVideoReady, setBreezyVideoReady] = useState(false);
+  const breezyPoster = breezyPosterSource;
+  const shouldAnimateBreezyMedia = themeName === 'breezy' && breezyVideoReady;
 
   useEffect(() => {
     const loaders: Record<string, () => Promise<unknown>> = {
@@ -212,6 +223,89 @@ function Hero(): React.ReactElement {
     loadThemeStyles();
     loadedThemeStyles.current.add(themeName);
   }, [themeName]);
+
+  useEffect(() => {
+    if (themeName !== 'breezy') {
+      setBreezyVideoReady(false);
+      return;
+    }
+    if (prefersReducedMotion) {
+      setBreezyVideoReady(false);
+      return;
+    }
+    let ready = false;
+    const markReady = () => {
+      if (ready) {
+        return;
+      }
+      ready = true;
+      setBreezyVideoReady(true);
+    };
+    const opts: AddEventListenerOptions = { passive: true, once: true };
+    window.addEventListener('pointerdown', markReady, opts);
+    window.addEventListener('keydown', markReady, opts);
+    window.addEventListener('touchstart', markReady, opts);
+    window.addEventListener('wheel', markReady, opts);
+    window.addEventListener('pointermove', markReady, opts);
+    return () => {
+      window.removeEventListener('pointerdown', markReady);
+      window.removeEventListener('keydown', markReady);
+      window.removeEventListener('touchstart', markReady);
+      window.removeEventListener('wheel', markReady);
+      window.removeEventListener('pointermove', markReady);
+    };
+  }, [themeName, prefersReducedMotion]);
+
+  useEffect(() => {
+    if (themeName !== 'breezy') {
+      return;
+    }
+    setBreezyVideoIndex(0);
+    setBreezySequenceComplete(false);
+    setBreezyVideoActive(false);
+    setBreezyVideoFadeIn(false);
+    if (!breezyVideoReady) {
+      return;
+    }
+    const timer = window.setTimeout(() => {
+      setBreezyVideoActive(true);
+    }, breezyPreDelayMs);
+    return () => window.clearTimeout(timer);
+  }, [themeName, breezyVideoReady]);
+
+  useEffect(() => {
+    if (!breezyVideoActive || breezySequenceComplete) {
+      return;
+    }
+    setBreezyVideoFadeIn(false);
+    const raf = window.requestAnimationFrame(() => {
+      setBreezyVideoFadeIn(true);
+    });
+    return () => window.cancelAnimationFrame(raf);
+  }, [breezyVideoActive, breezyVideoIndex, breezySequenceComplete]);
+
+  useEffect(() => {
+    if (themeName !== 'breezy') {
+      return;
+    }
+    const posterPrefetch = new Image();
+    posterPrefetch.src = breezyPosterSource;
+  }, [themeName]);
+
+  const handleBreezyVideoEnded = () => {
+    setBreezyVideoIndex((prev) => {
+      const nextIndex = prev + 1;
+      if (nextIndex >= breezyVideoSources.length) {
+        setBreezySequenceComplete(true);
+        setBreezyVideoActive(false);
+        setBreezyVideoFadeIn(false);
+        return prev;
+      }
+      setBreezyVideoActive(true);
+      setBreezyVideoFadeIn(false);
+      return nextIndex;
+    });
+  };
 
   // Framer Motion scroll hooks for smooth parallax
   const { scrollYProgress } = useScroll({
@@ -244,23 +338,40 @@ function Hero(): React.ReactElement {
     <section
       ref={sectionRef}
       id="hero"
-      className="hero-section visible"
+      className={`hero-section visible${shouldAnimateBreezyMedia ? ' hero-media-ready' : ''}`}
       aria-labelledby="hero-heading"
     >
       <div className="hero-background" aria-hidden="true">
+        {themeName === 'breezy' &&
+          breezyVideoReady &&
+          breezyVideoActive &&
+          !breezySequenceComplete && (
+            <video
+              key={breezyVideoIndex}
+              className={`hero-video${breezyVideoFadeIn ? ' is-active' : ''}`}
+              autoPlay
+              muted
+              playsInline
+              preload="none"
+              aria-hidden="true"
+              tabIndex={-1}
+              onEnded={handleBreezyVideoEnded}
+            >
+              <source
+                src={breezyVideoSources[breezyVideoIndex]}
+                type="video/mp4"
+              />
+            </video>
+          )}
         {themeName === 'breezy' && (
-          <video
-            className="hero-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
+          <img
+            className={`hero-video-poster${breezyVideoActive && !breezySequenceComplete ? ' is-hidden' : ''}`}
+            src={breezyPoster}
+            alt=""
             aria-hidden="true"
-            tabIndex={-1}
-          >
-            <source src="/brees.mp4" type="video/mp4" />
-          </video>
+            loading="eager"
+            decoding="async"
+          />
         )}
         <div className="star-layer star-layer-back" />
         <div className="nebula-layer nebula-layer-1" />
@@ -496,13 +607,18 @@ function Hero(): React.ReactElement {
             aria-hidden="true"
             loading="eager"
             decoding="async"
+            fetchPriority="high"
+            width={1024}
+            height={1024}
           />
         )}
 
         <div className="hero-tagline">
           <p>I solve complex business challenges through thoughtful code,</p>
           <p>
-            and deliver fast reliable solutions with precision and expertise.
+            {themeName === 'breezy'
+              ? 'and deliver fast reliable solutions with Brees-like precision.'
+              : 'and deliver fast reliable solutions with precision and expertise.'}
           </p>
         </div>
 

@@ -365,7 +365,7 @@ function Experience(): React.ReactElement {
                     strokeLinecap="round"
                   />
                 </svg>
-                Download Resume
+                <span className="resume-button-label">Download Resume</span>
               </a>
             </motion.div>
           </motion.div>

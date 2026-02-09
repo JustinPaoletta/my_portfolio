@@ -31,6 +31,20 @@
   animation-duration: 10s;
 }
 
+:root[data-theme='cosmic'][data-color-mode='light'] .star-layer {
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+  filter: brightness(0.55) contrast(1.1);
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .star-layer-back {
+  opacity: 0.35;
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .star-layer-front {
+  opacity: 0.28;
+}
+
 :root[data-theme='cosmic'] .nebula-layer-1 {
   background:
     radial-gradient(
@@ -97,6 +111,27 @@
   opacity: 0.42;
   animation: nebula-drift-4 72s ease-in-out infinite;
   filter: hue-rotate(55deg) saturate(1.1);
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .nebula-layer {
+  mix-blend-mode: multiply;
+  filter: saturate(0.9) brightness(1.05);
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .nebula-layer-1 {
+  opacity: 0.45;
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .nebula-layer-2 {
+  opacity: 0.38;
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .nebula-layer-3 {
+  opacity: 0.3;
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .nebula-layer-4 {
+  opacity: 0.24;
 }
 
 @keyframes nebula-drift-1 {
@@ -194,6 +229,31 @@
     linear-gradient(160deg, #06030d 0%, #120418 45%, #05010b 100%);
 }
 
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-background {
+  background:
+    radial-gradient(
+      900px 700px at 20% 25%,
+      rgba(var(--color-primary-rgb), 0.16),
+      transparent 65%
+    ),
+    radial-gradient(
+      1000px 900px at 70% 20%,
+      rgba(var(--color-accent-rgb), 0.12),
+      transparent 65%
+    ),
+    radial-gradient(
+      900px 800px at 55% 65%,
+      rgba(var(--color-primary-rgb), 0.12),
+      transparent 70%
+    ),
+    radial-gradient(
+      700px 600px at 35% 55%,
+      rgba(var(--color-accent-rgb), 0.14),
+      transparent 65%
+    ),
+    linear-gradient(160deg, var(--bg-main) 0%, #f4edff 45%, var(--bg-main) 100%);
+}
+
 :root[data-theme='cosmic'] .hero-background::before {
   content: '';
   position: absolute;
@@ -243,6 +303,52 @@
   pointer-events: none;
 }
 
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-background::before {
+  background:
+    radial-gradient(
+      2px 2px at 22% 28%,
+      rgba(80, 54, 140, 0.35),
+      transparent 3px
+    ),
+    radial-gradient(
+      2px 2px at 62% 42%,
+      rgba(96, 70, 156, 0.32),
+      transparent 3px
+    ),
+    radial-gradient(
+      1px 1px at 48% 58%,
+      rgba(70, 50, 120, 0.28),
+      transparent 2px
+    ),
+    radial-gradient(
+      1px 1px at 12% 24%,
+      rgba(84, 64, 140, 0.26),
+      transparent 2px
+    ),
+    radial-gradient(
+      1.5px 1.5px at 28% 52%,
+      rgba(90, 68, 150, 0.24),
+      transparent 3px
+    ),
+    radial-gradient(
+      1px 1px at 66% 18%,
+      rgba(76, 56, 130, 0.28),
+      transparent 2px
+    ),
+    radial-gradient(
+      1.5px 1.5px at 78% 62%,
+      rgba(88, 66, 148, 0.22),
+      transparent 3px
+    ),
+    radial-gradient(
+      1px 1px at 46% 74%,
+      rgba(82, 60, 140, 0.24),
+      transparent 2px
+    );
+  opacity: 0.35;
+  mix-blend-mode: multiply;
+}
+
 :root[data-theme='cosmic'] .hero-background::after {
   content: '';
   position: absolute;
@@ -268,14 +374,42 @@
   pointer-events: none;
 }
 
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-background::after {
+  background:
+    radial-gradient(
+      800px 600px at 40% 40%,
+      rgba(var(--color-primary-rgb), 0.08),
+      transparent 70%
+    ),
+    radial-gradient(
+      600px 500px at 60% 35%,
+      rgba(var(--color-primary-rgb), 0.14),
+      transparent 65%
+    ),
+    radial-gradient(
+      500px 400px at 45% 50%,
+      rgba(var(--color-accent-rgb), 0.12),
+      transparent 65%
+    );
+  mix-blend-mode: multiply;
+  opacity: 0.4;
+}
+
 :root[data-theme='cosmic'] .hero-name-text {
   opacity: 1;
 }
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-name-text {
-  background: none;
-  color: #f7f2ff;
-  -webkit-text-fill-color: #f7f2ff;
+  background: linear-gradient(
+    135deg,
+    var(--text-primary) 0%,
+    var(--color-primary-dark) 50%,
+    var(--color-accent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
 }
 
 :root[data-theme='cosmic'] .hero-name-svg {
@@ -293,6 +427,21 @@
 
 :root[data-theme='cosmic'] .hero-tagline .hero-tagline-subtext {
   color: #e6dbff;
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-greeting {
+  color: var(--text-primary);
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-title .title-text,
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-tagline p {
+  color: var(--text-secondary);
+}
+
+:root[data-theme='cosmic'][data-color-mode='light']
+  .hero-tagline
+  .hero-tagline-subtext {
+  color: var(--text-muted);
 }
 
 :root[data-theme='cosmic'] .hero-astronaut {

@@ -406,7 +406,7 @@ function Skills(): React.ReactElement {
                   rel="noopener noreferrer"
                   aria-label={`${skill.name} official website`}
                 >
-                  {skill.name}
+                  <span className="skill-tag-label">{skill.name}</span>
                 </motion.a>
               ) : (
                 <motion.span
@@ -414,7 +414,7 @@ function Skills(): React.ReactElement {
                   className="skill-tag"
                   variants={fadeUpVariants}
                 >
-                  {skill.name}
+                  <span className="skill-tag-label">{skill.name}</span>
                 </motion.span>
               )
             )}
