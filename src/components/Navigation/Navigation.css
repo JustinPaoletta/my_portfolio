@@ -31,7 +31,7 @@
     backdrop-filter: blur(10px);
   }
 
-  .logo-text {
+  .nav-logo {
     color: var(--text-primary);
   }
 
@@ -66,7 +66,7 @@
   backdrop-filter: blur(12px);
 }
 
-:root[data-color-mode='light'][data-theme='cosmic'] .logo-text,
+:root[data-color-mode='light'][data-theme='cosmic'] .nav-logo,
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-link,
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-social-link {
   color: var(--text-primary);
@@ -88,13 +88,13 @@
   }
 }
 
-:root[data-color-mode='light'][data-theme='dewTheDew'] .logo-text,
+:root[data-color-mode='light'][data-theme='dewTheDew'] .nav-logo,
 :root[data-color-mode='light'][data-theme='dewTheDew'] .nav-link,
 :root[data-color-mode='light'][data-theme='dewTheDew'] .nav-social-link {
   color: #f5fff5;
 }
 
-:root[data-color-mode='light'][data-theme='breezy'] .logo-text,
+:root[data-color-mode='light'][data-theme='breezy'] .nav-logo,
 :root[data-color-mode='light'][data-theme='breezy'] .nav-link,
 :root[data-color-mode='light'][data-theme='breezy'] .nav-social-link {
   color: #f7f3ea;
@@ -147,9 +147,7 @@
   align-items: center;
   gap: 0.25rem;
   text-decoration: none;
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 1.5rem;
+  color: var(--color-primary-ink);
   transition: transform 0.15s ease;
 
   &:hover {
@@ -162,8 +160,11 @@
     border-radius: 4px;
   }
 
-  .logo-text {
-    color: var(--color-primary-ink);
+  .logo-image {
+    width: 34px;
+    height: 34px;
+    display: block;
+    object-fit: contain;
   }
 }
 
