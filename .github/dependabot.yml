@@ -10,6 +10,12 @@ updates:
       day: 'monday'
       time: '09:00'
       timezone: 'America/New_York'
+    ignore:
+      # eslint-plugin-jsx-a11y and eslint-plugin-react-hooks currently cap at ESLint 9.
+      - dependency-name: 'eslint'
+        versions: ['>=10']
+      - dependency-name: '@eslint/js'
+        versions: ['>=10']
     groups:
       # prod deps
       react:
