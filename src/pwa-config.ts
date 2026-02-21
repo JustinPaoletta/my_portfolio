@@ -9,7 +9,7 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
   includeAssets: [
-    'favicon.svg',
+    'JP-logo-1.svg',
     'pwa-192x192.png',
     'pwa-512x512.png',
     'robots.txt',
@@ -30,7 +30,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     start_url: '/',
     icons: [
       {
-        src: '/favicon.svg',
+        src: '/JP-logo-1.svg',
         sizes: 'any',
         type: 'image/svg+xml',
         purpose: 'any',
@@ -93,6 +93,8 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   workbox: {
     // Cache configuration - precache static assets for offline support
     globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+    // Increase default 2 MiB precache limit to 4 MiB to allow larger SVG assets.
+    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
     // Exclude large assets from precaching to avoid exceeding size limits
     globIgnores: [],
     runtimeCaching: [

@@ -116,7 +116,12 @@ function Navigation(): React.ReactElement {
       <div className="nav-container">
         {/* Logo */}
         <a href="#hero" className="nav-logo">
-          <span className="logo-text">JP</span>
+          <img
+            src="/JP-logo-1.svg"
+            alt=""
+            className="logo-image"
+            aria-hidden="true"
+          />
           <span className="visually-hidden">- Go to top</span>
         </a>
 

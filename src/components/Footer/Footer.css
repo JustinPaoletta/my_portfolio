@@ -38,9 +38,7 @@
   align-items: center;
   gap: 0.25rem;
   text-decoration: none;
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 1.5rem;
+  color: var(--color-primary-ink);
   flex-shrink: 0;
 
   &:focus-visible {
@@ -49,8 +47,11 @@
     border-radius: 4px;
   }
 
-  .logo-text {
-    color: var(--color-primary-ink);
+  .logo-image {
+    width: 30px;
+    height: 30px;
+    display: block;
+    object-fit: contain;
   }
 }
 
