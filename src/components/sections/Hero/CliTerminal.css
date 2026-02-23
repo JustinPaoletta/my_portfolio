@@ -141,6 +141,12 @@
   line-height: 1.4;
 }
 
+@media (hover: none) and (pointer: coarse) {
+  :root[data-theme='cli'] .cli-prompt-input {
+    font-size: 16px;
+  }
+}
+
 :root[data-theme='cli'] .cli-prompt-input::placeholder {
   color: var(--text-muted);
 }

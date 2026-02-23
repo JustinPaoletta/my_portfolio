@@ -969,14 +969,27 @@ function CliTerminal(): React.ReactElement {
     ]);
   };
 
+  const submitPrompt = (): void => {
+    if (inputValue.trim().length > 0) {
+      executeCommand(inputValue);
+    } else {
+      activateSelectedOption();
+    }
+    setInputValue('');
+  };
+
+  const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
+
   useEffect(() => {
     const history = historyRef.current;
     if (!history) {
       return;
     }
     history.scrollTop = history.scrollHeight;
-    inputRef.current?.focus();
-  }, [lines]);
+    if (!isCompactLayout) {
+      inputRef.current?.focus();
+    }
+  }, [isCompactLayout, lines]);
 
   const promptPlaceholder =
     context === 'projects'
@@ -989,7 +1002,32 @@ function CliTerminal(): React.ReactElement {
             ? 'Dog number or "dog <n> treat"'
             : 'Enter a number or command (9 for help)';
 
-  const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
+  const touchControlsStyle = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+    gap: '0.4rem',
+    marginBottom: '0.75rem',
+  } as const;
+
+  const touchButtonStyle = {
+    border: '1px solid var(--border-subtle)',
+    borderRadius: '8px',
+    background: 'var(--bg-card)',
+    color: 'var(--text-primary)',
+    fontFamily: 'var(--font-mono)',
+    fontSize: '0.78rem',
+    fontWeight: 600,
+    lineHeight: 1.2,
+    padding: '0.52rem 0.58rem',
+    minHeight: '2.2rem',
+    touchAction: 'manipulation',
+  } as const;
+
+  const runTouchButtonStyle = {
+    ...touchButtonStyle,
+    borderColor: 'var(--border-hover)',
+    background: 'var(--bg-card-hover)',
+  } as const;
 
   return (
     <div className="cli-terminal-shell">
@@ -1068,7 +1106,9 @@ function CliTerminal(): React.ReactElement {
                       onClick={() => {
                         setSelectedOptionIndex(index);
                         setInputValue(String(option.value));
-                        inputRef.current?.focus();
+                        if (!isCompactLayout) {
+                          inputRef.current?.focus();
+                        }
                       }}
                       aria-current={isSelected ? 'true' : undefined}
                       style={{
@@ -1130,14 +1170,63 @@ function CliTerminal(): React.ReactElement {
                 borderBottom: '1px solid var(--border-subtle)',
               }}
             >
-              Menu: {isCompactLayout ? 'panel below' : 'left panel'} | Keys: ↑ ↓
-              ← → move | Space/0-9 stage input | Enter run | Current:{' '}
-              {currentSelection
-                ? `${currentSelection.value}. ${currentSelection.label}`
-                : 'None'}
+              {isCompactLayout ? (
+                <>
+                  Menu: panel below | Tap menu items or controls | Current:{' '}
+                  {currentSelection
+                    ? `${currentSelection.value}. ${currentSelection.label}`
+                    : 'None'}
+                </>
+              ) : (
+                <>
+                  Menu: left panel | Keys: ↑ ↓ ← → move | Space/0-9 stage input
+                  | Enter run | Current:{' '}
+                  {currentSelection
+                    ? `${currentSelection.value}. ${currentSelection.label}`
+                    : 'None'}
+                </>
+              )}
             </p>
 
             <div className="cli-session" ref={historyRef}>
+              {isCompactLayout ? (
+                <div style={touchControlsStyle} aria-label="Touch controls">
+                  <button
+                    type="button"
+                    style={touchButtonStyle}
+                    onClick={() => moveSelection(-1)}
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="button"
+                    style={touchButtonStyle}
+                    onClick={() => moveSelection(1)}
+                  >
+                    Next
+                  </button>
+                  <button
+                    type="button"
+                    style={touchButtonStyle}
+                    onClick={() => {
+                      if (currentSelection) {
+                        setInputValue(String(currentSelection.value));
+                      }
+                    }}
+                    disabled={!currentSelection}
+                  >
+                    Stage
+                  </button>
+                  <button
+                    type="button"
+                    style={runTouchButtonStyle}
+                    onClick={submitPrompt}
+                  >
+                    Run
+                  </button>
+                </div>
+              ) : null}
+
               <div className="cli-history" role="log" aria-live="polite">
                 {lines.map((line) => (
                   <p
@@ -1160,12 +1249,7 @@ function CliTerminal(): React.ReactElement {
                 className="cli-prompt cli-prompt--inline"
                 onSubmit={(event) => {
                   event.preventDefault();
-                  if (inputValue.trim().length > 0) {
-                    executeCommand(inputValue);
-                  } else {
-                    activateSelectedOption();
-                  }
-                  setInputValue('');
+                  submitPrompt();
                 }}
               >
                 <label htmlFor="cli-command-input" className="visually-hidden">
