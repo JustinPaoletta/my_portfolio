@@ -42,9 +42,9 @@ function AppLayout(): React.ReactElement {
           className="cli-theme-switcher-anchor"
           style={{
             position: 'fixed',
-            bottom: 12,
-            right: 14,
-            zIndex: 1200,
+            bottom: 'calc(env(safe-area-inset-bottom) + 12px)',
+            right: 'calc(env(safe-area-inset-right) + 14px)',
+            zIndex: 10000,
           }}
         >
           <ThemeSwitcher placement="nav" />

@@ -544,12 +544,8 @@ function Hero(): React.ReactElement {
                 {!isCosmicTheme && (
                   <div className="hero-tagline">
                     <p>
-                      I solve complex business challenges through thoughtful
-                      code,
-                    </p>
-                    <p>
-                      and deliver fast reliable solutions with precision and
-                      expertise.
+                      I turn evolving business requirements into high-quality
+                      software delivered with precision and consistency.
                     </p>
                   </div>
                 )}

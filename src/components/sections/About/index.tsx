@@ -6,6 +6,7 @@
 import { Brain, BookOpen, MessageCircle } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useEffect, useRef } from 'react';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import {
   fadeUpVariants,
   fadeLeftVariants,
@@ -21,6 +22,8 @@ function About(): React.ReactElement {
   const contentRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(sectionRef, defaultViewport);
+  const breakpoint = useBreakpoint();
+  const isSmallHighlights = breakpoint === 'xs' || breakpoint === 'sm';
 
   useEffect(() => {
     const content = contentRef.current;
@@ -226,20 +229,75 @@ function About(): React.ReactElement {
               initial="hidden"
               animate={isInView ? 'visible' : 'hidden'}
             >
-              <motion.div className="highlight-item" variants={fadeUpVariants}>
-                <span className="highlight-number">5+</span>
-                <span className="highlight-label">Years Experience</span>
-              </motion.div>
-              <motion.div className="highlight-item" variants={fadeUpVariants}>
-                <span className="highlight-number">300+</span>
-                <span className="highlight-label">Jira Tickets Completed</span>
-              </motion.div>
-              <motion.div className="highlight-item" variants={fadeUpVariants}>
-                <span className="highlight-number">1500+</span>
-                <span className="highlight-label">
-                  Diet Dews Converted to Code
-                </span>
-              </motion.div>
+              <div
+                className="about-highlights-lines"
+                style={
+                  isSmallHighlights
+                    ? {
+                        display: 'grid',
+                        gap: '1rem',
+                        width: 'fit-content',
+                        margin: '0 auto',
+                      }
+                    : { display: 'contents' }
+                }
+              >
+                <motion.div
+                  className="highlight-item"
+                  variants={fadeUpVariants}
+                  style={
+                    isSmallHighlights
+                      ? { justifyContent: 'flex-start', textAlign: 'left' }
+                      : undefined
+                  }
+                >
+                  <span
+                    className="highlight-number"
+                    style={isSmallHighlights ? { marginBottom: 0 } : undefined}
+                  >
+                    5+
+                  </span>
+                  <span className="highlight-label">Years Experience</span>
+                </motion.div>
+                <motion.div
+                  className="highlight-item"
+                  variants={fadeUpVariants}
+                  style={
+                    isSmallHighlights
+                      ? { justifyContent: 'flex-start', textAlign: 'left' }
+                      : undefined
+                  }
+                >
+                  <span
+                    className="highlight-number"
+                    style={isSmallHighlights ? { marginBottom: 0 } : undefined}
+                  >
+                    300+
+                  </span>
+                  <span className="highlight-label">
+                    Jira Tickets Completed
+                  </span>
+                </motion.div>
+                <motion.div
+                  className="highlight-item"
+                  variants={fadeUpVariants}
+                  style={
+                    isSmallHighlights
+                      ? { justifyContent: 'flex-start', textAlign: 'left' }
+                      : undefined
+                  }
+                >
+                  <span
+                    className="highlight-number"
+                    style={isSmallHighlights ? { marginBottom: 0 } : undefined}
+                  >
+                    1500+
+                  </span>
+                  <span className="highlight-label">
+                    Diet Dews Converted to Code
+                  </span>
+                </motion.div>
+              </div>
             </motion.div>
 
             <motion.div

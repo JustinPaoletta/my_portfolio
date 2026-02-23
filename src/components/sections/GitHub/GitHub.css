@@ -185,7 +185,7 @@
 
   .github-stats-bar {
     flex-direction: column;
-    text-align: center;
+    align-items: flex-start;
     gap: 1.5rem;
   }
 
