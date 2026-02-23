@@ -9,7 +9,7 @@ module.exports = {
       url: [
         '/?theme=engineer&mode=light',
         '/?theme=cosmic&mode=light',
-        '/?theme=dewTheDew&mode=light',
+        '/?theme=cli&mode=light',
         '/?theme=minimal&mode=light',
         '/?theme=breezy&mode=light',
       ],

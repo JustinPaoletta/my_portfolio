@@ -9,7 +9,7 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
   includeAssets: [
-    'JP-logo-1.svg',
+    'JP.svg',
     'pwa-192x192.png',
     'pwa-512x512.png',
     'robots.txt',
@@ -30,7 +30,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     start_url: '/',
     icons: [
       {
-        src: '/JP-logo-1.svg',
+        src: '/JP.svg',
         sizes: 'any',
         type: 'image/svg+xml',
         purpose: 'any',
