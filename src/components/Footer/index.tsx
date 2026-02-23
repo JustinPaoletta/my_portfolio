@@ -3,6 +3,7 @@
  * Site footer with copyright
  */
 import { ArrowRight } from 'lucide-react';
+import JPLogo from '@/components/Brand/JPLogo';
 import './Footer.css';
 
 function Footer(): React.ReactElement {
@@ -13,12 +14,7 @@ function Footer(): React.ReactElement {
       <div className="footer-container">
         <div className="footer-brand">
           <a href="#hero" className="footer-logo">
-            <img
-              src="/JP-logo-1.svg"
-              alt=""
-              className="logo-image"
-              aria-hidden="true"
-            />
+            <JPLogo className="logo-image" />
             <span className="visually-hidden">- Go to top</span>
           </a>
           <p className="footer-tagline">

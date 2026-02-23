@@ -146,7 +146,7 @@
   }
 }
 
-:root[data-theme='dewTheDew'][data-color-mode='dark'] {
+:root[data-theme='cli'][data-color-mode='dark'] {
   .indicator-dot,
   .indicator-dot::before {
     background: #ffffff;

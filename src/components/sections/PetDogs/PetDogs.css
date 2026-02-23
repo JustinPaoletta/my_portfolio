@@ -11,7 +11,7 @@
 
   .section-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
 }
 
@@ -30,7 +30,6 @@
   letter-spacing: 0.18em;
   text-transform: uppercase;
   cursor: pointer;
-  position: relative;
   transition:
     color 0.2s ease,
     transform 0.2s ease;
@@ -61,197 +60,157 @@
 }
 
 .dogs-content {
-  max-width: 900px;
   margin: 0 auto;
 }
 
 .dogs-description {
-  font-size: 1.125rem;
-  line-height: 1.7;
+  font-size: 1.05rem;
+  line-height: 1.65;
   text-align: center;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
+  margin: 0 0 1.5rem;
 }
 
-.dogs-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(260px, 1fr));
-  gap: 1.5rem;
-}
-
-.dogs-carousel {
-  display: none;
-
-  .dog-card {
-    min-width: 0;
-    width: 100%;
-    max-width: 320px;
-  }
-}
-
-.dog-card {
-  position: relative;
-  min-width: 260px;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  padding: 1rem;
+.dogs-list {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 1.65rem;
   align-items: center;
-  text-align: center;
+  justify-content: center;
 }
 
-.dog-name-row {
+.dog-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.9rem;
+  padding: 0.25rem 0;
+  width: auto;
+}
+
+.dog-avatar-shell {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  border-radius: 999px;
+  border: 6px solid var(--border-subtle);
+  background: var(--bg-main);
+  overflow: hidden;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-  min-height: 2rem;
 }
 
-.dog-badge {
+.dog-avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+  transform-origin: center;
+}
+
+.dog-row-main {
+  min-width: 0;
+  width: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.dog-name-row {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.dog-name {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.dog-badge-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  height: 25%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-mono);
   font-size: 0.65rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--color-primary-ink);
-  background: var(--bg-main);
-  border: 1px solid var(--color-primary-ink);
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  white-space: nowrap;
+  color: #ffffff;
+  background: #000000;
 }
 
-.dog-image-wrapper {
-  width: 100%;
-  background: var(--bg-main);
-  border: 1px solid var(--border-subtle);
-  border-radius: 8px;
-  overflow: hidden;
-  margin-bottom: 0.75rem;
-  display: flex;
+.dog-counter-actions {
+  display: inline-flex;
   align-items: center;
+  gap: 0.45rem;
+  flex-wrap: nowrap;
   justify-content: center;
 }
 
-.dog-name {
-  font-size: 1rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.dog-stats {
-  display: flex;
-  gap: 1rem;
-  font-size: 0.875rem;
+.dog-counter-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-width: 64px;
+  padding: 0.38rem 0.65rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  background: transparent;
   color: var(--text-secondary);
-  margin-bottom: 1rem;
-}
+  font-family: var(--font-sans);
+  font-size: 0.86rem;
+  font-weight: 600;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease,
+    background-color 0.15s ease,
+    transform 0.15s ease;
 
-.dog-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  width: 100%;
-
-  button {
-    padding: 0.5rem 1rem;
-    border: 1px solid var(--border-subtle);
-    border-radius: 6px;
-    background: var(--bg-main);
+  &:hover {
     color: var(--text-primary);
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
+    border-color: var(--color-primary-ink);
+    background: var(--bg-card-hover);
+    transform: translateY(-1px);
+  }
 
-    &:hover {
-      border-color: var(--color-primary-ink);
-      background: var(--bg-card-hover);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--color-primary-ink);
-      outline-offset: 2px;
-    }
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 2px;
   }
 }
 
-@media (max-width: 900px) {
-  .dogs-content {
-    overflow: visible;
-  }
-
-  .dogs-grid {
-    display: none;
-  }
-
-  .dogs-carousel {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0;
-    position: relative;
-    margin: 0 auto;
-    width: 100%;
-    padding: 0 3rem;
-  }
-
-  .carousel-btn {
-    flex-shrink: 0;
-    width: 2.5rem;
-    height: 2.5rem;
-    padding: 0;
-    border-radius: 50%;
-    border: 1px solid var(--border-subtle);
-    background: var(--bg-card);
-    color: var(--text-primary);
-    font-size: 1.25rem;
-    font-weight: 600;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    line-height: 1;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-
-    &:hover {
-      border-color: var(--color-primary-ink);
-      background: var(--bg-card-hover);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--color-primary-ink);
-      outline-offset: 2px;
-    }
-  }
-
-  .carousel-prev {
-    left: 0;
-  }
-
-  .carousel-next {
-    right: 0;
-  }
+.dog-counter-value {
+  min-width: 1ch;
+  text-align: center;
 }
 
-@media (max-width: 480px) {
-  .dogs-carousel {
-    padding: 0 2.5rem;
-  }
+.dog-stat-icon {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+  color: var(--color-primary-ink);
+  stroke-width: 2;
+}
 
-  .carousel-btn {
-    width: 2.1rem;
-    height: 2.1rem;
-
-    svg {
-      width: 16px;
-      height: 16px;
-    }
+@media (max-width: 720px) {
+  .pet-dogs-section {
+    padding: 3rem 1.25rem;
   }
 }

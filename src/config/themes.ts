@@ -113,9 +113,9 @@ export const themes: Record<string, Theme> = {
       navBgScrolled: 'rgba(253, 248, 255, 0.95)',
     },
   },
-  dewTheDew: {
-    name: 'dewTheDew',
-    label: 'Dew The Dew',
+  cli: {
+    name: 'cli',
+    label: 'CLI',
     colors: {
       primary: '#57ff48', // Mountain Dew green
       primaryLight: '#e7e7e7', // Light neutral from palette
@@ -177,39 +177,6 @@ export const themes: Record<string, Theme> = {
       borderSubtle: 'rgba(44, 52, 64, 0.22)',
       borderHover: 'rgba(44, 52, 64, 0.4)',
       navBgScrolled: 'rgba(247, 247, 245, 0.95)',
-    },
-  },
-  breezy: {
-    name: 'breezy',
-    label: 'Breezy',
-    colors: {
-      primary: '#d3bc8d', // Old Gold - Saints official palette
-      primaryLight: '#e6d8b8',
-      primaryDark: '#b3985a', // Deeper gold for light mode contrast
-      accent: '#d3bc8d',
-      accentTeal: '#b3985a',
-    },
-    dark: {
-      textPrimary: '#ffffff', // 15.5:1 on #101820
-      textSecondary: '#d4d0c8', // 10:1 on #101820
-      textMuted: '#a8a49c', // 5.5:1 on #101820
-      bgMain: '#000000',
-      bgCard: 'rgba(211, 188, 141, 0.05)',
-      bgCardHover: 'rgba(211, 188, 141, 0.1)',
-      borderSubtle: 'rgba(211, 188, 141, 0.25)',
-      borderHover: 'rgba(211, 188, 141, 0.5)',
-      navBgScrolled: 'rgba(0, 0, 0, 0.95)',
-    },
-    light: {
-      textPrimary: '#101820', // 14:1 on #ffffff
-      textSecondary: '#2b3240', // 9:1 on #ffffff
-      textMuted: '#5b6370', // 5.5:1 on #ffffff
-      bgMain: '#ffffff',
-      bgCard: 'rgba(16, 24, 32, 0.03)',
-      bgCardHover: 'rgba(16, 24, 32, 0.06)',
-      borderSubtle: 'rgba(16, 24, 32, 0.2)',
-      borderHover: 'rgba(16, 24, 32, 0.4)',
-      navBgScrolled: 'rgba(255, 255, 255, 0.95)',
     },
   },
 };

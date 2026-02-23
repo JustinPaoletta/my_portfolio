@@ -45,6 +45,43 @@
   min-height: 100vh;
 }
 
+.main-content {
+  min-height: 100vh;
+}
+
+.main-content--cli {
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+:root[data-theme='cli'] {
+  overflow: hidden;
+}
+
+:root[data-theme='cli'] body {
+  overflow: hidden;
+}
+
+:root[data-theme='cli'] #root {
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+:root[data-theme='cli'] .cli-theme-switcher-anchor .theme-switcher--nav {
+  position: relative;
+}
+
+:root[data-theme='cli']
+  .cli-theme-switcher-anchor
+  .theme-switcher--nav
+  .theme-switcher-menu {
+  top: auto;
+  bottom: calc(100% + 8px);
+  right: 0;
+}
+
 h1,
 h2,
 h3,

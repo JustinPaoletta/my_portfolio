@@ -28,7 +28,7 @@ Your portfolio is configured as a Progressive Web App with offline support, cach
 
 You need these icon files in your `public/` folder:
 
-- `JP-logo-1.svg` (primary SVG favicon/manifest icon)
+- `JP.svg` (primary SVG favicon/manifest icon)
 - `pwa-192x192.png` (192 × 192 pixels)
 - `pwa-512x512.png` (512 × 512 pixels)
 
@@ -62,7 +62,7 @@ You need these icon files in your `public/` folder:
 npm install -g pwa-asset-generator
 
 # Generate from a single source image (1024x1024 recommended)
-pwa-asset-generator path/to/logo.png public/ \
+pwa-asset-generator path/to/JP.svg public/ \
   --icon-only \
   --type png \
   --background "#242424" \
@@ -105,7 +105,7 @@ The PWA assets are automatically generated during build:
 
 - **`src/pwa-config.ts`** - PWA configuration (manifest, workbox, etc.)
 - **`vite.config.ts`** - Includes `VitePWA` plugin
-- **`public/JP-logo-1.svg`** - Primary SVG icon for favicon + manifest
+- **`public/JP.svg`** - Primary SVG icon for favicon + manifest
 - **`public/pwa-*.png`** - PNG app icons (192x192 and 512x512)
 
 ### Configuration Files
@@ -114,7 +114,7 @@ The PWA is configured via `src/pwa-config.ts`. Key settings:
 
 ```typescript
 export const pwaConfig = {
-  includeAssets: ['JP-logo-1.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
+  includeAssets: ['JP.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
   manifest: {
     name: 'JP - Engineering', // Full app name
     short_name: 'Portfolio', // Short name for home screen
@@ -124,7 +124,7 @@ export const pwaConfig = {
     display: 'standalone', // Display mode
     icons: [
       {
-        src: '/JP-logo-1.svg',
+        src: '/JP.svg',
         sizes: 'any',
         type: 'image/svg+xml',
       },
@@ -337,7 +337,7 @@ When you deploy a new version:
 **Solutions:**
 
 - Verify icon files exist in `public/` folder
-- Check file names match exactly: `JP-logo-1.svg`, `pwa-192x192.png`, `pwa-512x512.png`
+- Check file names match exactly: `JP.svg`, `pwa-192x192.png`, `pwa-512x512.png`
 - Rebuild the project: `npm run build`
 - Clear manifest cache in DevTools
 
