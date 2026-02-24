@@ -69,19 +69,6 @@
   overflow: hidden;
 }
 
-:root[data-theme='cli'] .cli-theme-switcher-anchor .theme-switcher--nav {
-  position: relative;
-}
-
-:root[data-theme='cli']
-  .cli-theme-switcher-anchor
-  .theme-switcher--nav
-  .theme-switcher-menu {
-  top: auto;
-  bottom: calc(100% + 8px);
-  right: 0;
-}
-
 h1,
 h2,
 h3,

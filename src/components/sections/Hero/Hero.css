@@ -973,7 +973,7 @@
   }
 
   .hero-tagline {
-    max-width: 32ch;
+    max-width: 48ch;
     margin: 0 auto 2rem;
   }
 
@@ -1010,7 +1010,7 @@
   }
 
   .hero-tagline {
-    max-width: 30ch;
+    max-width: 48ch;
   }
 
   .hero-tagline p {

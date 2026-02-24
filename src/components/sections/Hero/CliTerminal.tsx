@@ -65,13 +65,13 @@ const MAIN_MENU = [
   { number: 1, label: 'About Me', command: 'about' },
   { number: 2, label: 'Projects', command: 'projects' },
   { number: 3, label: 'Skills', command: 'skills' },
-  { number: 4, label: 'Experience & Education', command: 'experience' },
+  { number: 4, label: 'Experience', command: 'experience' },
   { number: 5, label: 'GitHub Activity', command: 'github' },
   { number: 6, label: 'Contact', command: 'contact' },
   { number: 7, label: 'Pet Dogs', command: 'dogs' },
   { number: 8, label: 'Resume', command: 'resume' },
   { number: 9, label: 'Help', command: 'help' },
-  { number: 0, label: 'Clear Terminal', command: 'clear' },
+  { number: 0, label: 'Clear', command: 'clear' },
 ] as const;
 
 const ABOUT_SUMMARY = [
@@ -346,7 +346,7 @@ function CliTerminal(): React.ReactElement {
           value: index + 1,
           label: project.title,
         })),
-        { value: 0, label: 'Clear Terminal' },
+        { value: 0, label: 'Clear' },
       ];
     }
 
@@ -356,7 +356,7 @@ function CliTerminal(): React.ReactElement {
           value: index + 1,
           label: category.name,
         })),
-        { value: 0, label: 'Clear Terminal' },
+        { value: 0, label: 'Clear' },
       ];
     }
 
@@ -366,7 +366,7 @@ function CliTerminal(): React.ReactElement {
           value: index + 1,
           label: getCliExperienceOptionLabel(item),
         })),
-        { value: 0, label: 'Clear Terminal' },
+        { value: 0, label: 'Clear' },
       ];
     }
 
@@ -376,7 +376,7 @@ function CliTerminal(): React.ReactElement {
           value: index + 1,
           label: dog.name,
         })),
-        { value: 0, label: 'Clear Terminal' },
+        { value: 0, label: 'Clear' },
       ];
     }
 
@@ -1328,9 +1328,7 @@ function CliTerminal(): React.ReactElement {
                   >
                     {line.kind === 'input' ? (
                       <>
-                        <span className="cli-line-prefix">
-                          justin@jp-cli: ~%
-                        </span>
+                        <span className="cli-line-prefix">user@jp-cli: ~%</span>
                         <span>{line.text}</span>
                       </>
                     ) : (
@@ -1350,7 +1348,7 @@ function CliTerminal(): React.ReactElement {
                 <label htmlFor="cli-command-input" className="visually-hidden">
                   Enter a command
                 </label>
-                <span className="cli-prompt-prefix">justin@jp-cli: ~%</span>
+                <span className="cli-prompt-prefix">user@jp-cli: ~%</span>
                 <input
                   ref={inputRef}
                   id="cli-command-input"

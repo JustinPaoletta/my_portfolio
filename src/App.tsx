@@ -36,22 +36,8 @@ function AppLayout(): React.ReactElement {
       {/* Fixed Navigation */}
       {!isCliTheme && <Navigation />}
 
-      {/* Theme controls */}
-      {isCliTheme ? (
-        <div
-          className="cli-theme-switcher-anchor"
-          style={{
-            position: 'fixed',
-            bottom: 'calc(env(safe-area-inset-bottom) + 12px)',
-            right: 'calc(env(safe-area-inset-right) + 14px)',
-            zIndex: 10000,
-          }}
-        >
-          <ThemeSwitcher placement="nav" />
-        </div>
-      ) : (
-        <ThemeSwitcher placement="floating" />
-      )}
+      {/* Theme switcher - always floating bottom-right */}
+      <ThemeSwitcher placement="floating" />
 
       {/* Main Content */}
       <main

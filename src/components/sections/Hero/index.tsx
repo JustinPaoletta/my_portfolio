@@ -566,6 +566,15 @@ function Hero(): React.ReactElement {
               )}
             </div>
 
+            {isCosmicTheme && (
+              <div className="hero-tagline">
+                <p>
+                  I turn evolving business requirements into high-quality
+                  software delivered with precision and consistency.
+                </p>
+              </div>
+            )}
+
             <div className="hero-cta">
               <a href="#projects" className="cta-primary">
                 <span>View My Work</span>
