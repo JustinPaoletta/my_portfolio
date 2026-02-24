@@ -1035,6 +1035,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
+  const compactOptionsPanelHeight = '16rem';
 
   const macDotBaseStyle = {
     width: '0.76rem',
@@ -1151,7 +1152,9 @@ function CliTerminal(): React.ReactElement {
               display: 'flex',
               flexDirection: 'column',
               gap: '0.55rem',
-              minHeight: isCompactLayout ? 'auto' : 0,
+              minHeight: isCompactLayout ? compactOptionsPanelHeight : 0,
+              maxHeight: isCompactLayout ? compactOptionsPanelHeight : 'none',
+              overflow: isCompactLayout ? 'hidden' : 'visible',
             }}
           >
             <div
@@ -1234,8 +1237,10 @@ function CliTerminal(): React.ReactElement {
                 display: 'flex',
                 flexDirection: isCompactLayout ? 'row' : 'column',
                 flexWrap: isCompactLayout ? 'wrap' : 'nowrap',
+                flex: 1,
                 gap: '0.35rem',
-                overflowY: isCompactLayout ? 'visible' : 'auto',
+                overflowY: 'auto',
+                alignContent: isCompactLayout ? 'flex-start' : undefined,
                 minHeight: 0,
               }}
             >
