@@ -8,6 +8,11 @@ on:
       - main
       - master
 
+# Explicit permissions required for checkout@v6 and PR comments (GitHub tightened default GITHUB_TOKEN)
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   lighthouse:
     name: Lighthouse Performance Audit
@@ -77,7 +82,7 @@ jobs:
 
       - name: Upload LHCI artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: lhci
           path: .lighthouseci
