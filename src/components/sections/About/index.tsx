@@ -3,7 +3,7 @@
  * Background and story with Framer Motion animations
  */
 
-import { Brain, BookOpen, MessageCircle } from 'lucide-react';
+import { Brain, BookOpen, Cloud } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -308,7 +308,7 @@ function About(): React.ReactElement {
             >
               <h3 className="about-ai-title">
                 Thoughts on AI
-                <MessageCircle className="about-ai-icon" aria-hidden="true" />
+                <Cloud className="about-ai-icon" aria-hidden="true" />
               </h3>
               <p className="about-ai-lede">
                 Artificial intelligence is arguably the most significant

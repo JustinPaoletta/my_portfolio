@@ -399,15 +399,25 @@
   }
 
   .highlight-item {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    display: grid;
+    grid-template-columns: 5.75rem minmax(0, 1fr);
+    align-items: baseline;
+    justify-content: flex-start;
+    justify-items: start;
+    column-gap: 0.75rem;
+    width: 100%;
   }
 
   .highlight-number {
     font-size: 1.35rem;
     margin-bottom: 0;
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .highlight-label {
+    text-align: left;
   }
 
   .values-title {

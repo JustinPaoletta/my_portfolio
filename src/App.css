@@ -69,6 +69,12 @@
   overflow: hidden;
 }
 
+/* Hard guard: CLI theme never renders a footer, even if added by mistake. */
+:root[data-theme='cli'] footer,
+:root[data-theme='cli'] [role='contentinfo'] {
+  display: none !important;
+}
+
 h1,
 h2,
 h3,

@@ -878,7 +878,8 @@
   .hero-section {
     padding: 1.5rem;
     padding-top: max(80px, 1.5rem);
-    min-height: 100svh;
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .hero-avatar {
@@ -1023,7 +1024,8 @@
   .hero-section {
     justify-content: flex-start;
     padding-top: 100px;
-    min-height: auto;
+    min-height: 100vh;
+    min-height: 100dvh;
     padding-bottom: 3rem;
   }
 
