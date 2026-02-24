@@ -265,7 +265,7 @@ const INITIAL_DOGS_DATA: DogData[] = DOGS.map((dog) => ({
 }));
 
 const BOOT_LINES: InitialLine[] = [
-  { kind: 'system', text: 'JP CLI Initialized. Type 9 for help.' },
+  { kind: 'system', text: 'JP-CLI Initialized' },
 ];
 
 const MAIN_MENU_LINES: InitialLine[] = [
@@ -287,12 +287,17 @@ function chunk(items: string[], size: number): string[] {
   return groups;
 }
 
+function getCliExperienceOptionLabel(item: CliExperience): string {
+  return item.organization === 'Hack Reactor' ? 'Hack Reactor' : item.title;
+}
+
 function CliTerminal(): React.ReactElement {
   const { setTheme } = useTheme();
   const breakpoint = useBreakpoint();
   const [context, setContext] = useState<Context>('main');
   const [inputValue, setInputValue] = useState('');
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
+  const [isDetailView, setIsDetailView] = useState(false);
   const [lines, setLines] = useState<TerminalLine[]>(createInitialLines);
   const lineIdRef = useRef(lines.length);
   const historyRef = useRef<HTMLDivElement>(null);
@@ -336,31 +341,43 @@ function CliTerminal(): React.ReactElement {
 
   const selectionOptions = useMemo<SelectionOption[]>(() => {
     if (context === 'projects') {
-      return PROJECTS.map((project, index) => ({
-        value: index + 1,
-        label: project.title,
-      }));
+      return [
+        ...PROJECTS.map((project, index) => ({
+          value: index + 1,
+          label: project.title,
+        })),
+        { value: 0, label: 'Clear Terminal' },
+      ];
     }
 
     if (context === 'skills') {
-      return SKILL_CATEGORIES.map((category, index) => ({
-        value: index + 1,
-        label: category.name,
-      }));
+      return [
+        ...SKILL_CATEGORIES.map((category, index) => ({
+          value: index + 1,
+          label: category.name,
+        })),
+        { value: 0, label: 'Clear Terminal' },
+      ];
     }
 
     if (context === 'experience') {
-      return EXPERIENCES.map((item, index) => ({
-        value: index + 1,
-        label: item.title,
-      }));
+      return [
+        ...EXPERIENCES.map((item, index) => ({
+          value: index + 1,
+          label: getCliExperienceOptionLabel(item),
+        })),
+        { value: 0, label: 'Clear Terminal' },
+      ];
     }
 
     if (context === 'dogs') {
-      return dogs.map((dog, index) => ({
-        value: index + 1,
-        label: dog.name,
-      }));
+      return [
+        ...dogs.map((dog, index) => ({
+          value: index + 1,
+          label: dog.name,
+        })),
+        { value: 0, label: 'Clear Terminal' },
+      ];
     }
 
     return MAIN_MENU.map((item) => ({
@@ -404,6 +421,7 @@ function CliTerminal(): React.ReactElement {
 
   const printMainMenu = (): void => {
     setContext('main');
+    setIsDetailView(false);
     setSelectedOptionIndex(0);
     appendLines(MAIN_MENU_LINES);
   };
@@ -412,6 +430,7 @@ function CliTerminal(): React.ReactElement {
     const initialLines = createInitialLines();
     lineIdRef.current = initialLines.length;
     setContext('main');
+    setIsDetailView(false);
     setSelectedOptionIndex(0);
     setLines(initialLines);
   };
@@ -438,6 +457,7 @@ function CliTerminal(): React.ReactElement {
 
   const showProjectsMenu = (): void => {
     setContext('projects');
+    setIsDetailView(false);
     setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[PROJECTS]' },
@@ -463,6 +483,7 @@ function CliTerminal(): React.ReactElement {
     }
 
     setContext('projects');
+    setIsDetailView(true);
     setSelectedOptionIndex(selection - 1);
     appendLines([
       { kind: 'output', text: `[PROJECT ${selection}] ${project.title}` },
@@ -478,6 +499,7 @@ function CliTerminal(): React.ReactElement {
 
   const showSkillsMenu = (): void => {
     setContext('skills');
+    setIsDetailView(false);
     setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[SKILLS]' },
@@ -503,6 +525,7 @@ function CliTerminal(): React.ReactElement {
     }
 
     setContext('skills');
+    setIsDetailView(true);
     setSelectedOptionIndex(selection - 1);
     appendLines([
       {
@@ -523,12 +546,13 @@ function CliTerminal(): React.ReactElement {
 
   const showExperienceMenu = (): void => {
     setContext('experience');
+    setIsDetailView(false);
     setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[EXPERIENCE & EDUCATION]' },
       ...EXPERIENCES.map((item, index) => ({
         kind: 'output' as const,
-        text: `${index + 1}. ${item.title} @ ${item.organization} (${item.period})`,
+        text: `${index + 1}. ${getCliExperienceOptionLabel(item)} @ ${item.organization} (${item.period})`,
       })),
       {
         kind: 'hint',
@@ -548,6 +572,7 @@ function CliTerminal(): React.ReactElement {
     }
 
     setContext('experience');
+    setIsDetailView(true);
     setSelectedOptionIndex(selection - 1);
     appendLines([
       { kind: 'output', text: `[TIMELINE ${selection}] ${item.title}` },
@@ -645,6 +670,7 @@ function CliTerminal(): React.ReactElement {
 
   const showDogsMenu = (): void => {
     setContext('dogs');
+    setIsDetailView(false);
     setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[PET DOGS]' },
@@ -670,6 +696,7 @@ function CliTerminal(): React.ReactElement {
     }
 
     setContext('dogs');
+    setIsDetailView(true);
     setSelectedOptionIndex(selection - 1);
     appendLines([
       {
@@ -694,6 +721,8 @@ function CliTerminal(): React.ReactElement {
       appendLines([{ kind: 'error', text: `Dog ${selection} not found.` }]);
       return;
     }
+
+    setIsDetailView(true);
 
     if (action === 'treat' || action === 'treats') {
       updateDogStats(dog.name, 'treats');
@@ -978,7 +1007,75 @@ function CliTerminal(): React.ReactElement {
     setInputValue('');
   };
 
+  const goToPreviousList = (): void => {
+    setInputValue('');
+
+    if (context === 'main') {
+      return;
+    }
+
+    if (isDetailView) {
+      if (context === 'projects') {
+        showProjectsMenu();
+        return;
+      }
+      if (context === 'skills') {
+        showSkillsMenu();
+        return;
+      }
+      if (context === 'experience') {
+        showExperienceMenu();
+        return;
+      }
+      showDogsMenu();
+      return;
+    }
+
+    printMainMenu();
+  };
+
   const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
+
+  const macDotBaseStyle = {
+    width: '0.76rem',
+    height: '0.76rem',
+    padding: 0,
+    border: '1px solid rgba(0, 0, 0, 0.22)',
+    borderRadius: '50%',
+    boxShadow: 'inset 0 0.045rem 0.075rem rgba(255, 255, 255, 0.22)',
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    lineHeight: 1,
+  } as const;
+
+  const macCloseDotStyle = {
+    ...macDotBaseStyle,
+    background: '#ff5f57',
+    cursor: 'pointer',
+    WebkitAppearance: 'none',
+    appearance: 'none',
+    touchAction: 'manipulation',
+  } as const;
+
+  const macYellowDotStyle = {
+    ...macDotBaseStyle,
+    background: '#febc2e',
+  } as const;
+
+  const macGreenDotStyle = {
+    ...macDotBaseStyle,
+    background: '#28c840',
+  } as const;
+
+  const macCloseGlyphStyle = {
+    fontFamily: 'var(--font-sans)',
+    fontSize: '0.56rem',
+    fontWeight: 700,
+    lineHeight: 1,
+    color: 'rgba(68, 20, 15, 0.8)',
+    transform: 'translateY(-0.01rem)',
+  } as const;
 
   useEffect(() => {
     const history = historyRef.current;
@@ -991,44 +1088,6 @@ function CliTerminal(): React.ReactElement {
     }
   }, [isCompactLayout, lines]);
 
-  const promptPlaceholder =
-    context === 'projects'
-      ? 'Project number or "project <n>"'
-      : context === 'skills'
-        ? 'Skill category number or "skill <n>"'
-        : context === 'experience'
-          ? 'Experience number or "exp <n>"'
-          : context === 'dogs'
-            ? 'Dog number or "dog <n> treat"'
-            : 'Enter a number or command (9 for help)';
-
-  const touchControlsStyle = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-    gap: '0.4rem',
-    marginBottom: '0.75rem',
-  } as const;
-
-  const touchButtonStyle = {
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '8px',
-    background: 'var(--bg-card)',
-    color: 'var(--text-primary)',
-    fontFamily: 'var(--font-mono)',
-    fontSize: '0.78rem',
-    fontWeight: 600,
-    lineHeight: 1.2,
-    padding: '0.52rem 0.58rem',
-    minHeight: '2.2rem',
-    touchAction: 'manipulation',
-  } as const;
-
-  const runTouchButtonStyle = {
-    ...touchButtonStyle,
-    borderColor: 'var(--border-hover)',
-    background: 'var(--bg-card-hover)',
-  } as const;
-
   return (
     <div className="cli-terminal-shell">
       <h1 id="hero-heading" className="visually-hidden">
@@ -1040,12 +1099,31 @@ function CliTerminal(): React.ReactElement {
         aria-label="Interactive portfolio terminal"
       >
         <header className="cli-terminal-toolbar">
-          <div className="cli-terminal-dots" aria-hidden="true">
-            <span className="cli-terminal-dot cli-terminal-dot--red" />
-            <span className="cli-terminal-dot cli-terminal-dot--yellow" />
-            <span className="cli-terminal-dot cli-terminal-dot--green" />
+          <div className="cli-terminal-dots">
+            <button
+              type="button"
+              className="cli-terminal-dot cli-terminal-dot--red cli-terminal-dot--close"
+              onClick={() => setTheme(defaultTheme)}
+              aria-label={`Exit CLI and switch to ${defaultTheme} theme`}
+              title="Exit CLI theme"
+              style={macCloseDotStyle}
+            >
+              <span aria-hidden="true" style={macCloseGlyphStyle}>
+                ×
+              </span>
+            </button>
+            <span
+              className="cli-terminal-dot cli-terminal-dot--yellow"
+              aria-hidden="true"
+              style={macYellowDotStyle}
+            />
+            <span
+              className="cli-terminal-dot cli-terminal-dot--green"
+              aria-hidden="true"
+              style={macGreenDotStyle}
+            />
           </div>
-          <span className="cli-terminal-title">jp-cli</span>
+          <span className="cli-terminal-title">jp-cli v1.0.1</span>
         </header>
 
         <div
@@ -1076,9 +1154,78 @@ function CliTerminal(): React.ReactElement {
               minHeight: isCompactLayout ? 'auto' : 0,
             }}
           >
-            <p className="cli-line cli-line--system" style={{ margin: 0 }}>
-              Navigate
-            </p>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                gap: '0.5rem',
+              }}
+            >
+              <p className="cli-line cli-line--system" style={{ margin: 0 }}>
+                Options
+              </p>
+              {isCompactLayout ? (
+                <div
+                  style={{
+                    alignItems: 'center',
+                    display: 'inline-flex',
+                    gap: '0.35rem',
+                  }}
+                >
+                  <button
+                    type="button"
+                    onClick={goToPreviousList}
+                    aria-label="Previous list"
+                    title="Previous list"
+                    style={{
+                      width: '3.1rem',
+                      height: '2rem',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: '8px',
+                      background: 'var(--bg-main)',
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '0.74rem',
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      touchAction: 'manipulation',
+                    }}
+                  >
+                    Prev
+                  </button>
+                  <button
+                    type="button"
+                    onClick={submitPrompt}
+                    aria-label="Run selected option"
+                    title="Run selected option"
+                    style={{
+                      width: '2rem',
+                      height: '2rem',
+                      border: '1px solid var(--border-subtle)',
+                      borderRadius: '8px',
+                      background: 'var(--bg-main)',
+                      color: 'var(--text-primary)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: '1rem',
+                      fontWeight: 700,
+                      lineHeight: 1,
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 0,
+                      touchAction: 'manipulation',
+                    }}
+                  >
+                    ↵
+                  </button>
+                </div>
+              ) : null}
+            </div>
             <ul
               style={{
                 margin: 0,
@@ -1140,9 +1287,6 @@ function CliTerminal(): React.ReactElement {
                 );
               })}
             </ul>
-            <p className="cli-line cli-line--system" style={{ margin: 0 }}>
-              Context: {context}
-            </p>
           </aside>
 
           <div
@@ -1170,63 +1314,12 @@ function CliTerminal(): React.ReactElement {
                 borderBottom: '1px solid var(--border-subtle)',
               }}
             >
-              {isCompactLayout ? (
-                <>
-                  Menu: panel below | Tap menu items or controls | Current:{' '}
-                  {currentSelection
-                    ? `${currentSelection.value}. ${currentSelection.label}`
-                    : 'None'}
-                </>
-              ) : (
-                <>
-                  Menu: left panel | Keys: ↑ ↓ ← → move | Space/0-9 stage input
-                  | Enter run | Current:{' '}
-                  {currentSelection
-                    ? `${currentSelection.value}. ${currentSelection.label}`
-                    : 'None'}
-                </>
-              )}
+              {isCompactLayout
+                ? 'Options below | Type 9 for help'
+                : 'Options left | Keys: ↑ ↓ ← → move | Space/0-9 stage input | Enter run'}
             </p>
 
             <div className="cli-session" ref={historyRef}>
-              {isCompactLayout ? (
-                <div style={touchControlsStyle} aria-label="Touch controls">
-                  <button
-                    type="button"
-                    style={touchButtonStyle}
-                    onClick={() => moveSelection(-1)}
-                  >
-                    Prev
-                  </button>
-                  <button
-                    type="button"
-                    style={touchButtonStyle}
-                    onClick={() => moveSelection(1)}
-                  >
-                    Next
-                  </button>
-                  <button
-                    type="button"
-                    style={touchButtonStyle}
-                    onClick={() => {
-                      if (currentSelection) {
-                        setInputValue(String(currentSelection.value));
-                      }
-                    }}
-                    disabled={!currentSelection}
-                  >
-                    Stage
-                  </button>
-                  <button
-                    type="button"
-                    style={runTouchButtonStyle}
-                    onClick={submitPrompt}
-                  >
-                    Run
-                  </button>
-                </div>
-              ) : null}
-
               <div className="cli-history" role="log" aria-live="polite">
                 {lines.map((line) => (
                   <p
@@ -1235,7 +1328,9 @@ function CliTerminal(): React.ReactElement {
                   >
                     {line.kind === 'input' ? (
                       <>
-                        <span className="cli-line-prefix">jp@cli: ~%</span>
+                        <span className="cli-line-prefix">
+                          justin@jp-cli: ~%
+                        </span>
                         <span>{line.text}</span>
                       </>
                     ) : (
@@ -1255,7 +1350,7 @@ function CliTerminal(): React.ReactElement {
                 <label htmlFor="cli-command-input" className="visually-hidden">
                   Enter a command
                 </label>
-                <span className="cli-prompt-prefix">jp@cli: ~%</span>
+                <span className="cli-prompt-prefix">justin@jp-cli: ~%</span>
                 <input
                   ref={inputRef}
                   id="cli-command-input"
@@ -1263,7 +1358,6 @@ function CliTerminal(): React.ReactElement {
                   className="cli-prompt-input"
                   value={inputValue}
                   onChange={(event) => setInputValue(event.target.value)}
-                  placeholder={promptPlaceholder}
                   autoComplete="off"
                   spellCheck={false}
                   aria-label="Terminal command input"

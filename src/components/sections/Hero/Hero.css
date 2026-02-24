@@ -603,7 +603,7 @@
 }
 
 .title-text {
-  font-size: clamp(1rem, 3vw, 1.25rem);
+  font-size: clamp(1.08rem, 3.25vw, 1.35rem);
   color: var(--text-secondary);
   font-weight: 600;
 }
@@ -967,7 +967,7 @@
   }
 
   .title-text {
-    font-size: 1.125rem;
+    font-size: 1.2rem;
     font-weight: 650;
     letter-spacing: 0.015em;
   }
@@ -1005,7 +1005,7 @@
   }
 
   .title-text {
-    font-size: 1.05rem;
+    font-size: 1.12rem;
     font-weight: 650;
   }
 
