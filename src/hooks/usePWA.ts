@@ -28,6 +28,29 @@ export interface UsePWAReturn {
   closePrompt: () => void;
 }
 
+const DISPLAY_MODE_QUERIES = [
+  '(display-mode: standalone)',
+  '(display-mode: fullscreen)',
+  '(display-mode: minimal-ui)',
+  '(display-mode: window-controls-overlay)',
+] as const;
+
+function detectStandalone(): boolean {
+  if (typeof window === 'undefined') {
+    return false;
+  }
+
+  const matchesInstalledDisplayMode = DISPLAY_MODE_QUERIES.some(
+    (query) => window.matchMedia(query).matches
+  );
+  const isIOSStandalone =
+    (window.navigator as Navigator & { standalone?: boolean }).standalone ===
+    true;
+  const isAndroidTWA = document.referrer.startsWith('android-app://');
+
+  return matchesInstalledDisplayMode || isIOSStandalone || isAndroidTWA;
+}
+
 /**
  * Hook for managing PWA updates and installation
  */
@@ -182,15 +205,46 @@ export function usePWA(): UsePWAReturn {
  * Hook for detecting if app is running as PWA
  */
 export function useIsStandalone(): boolean {
-  // Initialize state directly instead of in an effect
-  const [isStandalone] = useState(() => {
-    // Check if app is running in standalone mode (installed PWA)
-    return (
-      window.matchMedia('(display-mode: standalone)').matches ||
-      (window.navigator as Navigator & { standalone?: boolean }).standalone ||
-      document.referrer.includes('android-app://')
+  const [isStandalone, setIsStandalone] = useState(() => detectStandalone());
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const syncStandalone = (): void => {
+      setIsStandalone(detectStandalone());
+    };
+
+    const mediaQueryLists = DISPLAY_MODE_QUERIES.map((query) =>
+      window.matchMedia(query)
     );
-  });
+
+    mediaQueryLists.forEach((mql) => {
+      if (typeof mql.addEventListener === 'function') {
+        mql.addEventListener('change', syncStandalone);
+      } else {
+        mql.addListener(syncStandalone);
+      }
+    });
+
+    // Keep state in sync after install or browser navigation restore.
+    window.addEventListener('appinstalled', syncStandalone);
+    window.addEventListener('pageshow', syncStandalone);
+    syncStandalone();
+
+    return () => {
+      mediaQueryLists.forEach((mql) => {
+        if (typeof mql.removeEventListener === 'function') {
+          mql.removeEventListener('change', syncStandalone);
+        } else {
+          mql.removeListener(syncStandalone);
+        }
+      });
+      window.removeEventListener('appinstalled', syncStandalone);
+      window.removeEventListener('pageshow', syncStandalone);
+    };
+  }, []);
 
   return isStandalone;
 }

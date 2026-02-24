@@ -87,3 +87,9 @@
     opacity: 1;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  .pwa-toast {
+    animation: none;
+  }
+}
