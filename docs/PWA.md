@@ -26,8 +26,9 @@ Your portfolio is configured as a Progressive Web App with offline support, cach
 
 ### 1. Generate PWA Icons
 
-You need two icon files in your `public/` folder:
+You need these icon files in your `public/` folder:
 
+- `JP.svg` (primary SVG favicon/manifest icon)
 - `pwa-192x192.png` (192 × 192 pixels)
 - `pwa-512x512.png` (512 × 512 pixels)
 
@@ -61,7 +62,7 @@ You need two icon files in your `public/` folder:
 npm install -g pwa-asset-generator
 
 # Generate from a single source image (1024x1024 recommended)
-pwa-asset-generator path/to/logo.png public/ \
+pwa-asset-generator path/to/JP.svg public/ \
   --icon-only \
   --type png \
   --background "#242424" \
@@ -104,7 +105,8 @@ The PWA assets are automatically generated during build:
 
 - **`src/pwa-config.ts`** - PWA configuration (manifest, workbox, etc.)
 - **`vite.config.ts`** - Includes `VitePWA` plugin
-- **`public/pwa-*.png`** - PWA icons (192x192 and 512x512)
+- **`public/JP.svg`** - Primary SVG icon for favicon + manifest
+- **`public/pwa-*.png`** - PNG app icons (192x192 and 512x512)
 
 ### Configuration Files
 
@@ -112,6 +114,7 @@ The PWA is configured via `src/pwa-config.ts`. Key settings:
 
 ```typescript
 export const pwaConfig = {
+  includeAssets: ['JP.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
   manifest: {
     name: 'JP - Engineering', // Full app name
     short_name: 'Portfolio', // Short name for home screen
@@ -120,6 +123,11 @@ export const pwaConfig = {
     background_color: '#242424', // Splash screen background
     display: 'standalone', // Display mode
     icons: [
+      {
+        src: '/JP.svg',
+        sizes: 'any',
+        type: 'image/svg+xml',
+      },
       {
         src: '/pwa-192x192.png',
         sizes: '192x192',
@@ -133,6 +141,8 @@ export const pwaConfig = {
     ],
   },
   workbox: {
+    // Increase default 2 MiB limit when using larger SVG assets
+    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
     // Caching strategies
     runtimeCaching: [
       /* ... */
@@ -166,6 +176,7 @@ Customize caching strategies in `src/pwa-config.ts`:
 
 ```typescript
 workbox: {
+  maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
   runtimeCaching: [
     {
       urlPattern: /your-pattern/,
@@ -326,7 +337,7 @@ When you deploy a new version:
 **Solutions:**
 
 - Verify icon files exist in `public/` folder
-- Check file names match exactly: `pwa-192x192.png`, `pwa-512x512.png`
+- Check file names match exactly: `JP.svg`, `pwa-192x192.png`, `pwa-512x512.png`
 - Rebuild the project: `npm run build`
 - Clear manifest cache in DevTools
 
@@ -346,6 +357,16 @@ When you deploy a new version:
 - Verify caching strategies in `src/pwa-config.ts`
 - Test after visiting the site at least once while online
 - Check Network tab for cached requests
+
+### Build Fails Due to Large Icon in Precache
+
+**Issue:** Build fails with `missing-assets-from-sw-precache-manifest` for large SVG assets
+
+**Solutions:**
+
+- Set `workbox.maximumFileSizeToCacheInBytes` in `src/pwa-config.ts`
+- Example value used here: `4 * 1024 * 1024` (4 MiB)
+- Rebuild the project: `npm run build`
 
 ### Old Content After Update
 

@@ -19,8 +19,24 @@ import {
 
 const THEME_STORAGE_KEY = 'portfolio-theme';
 const MODE_STORAGE_KEY = 'portfolio-color-mode';
+const FAVICON_TEMPLATE_PATH = '/JP-no-cursor.svg';
+const FAVICON_LOGO_FILL = '#7ed957';
+const FAVICON_CURSOR_FILL = '#ffffff';
 const hasOwnTheme = (value: string): value is ThemeName =>
   Object.prototype.hasOwnProperty.call(themes, value);
+const deprecatedThemeAliases: Record<string, ThemeName> = {
+  dewTheDew: 'cli',
+};
+let faviconTemplatePromise: Promise<string | null> | null = null;
+
+function normalizeThemeName(value: string | null): ThemeName | null {
+  if (!value) {
+    return null;
+  }
+
+  const normalized = deprecatedThemeAliases[value] ?? value;
+  return hasOwnTheme(normalized) ? normalized : null;
+}
 
 interface ThemeContextValue {
   theme: Theme;
@@ -149,6 +165,65 @@ function pickOnColor(background: string, minRatio = 4.5): string {
   return white >= black ? '#ffffff' : '#000000';
 }
 
+function setThemeMetaColor(color: string): void {
+  const themeColorMeta = document.querySelector<HTMLMetaElement>(
+    'meta[name="theme-color"]'
+  );
+  const tileColorMeta = document.querySelector<HTMLMetaElement>(
+    'meta[name="msapplication-TileColor"]'
+  );
+
+  if (themeColorMeta) {
+    themeColorMeta.setAttribute('content', color);
+  }
+
+  if (tileColorMeta) {
+    tileColorMeta.setAttribute('content', color);
+  }
+}
+
+function setSvgFaviconHref(href: string): void {
+  const iconLinks = document.querySelectorAll<HTMLLinkElement>(
+    'link[rel="icon"][type="image/svg+xml"], link[rel="shortcut icon"][type="image/svg+xml"]'
+  );
+
+  iconLinks.forEach((link) => {
+    if (link.getAttribute('href') !== href) {
+      link.setAttribute('href', href);
+    }
+  });
+}
+
+function getFaviconTemplate(): Promise<string | null> {
+  if (!faviconTemplatePromise) {
+    faviconTemplatePromise = fetch(FAVICON_TEMPLATE_PATH)
+      .then((response) => (response.ok ? response.text() : null))
+      .catch(() => null);
+  }
+
+  return faviconTemplatePromise;
+}
+
+async function updateFavicon(
+  theme: Theme,
+  resolvedMode: 'dark' | 'light'
+): Promise<void> {
+  const template = await getFaviconTemplate();
+  if (!template) {
+    return;
+  }
+
+  const logoFill =
+    resolvedMode === 'light' ? theme.colors.primaryDark : theme.colors.primary;
+  const cursorFill = theme[resolvedMode].textPrimary;
+  const themedSvg = template
+    .replace(new RegExp(FAVICON_LOGO_FILL, 'gi'), logoFill)
+    .replace(new RegExp(FAVICON_CURSOR_FILL, 'gi'), cursorFill);
+
+  const dataUrl = `data:image/svg+xml,${encodeURIComponent(themedSvg)}`;
+  setSvgFaviconHref(dataUrl);
+}
+
 /**
  * Apply theme colors to CSS custom properties on :root
  */
@@ -243,6 +318,9 @@ function applyThemeToDocument(
   // Set data attribute for CSS fallbacks
   root.dataset.theme = theme.name;
   root.dataset.colorMode = resolvedMode;
+
+  setThemeMetaColor(modeColors.bgMain);
+  void updateFavicon(theme, resolvedMode);
 }
 
 /**
@@ -254,10 +332,7 @@ function getThemeFromQuery(): ThemeName | null {
   }
   const params = new URLSearchParams(window.location.search);
   const themeParam = params.get('theme');
-  if (!themeParam) {
-    return null;
-  }
-  return hasOwnTheme(themeParam) ? themeParam : null;
+  return normalizeThemeName(themeParam);
 }
 
 function getInitialTheme(): ThemeName {
@@ -272,8 +347,12 @@ function getInitialTheme(): ThemeName {
   }
 
   const stored = localStorage.getItem(THEME_STORAGE_KEY);
-  if (stored && hasOwnTheme(stored)) {
-    return stored;
+  const normalizedStoredTheme = normalizeThemeName(stored);
+  if (normalizedStoredTheme) {
+    if (stored !== normalizedStoredTheme) {
+      localStorage.setItem(THEME_STORAGE_KEY, normalizedStoredTheme);
+    }
+    return normalizedStoredTheme;
   }
 
   return defaultTheme;

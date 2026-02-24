@@ -1,6 +1,6 @@
 .footer {
   position: relative;
-  padding: 2rem;
+  padding: 2rem 20px;
   overflow: hidden;
 
   &::before {
@@ -15,8 +15,8 @@
 }
 
 .footer-container {
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   position: relative;
   z-index: 1;
   display: flex;
@@ -38,9 +38,7 @@
   align-items: center;
   gap: 0.25rem;
   text-decoration: none;
-  font-family: var(--font-serif);
-  font-weight: 700;
-  font-size: 1.5rem;
+  color: var(--color-primary-ink);
   flex-shrink: 0;
 
   &:focus-visible {
@@ -49,8 +47,16 @@
     border-radius: 4px;
   }
 
-  .logo-text {
-    color: var(--color-primary-ink);
+  .logo-image {
+    width: 48px;
+    height: 48px;
+    display: block;
+  }
+
+  .logo-image .jp-logo-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
   }
 }
 
@@ -63,6 +69,10 @@
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
+}
+
+.footer-logo .logo-image .jp-logo-cursor {
+  display: none;
 }
 
 .footer-tagline-icon {
@@ -107,7 +117,7 @@
 
 @media (max-width: 768px) {
   .footer {
-    padding: 1.5rem;
+    padding: 1.5rem 20px;
   }
 
   .footer-container {

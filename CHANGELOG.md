@@ -9,7 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- CLI theme command `exit`/`quit` to switch from CLI back to the default `engineer` theme
+- `docs/CLI_THEME.md` with CLI layout, controls, and command reference
+
 ### Changed
+
+- CLI theme presentation and interactions:
+- Fullscreen terminal-focused layout with navbar hidden
+- Keyboard-first staged input model (`Arrow`/`Space`/`0-9` stage, `Enter` executes)
+- Compact/mobile view ordering updated so terminal content appears before the menu
+- CLI prompt/title naming updated to `jp@cli: ~%` and `JP CLI`
+- CLI theme switcher moved to bottom-right with upward-opening options menu
 
 ### Deprecated
 

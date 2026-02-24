@@ -412,7 +412,7 @@ Create `vercel.json`:
 **Checks:**
 
 - ✓ HTTPS enabled (Vercel does this automatically)
-- ✓ Icons exist: `/pwa-192x192.png`, `/pwa-512x512.png`
+- ✓ Icons exist: `/JP.svg`, `/pwa-192x192.png`, `/pwa-512x512.png`
 - ✓ Manifest accessible: `/manifest.webmanifest`
 - ✓ Service Worker registers (check DevTools)
 

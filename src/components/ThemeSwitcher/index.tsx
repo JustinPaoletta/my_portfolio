@@ -21,12 +21,22 @@ const modeLabels: Record<ColorMode, string> = {
   system: 'System',
 };
 
-export default function ThemeSwitcher(): React.ReactElement {
+interface ThemeSwitcherProps {
+  placement?: 'floating' | 'nav';
+}
+
+export default function ThemeSwitcher({
+  placement = 'floating',
+}: ThemeSwitcherProps): React.ReactElement {
   const { themeName, setTheme, themes, colorMode, setColorMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const switcherRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (placement !== 'floating') {
+      return;
+    }
+
     const switcher = switcherRef.current;
     if (!switcher) {
       return;
@@ -78,7 +88,7 @@ export default function ThemeSwitcher(): React.ReactElement {
       window.removeEventListener('scroll', scheduleUpdate);
       window.removeEventListener('resize', scheduleUpdate);
     };
-  }, []);
+  }, [placement]);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev);
@@ -123,7 +133,10 @@ export default function ThemeSwitcher(): React.ReactElement {
   }, []);
 
   return (
-    <div className={`theme-switcher ${isOpen ? 'open' : ''}`} ref={switcherRef}>
+    <div
+      className={`theme-switcher theme-switcher--${placement} ${isOpen ? 'open' : ''}`}
+      ref={switcherRef}
+    >
       <button
         className="theme-switcher-toggle"
         onClick={toggleOpen}

@@ -10,6 +10,7 @@ A modern, performant portfolio website showcasing my projects and skills. Built 
 
 - **Progressive Web App (PWA)** - Installable, works offline, auto-updates
 - **Responsive Design** - Mobile-first, works seamlessly on all devices
+- **Interactive CLI Theme** - Fullscreen terminal experience with keyboard-first navigation and command-driven portfolio browsing
 - **Accessibility First** - Built with accessibility best practices and ESLint a11y linting
 - **SEO Optimized** - Dynamic meta tags, automated sitemap generation, robots.txt
 - **Privacy-Friendly Analytics** - Umami integration for visitor tracking
@@ -208,6 +209,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 - **[Workspace Info](docs/WORKSPACE.md)** - Project structure
 - **[Dependabot Setup](docs/DEPENDABOT.md)** - Automated dependency updates
 - **[Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)** - Deployment configuration and best practices
+- **[CLI Theme Guide](docs/CLI_THEME.md)** - CLI layout, controls, command reference, and exit behavior
 
 ### Integrations & Services
 

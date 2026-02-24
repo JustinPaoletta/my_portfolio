@@ -16,12 +16,15 @@ import GitHub from '@/components/sections/GitHub';
 import Contact from '@/components/sections/Contact';
 import PetDogs from '@/components/sections/PetDogs';
 import Footer from '@/components/Footer';
-import { ThemeProvider } from '@/hooks/useTheme';
+import { ThemeProvider, useTheme } from '@/hooks/useTheme';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
 
-export default function App(): React.ReactElement {
+function AppLayout(): React.ReactElement {
+  const { themeName } = useTheme();
+  const isCliTheme = themeName === 'cli';
+
   return (
-    <ThemeProvider>
+    <>
       <SEO />
       <PWAUpdatePrompt />
 
@@ -31,25 +34,57 @@ export default function App(): React.ReactElement {
       </a>
 
       {/* Fixed Navigation */}
-      <Navigation />
+      {!isCliTheme && <Navigation />}
 
-      {/* Theme Switcher - Fixed position for easy testing */}
-      <ThemeSwitcher />
+      {/* Theme controls */}
+      {isCliTheme ? (
+        <div
+          className="cli-theme-switcher-anchor"
+          style={{
+            position: 'fixed',
+            bottom: 'calc(env(safe-area-inset-bottom) + 12px)',
+            right: 'calc(env(safe-area-inset-right) + 14px)',
+            zIndex: 10000,
+          }}
+        >
+          <ThemeSwitcher placement="nav" />
+        </div>
+      ) : (
+        <ThemeSwitcher placement="floating" />
+      )}
 
       {/* Main Content */}
-      <main id="main" role="main">
+      <main
+        id="main"
+        role="main"
+        className={
+          isCliTheme ? 'main-content main-content--cli' : 'main-content'
+        }
+      >
         <Hero />
-        <About />
-        <Projects />
-        <Skills />
-        <Experience />
-        <GitHub />
-        <Contact />
-        <PetDogs />
+        {!isCliTheme && (
+          <>
+            <About />
+            <Projects />
+            <Skills />
+            <Experience />
+            <GitHub />
+            <Contact />
+            <PetDogs />
+          </>
+        )}
       </main>
 
       {/* Footer */}
-      <Footer />
+      {!isCliTheme && <Footer />}
+    </>
+  );
+}
+
+export default function App(): React.ReactElement {
+  return (
+    <ThemeProvider>
+      <AppLayout />
     </ThemeProvider>
   );
 }
