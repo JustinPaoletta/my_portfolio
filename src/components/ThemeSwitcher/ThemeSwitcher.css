@@ -18,7 +18,7 @@
 }
 
 .theme-switcher--floating {
-  display: none;
+  display: flex;
 }
 
 .theme-switcher--nav .theme-switcher-toggle {
@@ -245,7 +245,6 @@
 
 @media (max-width: 980px) {
   .theme-switcher--floating {
-    display: block;
     --theme-switcher-base-bottom: 16px;
     right: 16px;
   }

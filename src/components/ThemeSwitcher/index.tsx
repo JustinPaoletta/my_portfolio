@@ -48,6 +48,7 @@ export default function ThemeSwitcher({
       document.querySelector<HTMLElement>('footer');
 
     if (!footer) {
+      switcher.style.setProperty('--theme-switcher-offset', '0px');
       return;
     }
 
@@ -88,7 +89,7 @@ export default function ThemeSwitcher({
       window.removeEventListener('scroll', scheduleUpdate);
       window.removeEventListener('resize', scheduleUpdate);
     };
-  }, [placement]);
+  }, [placement, themeName]);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev);

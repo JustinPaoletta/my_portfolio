@@ -153,14 +153,6 @@
   }
 }
 
-.nav-theme-toggle {
-  display: flex;
-  align-items: center;
-  justify-self: end;
-  grid-column: 3;
-  z-index: 1002;
-}
-
 .nav-links {
   display: flex;
   align-items: center;
@@ -397,8 +389,7 @@
   }
 
   .nav-links,
-  .nav-social,
-  .nav-theme-toggle {
+  .nav-social {
     display: none;
   }
 

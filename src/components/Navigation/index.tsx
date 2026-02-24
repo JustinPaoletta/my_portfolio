@@ -7,7 +7,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useScroll, useMotionValueEvent } from 'framer-motion';
 import JPLogo from '@/components/Brand/JPLogo';
-import ThemeSwitcher from '@/components/ThemeSwitcher';
 import { useTheme } from '@/hooks/useTheme';
 import './Navigation.css';
 
@@ -161,10 +160,6 @@ function Navigation(): React.ReactElement {
             ))}
           </ul>
         )}
-
-        <div className="nav-theme-toggle">
-          <ThemeSwitcher placement="nav" />
-        </div>
 
         {/* Mobile Menu Button */}
         {!isCliTheme && (
