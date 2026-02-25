@@ -22,7 +22,12 @@
 
 import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { defaultSEO, getPageTitle, getFullUrl } from '@/config/seo';
+import {
+  defaultSEO,
+  getPageTitle,
+  getBrowserTabTitle,
+  getFullUrl,
+} from '@/config/seo';
 import type { SEOConfig } from '@/config/seo';
 
 const TITLE_CURSOR_BLINK_INTERVAL_MS = 600;
@@ -48,7 +53,8 @@ export const SEO: React.FC<SEOProps> = ({
   noindex = false,
   nofollow = false,
 }) => {
-  const pageTitle = getPageTitle(title);
+  const seoTitle = getPageTitle(title);
+  const browserTabTitle = getBrowserTabTitle(title);
   const fullImageUrl = image?.startsWith('http') ? image : getFullUrl(image);
   const canonicalUrl = canonical || siteUrl;
 
@@ -62,7 +68,9 @@ export const SEO: React.FC<SEOProps> = ({
     let intervalId: number | null = null;
 
     const setTitle = (withCursor: boolean): void => {
-      document.title = withCursor ? `${pageTitle} ▌` : `${pageTitle}`;
+      document.title = withCursor
+        ? `${browserTabTitle} ▌`
+        : `${browserTabTitle}`;
     };
 
     const updateTitle = (): void => {
@@ -112,15 +120,15 @@ export const SEO: React.FC<SEOProps> = ({
     return () => {
       clearBlinkTimers();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
-      document.title = `${pageTitle} ▌`;
+      document.title = `${browserTabTitle} ▌`;
     };
-  }, [pageTitle]);
+  }, [browserTabTitle]);
 
   return (
     <Helmet>
       {/* primary meta tags */}
-      <title>{pageTitle}</title>
-      <meta name="title" content={pageTitle} />
+      <title>{browserTabTitle}</title>
+      <meta name="title" content={seoTitle} />
       <meta name="description" content={description} />
       {keywords && keywords.length > 0 && (
         <meta name="keywords" content={keywords.join(', ')} />
@@ -134,7 +142,7 @@ export const SEO: React.FC<SEOProps> = ({
       {/* open graph / facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={canonicalUrl} />
-      <meta property="og:title" content={pageTitle} />
+      <meta property="og:title" content={seoTitle} />
       <meta property="og:description" content={description} />
       {image && <meta property="og:image" content={fullImageUrl} />}
       {locale && <meta property="og:locale" content={locale} />}
@@ -143,7 +151,7 @@ export const SEO: React.FC<SEOProps> = ({
       {/* twitter/x */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={canonicalUrl} />
-      <meta name="twitter:title" content={pageTitle} />
+      <meta name="twitter:title" content={seoTitle} />
       <meta name="twitter:description" content={description} />
       {image && <meta name="twitter:image" content={fullImageUrl} />}
       {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}

@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { render, screen, act } from '@/test/test-utils';
 import App from './App';
 
@@ -48,5 +49,22 @@ describe('App', () => {
     ).toBeInTheDocument(); // main nav
     expect(screen.getByRole('main')).toBeInTheDocument(); // main
     expect(screen.getByRole('contentinfo')).toBeInTheDocument(); // footer
+  });
+
+  it('has no footer in CLI view', async () => {
+    const user = userEvent.setup();
+    await act(async () => {
+      render(<App />);
+    });
+
+    const themeToggle = screen.getByRole('button', {
+      name: /toggle theme switcher/i,
+    });
+    await user.click(themeToggle);
+
+    const cliOption = screen.getByRole('option', { name: /CLI/i });
+    await user.click(cliOption);
+
+    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
   });
 });

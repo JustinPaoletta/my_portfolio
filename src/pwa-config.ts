@@ -9,7 +9,9 @@ import type { VitePWAOptions } from 'vite-plugin-pwa';
 export const pwaConfig: Partial<VitePWAOptions> = {
   registerType: 'autoUpdate',
   includeAssets: [
-    'JP.svg',
+    'JP-no-cursor.svg',
+    'favicon-48x48.png',
+    'apple-touch-icon.png',
     'pwa-192x192.png',
     'pwa-512x512.png',
     'robots.txt',
@@ -30,7 +32,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     start_url: '/',
     icons: [
       {
-        src: '/JP.svg',
+        src: '/JP-no-cursor.svg',
         sizes: 'any',
         type: 'image/svg+xml',
         purpose: 'any',
