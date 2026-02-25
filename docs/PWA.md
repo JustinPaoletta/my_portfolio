@@ -28,11 +28,34 @@ Your portfolio is configured as a Progressive Web App with offline support, cach
 
 You need these icon files in your `public/` folder:
 
-- `JP.svg` (primary SVG favicon/manifest icon)
-- `pwa-192x192.png` (192 × 192 pixels)
-- `pwa-512x512.png` (512 × 512 pixels)
+- `JP.svg` (primary SVG favicon/manifest icon, with cursor)
+- `favicon-48x48.png` (48 × 48 pixels, Google search + browser)
+- `apple-touch-icon.png` (180 × 180 pixels, iOS home screen)
+- `pwa-192x192.png` (192 × 192 pixels, Android/Chrome PWA, Windows)
+- `pwa-512x512.png` (512 × 512 pixels, PWA splash, app stores)
 
-#### Fastest Method: Online Generator
+#### Platform Coverage
+
+| Platform             | Icon(s)               | Purpose                              |
+| -------------------- | --------------------- | ------------------------------------ |
+| **Browser tab**      | SVG, 48 PNG           | Favicon                              |
+| **Google Search**    | 48×48 PNG             | Search result favicon                |
+| **Android / Chrome** | 192, 512 PNG          | PWA install, home screen             |
+| **iOS / Safari**     | 180×180, 512 PNG      | Add to Home Screen                   |
+| **Windows**          | 192 PNG               | Start menu / taskbar tile            |
+| **Social (OG)**      | og-image.png 1200×630 | Facebook, Twitter, LinkedIn previews |
+
+#### Quickest Method: Script (Recommended)
+
+If you have `JP.svg` in `public/`, run:
+
+```bash
+npm run generate:icons
+```
+
+This generates all icon sizes from the SVG using sharp. Run whenever you update the logo.
+
+#### Alternative: Online Generator
 
 **Option 1: Favicon.io (Easiest)**
 
