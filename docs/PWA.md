@@ -28,22 +28,22 @@ Your portfolio is configured as a Progressive Web App with offline support, cach
 
 You need these icon files in your `public/` folder:
 
-- `JP.svg` (primary SVG favicon/manifest icon, with cursor)
-- `favicon-48x48.png` (48 × 48 pixels, Google search + browser)
-- `apple-touch-icon.png` (180 × 180 pixels, iOS home screen)
-- `pwa-192x192.png` (192 × 192 pixels, Android/Chrome PWA, Windows)
-- `pwa-512x512.png` (512 × 512 pixels, PWA splash, app stores)
+- `branding/JP.svg` (primary SVG favicon/manifest icon, with cursor)
+- `favicons/favicon-48x48.png` (48 × 48 pixels, Google search + browser)
+- `favicons/apple-touch-icon.png` (180 × 180 pixels, iOS home screen)
+- `favicons/pwa-192x192.png` (192 × 192 pixels, Android/Chrome PWA, Windows)
+- `favicons/pwa-512x512.png` (512 × 512 pixels, PWA splash, app stores)
 
 #### Platform Coverage
 
-| Platform             | Icon(s)                        | Purpose                              |
-| -------------------- | ------------------------------ | ------------------------------------ |
-| **Browser tab**      | SVG, 48 PNG                    | Favicon                              |
-| **Google Search**    | 48×48 PNG                      | Search result favicon                |
-| **Android / Chrome** | 192, 512 PNG                   | PWA install, home screen             |
-| **iOS / Safari**     | 180×180, 512 PNG               | Add to Home Screen                   |
-| **Windows**          | 192 PNG                        | Start menu / taskbar tile            |
-| **Social (OG)**      | og-image-branding.png 1200×630 | Facebook, Twitter, LinkedIn previews |
+| Platform             | Icon(s)                  | Purpose                              |
+| -------------------- | ------------------------ | ------------------------------------ |
+| **Browser tab**      | SVG, 48 PNG              | Favicon                              |
+| **Google Search**    | 48×48 PNG                | Search result favicon                |
+| **Android / Chrome** | 192, 512 PNG             | PWA install, home screen             |
+| **iOS / Safari**     | 180×180, 512 PNG         | Add to Home Screen                   |
+| **Windows**          | 192 PNG                  | Start menu / taskbar tile            |
+| **Social (OG)**      | og/og-image.png 1200×630 | Facebook, Twitter, LinkedIn previews |
 
 #### Quickest Method: Script (Recommended)
 
@@ -128,8 +128,8 @@ The PWA assets are automatically generated during build:
 
 - **`src/pwa-config.ts`** - PWA configuration (manifest, workbox, etc.)
 - **`vite.config.ts`** - Includes `VitePWA` plugin
-- **`public/JP.svg`** - Primary SVG icon for favicon + manifest
-- **`public/pwa-*.png`** - PNG app icons (192x192 and 512x512)
+- **`public/branding/JP.svg`** - Primary SVG icon for favicon + manifest
+- **`public/favicons/pwa-*.png`** - PNG app icons (192x192 and 512x512)
 
 ### Configuration Files
 
@@ -137,7 +137,11 @@ The PWA is configured via `src/pwa-config.ts`. Key settings:
 
 ```typescript
 export const pwaConfig = {
-  includeAssets: ['JP.svg', 'pwa-192x192.png', 'pwa-512x512.png'],
+  includeAssets: [
+    'branding/JP-no-cursor.svg',
+    'favicons/pwa-192x192.png',
+    'favicons/pwa-512x512.png',
+  ],
   manifest: {
     name: 'JP - Engineering', // Full app name
     short_name: 'Portfolio', // Short name for home screen
@@ -147,17 +151,17 @@ export const pwaConfig = {
     display: 'standalone', // Display mode
     icons: [
       {
-        src: '/JP.svg',
+        src: '/branding/JP-no-cursor.svg',
         sizes: 'any',
         type: 'image/svg+xml',
       },
       {
-        src: '/pwa-192x192.png',
+        src: '/favicons/pwa-192x192.png',
         sizes: '192x192',
         type: 'image/png',
       },
       {
-        src: '/pwa-512x512.png',
+        src: '/favicons/pwa-512x512.png',
         sizes: '512x512',
         type: 'image/png',
       },
@@ -359,8 +363,8 @@ When you deploy a new version:
 
 **Solutions:**
 
-- Verify icon files exist in `public/` folder
-- Check file names match exactly: `JP.svg`, `pwa-192x192.png`, `pwa-512x512.png`
+- Verify icon files exist in `public/branding/` and `public/favicons/` folders
+- Check file names match exactly: `branding/JP.svg`, `favicons/pwa-192x192.png`, `favicons/pwa-512x512.png`
 - Rebuild the project: `npm run build`
 - Clear manifest cache in DevTools
 

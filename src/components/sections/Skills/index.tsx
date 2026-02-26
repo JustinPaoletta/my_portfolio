@@ -217,13 +217,13 @@ const skillCategories: SkillCategory[] = [
       },
       {
         name: 'Cursor',
-        icon: '/icons/cursor.png',
+        icon: '/icons/cursor.webp',
         color: '#4A6A8C',
         url: 'https://cursor.com/',
       },
       {
         name: 'Codex',
-        icon: '/icons/codex.png',
+        icon: '/icons/codex.webp',
         color: '#4A8C6A',
         url: 'https://openai.com/codex',
       },

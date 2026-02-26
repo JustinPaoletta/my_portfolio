@@ -112,7 +112,7 @@
   position: absolute;
   inset: 0;
   z-index: 0;
-  background-image: url('/hero/noise.svg');
+  background-image: url('/images/hero/dew/noise.svg');
   background-size: 110px 110px;
   opacity: 0.2;
   mix-blend-mode: soft-light;
@@ -125,21 +125,21 @@
 }
 
 :root[data-theme='cli'] .dew-bubbles--1 {
-  background-image: url('/hero/dew-bubbles-1.svg');
+  background-image: url('/images/hero/dew/dew-bubbles-1.svg');
   background-size: 160px 180px;
   opacity: 0.65;
   animation: bubble-stream-fast 2.25s linear infinite;
 }
 
 :root[data-theme='cli'] .dew-bubbles--2 {
-  background-image: url('/hero/dew-bubbles-2.svg');
+  background-image: url('/images/hero/dew/dew-bubbles-2.svg');
   background-size: 180px 210px;
   opacity: 0.45;
   animation: bubble-stream-medium 3.25s linear infinite;
 }
 
 :root[data-theme='cli'] .dew-bubbles--3 {
-  background-image: url('/hero/dew-bubbles-3.svg');
+  background-image: url('/images/hero/dew/dew-bubbles-3.svg');
   background-size: 200px 240px;
   opacity: 0.32;
   animation: bubble-stream-slow 4.5s linear infinite;

@@ -14,7 +14,7 @@
 }
 
 :root[data-theme='cosmic'] .star-layer-back {
-  background-image: url('/hero/cosmic-star-back.svg');
+  background-image: url('/images/hero/cosmic/cosmic-star-back.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -23,7 +23,7 @@
 }
 
 :root[data-theme='cosmic'] .star-layer-front {
-  background-image: url('/hero/cosmic-star-front.svg');
+  background-image: url('/images/hero/cosmic/cosmic-star-front.svg');
   background-size: 100% 100%;
   background-repeat: no-repeat;
   background-position: center;
@@ -623,7 +623,8 @@
   transform: translateX(-50%) rotate(20deg);
   z-index: 0;
   pointer-events: none;
-  background: url('/hero/comet-tail.png') no-repeat bottom center / contain;
+  background: url('/images/hero/cosmic/comet-tail.webp') no-repeat bottom
+    center / contain;
   filter: blur(2px) hue-rotate(240deg) saturate(1.6);
   opacity: 0.85;
   animation: asteroid-tail-pulse 3.5s ease-in-out infinite;

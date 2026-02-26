@@ -336,7 +336,7 @@ function Hero(): React.ReactElement {
             playsInline
             preload="auto"
           >
-            <source src="/cosmos.mp4" type="video/mp4" />
+            <source src="/video/cosmos.mp4" type="video/mp4" />
           </video>
         ) : isEngineerTheme ? (
           <>
@@ -557,7 +557,7 @@ function Hero(): React.ReactElement {
                   <span className="hero-asteroid" />
                   <img
                     className="hero-astronaut"
-                    src="/astro.webp"
+                    src="/images/hero/astro.webp"
                     alt=""
                     aria-hidden="true"
                     loading="eager"

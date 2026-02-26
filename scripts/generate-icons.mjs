@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
  * Generates PWA and favicon assets from the no-cursor SVG logo.
- * Run when JP-no-cursor.svg is updated.
+ * Source: public/branding/JP-no-cursor.svg
+ * Output: public/favicons/
  *
  * Generates:
- * - favicon-48x48.png (Google search, browser)
- * - apple-touch-icon.png (180x180, iOS home screen)
- * - pwa-192x192.png (Android/Chrome PWA, Windows tile)
- * - pwa-512x512.png (PWA splash, app stores)
+ * - favicons/favicon-48x48.png (Google search, browser)
+ * - favicons/apple-touch-icon.png (180x180, iOS home screen)
+ * - favicons/pwa-192x192.png (Android/Chrome PWA, Windows tile)
+ * - favicons/pwa-512x512.png (PWA splash, app stores)
  */
 
 import sharp from 'sharp';
@@ -18,7 +19,8 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const projectRoot = join(__dirname, '..');
 const publicDir = join(projectRoot, 'public');
-const sourceSvg = join(publicDir, 'JP-no-cursor.svg');
+const sourceSvg = join(publicDir, 'branding', 'JP-no-cursor.svg');
+const faviconsDir = join(publicDir, 'favicons');
 
 const sizes = [
   { name: 'favicon-48x48.png', size: 48 },
@@ -50,7 +52,7 @@ const LOGO_X_OFFSET_RATIO = -0.05;
 const CORNER_RADIUS = 0.22;
 
 for (const { name, size } of sizes) {
-  const outPath = join(publicDir, name);
+  const outPath = join(faviconsDir, name);
   const innerSize = Math.round(size * LOGO_SCALE);
 
   const resizedLogo = await sharp(svgBuffer)
@@ -73,7 +75,6 @@ for (const { name, size } of sizes) {
     .png()
     .toBuffer();
 
-  // Rounded-rect mask: opaque inside, transparent at corners.
   const radius = Math.round(size * CORNER_RADIUS);
   const maskSvg = `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="${size}" height="${size}" rx="${radius}" ry="${radius}" fill="white"/></svg>`;
 
@@ -81,47 +82,5 @@ for (const { name, size } of sizes) {
     .composite([{ input: Buffer.from(maskSvg), blend: 'dest-in' }])
     .png()
     .toFile(outPath);
-  console.log(`Generated ${name}`);
-
-  // Circle preview (e.g. for Google search)—helps decide if LOGO_SCALE needs adjustment.
-  const circleMaskSvg = `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg"><circle cx="${size / 2}" cy="${size / 2}" r="${size / 2}" fill="white"/></svg>`;
-  const circlePath = outPath.replace('.png', '-circle.png');
-  await sharp(iconWithAlpha)
-    .composite([{ input: Buffer.from(circleMaskSvg), blend: 'dest-in' }])
-    .png()
-    .toFile(circlePath);
-  console.log(`Generated ${circlePath.split('/').pop()}`);
+  console.log(`Generated favicons/${name}`);
 }
-
-// Transparent PNG (no-cursor logo, no background)—uses original SVG.
-const transparentSvg = readFileSync(sourceSvg, 'utf8').replace(
-  /viewBox="0 0 330 ([^"]+)"/,
-  'viewBox="-4 0 354 $1"'
-);
-const transparentSize = 512;
-const transparentInnerSize = Math.round(transparentSize * LOGO_SCALE);
-const transparentLogo = await sharp(Buffer.from(transparentSvg))
-  .resize(transparentInnerSize, transparentInnerSize, {
-    fit: 'contain',
-    background: { r: 0, g: 0, b: 0, alpha: 0 },
-  })
-  .png()
-  .toBuffer();
-
-const transparentLeft = Math.round(
-  (transparentSize - transparentInnerSize) / 2 + transparentSize * LOGO_X_OFFSET_RATIO
-);
-const transparentTop = Math.round((transparentSize - transparentInnerSize) / 2);
-
-await sharp({
-  create: {
-    width: transparentSize,
-    height: transparentSize,
-    channels: 4,
-    background: { r: 0, g: 0, b: 0, alpha: 0 },
-  },
-})
-  .composite([{ input: transparentLogo, left: transparentLeft, top: transparentTop }])
-  .png()
-  .toFile(join(publicDir, 'JP-transparent.png'));
-console.log('Generated JP-transparent.png');

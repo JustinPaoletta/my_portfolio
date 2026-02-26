@@ -13,9 +13,9 @@
 }
 
 :root[data-theme='engineer'] .hero-section {
-  --trace-mask-strong: url('/hero/trace-mask-strong.svg');
-  --trace-mask: url('/hero/trace-mask.svg');
-  --node-mask: url('/hero/node-mask.svg');
+  --trace-mask-strong: url('/images/hero/masks/trace-mask-strong.svg');
+  --trace-mask: url('/images/hero/masks/trace-mask.svg');
+  --node-mask: url('/images/hero/masks/node-mask.svg');
   --pcb-bg: var(--bg-main);
   --pcb-bg-deep: var(--bg-main);
   --trace-color: rgba(var(--color-accent-rgb), 0.55);
