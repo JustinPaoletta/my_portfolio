@@ -58,10 +58,10 @@ const projects: Project[] = [
   },
   {
     id: 'project-2',
-    title: '@jp-angular-ui',
+    title: '@jp-design-system',
     description:
       'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
-    image: '/jp-angular-ui.webp',
+    image: '/jp-design-system.jpg',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     githubUrl: '#',
     featured: true,
@@ -69,20 +69,20 @@ const projects: Project[] = [
   },
   {
     id: 'project-3',
-    title: 'StarForge',
+    title: 'Godot Playground',
     description:
-      'A cosmic strategy game built in Godot where you forge life and weapons from stellar matter. Use heat, pressure, and gravitational collapse to out-engineer hostile alien forces and expand your control across an ever-growing cosmos.',
-    image: '/starforge.webp',
-    techStack: ['Godot', 'GDScript', 'Game Design', 'Procedural Generation'],
+      'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene designed to be reused or referenced in future projects.',
+    image: '/godot_playground.png',
+    techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     githubUrl: '#',
     featured: true,
-    status: 'planning',
+    status: 'development',
   },
   {
     id: 'project-5',
     title: 'SideQuest: Pittsburgh',
     description:
-      'SideQuest: Pittsburgh is a discovery app for finding the weird, fun, and off-the-beaten-path things to do around the city. Instead of ranking by popularity like Yelp, it surfaces hidden spots, low-key entertainment, micro-events, and neighborhood oddities. The app works offline-first and focuses on local knowledge over influencer recommendations.',
+      "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
     image:
       'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
@@ -91,18 +91,12 @@ const projects: Project[] = [
   },
   {
     id: 'project-6',
-    title: 'Easy Eats',
+    title: 'Plex Request App',
     description:
-      'Easy Eats is a lightweight food-tracking app I built for personal use after struggling with the friction and overhead of existing calorie and macro trackers. By focusing on reusable recipes and repeatable portions instead of daily ingredient entry, the app reduces cognitive load and makes consistent, healthy eating easier to maintain over time.',
+      'A self-hosted media request system built for managing my at home Plex Server. Users authenticate via passkeys (WebAuthn) and can search for content. API keys are managed entirely server-side and never exposed to the client. Features include real-time service health monitoring, per-user quality profile defaults, and an activity audit log.',
     image:
       'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
-    techStack: [
-      'React',
-      'TypeScript',
-      'SQLite',
-      'Nutrition API',
-      'Mobile-First',
-    ],
+    techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
     githubUrl: '#',
     featured: false,
   },

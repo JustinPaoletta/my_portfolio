@@ -75,9 +75,9 @@ const MAIN_MENU = [
 ] as const;
 
 const ABOUT_SUMMARY = [
-  'Started in AppleCare, then pivoted to software to solve root causes directly.',
-  'Switched careers in 2020 through Hack Reactor and moved into full-stack development.',
-  'Now frontend-focused as a UI Engineer, with end-to-end delivery experience.',
+  'The drive to understand how things work led me to code; first website led to a career change.',
+  'Switched careers in 2020 through Hack Reactor (HRR45) into full-stack development.',
+  'Now frontend-focused as a UI Engineer at accesso, with end-to-end delivery experience.',
 ];
 
 const ABOUT_HIGHLIGHTS = [
@@ -104,7 +104,7 @@ const PROJECTS: CliProject[] = [
     featured: true,
   },
   {
-    title: '@jp-angular-ui',
+    title: '@jp-design-system',
     description:
       'Reusable Angular component library focused on accessibility, consistency, and velocity.',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
@@ -162,7 +162,7 @@ const SKILL_CATEGORIES: CliSkillCategory[] = [
     skills: ['Node.js', 'Express', 'PostgreSQL', 'Java', 'Postman'],
   },
   {
-    name: 'DevOps & Tools',
+    name: 'Tooling',
     skills: [
       'Git',
       'GitHub',
@@ -213,7 +213,7 @@ const EXPERIENCES: CliExperience[] = [
     ],
   },
   {
-    title: 'Software Engineer',
+    title: 'Angular Developer',
     organization: '4C Strategies',
     period: 'Aug 2020 - Apr 2021',
     location: 'Orlando, FL',

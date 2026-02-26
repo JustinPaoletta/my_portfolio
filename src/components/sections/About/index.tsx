@@ -3,7 +3,7 @@
  * Background and story with Framer Motion animations
  */
 
-import { Brain, BookOpen, Cloud } from 'lucide-react';
+import { Brain, BookOpen } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -190,36 +190,25 @@ function About(): React.ReactElement {
           >
             <div className="about-story" ref={storyRef}>
               <p className="about-intro">
-                I began my career in technology as a Senior Technical Advisor
-                for AppleCare. It was a solid role, and a great company, but I
-                wanted something more challenging. Instead of collecting data
-                and passing it off to someone else to solve the root problem, I
-                wanted to get to dive into the software myself and figure out
-                solutions.
-              </p>
-
-              <p>
-                The drive to challenge myself and really understand how things
-                work led me to learn how to code. The first site I built was
-                simple, mostly html, css, and a little bit of javascript. I
-                enjoyed the experience and the creative freedom of building it
-                so much so, that I decided to make a career change. In 2020, the
-                year of the COVID-19 pandemic, I quit my job and joined the
-                HRR45 cohort at Hack Reactor. It was from there, I learned the
-                fundamentals of building full stack web applications and gained
-                the experience and foundation needed for a successful career in
-                software development.
+                It was the drive to challenge myself and really understand how
+                things work that led me to learn how to code. When I eventually
+                built my first website I realized I enjoyed the process so
+                immensely, that I chose to take a leap and make a career change.
+                In 2020, the year of the COVID-19 pandemic, I quit my job and
+                joined the HRR45 cohort at Hack Reactor. It was from there, I
+                learned the fundamentals of building full stack web applications
+                and gained the experience and foundation needed for a successful
+                career in software development.
               </p>
 
               <p>
                 Today, I&apos;m primarily frontend-focused, working as a UI
-                Engineer for accesso. I know my way around backend systems well
-                enough too though, that I can build/support features end to end.
-                I focus on the quality of what I produce and advocate for
-                maintainable solutions that scale without breaking. I care
-                deeply about thoughtful design, reducing unnecessary complexity,
-                and building software that people will find useful and enjoy
-                using.
+                Engineer for accesso. I know my way around backend systems, and
+                I can build/support features end to end. I focus on the quality
+                of what I produce and advocate for maintainable solutions that
+                scale without breaking. I care deeply about thoughtful design,
+                reducing unnecessary complexity, and building software that
+                people will find useful and enjoy using.
               </p>
             </div>
 
@@ -308,31 +297,29 @@ function About(): React.ReactElement {
             >
               <h3 className="about-ai-title">
                 Thoughts on AI
-                <Cloud className="about-ai-icon" aria-hidden="true" />
+                <img
+                  src="/thoughts.png"
+                  width={18}
+                  height={18}
+                  alt=""
+                  className="about-ai-icon"
+                  aria-hidden="true"
+                />
               </h3>
               <p className="about-ai-lede">
                 Artificial intelligence is arguably the most significant
-                invention of my lifetime. At its core, it&apos;s simple, it
+                invention of our lifetimes. At its core, it&apos;s simple, it
                 predicts the next most likely token. The complexity that emerges
-                from such a simple concept though is where its utility lies. It
-                reminds me of{' '}
-                <a
-                  href="https://conwaylife.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  John Conway&apos;s Game of Life
-                </a>
-                .
+                from such a simple concept though is what makes it
+                extraordinarily valuable.
               </p>
               <p>
-                Its practical value is obvious. Used properly, we can learn
-                faster, plan more efficiently and code higher quality software
-                with incredible speed. We need to approach it with caution
-                though, it&apos;s not an oracle, and it doesn&apos;t consciously
-                &ldquo;think&rdquo; like we do. It builds statistical models and
-                finds patterns, but it has no awareness, or understanding, its
-                mathematics.
+                Used properly, we can learn faster, plan more efficiently and
+                code higher quality software with incredible speed. We need to
+                approach it with caution though, it&apos;s not an oracle, and it
+                doesn&apos;t consciously &ldquo;think&rdquo; like we do. It
+                builds statistical models and finds patterns, but it has no
+                awareness, or understanding, its mathematics.
               </p>
               <p>
                 I work daily with{' '}
@@ -396,8 +383,9 @@ function About(): React.ReactElement {
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        First set up proper guardrails, then build fast with
-                        less risk.
+                        It starts with precision. Lay the right groundwork,
+                        design with AI in mind, and accelerate with confidence
+                        and reduced risk.
                       </p>
                     </div>
                   </div>
@@ -423,8 +411,9 @@ function About(): React.ReactElement {
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Working together to achieve great results. The best
-                        solutions come from diverse perspectives.
+                        Great outcomes are built together. The strongest
+                        solutions emerge from diverse perspectives working in
+                        sync.
                       </p>
                     </div>
                   </div>
@@ -441,8 +430,27 @@ function About(): React.ReactElement {
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Staying curious, always exploring new technologies,
-                        patterns, and approaches.
+                        Stay curious. Continuously explore new technologies,
+                        patterns, and ideas to keep evolving and improving.
+                      </p>
+                    </div>
+                  </div>
+                </motion.article>
+
+                <motion.article
+                  className="value-card"
+                  variants={fadeUpVariants}
+                >
+                  <div className="value-icon" aria-hidden="true">
+                    <BookOpen strokeWidth={2} size={24} />
+                  </div>
+                  <h4>Documentation</h4>
+                  <div className="value-card-content">
+                    <div className="value-card-content-inner">
+                      <p>
+                        Create clear, thoughtful documentation that empowers
+                        both AI agents and developers to quickly understand the
+                        project and contribute effectively from day one.
                       </p>
                     </div>
                   </div>
@@ -464,26 +472,8 @@ function About(): React.ReactElement {
                   <div className="value-card-content">
                     <div className="value-card-content-inner">
                       <p>
-                        Building inclusive experiences that work for everyone.
-                      </p>
-                    </div>
-                  </div>
-                </motion.article>
-
-                <motion.article
-                  className="value-card"
-                  variants={fadeUpVariants}
-                >
-                  <div className="value-icon" aria-hidden="true">
-                    <BookOpen strokeWidth={2} size={24} />
-                  </div>
-                  <h4>Documentation</h4>
-                  <div className="value-card-content">
-                    <div className="value-card-content-inner">
-                      <p>
-                        Always create docs that give AI agents and developers
-                        the context they need to understand projects fast and
-                        start contributing immediately.
+                        Design inclusive experiences that are usable, welcoming,
+                        and effective for everyone.
                       </p>
                     </div>
                   </div>

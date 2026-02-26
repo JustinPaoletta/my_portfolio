@@ -80,6 +80,8 @@
 .github-stats {
   display: flex;
   gap: 2rem;
+  flex: 1;
+  justify-content: space-evenly;
 }
 
 .stat-item {

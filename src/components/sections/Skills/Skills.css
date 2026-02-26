@@ -1,5 +1,5 @@
 .skills-section {
-  padding: 6rem 2rem;
+  padding: 6rem 2rem 3rem;
   position: relative;
   overflow: hidden;
 
@@ -22,12 +22,14 @@
 
 .tabs-list {
   display: flex;
-  justify-content: center;
-  gap: 0.25rem;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 0.55rem;
   margin-bottom: 3rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   position: relative;
-  padding-bottom: 0.75rem;
+  padding: 0 0.25rem 0.75rem;
+  overflow: hidden;
 
   &::after {
     content: '';
@@ -36,17 +38,20 @@
     right: 0;
     bottom: 0.25rem;
     height: 1px;
-    background: rgba(var(--color-primary-rgb), 0.2);
+    background: var(--border-subtle);
     pointer-events: none;
   }
 }
 
 .tab-button {
   position: relative;
-  padding: 0.5rem 0.75rem;
-  background: transparent;
-  border: none;
-  border-radius: 0;
+  padding: 0.55rem 1rem 0.6rem;
+  margin-left: 0;
+  flex: 1 1 0;
+  background: #0f1a22;
+  border: 1px solid var(--border-subtle);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
   font-family: var(--font-mono);
   font-size: 0.95rem;
   font-weight: 500;
@@ -54,24 +59,34 @@
   text-transform: uppercase;
   color: var(--text-muted);
   cursor: pointer;
+  z-index: 1;
   transition:
     color 0.2s ease,
     opacity 0.2s ease,
-    transform 0.2s ease;
+    transform 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
 
   &:hover,
   &:focus {
-    color: var(--text-secondary);
+    color: var(--text-primary);
     outline: none;
+    background: #142430;
+    border-color: var(--border-hover);
   }
 
   &:focus-visible {
-    box-shadow: 0 2px 0 0 rgba(var(--color-primary-rgb), 0.6);
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
   }
 
   &.active {
     color: var(--color-primary-ink);
     font-weight: 600;
+    background: var(--bg-main);
+    border-color: var(--color-primary-ink);
+    z-index: 3;
+    transform: translateY(1px);
   }
 
   &::after {
@@ -79,9 +94,9 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -0.35rem;
+    bottom: -1px;
     height: 2px;
-    background: var(--color-primary);
+    background: var(--bg-main);
     transform: scaleX(0.2);
     transform-origin: center;
     opacity: 0;
@@ -286,13 +301,29 @@
   }
 
   .tabs-list {
-    gap: 0.25rem;
+    justify-content: flex-start;
+    gap: 0.4rem;
+    padding: 0 0.1rem 0.75rem;
+    overflow-x: auto;
+    scrollbar-width: thin;
   }
 
   .tab-button {
-    padding: 0.5rem 0.65rem;
+    flex: 0 0 auto;
+    padding: 0.5rem 0.8rem 0.56rem;
+    margin-left: 0;
     font-size: 0.85rem;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 520px) {
+  .tab-button {
+    margin-left: 0;
+    padding: 0.46rem 0.72rem 0.52rem;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
   }
 
   .skills-grid {

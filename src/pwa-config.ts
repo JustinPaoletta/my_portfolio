@@ -16,7 +16,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'pwa-512x512.png',
     'robots.txt',
     'sitemap.xml',
-    'og-image.png',
+    'og-image-branding.png',
   ],
   manifestFilename: 'manifest.webmanifest',
 

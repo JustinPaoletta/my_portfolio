@@ -86,7 +86,7 @@ const experiences: ExperienceItem[] = [
   {
     id: 'exp-2',
     type: 'work',
-    title: 'Software Engineer',
+    title: 'Angular Developer',
     organization: '4C Strategies',
     organizationUrl: 'https://www.4cstrategies.com',
     location: 'Orlando, FL',

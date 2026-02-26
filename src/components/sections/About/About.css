@@ -80,7 +80,7 @@
   .about-ai-icon {
     width: 18px;
     height: 18px;
-    color: currentColor;
+    object-fit: contain;
   }
 
   .about-ai-lede {
@@ -326,7 +326,7 @@
 @media (max-width: 1024px) {
   .about-content {
     grid-template-columns: 1fr;
-    gap: 3rem;
+    gap: 2rem;
     max-width: none;
     margin-left: 0;
     margin-right: 0;

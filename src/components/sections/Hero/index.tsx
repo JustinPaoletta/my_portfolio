@@ -334,7 +334,7 @@ function Hero(): React.ReactElement {
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
           >
             <source src="/cosmos.mp4" type="video/mp4" />
           </video>
@@ -553,6 +553,7 @@ function Hero(): React.ReactElement {
 
               {isCosmicTheme && (
                 <span className="hero-astronaut-rig" aria-hidden="true">
+                  <span className="hero-asteroid-tail" />
                   <span className="hero-asteroid" />
                   <img
                     className="hero-astronaut"

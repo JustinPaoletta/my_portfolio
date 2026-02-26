@@ -55,7 +55,7 @@ export const defaultSEO: SEOConfig = {
   ],
   author: 'Justin Paoletta',
   siteUrl: env.site.url || 'https://jpengineering.dev',
-  image: '/og-image.png',
+  image: '/og-image-branding.png',
   locale: 'en_US',
   type: 'website',
 };

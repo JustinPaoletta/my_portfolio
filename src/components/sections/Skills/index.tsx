@@ -130,7 +130,7 @@ const skillCategories: SkillCategory[] = [
     ],
   },
   {
-    name: 'DevOps & Tools',
+    name: 'Tooling',
     skills: [
       {
         name: 'Git',
