@@ -3,20 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <!-- Tab favicon -->
-    <link rel="icon" type="image/svg+xml" sizes="any" href="/JP-no-cursor.svg?v=2" />
+    <link rel="icon" type="image/svg+xml" sizes="any" href="/branding/JP-no-cursor.svg?v=2" />
     <!-- PNG favicons (48x48 recommended by Google for search results) -->
-    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png?v=2" />
-    <link rel="icon" type="image/png" sizes="192x192" href="/pwa-192x192.png?v=2" />
-    <link rel="icon" type="image/png" sizes="512x512" href="/pwa-512x512.png?v=2" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png?v=2" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/favicons/pwa-192x192.png?v=2" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/favicons/pwa-512x512.png?v=2" />
     <!-- Apple Touch Icons (iOS home screen) -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=2" />
-    <link rel="apple-touch-icon" sizes="512x512" href="/pwa-512x512.png?v=2" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon.png?v=2" />
+    <link rel="apple-touch-icon" sizes="512x512" href="/favicons/pwa-512x512.png?v=2" />
     <!-- Shortcut icon for older browsers -->
-    <link rel="shortcut icon" type="image/svg+xml" href="/JP-no-cursor.svg?v=2" />
+    <link rel="shortcut icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg?v=2" />
 
     <!-- Microsoft Windows Tiles -->
     <meta name="msapplication-TileColor" content="#1a1918" />
-    <meta name="msapplication-TileImage" content="/pwa-192x192.png" />
+    <meta name="msapplication-TileImage" content="/favicons/pwa-192x192.png" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="color-scheme" content="dark light" />
@@ -31,7 +31,7 @@
     <meta name="theme-color" content="#1a1918" />
 
     <!-- Preload LCP image for CLI theme -->
-    <link rel="preload" as="image" href="/dew_text.webp" fetchpriority="high" />
+    <link rel="preload" as="image" href="/images/hero/dew/dew-text.webp" fetchpriority="high" />
 
     <!-- Preload cosmic theme video when user's saved theme is cosmic (instant playback) -->
     <script>
@@ -41,7 +41,7 @@
             var link = document.createElement('link');
             link.rel = 'preload';
             link.as = 'video';
-            link.href = '/cosmos.mp4';
+            link.href = '/video/cosmos.mp4';
             document.head.appendChild(link);
           }
         } catch (e) {}
@@ -81,7 +81,7 @@
     />
     <meta
       property="og:image"
-      content="https://jpengineering.dev/og-image-branding.png"
+      content="https://jpengineering.dev/og/og-image.png"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -97,7 +97,7 @@
     />
     <meta
       name="twitter:image"
-      content="https://jpengineering.dev/og-image-branding.png"
+      content="https://jpengineering.dev/og/og-image.png"
     />
 
     <!-- Umami Analytics - injected at runtime from env config -->

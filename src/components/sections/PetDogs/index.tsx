@@ -30,15 +30,15 @@ const initialDogsData = [
 
 const dogMetadata: Record<string, Omit<Dog, 'name' | 'stats'>> = {
   Nala: {
-    image: '/nala.webp',
+    image: '/images/pets/nala.webp',
     alt: 'Nala, a beautiful Australian Cattle Dog, Australian Shepherd, German Shepherd mix looking happy',
   },
   Rosie: {
-    image: '/rosie.webp',
+    image: '/images/pets/rosie.webp',
     alt: 'Rosie, a sweet Bloodhound Beagle mix with a gentle expression',
   },
   Tito: {
-    image: '/tito.webp',
+    image: '/images/pets/tito.webp',
     alt: 'Tito, a playful Chihuahua Pomeranian Dachshund mix with lots of energy',
   },
 };

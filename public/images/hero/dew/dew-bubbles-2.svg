@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="180" height="210" viewBox="0 0 180 210" fill="none">
+  <defs>
+    <radialGradient id="bubble" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="white" stop-opacity="1"/>
+      <stop offset="70%" stop-color="white" stop-opacity="0"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="21.60" cy="12.60" r="4.00" fill="url(#bubble)" opacity="0.50"/>
+  <circle cx="21.60" cy="25.20" r="5.00" fill="url(#bubble)" opacity="0.55"/>
+  <circle cx="21.60" cy="58.80" r="3.00" fill="url(#bubble)" opacity="0.42"/>
+  <circle cx="21.60" cy="92.40" r="3.00" fill="url(#bubble)" opacity="0.45"/>
+  <circle cx="21.60" cy="126.00" r="4.00" fill="url(#bubble)" opacity="0.46"/>
+  <circle cx="21.60" cy="155.40" r="4.00" fill="url(#bubble)" opacity="0.50"/>
+  <circle cx="21.60" cy="189.00" r="3.00" fill="url(#bubble)" opacity="0.42"/>
+  <circle cx="57.60" cy="16.80" r="4.00" fill="url(#bubble)" opacity="0.44"/>
+  <circle cx="57.60" cy="42.00" r="5.00" fill="url(#bubble)" opacity="0.48"/>
+  <circle cx="57.60" cy="75.60" r="3.00" fill="url(#bubble)" opacity="0.36"/>
+  <circle cx="57.60" cy="109.20" r="3.00" fill="url(#bubble)" opacity="0.38"/>
+  <circle cx="57.60" cy="147.00" r="4.00" fill="url(#bubble)" opacity="0.40"/>
+  <circle cx="57.60" cy="184.80" r="5.00" fill="url(#bubble)" opacity="0.42"/>
+  <circle cx="93.60" cy="16.80" r="5.00" fill="url(#bubble)" opacity="0.50"/>
+  <circle cx="93.60" cy="42.00" r="6.00" fill="url(#bubble)" opacity="0.52"/>
+  <circle cx="93.60" cy="75.60" r="3.00" fill="url(#bubble)" opacity="0.40"/>
+  <circle cx="93.60" cy="100.80" r="3.00" fill="url(#bubble)" opacity="0.42"/>
+  <circle cx="93.60" cy="134.40" r="4.00" fill="url(#bubble)" opacity="0.44"/>
+  <circle cx="93.60" cy="172.20" r="5.00" fill="url(#bubble)" opacity="0.48"/>
+  <circle cx="93.60" cy="197.40" r="3.00" fill="url(#bubble)" opacity="0.40"/>
+  <circle cx="129.60" cy="21.00" r="4.00" fill="url(#bubble)" opacity="0.44"/>
+  <circle cx="129.60" cy="46.20" r="5.00" fill="url(#bubble)" opacity="0.48"/>
+  <circle cx="129.60" cy="79.80" r="3.00" fill="url(#bubble)" opacity="0.36"/>
+  <circle cx="129.60" cy="109.20" r="3.00" fill="url(#bubble)" opacity="0.38"/>
+  <circle cx="129.60" cy="142.80" r="4.00" fill="url(#bubble)" opacity="0.40"/>
+  <circle cx="129.60" cy="176.40" r="4.00" fill="url(#bubble)" opacity="0.42"/>
+  <circle cx="129.60" cy="201.60" r="3.00" fill="url(#bubble)" opacity="0.36"/>
+  <circle cx="165.60" cy="16.80" r="4.00" fill="url(#bubble)" opacity="0.42"/>
+  <circle cx="165.60" cy="33.60" r="4.00" fill="url(#bubble)" opacity="0.45"/>
+  <circle cx="165.60" cy="67.20" r="3.00" fill="url(#bubble)" opacity="0.36"/>
+  <circle cx="165.60" cy="109.20" r="3.00" fill="url(#bubble)" opacity="0.38"/>
+  <circle cx="165.60" cy="147.00" r="4.00" fill="url(#bubble)" opacity="0.40"/>
+  <circle cx="165.60" cy="184.80" r="5.00" fill="url(#bubble)" opacity="0.42"/>
+</svg>

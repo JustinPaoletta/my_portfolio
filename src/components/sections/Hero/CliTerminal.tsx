@@ -759,7 +759,7 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: '[RESUME]' },
       {
         kind: 'output',
-        text: 'Download: /Justin Paoletta_Software Engineer.pdf',
+        text: 'Download: /resume/Justin-Paoletta_Software-Engineer.pdf',
       },
       {
         kind: 'hint',
@@ -1304,7 +1304,7 @@ function CliTerminal(): React.ReactElement {
           >
             <img
               className="cli-terminal-banner"
-              src="/terminal-header.png"
+              src="/images/cli/terminal-header.webp"
               alt=""
               aria-hidden="true"
               loading="eager"

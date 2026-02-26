@@ -298,7 +298,7 @@ function About(): React.ReactElement {
               <h3 className="about-ai-title">
                 Thoughts on AI
                 <img
-                  src="/thoughts.png"
+                  src="/images/about/thoughts.webp"
                   width={18}
                   height={18}
                   alt=""
@@ -347,7 +347,7 @@ function About(): React.ReactElement {
             <div className="about-image-container">
               <div className="about-image-wrapper">
                 <img
-                  src="/jp-400.webp"
+                  src="/branding/jp-headshot/jp-400.webp"
                   width={400}
                   height={400}
                   alt="Justin working on code"

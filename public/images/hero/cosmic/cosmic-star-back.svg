@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="900" viewBox="0 0 1600 900" fill="none">
+  <defs>
+    <radialGradient id="star-255-255-255" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(255 255 255)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(255 255 255)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-150-210-255" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(150 210 255)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(150 210 255)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-255-170-230" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(255 170 230)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(255 170 230)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-180-200-255" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(180 200 255)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(180 200 255)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-200-220-255" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(200 220 255)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(200 220 255)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-255-220-245" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(255 220 245)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(255 220 245)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-190-215-255" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(190 215 255)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(190 215 255)" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="star-255-200-235" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgb(255 200 235)" stop-opacity="1"/>
+      <stop offset="100%" stop-color="rgb(255 200 235)" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="128.00" cy="144.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.70"/>
+  <circle cx="224.00" cy="576.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.60"/>
+  <circle cx="352.00" cy="324.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.65"/>
+  <circle cx="448.00" cy="702.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.55"/>
+  <circle cx="576.00" cy="198.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.60"/>
+  <circle cx="704.00" cy="522.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.70"/>
+  <circle cx="832.00" cy="126.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.60"/>
+  <circle cx="992.00" cy="378.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.75"/>
+  <circle cx="1088.00" cy="666.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.55"/>
+  <circle cx="1216.00" cy="252.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.65"/>
+  <circle cx="1344.00" cy="558.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.60"/>
+  <circle cx="1472.00" cy="162.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.70"/>
+  <circle cx="96.00" cy="432.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.55"/>
+  <circle cx="288.00" cy="774.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.60"/>
+  <circle cx="544.00" cy="396.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.65"/>
+  <circle cx="640.00" cy="738.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.55"/>
+  <circle cx="928.00" cy="234.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.60"/>
+  <circle cx="1152.00" cy="450.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.65"/>
+  <circle cx="1440.00" cy="648.00" r="2.00" fill="url(#star-255-255-255)" opacity="0.55"/>
+  <circle cx="288.00" cy="234.00" r="3.00" fill="url(#star-150-210-255)" opacity="0.60"/>
+  <circle cx="768.00" cy="684.00" r="3.00" fill="url(#star-255-170-230)" opacity="0.55"/>
+  <circle cx="1152.00" cy="108.00" r="3.00" fill="url(#star-180-200-255)" opacity="0.60"/>
+  <circle cx="960.00" cy="486.00" r="4.00" fill="url(#star-255-255-255)" opacity="0.80"/>
+  <circle cx="192.00" cy="72.00" r="4.00" fill="url(#star-255-255-255)" opacity="0.75"/>
+  <circle cx="480.00" cy="90.00" r="4.00" fill="url(#star-200-220-255)" opacity="0.70"/>
+  <circle cx="864.00" cy="72.00" r="3.00" fill="url(#star-255-220-245)" opacity="0.60"/>
+  <circle cx="1408.00" cy="72.00" r="4.00" fill="url(#star-255-255-255)" opacity="0.70"/>
+  <circle cx="160.00" cy="810.00" r="3.00" fill="url(#star-190-215-255)" opacity="0.60"/>
+  <circle cx="832.00" cy="810.00" r="4.00" fill="url(#star-255-255-255)" opacity="0.70"/>
+  <circle cx="1344.00" cy="810.00" r="4.00" fill="url(#star-255-200-235)" opacity="0.65"/>
+</svg>

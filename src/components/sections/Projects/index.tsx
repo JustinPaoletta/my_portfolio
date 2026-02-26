@@ -50,7 +50,7 @@ const projects: Project[] = [
     title: 'BitStockerz',
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
-    image: '/bitstockerz.webp',
+    image: '/images/projects/bitstockerz.webp',
     techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: '#',
     featured: true,
@@ -61,7 +61,7 @@ const projects: Project[] = [
     title: '@jp-design-system',
     description:
       'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
-    image: '/jp-design-system.jpg',
+    image: '/images/projects/jp-design-system.webp',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     githubUrl: '#',
     featured: true,
@@ -72,7 +72,7 @@ const projects: Project[] = [
     title: 'Godot Playground',
     description:
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene designed to be reused or referenced in future projects.',
-    image: '/godot_playground.png',
+    image: '/images/projects/godot-playground.webp',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     githubUrl: '#',
     featured: true,

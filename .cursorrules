@@ -426,8 +426,8 @@ async function fetchData(): Promise<Data> {
 ```tsx
 // ✅ GOOD - Optimized image with srcSet
 <img
-  src="/jp-100.webp"
-  srcSet="/jp-100.webp 100w, /jp-200.webp 200w, /jp-400.webp 400w"
+  src="/branding/jp-headshot/jp-100.webp"
+  srcSet="/branding/jp-headshot/jp-100.webp 100w, /branding/jp-headshot/jp-200.webp 200w, /branding/jp-headshot/jp-400.webp 400w"
   sizes="100px"
   width={100}
   height={100}

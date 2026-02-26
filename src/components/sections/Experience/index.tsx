@@ -333,7 +333,7 @@ function Experience(): React.ReactElement {
               animate={isInView ? 'visible' : 'hidden'}
             >
               <a
-                href="/Justin Paoletta_Software Engineer.pdf"
+                href="/resume/Justin-Paoletta_Software-Engineer.pdf"
                 download="Justin_Paoletta_Resume.pdf"
                 className="resume-button"
                 aria-label="Download resume as PDF"

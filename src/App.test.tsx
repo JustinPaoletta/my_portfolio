@@ -24,7 +24,7 @@ describe('App', () => {
     expect(jpImage).toBeInTheDocument();
     expect(jpImage).toHaveAttribute('width', '400');
     expect(jpImage).toHaveAttribute('height', '400');
-    expect(jpImage).toHaveAttribute('src', '/jp-400.webp');
+    expect(jpImage).toHaveAttribute('src', '/branding/jp-headshot/jp-400.webp');
   });
 
   it('renders skip link for keyboard navigation', async () => {
