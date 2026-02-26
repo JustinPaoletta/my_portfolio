@@ -3,9 +3,13 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import path from 'node:path';
 import fs from 'node:fs';
+import browserslist from 'browserslist';
+import { browserslistToTargets } from 'lightningcss';
 import { sitemapPlugin } from './plugins/vite-plugin-sitemap';
 import { inlineCssPlugin } from './plugins/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
+
+const cssTargets = browserslistToTargets(browserslist());
 
 /**
  * Plugin to exclude API directory from Vite processing
@@ -67,7 +71,7 @@ const BUNDLE_SIZE_LIMITS = {
   appChunk: 150,
   vendorChunk: 400,
   totalSize: 660,
-  cssFile: 80,
+  cssFile: 79,
 };
 
 function bundleSizeLimit(): Plugin {
@@ -177,6 +181,9 @@ export default defineConfig(({ mode }) => {
     },
     css: {
       transformer: 'lightningcss',
+      lightningcss: {
+        targets: cssTargets,
+      },
     },
     build: {
       emptyOutDir: true,

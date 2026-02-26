@@ -292,13 +292,9 @@
 
 .circuit-traces {
   background-color: var(--trace-color);
-  -webkit-mask-image: var(--trace-mask);
   mask-image: var(--trace-mask);
-  -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-size: cover;
   mask-size: cover;
-  -webkit-mask-position: center;
   mask-position: center;
   opacity: 0.28;
   filter: none;
@@ -309,32 +305,11 @@
   position: absolute;
   inset: 0;
   background-color: var(--trace-color);
-  -webkit-mask-image: var(--trace-mask-strong, var(--trace-mask));
   mask-image: var(--trace-mask-strong, var(--trace-mask));
-  -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-size: cover;
   mask-size: cover;
-  -webkit-mask-position: center;
   mask-position: center;
   opacity: 0.24;
-  filter: none;
-}
-
-.circuit-traces::after {
-  content: none;
-  position: absolute;
-  inset: 0;
-  background-color: var(--trace-color);
-  -webkit-mask-image: var(--trace-mask);
-  mask-image: var(--trace-mask);
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-size: cover;
-  mask-size: cover;
-  -webkit-mask-position: center;
-  mask-position: center;
-  opacity: 0;
   filter: none;
 }
 
@@ -345,11 +320,6 @@
 
 :root[data-theme='engineer'][data-color-mode='light'] .circuit-traces::before {
   opacity: 0.32;
-  filter: none;
-}
-
-:root[data-theme='engineer'][data-color-mode='light'] .circuit-traces::after {
-  opacity: 0;
   filter: none;
 }
 
@@ -426,13 +396,9 @@
 
 .circuit-nodes {
   background-color: var(--node-color);
-  -webkit-mask-image: var(--node-mask);
   mask-image: var(--node-mask);
-  -webkit-mask-repeat: no-repeat;
   mask-repeat: no-repeat;
-  -webkit-mask-size: cover;
   mask-size: cover;
-  -webkit-mask-position: center;
   mask-position: center;
   opacity: 0.45;
   filter: drop-shadow(0 0 3px var(--node-glow));
@@ -615,7 +581,9 @@
 
 .hero-tagline {
   max-width: 600px;
-  margin: 0 0 2.5rem;
+  margin: 0.5rem 0 2.5rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  color: var(--text-muted);
   opacity: 0;
   animation: fadeInUp 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 }
@@ -630,12 +598,6 @@
 
 .hero-tagline p:last-child {
   margin-bottom: 0;
-}
-
-.hero-tagline {
-  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
-  color: var(--text-muted);
-  margin-top: 0.5rem;
 }
 
 .hero-cta {
@@ -849,31 +811,6 @@
   }
 }
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes bounce {
-  0%,
-  20%,
-  50%,
-  80%,
-  100% {
-    transform: translateX(-50%) translateY(0);
-  }
-  40% {
-    transform: translateX(-50%) translateY(-8px);
-  }
-  60% {
-    transform: translateX(-50%) translateY(-4px);
-  }
-}
-
 @media (max-width: 768px) {
   .hero-section {
     padding: 1.5rem;
@@ -932,8 +869,7 @@
     opacity: 0.3;
   }
 
-  :root[data-theme='engineer'] .circuit-traces::before,
-  :root[data-theme='engineer'] .circuit-traces::after {
+  :root[data-theme='engineer'] .circuit-traces::before {
     content: none;
   }
 

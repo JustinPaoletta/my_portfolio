@@ -656,31 +656,10 @@
   filter: blur(2px) hue-rotate(240deg) saturate(0.8) brightness(0.75);
 }
 
-@media (max-width: 980px) {
-  :root[data-theme='cosmic'] {
-    --cosmic-rig-scale: 1.46;
-    --cosmic-rig-scale-drift: 1.5;
-  }
-}
-
-@media (max-width: 768px) {
-  :root[data-theme='cosmic'] {
-    --cosmic-rig-scale: 1.46;
-    --cosmic-rig-scale-drift: 1.5;
-  }
-}
-
 @media (max-width: 480px) {
   :root[data-theme='cosmic'] {
     --cosmic-rig-scale: 1.38;
     --cosmic-rig-scale-drift: 1.42;
-  }
-}
-
-@media (min-width: 750px) and (max-width: 980px) {
-  :root[data-theme='cosmic'] {
-    --cosmic-rig-scale: 1.46;
-    --cosmic-rig-scale-drift: 1.5;
   }
 }
 
