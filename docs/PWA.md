@@ -36,14 +36,14 @@ You need these icon files in your `public/` folder:
 
 #### Platform Coverage
 
-| Platform             | Icon(s)               | Purpose                              |
-| -------------------- | --------------------- | ------------------------------------ |
-| **Browser tab**      | SVG, 48 PNG           | Favicon                              |
-| **Google Search**    | 48×48 PNG             | Search result favicon                |
-| **Android / Chrome** | 192, 512 PNG          | PWA install, home screen             |
-| **iOS / Safari**     | 180×180, 512 PNG      | Add to Home Screen                   |
-| **Windows**          | 192 PNG               | Start menu / taskbar tile            |
-| **Social (OG)**      | og-image.png 1200×630 | Facebook, Twitter, LinkedIn previews |
+| Platform             | Icon(s)                        | Purpose                              |
+| -------------------- | ------------------------------ | ------------------------------------ |
+| **Browser tab**      | SVG, 48 PNG                    | Favicon                              |
+| **Google Search**    | 48×48 PNG                      | Search result favicon                |
+| **Android / Chrome** | 192, 512 PNG                   | PWA install, home screen             |
+| **iOS / Safari**     | 180×180, 512 PNG               | Add to Home Screen                   |
+| **Windows**          | 192 PNG                        | Start menu / taskbar tile            |
+| **Social (OG)**      | og-image-branding.png 1200×630 | Facebook, Twitter, LinkedIn previews |
 
 #### Quickest Method: Script (Recommended)
 

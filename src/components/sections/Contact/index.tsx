@@ -32,14 +32,20 @@ function Contact(): React.ReactElement {
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [envelopeFlying, setEnvelopeFlying] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'success' | 'error'
   >('idle');
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setEnvelopeFlying(true);
     setSubmitStatus('idle');
+
+    await new Promise<void>((resolve) => setTimeout(resolve, 500));
+
+    setEnvelopeFlying(false);
+    setIsSubmitting(true);
 
     try {
       const response = await fetch('/api/contact', {
@@ -261,7 +267,7 @@ function Contact(): React.ReactElement {
             <button
               type="submit"
               className="submit-button"
-              disabled={isSubmitting}
+              disabled={isSubmitting || envelopeFlying}
             >
               {isSubmitting ? (
                 <>
@@ -272,21 +278,22 @@ function Contact(): React.ReactElement {
                 <>
                   <span>Send Message</span>
                   <svg
+                    className={`envelope-icon${envelopeFlying ? ' fly-off' : ''}`}
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
                     aria-hidden="true"
                   >
-                    <line
-                      x1="22"
-                      y1="2"
-                      x2="11"
-                      y2="13"
+                    <rect
+                      x="2"
+                      y="4"
+                      width="20"
+                      height="16"
+                      rx="2"
                       strokeWidth="2"
-                      strokeLinecap="round"
                     />
-                    <polygon
-                      points="22 2 15 22 11 13 2 9 22 2"
+                    <polyline
+                      points="2 4 12 13 22 4"
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"

@@ -55,7 +55,7 @@ export const defaultSEO: SEOConfig = {
   ],
   author: 'Justin Paoletta',
   siteUrl: env.site.url || 'https://jpengineering.dev',
-  image: '/og-image.png',
+  image: '/og-image-branding.png',
   locale: 'en_US',
   type: 'website',
 };
@@ -67,18 +67,7 @@ export const getPageTitle = (pageTitle?: string): string => {
 
 export const getBrowserTabTitle = (pageTitle?: string): string => {
   if (pageTitle) return pageTitle;
-  const withoutBrandPrefix = defaultSEO.title
-    .replace(/^\s*JP\b[\s\-–—|:]*?/i, '')
-    .trim();
-
-  if (
-    withoutBrandPrefix.length > 0 &&
-    withoutBrandPrefix !== defaultSEO.title
-  ) {
-    return withoutBrandPrefix;
-  }
-
-  return 'Engineering';
+  return defaultSEO.title;
 };
 
 export const getFullUrl = (path: string = ''): string => {

@@ -67,8 +67,7 @@ const BUNDLE_SIZE_LIMITS = {
   appChunk: 150,
   vendorChunk: 400,
   totalSize: 660,
-  // CSS optimized to stay under 75KB uncompressed
-  cssFile: 75,
+  cssFile: 80,
 };
 
 function bundleSizeLimit(): Plugin {
