@@ -20,7 +20,6 @@
  * 2. index.html (for social media crawlers)
  */
 
-import { useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import {
   defaultSEO,
@@ -29,8 +28,6 @@ import {
   getFullUrl,
 } from '@/config/seo';
 import type { SEOConfig } from '@/config/seo';
-
-const TITLE_CURSOR_BLINK_INTERVAL_MS = 600;
 
 interface SEOProps extends Partial<SEOConfig> {
   // additional props
@@ -62,67 +59,6 @@ export const SEO: React.FC<SEOProps> = ({
     noindex ? 'noindex' : 'index',
     nofollow ? 'nofollow' : 'follow',
   ].join(', ');
-
-  useEffect(() => {
-    let showCursor = true;
-    let intervalId: number | null = null;
-
-    const setTitle = (withCursor: boolean): void => {
-      document.title = withCursor
-        ? `${browserTabTitle} ▌`
-        : `${browserTabTitle}`;
-    };
-
-    const updateTitle = (): void => {
-      setTitle(showCursor);
-      showCursor = !showCursor;
-    };
-
-    const clearBlinkTimers = (): void => {
-      if (intervalId !== null) {
-        window.clearInterval(intervalId);
-        intervalId = null;
-      }
-    };
-
-    const pauseBlinking = (): void => {
-      clearBlinkTimers();
-      setTitle(true);
-    };
-
-    const startBlinking = (): void => {
-      if (intervalId !== null) {
-        return;
-      }
-      if (document.visibilityState !== 'visible') {
-        setTitle(true);
-        return;
-      }
-
-      updateTitle();
-      intervalId = window.setInterval(
-        updateTitle,
-        TITLE_CURSOR_BLINK_INTERVAL_MS
-      );
-    };
-
-    const handleVisibilityChange = (): void => {
-      if (document.visibilityState === 'visible') {
-        startBlinking();
-        return;
-      }
-      pauseBlinking();
-    };
-
-    startBlinking();
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      clearBlinkTimers();
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      document.title = `${browserTabTitle} ▌`;
-    };
-  }, [browserTabTitle]);
 
   return (
     <Helmet>
