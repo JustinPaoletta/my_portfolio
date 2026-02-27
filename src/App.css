@@ -50,9 +50,12 @@
 }
 
 .main-content--cli {
+  min-height: 100vh;
+  min-height: 100svh;
   height: 100vh;
-  height: 100dvh;
+  height: 100svh;
   overflow: hidden;
+  overscroll-behavior: none;
 }
 
 :root[data-theme='cli'] {
@@ -61,11 +64,19 @@
 
 :root[data-theme='cli'] body {
   overflow: hidden;
+  overscroll-behavior: none;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
 }
 
 :root[data-theme='cli'] #root {
-  min-height: 100dvh;
-  height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
+  height: 100vh;
+  height: 100svh;
   overflow: hidden;
 }
 

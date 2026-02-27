@@ -1096,8 +1096,13 @@ function CliTerminal(): React.ReactElement {
   };
 
   const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
+  const shouldAutoFocusPrompt = !isCompactLayout;
   /** Height for options panel sized to fit all 10 main-menu options (5 rows × 2 cols) */
   const compactOptionsPanelHeight = '16rem';
+
+  const focusPromptInput = (): void => {
+    inputRef.current?.focus();
+  };
 
   const macDotBaseStyle = {
     width: '0.76rem',
@@ -1180,8 +1185,10 @@ function CliTerminal(): React.ReactElement {
       return;
     }
     history.scrollTop = history.scrollHeight;
-    inputRef.current?.focus();
-  }, [lines]);
+    if (shouldAutoFocusPrompt) {
+      inputRef.current?.focus();
+    }
+  }, [lines, shouldAutoFocusPrompt]);
 
   return (
     <div className="cli-terminal-shell">
@@ -1279,7 +1286,7 @@ function CliTerminal(): React.ReactElement {
                     type="button"
                     onClick={() => {
                       goToPreviousList();
-                      requestAnimationFrame(() => inputRef.current?.focus());
+                      requestAnimationFrame(focusPromptInput);
                     }}
                     aria-label="Previous list"
                     title="Previous list"
@@ -1307,7 +1314,7 @@ function CliTerminal(): React.ReactElement {
                     type="button"
                     onClick={() => {
                       submitPrompt();
-                      requestAnimationFrame(() => inputRef.current?.focus());
+                      requestAnimationFrame(focusPromptInput);
                     }}
                     aria-label="Run selected option"
                     title="Run selected option"
@@ -1364,7 +1371,7 @@ function CliTerminal(): React.ReactElement {
                       onClick={() => {
                         setSelectedOptionIndex(index);
                         setInputValue(String(option.value));
-                        requestAnimationFrame(() => inputRef.current?.focus());
+                        requestAnimationFrame(focusPromptInput);
                       }}
                       aria-current={isSelected ? 'true' : undefined}
                       style={{
@@ -1437,11 +1444,11 @@ function CliTerminal(): React.ReactElement {
               role="button"
               tabIndex={0}
               aria-label="Focus command input"
-              onClick={() => inputRef.current?.focus()}
+              onClick={focusPromptInput}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
-                  inputRef.current?.focus();
+                  focusPromptInput();
                 }
               }}
             >
@@ -1506,8 +1513,6 @@ function CliTerminal(): React.ReactElement {
                   onChange={(event) => setInputValue(event.target.value)}
                   autoComplete="off"
                   spellCheck={false}
-                  /* eslint-disable-next-line jsx-a11y/no-autofocus -- CLI terminal: focus prompt on load for expected terminal UX */
-                  autoFocus
                   aria-label="Terminal command input"
                   onKeyDown={(event) => {
                     const trimmedInput = inputValue.trim();

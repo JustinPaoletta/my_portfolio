@@ -222,6 +222,12 @@
   }
 }
 
+@media (max-width: 768px) {
+  :root[data-theme='cli'] .cli-prompt-input {
+    font-size: 16px;
+  }
+}
+
 :root[data-theme='cli'] .cli-prompt-input::placeholder {
   color: var(--text-muted);
 }
