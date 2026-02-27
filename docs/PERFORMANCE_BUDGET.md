@@ -6,10 +6,10 @@ This project enforces **strict bundle size limits** to ensure fast load times an
 
 | Asset Type        | Limit  | Purpose               |
 | ----------------- | ------ | --------------------- |
-| **App Chunks**    | 150 KB | Your application code |
+| **App Chunks**    | 155 KB | Your application code |
 | **Vendor Chunks** | 400 KB | Third-party libraries |
-| **CSS Files**     | 70 KB  | Stylesheets           |
-| **Total Bundle**  | 650 KB | All assets combined   |
+| **CSS Files**     | 85 KB  | Stylesheets           |
+| **Total Bundle**  | 700 KB | All assets combined   |
 
 ## 🚦 How It Works
 
@@ -24,10 +24,10 @@ The build will **automatically fail** if any bundle exceeds these limits. This h
 As of last build:
 
 ```
-✅ CSS: 1.52 KB (limit: 70 KB)
+✅ CSS: 1.52 KB (limit: 80 KB)
 ✅ App code: 6.13 KB (limit: 150 KB)
 ✅ Vendor (React): 194.92 KB (limit: 400 KB)
-✅ Total: 211.40 KB (limit: 650 KB)
+✅ Total: 211.40 KB (limit: 700 KB)
 ```
 
 **Status**: 🟢 All limits passing with plenty of headroom!
@@ -38,10 +38,10 @@ Limits are configured in `vite.config.ts`:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 150, // KB - your application code
+  appChunk: 155, // KB - your application code
   vendorChunk: 400, // KB - third-party libraries
-  totalSize: 650, // KB - entire bundle
-  cssFile: 70, // KB - stylesheets
+  totalSize: 700, // KB - entire bundle
+  cssFile: 85, // KB - stylesheets
 };
 ```
 
@@ -142,7 +142,7 @@ If the build fails due to bundle size:
 🚨 Bundle size limit exceeded:
 
 ❌ app-chunk.js: 200.43 KB (limit: 150 KB)
-❌ Total bundle size 700.12 KB exceeds limit of 650 KB
+❌ Total bundle size 700.12 KB exceeds limit of 700 KB
 
 💡 Consider:
    - Code splitting

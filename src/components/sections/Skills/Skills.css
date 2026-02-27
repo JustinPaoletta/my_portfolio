@@ -69,7 +69,7 @@
 
   &:hover,
   &:focus {
-    color: var(--text-primary);
+    color: #ffffff;
     outline: none;
     background: #142430;
     border-color: var(--border-hover);

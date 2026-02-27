@@ -401,7 +401,7 @@
   .highlight-item {
     display: grid;
     grid-template-columns: 5.75rem minmax(0, 1fr);
-    align-items: baseline;
+    align-items: center;
     justify-content: flex-start;
     justify-items: start;
     column-gap: 0.75rem;

@@ -54,20 +54,78 @@
   backdrop-filter: blur(12px);
 }
 
-:root[data-color-mode='light'][data-theme='cosmic'] .navigation {
+/* Cosmic light: nav transparent until scrolled; hamburger has its own background for visibility */
+:root[data-color-mode='light'][data-theme='cosmic'] .navigation.scrolled {
   background: var(--nav-bg-scrolled, rgba(253, 248, 255, 0.95));
   backdrop-filter: blur(12px);
 }
 
-:root[data-color-mode='light'][data-theme='engineer'] .navigation {
+:root[data-color-mode='light'][data-theme='cosmic'] .mobile-menu-button {
+  background-color: rgba(253, 248, 255, 0.95);
+  border: 1px solid rgba(123, 44, 191, 0.25);
+  border-radius: 12px;
+  box-shadow:
+    0 2px 8px rgba(70, 40, 120, 0.1),
+    0 1px 3px rgba(70, 40, 120, 0.06);
+}
+
+:root[data-color-mode='light'][data-theme='cosmic'] .mobile-menu-button:hover,
+:root[data-color-mode='light'][data-theme='cosmic'] .mobile-menu-button:focus {
+  background-color: rgba(253, 248, 255, 0.98);
+  border-color: var(--color-primary-ink);
+  box-shadow:
+    0 4px 12px rgba(70, 40, 120, 0.14),
+    0 2px 6px rgba(70, 40, 120, 0.08);
+}
+
+:root[data-color-mode='light'][data-theme='cosmic']
+  .mobile-menu-button:focus-visible {
+  outline: 2px solid var(--color-primary-ink);
+  outline-offset: 2px;
+}
+
+:root[data-color-mode='light'][data-theme='cosmic'] .mobile-menu-button.open {
+  background-color: rgba(253, 248, 255, 0.98);
+  border-color: var(--color-primary-ink);
+}
+
+:root[data-color-mode='light'][data-theme='cosmic']
+  .mobile-menu-button
+  .hamburger-line {
+  background: var(--color-primary-ink);
+}
+
+:root[data-color-mode='light'][data-theme='engineer'] .navigation.scrolled {
   background: var(--nav-bg-scrolled, rgba(240, 248, 255, 0.95));
   backdrop-filter: blur(12px);
+}
+
+:root[data-color-mode='light'][data-theme='engineer'] .nav-logo,
+:root[data-color-mode='light'][data-theme='engineer'] .nav-link,
+:root[data-color-mode='light'][data-theme='engineer'] .nav-social-link {
+  color: var(--color-primary-ink);
+}
+
+:root[data-color-mode='light'][data-theme='engineer'] .nav-link:hover,
+:root[data-color-mode='light'][data-theme='engineer'] .nav-link.active {
+  color: var(--color-primary-ink);
+}
+
+:root[data-color-mode='light'][data-theme='engineer'] .nav-social-link:hover {
+  color: var(--color-primary-ink);
+  background: var(--bg-card-hover);
+}
+
+:root[data-color-mode='light'][data-theme='engineer'] .mobile-menu-button {
+  .hamburger-line {
+    background: var(--text-primary);
+  }
 }
 
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-logo,
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-link,
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-social-link {
-  color: var(--text-primary);
+  color: var(--color-primary-ink);
 }
 
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-link:hover,
@@ -80,10 +138,26 @@
   background: var(--bg-card-hover);
 }
 
-:root[data-color-mode='light'][data-theme='cosmic'] .mobile-menu-button {
+:root[data-color-mode='light'][data-theme='minimal'] .nav-logo,
+:root[data-color-mode='light'][data-theme='minimal'] .nav-link,
+:root[data-color-mode='light'][data-theme='minimal'] .nav-social-link {
+  color: var(--color-primary-ink);
+}
+
+:root[data-color-mode='light'][data-theme='minimal'] .nav-link:hover,
+:root[data-color-mode='light'][data-theme='minimal'] .nav-link.active {
+  color: var(--color-primary-ink);
+}
+
+:root[data-color-mode='light'][data-theme='minimal'] .nav-social-link:hover {
+  color: var(--color-primary-ink);
+  background: var(--bg-card-hover);
+}
+
+:root[data-color-mode='light'][data-theme='minimal']
+  .mobile-menu-button
   .hamburger-line {
-    background: var(--text-primary);
-  }
+  background: var(--text-primary);
 }
 
 :root[data-color-mode='light'][data-theme='cli'] .nav-logo,

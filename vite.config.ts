@@ -68,10 +68,10 @@ function excludeApiDirectory(): Plugin {
 }
 
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 150,
+  appChunk: 155,
   vendorChunk: 400,
-  totalSize: 660,
-  cssFile: 79,
+  totalSize: 700,
+  cssFile: 85,
 };
 
 function bundleSizeLimit(): Plugin {

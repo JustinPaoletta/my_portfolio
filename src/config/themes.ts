@@ -181,7 +181,7 @@ export const themes: Record<string, Theme> = {
   },
 };
 
-export const defaultTheme = 'engineer';
+export const defaultTheme = 'minimal';
 export const defaultMode: ColorMode = 'system';
 
 export type ThemeName = keyof typeof themes;

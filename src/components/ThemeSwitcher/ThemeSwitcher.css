@@ -34,6 +34,16 @@
   margin-bottom: 0;
 }
 
+@keyframes attention-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
+}
+
 .theme-switcher-toggle {
   display: flex;
   align-items: center;
@@ -62,6 +72,10 @@
       0 6px 16px rgba(0, 0, 0, 0.2),
       0 2px 4px rgba(0, 0, 0, 0.1);
   }
+}
+
+.theme-switcher-toggle.pulse-on-load {
+  animation: attention-pulse 0.5s ease-in-out 4;
 }
 
 .theme-icon {

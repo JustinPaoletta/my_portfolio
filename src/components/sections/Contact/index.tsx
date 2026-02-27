@@ -201,7 +201,7 @@ function Contact(): React.ReactElement {
                 <span className="indicator-dot" />
               </div>
               <span className="availability-text">
-                Currently available for freelance & full-time opportunities
+                Currently entertaining freelance & full-time opportunities
               </span>
             </motion.div>
           </motion.div>
