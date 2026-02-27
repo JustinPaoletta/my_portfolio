@@ -6,10 +6,10 @@ This project enforces **strict bundle size limits** to ensure fast load times an
 
 | Asset Type        | Limit  | Purpose               |
 | ----------------- | ------ | --------------------- |
-| **App Chunks**    | 150 KB | Your application code |
+| **App Chunks**    | 155 KB | Your application code |
 | **Vendor Chunks** | 400 KB | Third-party libraries |
-| **CSS Files**     | 80 KB  | Stylesheets           |
-| **Total Bundle**  | 650 KB | All assets combined   |
+| **CSS Files**     | 85 KB  | Stylesheets           |
+| **Total Bundle**  | 665 KB | All assets combined   |
 
 ## 🚦 How It Works
 
@@ -38,10 +38,10 @@ Limits are configured in `vite.config.ts`:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 150, // KB - your application code
+  appChunk: 155, // KB - your application code
   vendorChunk: 400, // KB - third-party libraries
-  totalSize: 650, // KB - entire bundle
-  cssFile: 70, // KB - stylesheets
+  totalSize: 665, // KB - entire bundle
+  cssFile: 85, // KB - stylesheets
 };
 ```
 

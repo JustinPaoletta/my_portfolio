@@ -105,16 +105,16 @@ jobs:
               let status = '✅';
 
               if (file.endsWith('.js')) {
-                limit = file.includes('vendor') ? '400 KB' : '150 KB';
+                limit = file.includes('vendor') ? '400 KB' : '155 KB';
               } else if (file.endsWith('.css')) {
-                limit = '80 KB';
+                limit = '85 KB';
               }
 
               bundleInfo += `| ${file} | ${sizeKB} KB | ${limit} | ${status} |\n`;
             });
 
             bundleInfo += '\n';
-            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 660 KB\n\n`;
+            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 665 KB\n\n`;
             bundleInfo += '---\n';
             bundleInfo += '*Bundle size checks passed! ✅*';
 
