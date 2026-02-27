@@ -441,7 +441,7 @@ async function fetchData(): Promise<Data> {
 - Monitor bundle sizes - limits defined in `vite.config.ts`
 - App chunks: < 150 KB
 - Vendor chunks: < 400 KB
-- Total bundle: < 650 KB
+- Total bundle: < 700 KB
 - CSS files: < 80 KB
 
 ### Lighthouse CI

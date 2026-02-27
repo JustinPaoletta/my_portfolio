@@ -114,7 +114,7 @@ jobs:
             });
 
             bundleInfo += '\n';
-            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 665 KB\n\n`;
+            bundleInfo += `**Total Bundle Size:** ${totalSize.toFixed(2)} KB / 700 KB\n\n`;
             bundleInfo += '---\n';
             bundleInfo += '*Bundle size checks passed! ✅*';
 

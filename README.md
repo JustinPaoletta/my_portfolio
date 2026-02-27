@@ -243,7 +243,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 ### Bundle Size Management
 
-- Strict bundle size budgeting (665 KB total, 155 KB app chunk, 85 KB CSS)
+- Strict bundle size budgeting (700 KB total, 155 KB app chunk, 85 KB CSS)
 - Intelligent chunk splitting (React, New Relic, and other vendors in separate chunks)
 - Lazy loading and code splitting for optimal performance
 - Tree shaking optimizations and aggressive minification
