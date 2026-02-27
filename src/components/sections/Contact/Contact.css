@@ -294,6 +294,14 @@
   }
 }
 
+/* Minimal theme: darker primary background + white text for WCAG AA contrast (≥4.5:1) */
+[data-theme='minimal'] .submit-button {
+  color: #ffffff;
+}
+[data-theme='minimal'] .submit-button::before {
+  background: var(--color-primary-dark);
+}
+
 @keyframes envelope-fly-off {
   0% {
     transform: translate(0, 0);

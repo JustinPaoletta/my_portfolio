@@ -30,7 +30,9 @@ export default function ThemeSwitcher({
 }: ThemeSwitcherProps): React.ReactElement {
   const { themeName, setTheme, themes, colorMode, setColorMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
+  const [pulseOnLoad, setPulseOnLoad] = useState(placement === 'floating');
   const switcherRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (placement !== 'floating') {
@@ -78,11 +80,23 @@ export default function ThemeSwitcher({
       rafId = window.requestAnimationFrame(updateOffset);
     };
 
-    updateOffset();
-    window.addEventListener('scroll', scheduleUpdate, { passive: true });
-    window.addEventListener('resize', scheduleUpdate);
+    // Defer initial update to allow layout to settle after theme switch (e.g. CLI
+    // → other). When switching from CLI, overflow/height change triggers reflow;
+    // running immediately can use stale rects and push the switcher off-screen.
+    let cancelled = false;
+    const initialRafId = window.requestAnimationFrame(() => {
+      if (cancelled) return;
+      window.requestAnimationFrame(() => {
+        if (cancelled) return;
+        updateOffset();
+        window.addEventListener('scroll', scheduleUpdate, { passive: true });
+        window.addEventListener('resize', scheduleUpdate);
+      });
+    });
 
     return () => {
+      cancelled = true;
+      window.cancelAnimationFrame(initialRafId);
       if (rafId !== null) {
         window.cancelAnimationFrame(rafId);
       }
@@ -133,13 +147,36 @@ export default function ThemeSwitcher({
     setIsOpen(false);
   }, []);
 
+  // Remove pulse-on-load class after animation completes
+  useEffect(() => {
+    if (!pulseOnLoad || placement !== 'floating') return;
+    const toggle = toggleRef.current;
+    if (!toggle) return;
+
+    const handleAnimationEnd = (): void => {
+      setPulseOnLoad(false);
+    };
+
+    toggle.addEventListener('animationend', handleAnimationEnd);
+    return () => toggle.removeEventListener('animationend', handleAnimationEnd);
+  }, [pulseOnLoad, placement]);
+
+  // Close the menu when the user scrolls
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleScroll = (): void => handleClose();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isOpen, handleClose]);
+
   return (
     <div
       className={`theme-switcher theme-switcher--${placement} ${isOpen ? 'open' : ''}`}
       ref={switcherRef}
     >
       <button
-        className="theme-switcher-toggle"
+        ref={toggleRef}
+        className={`theme-switcher-toggle ${pulseOnLoad ? 'pulse-on-load' : ''}`}
         onClick={toggleOpen}
         onMouseEnter={() => {}}
         onFocus={() => {}}

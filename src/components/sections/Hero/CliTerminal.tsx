@@ -14,6 +14,10 @@ interface TerminalLine {
   id: number;
   kind: LineKind;
   text: string;
+  /** When set, the line text is rendered as a clickable link */
+  url?: string;
+  /** For resume/download links, adds download attribute */
+  download?: string;
 }
 
 interface CliProject {
@@ -22,6 +26,8 @@ interface CliProject {
   techStack: string[];
   status?: string;
   featured: boolean;
+  githubUrl?: string;
+  private?: boolean;
 }
 
 interface CliSkillCategory {
@@ -66,17 +72,17 @@ const MAIN_MENU = [
   { number: 2, label: 'Projects', command: 'projects' },
   { number: 3, label: 'Skills', command: 'skills' },
   { number: 4, label: 'Experience', command: 'experience' },
-  { number: 5, label: 'GitHub Activity', command: 'github' },
+  { number: 5, label: 'GitHub Stats', command: 'github' },
   { number: 6, label: 'Contact', command: 'contact' },
-  { number: 7, label: 'Pet Dogs', command: 'dogs' },
+  { number: 7, label: 'Pet Dawgs', command: 'dogs' },
   { number: 8, label: 'Resume', command: 'resume' },
   { number: 9, label: 'Help', command: 'help' },
   { number: 0, label: 'Clear', command: 'clear' },
 ] as const;
 
 const ABOUT_SUMMARY = [
-  'The drive to understand how things work led me to code; first website led to a career change.',
-  'Switched careers in 2020 through Hack Reactor (HRR45) into full-stack development.',
+  'The drive to challenge myself and understand how things work led me to code; building my first website sparked a career change.',
+  'In 2020, quit my job and joined HRR45 at Hack Reactor for full-stack fundamentals.',
   'Now frontend-focused as a UI Engineer at accesso, with end-to-end delivery experience.',
 ];
 
@@ -90,54 +96,53 @@ const ABOUT_VALUES = [
   'Quality',
   'Collaboration',
   'Continuous Learning',
-  'Accessibility',
   'Documentation',
+  'Accessibility',
 ];
 
 const PROJECTS: CliProject[] = [
   {
     title: 'BitStockerz',
     description:
-      'Paper trading platform for crypto and stocks with simulated orders and real-time prices.',
+      'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money.',
     techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     status: 'In Development',
     featured: true,
+    githubUrl: `${env.social.github}/BitStockerz`,
   },
   {
     title: '@jp-design-system',
     description:
-      'Reusable Angular component library focused on accessibility, consistency, and velocity.',
+      'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Designed for rapid development and maintainability across projects.',
     techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
     status: 'Planning',
     featured: true,
+    githubUrl: `${env.social.github}/jp-design-system`,
   },
   {
-    title: 'StarForge',
+    title: 'Godot Playground',
     description:
-      'Cosmic strategy game in Godot where players forge life and weapons from stellar matter.',
-    techStack: ['Godot', 'GDScript', 'Game Design', 'Procedural Generation'],
-    status: 'Planning',
+      'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene.',
+    techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
+    status: 'In Development',
     featured: true,
+    githubUrl: `${env.social.github}/godot_practice`,
   },
   {
     title: 'SideQuest: Pittsburgh',
     description:
-      'Discovery app for weird and off-the-beaten-path local activities with offline-first behavior.',
+      'A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built offline-first, it surfaces under-the-radar spots—prioritizing proximity, novelty, and curated tags over star ratings and influencer rankings.',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     featured: false,
+    private: true,
   },
   {
-    title: 'Easy Eats',
+    title: 'Plex Request App',
     description:
-      'Personal nutrition tracker built around reusable recipes and repeatable portions.',
-    techStack: [
-      'React',
-      'TypeScript',
-      'SQLite',
-      'Nutrition API',
-      'Mobile-First',
-    ],
+      'A self-hosted media request system for managing a home Plex Server. Users authenticate via passkeys (WebAuthn). Features include real-time service health monitoring, per-user quality profiles, and an activity audit log.',
+    techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
     featured: false,
+    private: true,
   },
 ];
 
@@ -203,48 +208,53 @@ const EXPERIENCES: CliExperience[] = [
   {
     title: 'UI Engineer',
     organization: 'accesso',
-    period: 'May 2021 - Present',
+    period: 'May 2021 – Present',
     location: 'Orlando, FL (Remote)',
     summary:
-      'Builds frontend features for accesso Passport, a cloud SaaS ticketing platform used by high-volume venues.',
+      'Develop and maintain frontend features for accesso Passport, a cloud-hosted SaaS eCommerce ticketing system used by high-volume entertainment venues worldwide.',
     highlights: [
-      'Works across Angular, AngularJS, React, TypeScript, and RxJS in a production micro-frontend ecosystem.',
-      'Contributes to shared design systems, CI/CD workflows, and long-term modernization of legacy code.',
+      'Engineer on a large-scale micro-frontend platform with Angular, AngularJS, React, TypeScript, and RxJS.',
+      'Contribute to shared UI libraries and design systems, balancing consistency with application needs.',
+      'Work in hybrid legacy/modern codebases, incrementally modernizing while maintaining business continuity.',
+      'Participate in architectural discussions around state management, performance, and frontend scalability.',
+      'Contribute to CI/CD pipelines, build processes, and automated testing workflows.',
     ],
   },
   {
     title: 'Angular Developer',
     organization: '4C Strategies',
-    period: 'Aug 2020 - Apr 2021',
+    period: 'Aug 2020 – Apr 2021',
     location: 'Orlando, FL',
     summary:
-      'Early professional role shipping Angular UI and Java backend functionality.',
+      'Gained early hands-on experience shipping code, reviewing PRs, and working with legacy systems.',
     highlights: [
-      'Worked on a five-engineer team and participated in daily code review workflows in GitLab.',
-      'Built strong fundamentals in collaborative delivery and maintaining legacy systems.',
+      'Contributed to Angular UI components and Java backend endpoints as part of a team of 5 engineers.',
+      'Used GitLab for version control, participating in code reviews and team-based development workflows.',
     ],
   },
   {
     title: 'Advanced Software Engineering Immersive',
     organization: 'Hack Reactor',
     period: '2020',
-    location: 'Remote',
+    location: '(Remote)',
     summary:
-      'Full-time 12-week intensive focused on full-stack JavaScript and core CS fundamentals.',
+      'Full-time, 12-week intensive focused on full-stack JavaScript engineering and computer science fundamentals.',
     highlights: [
-      'Completed 600+ hours of programming and shipped multiple full-stack applications.',
-      'Practiced pair programming, algorithms, and production-style team workflows.',
+      'Completed ~600+ hours of hands-on programming under production-style deadlines.',
+      'Built and shipped multiple full-stack applications.',
+      'Applied core CS concepts: data structures, algorithms, async programming, and system design fundamentals.',
+      'Collaborated using Git/GitHub, code reviews, pair programming, and Agile workflows.',
     ],
   },
   {
-    title: 'B.S. in Psychology',
+    title: 'Bachelor of Science (B.S.) in Psychology',
     organization: 'University of Central Florida',
-    period: '2008 - 2012',
+    period: '2008-2012',
     location: 'Orlando, FL',
     summary:
-      'Academic background in research methods, statistics, cognitive psychology, and behavioral analysis.',
+      'Coursework emphasized research methods, statistics, cognitive psychology, and behavioral analysis.',
     highlights: [
-      'Built analytical and systems-thinking foundations that inform engineering decisions today.',
+      'Developed a foundation in analytical thinking, experimental design, and human-centered problem solving.',
     ],
   },
 ];
@@ -264,18 +274,19 @@ const INITIAL_DOGS_DATA: DogData[] = DOGS.map((dog) => ({
   stats: { treats: 0, scritches: 0 },
 }));
 
-const BOOT_LINES: InitialLine[] = [
-  { kind: 'system', text: 'JP-CLI Initialized' },
-];
+const RESUME_PATH = '/resume/Justin-Paoletta_Software-Engineer.pdf';
+
+const BOOT_MESSAGE = 'JP-CLI Initialized';
 
 const MAIN_MENU_LINES: InitialLine[] = [
-  { kind: 'hint', text: 'Use left-panel options or type a number/command.' },
+  { kind: 'hint', text: 'Use panel options or type a number/command.' },
 ];
 
-function createInitialLines(): TerminalLine[] {
-  return [...BOOT_LINES].map((entry, index) => ({
+/** Lines shown after boot completes and when user runs clear */
+function createMainMenuLines(lineIdStart: number): TerminalLine[] {
+  return MAIN_MENU_LINES.map((entry, index) => ({
     ...entry,
-    id: index + 1,
+    id: lineIdStart + index + 1,
   }));
 }
 
@@ -288,7 +299,10 @@ function chunk(items: string[], size: number): string[] {
 }
 
 function getCliExperienceOptionLabel(item: CliExperience): string {
-  return item.organization === 'Hack Reactor' ? 'Hack Reactor' : item.title;
+  if (item.organization === 'Hack Reactor') return 'Hack Reactor';
+  if (item.organization === 'University of Central Florida')
+    return 'B.S. Psychology';
+  return item.title;
 }
 
 function CliTerminal(): React.ReactElement {
@@ -298,8 +312,8 @@ function CliTerminal(): React.ReactElement {
   const [inputValue, setInputValue] = useState('');
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
   const [isDetailView, setIsDetailView] = useState(false);
-  const [lines, setLines] = useState<TerminalLine[]>(createInitialLines);
-  const lineIdRef = useRef(lines.length);
+  const [lines, setLines] = useState<TerminalLine[]>([]);
+  const lineIdRef = useRef(0);
   const historyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -356,6 +370,7 @@ function CliTerminal(): React.ReactElement {
           value: index + 1,
           label: category.name,
         })),
+        { value: 5, label: 'Other' },
         { value: 0, label: 'Clear' },
       ];
     }
@@ -427,12 +442,10 @@ function CliTerminal(): React.ReactElement {
   };
 
   const resetTerminal = (): void => {
-    const initialLines = createInitialLines();
-    lineIdRef.current = initialLines.length;
     setContext('main');
     setIsDetailView(false);
     setSelectedOptionIndex(0);
-    setLines(initialLines);
+    setLines([]);
   };
 
   const showAbout = (): void => {
@@ -446,11 +459,7 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `Core principles: ${ABOUT_VALUES.join(', ')}` },
       {
         kind: 'output',
-        text: 'AI approach: use tools aggressively, validate outputs, and code responsibly.',
-      },
-      {
-        kind: 'hint',
-        text: 'Next: type 2 for projects, 4 for experience, or menu.',
+        text: 'AI approach: use tools aggressively, validate outputs, treat as tool not oracle, code responsibly.',
       },
     ]);
   };
@@ -461,10 +470,14 @@ function CliTerminal(): React.ReactElement {
     setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[PROJECTS]' },
-      ...PROJECTS.map((project, index) => ({
-        kind: 'output' as const,
-        text: `${index + 1}. ${project.title}${project.status ? ` (${project.status})` : ''}`,
-      })),
+      ...PROJECTS.map((project, index) => {
+        const statusPart = project.status ? ` (${project.status})` : '';
+        const privatePart = project.private ? ' (Private)' : '';
+        const text = `${index + 1}. ${project.title}${statusPart}${privatePart}`;
+        return project.githubUrl
+          ? { kind: 'output' as const, text, url: project.githubUrl }
+          : { kind: 'output' as const, text };
+      }),
       {
         kind: 'hint',
         text: 'Choose a project number or type "project <number>" for details.',
@@ -485,12 +498,23 @@ function CliTerminal(): React.ReactElement {
     setContext('projects');
     setIsDetailView(true);
     setSelectedOptionIndex(selection - 1);
+    const repoLine = project.private
+      ? { kind: 'output' as const, text: 'Repository: Private' }
+      : project.githubUrl
+        ? {
+            kind: 'output' as const,
+            text: `GitHub: ${project.githubUrl}`,
+            url: project.githubUrl,
+          }
+        : null;
+
     appendLines([
       { kind: 'output', text: `[PROJECT ${selection}] ${project.title}` },
       {
         kind: 'output',
         text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${project.status}` : ''}`,
       },
+      ...(repoLine ? [repoLine] : []),
       { kind: 'output', text: project.description },
       { kind: 'output', text: `Stack: ${project.techStack.join(', ')}` },
       { kind: 'hint', text: 'Try another project number, or type menu.' },
@@ -508,6 +532,10 @@ function CliTerminal(): React.ReactElement {
         text: `${index + 1}. ${category.name} (${category.skills.length})`,
       })),
       {
+        kind: 'output',
+        text: `5. Other (${ADDITIONAL_SKILLS.length})`,
+      },
+      {
         kind: 'hint',
         text: 'Choose a category number or type "skill <number>".',
       },
@@ -515,6 +543,24 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showSkillDetail = (selection: number): void => {
+    if (selection === 5) {
+      setContext('skills');
+      setIsDetailView(true);
+      setSelectedOptionIndex(4);
+      appendLines([
+        {
+          kind: 'output',
+          text: '[SKILL CATEGORY 5] Other',
+        },
+        ...chunk(ADDITIONAL_SKILLS, 5).map((group) => ({
+          kind: 'output' as const,
+          text: group,
+        })),
+        { kind: 'hint', text: 'Choose another category or type menu.' },
+      ]);
+      return;
+    }
+
     const category = SKILL_CATEGORIES[selection - 1];
     if (!category) {
       appendLines([
@@ -536,10 +582,6 @@ function CliTerminal(): React.ReactElement {
         kind: 'output' as const,
         text: group,
       })),
-      {
-        kind: 'output',
-        text: `Also experienced with: ${ADDITIONAL_SKILLS.join(', ')}`,
-      },
       { kind: 'hint', text: 'Choose another category or type menu.' },
     ]);
   };
@@ -595,6 +637,7 @@ function CliTerminal(): React.ReactElement {
         {
           kind: 'hint',
           text: `You can still visit: ${env.social.github}`,
+          url: env.social.github,
         },
       ]);
       return;
@@ -647,7 +690,11 @@ function CliTerminal(): React.ReactElement {
             })),
           ]
         : []),
-      { kind: 'hint', text: `Profile: ${env.social.github}` },
+      {
+        kind: 'hint',
+        text: `Profile: ${env.social.github}`,
+        url: env.social.github,
+      },
     ]);
   };
 
@@ -656,11 +703,23 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: '[CONTACT]' },
       {
         kind: 'output',
-        text: "Open to freelance and full-time opportunities. Let's connect.",
+        text: 'Currently entertaining freelance & full-time opportunities.',
       },
-      { kind: 'output', text: `Email: ${env.social.email}` },
-      { kind: 'output', text: `LinkedIn: ${env.social.linkedin}` },
-      { kind: 'output', text: `GitHub: ${env.social.github}` },
+      {
+        kind: 'output',
+        text: `Email: ${env.social.email}`,
+        url: `mailto:${env.social.email}`,
+      },
+      {
+        kind: 'output',
+        text: `LinkedIn: ${env.social.linkedin}`,
+        url: env.social.linkedin,
+      },
+      {
+        kind: 'output',
+        text: `GitHub: ${env.social.github}`,
+        url: env.social.github,
+      },
       {
         kind: 'hint',
         text: 'Switch to a non-CLI theme if you want to use the web contact form.',
@@ -759,7 +818,9 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: '[RESUME]' },
       {
         kind: 'output',
-        text: 'Download: /resume/Justin-Paoletta_Software-Engineer.pdf',
+        text: `Download: ${RESUME_PATH}`,
+        url: RESUME_PATH,
+        download: 'Justin_Paoletta_Resume.pdf',
       },
       {
         kind: 'hint',
@@ -1035,6 +1096,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
+  /** Height for options panel sized to fit all 10 main-menu options (5 rows × 2 cols) */
   const compactOptionsPanelHeight = '16rem';
 
   const macDotBaseStyle = {
@@ -1078,16 +1140,48 @@ function CliTerminal(): React.ReactElement {
     transform: 'translateY(-0.01rem)',
   } as const;
 
+  /* Boot sequence: typewriter "JP-CLI Initialized", then clear and show main menu */
+  useEffect(() => {
+    const charDelayMs = 50;
+    const pauseAfterBootMs = 500;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    const schedule = (fn: () => void, ms: number) => {
+      timeouts.push(setTimeout(fn, ms));
+    };
+
+    let charIndex = 0;
+    const bootLineId = 1;
+    lineIdRef.current = 1;
+
+    const typeNextChar = (): void => {
+      charIndex += 1;
+      const partial = BOOT_MESSAGE.slice(0, charIndex);
+      setLines([{ id: bootLineId, kind: 'system', text: partial }]);
+
+      if (charIndex < BOOT_MESSAGE.length) {
+        schedule(typeNextChar, charDelayMs);
+      } else {
+        schedule(() => {
+          const menuLines = createMainMenuLines(lineIdRef.current);
+          lineIdRef.current += menuLines.length;
+          setLines(menuLines);
+        }, pauseAfterBootMs);
+      }
+    };
+
+    schedule(typeNextChar, charDelayMs);
+
+    return () => timeouts.forEach(clearTimeout);
+  }, []);
+
   useEffect(() => {
     const history = historyRef.current;
     if (!history) {
       return;
     }
     history.scrollTop = history.scrollHeight;
-    if (!isCompactLayout) {
-      inputRef.current?.focus();
-    }
-  }, [isCompactLayout, lines]);
+    inputRef.current?.focus();
+  }, [lines]);
 
   return (
     <div className="cli-terminal-shell">
@@ -1133,11 +1227,15 @@ function CliTerminal(): React.ReactElement {
             gridTemplateColumns: isCompactLayout
               ? '1fr'
               : 'minmax(210px, 260px) minmax(0, 1fr)',
+            gridTemplateRows: isCompactLayout
+              ? `1fr ${compactOptionsPanelHeight}`
+              : undefined,
             flex: 1,
             minHeight: 0,
           }}
         >
           <aside
+            className="cli-options-panel"
             aria-label="Selection menu"
             style={{
               order: isCompactLayout ? 2 : 1,
@@ -1154,6 +1252,7 @@ function CliTerminal(): React.ReactElement {
               gap: '0.55rem',
               minHeight: isCompactLayout ? compactOptionsPanelHeight : 0,
               maxHeight: isCompactLayout ? compactOptionsPanelHeight : 'none',
+              flexShrink: isCompactLayout ? 0 : undefined,
               overflow: isCompactLayout ? 'hidden' : 'visible',
             }}
           >
@@ -1178,7 +1277,10 @@ function CliTerminal(): React.ReactElement {
                 >
                   <button
                     type="button"
-                    onClick={goToPreviousList}
+                    onClick={() => {
+                      goToPreviousList();
+                      requestAnimationFrame(() => inputRef.current?.focus());
+                    }}
                     aria-label="Previous list"
                     title="Previous list"
                     style={{
@@ -1188,7 +1290,7 @@ function CliTerminal(): React.ReactElement {
                       borderRadius: '8px',
                       background: 'var(--bg-main)',
                       color: 'var(--text-primary)',
-                      fontFamily: 'var(--font-mono)',
+                      fontFamily: 'inherit',
                       fontSize: '0.74rem',
                       fontWeight: 700,
                       lineHeight: 1,
@@ -1203,28 +1305,32 @@ function CliTerminal(): React.ReactElement {
                   </button>
                   <button
                     type="button"
-                    onClick={submitPrompt}
+                    onClick={() => {
+                      submitPrompt();
+                      requestAnimationFrame(() => inputRef.current?.focus());
+                    }}
                     aria-label="Run selected option"
                     title="Run selected option"
                     style={{
-                      width: '2rem',
+                      width: '4.5rem',
                       height: '2rem',
                       border: '1px solid var(--border-subtle)',
                       borderRadius: '8px',
                       background: 'var(--bg-main)',
                       color: 'var(--text-primary)',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '1rem',
+                      fontFamily: 'inherit',
+                      fontSize: '0.74rem',
                       fontWeight: 700,
                       lineHeight: 1,
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
+                      gap: '0.25rem',
                       padding: 0,
                       touchAction: 'manipulation',
                     }}
                   >
-                    ↵
+                    Enter <span aria-hidden="true">↵</span>
                   </button>
                 </div>
               ) : null}
@@ -1258,9 +1364,7 @@ function CliTerminal(): React.ReactElement {
                       onClick={() => {
                         setSelectedOptionIndex(index);
                         setInputValue(String(option.value));
-                        if (!isCompactLayout) {
-                          inputRef.current?.focus();
-                        }
+                        requestAnimationFrame(() => inputRef.current?.focus());
                       }}
                       aria-current={isSelected ? 'true' : undefined}
                       style={{
@@ -1279,7 +1383,7 @@ function CliTerminal(): React.ReactElement {
                         gap: '0.4rem',
                         alignItems: 'center',
                         fontSize: '0.72rem',
-                        fontFamily: 'var(--font-mono)',
+                        fontFamily: 'inherit',
                         lineHeight: 1.25,
                       }}
                     >
@@ -1302,14 +1406,17 @@ function CliTerminal(): React.ReactElement {
               minHeight: 0,
             }}
           >
-            <img
-              className="cli-terminal-banner"
-              src="/images/cli/terminal-header.webp"
-              alt=""
-              aria-hidden="true"
-              loading="eager"
-              decoding="async"
-            />
+            <div className="cli-terminal-banner" aria-hidden="true">
+              <div className="cli-banner-left">
+                <div className="cli-banner-prompt">
+                  <span>&gt;&gt; HELLO, I&apos;M</span>
+                </div>
+                <div className="cli-banner-name">JUSTIN PAOLETTA</div>
+              </div>
+              <div className="cli-banner-right">
+                Software Engineer • Problem Solver • Fixer of Things
+              </div>
+            </div>
 
             <p
               className="cli-line cli-line--hint"
@@ -1324,7 +1431,20 @@ function CliTerminal(): React.ReactElement {
                 : 'Options left | Keys: ↑ ↓ ← → move | Space/0-9 stage input | Enter run'}
             </p>
 
-            <div className="cli-session" ref={historyRef}>
+            <div
+              className="cli-session"
+              ref={historyRef}
+              role="button"
+              tabIndex={0}
+              aria-label="Focus command input"
+              onClick={() => inputRef.current?.focus()}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  inputRef.current?.focus();
+                }
+              }}
+            >
               <div className="cli-history" role="log" aria-live="polite">
                 {lines.map((line) => (
                   <p
@@ -1336,6 +1456,29 @@ function CliTerminal(): React.ReactElement {
                         <span className="cli-line-prefix">user@jp-cli: ~%</span>
                         <span>{line.text}</span>
                       </>
+                    ) : line.url ? (
+                      <a
+                        href={line.url}
+                        className="cli-line-link"
+                        target={
+                          line.url.startsWith('mailto:') ||
+                          line.url.startsWith('/')
+                            ? undefined
+                            : '_blank'
+                        }
+                        rel={
+                          line.url.startsWith('mailto:') ||
+                          line.url.startsWith('/')
+                            ? undefined
+                            : 'noopener noreferrer'
+                        }
+                        download={line.download}
+                        {...(line.download && {
+                          'aria-label': 'Download resume as PDF',
+                        })}
+                      >
+                        {line.text}
+                      </a>
                     ) : (
                       <span>{line.text}</span>
                     )}
@@ -1363,6 +1506,8 @@ function CliTerminal(): React.ReactElement {
                   onChange={(event) => setInputValue(event.target.value)}
                   autoComplete="off"
                   spellCheck={false}
+                  /* eslint-disable-next-line jsx-a11y/no-autofocus -- CLI terminal: focus prompt on load for expected terminal UX */
+                  autoFocus
                   aria-label="Terminal command input"
                   onKeyDown={(event) => {
                     const trimmedInput = inputValue.trim();
