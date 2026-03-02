@@ -38,6 +38,7 @@ const MONTHS = [
 // Full and abbreviated day names
 const DAYS_FULL = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const DAYS_ABBR = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+const DAY_LABEL_INDICES = [1, 3, 5] as const; // Mon, Wed, Fri
 
 function ContributionGraph({
   contributions,
@@ -107,27 +108,23 @@ function ContributionGraph({
   }, [totalWeeks, isVisible]);
 
   // Calculate which day labels to show and their row positions
-  // We show Mon, Wed, Fri (day indices 1, 3, 5)
-  const dayLabelIndices = [1, 3, 5]; // Mon, Wed, Fri
   const dayLabelsWithPosition = useMemo(() => {
-    return dayLabelIndices
-      .map((targetDayIndex) => {
-        // Find which row (dayIndex within week) corresponds to this day of week
-        // We need to check the first week to see the mapping
-        const firstWeek = visibleWeeks[0];
-        if (!firstWeek) return null;
+    return DAY_LABEL_INDICES.map((targetDayIndex) => {
+      // Find which row (dayIndex within week) corresponds to this day of week
+      // We need to check the first week to see the mapping
+      const firstWeek = visibleWeeks[0];
+      if (!firstWeek) return null;
 
-        const rowIndex = firstWeek.contributionDays.findIndex(
-          (day) => new Date(day.date).getDay() === targetDayIndex
-        );
-
-        if (rowIndex === -1) return null;
-
-        return { day: DAYS[targetDayIndex], rowIndex };
-      })
-      .filter(
-        (item): item is { day: string; rowIndex: number } => item !== null
+      const rowIndex = firstWeek.contributionDays.findIndex(
+        (day) => new Date(day.date).getDay() === targetDayIndex
       );
+
+      if (rowIndex === -1) return null;
+
+      return { day: DAYS[targetDayIndex], rowIndex };
+    }).filter(
+      (item): item is { day: string; rowIndex: number } => item !== null
+    );
   }, [visibleWeeks, DAYS]);
 
   // Get unique months with accurate positioning for visible weeks

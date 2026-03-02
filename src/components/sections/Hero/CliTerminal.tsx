@@ -1446,6 +1446,10 @@ function CliTerminal(): React.ReactElement {
               aria-label="Focus command input"
               onClick={focusPromptInput}
               onKeyDown={(e) => {
+                if (e.target !== e.currentTarget) {
+                  return;
+                }
+
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();
                   focusPromptInput();

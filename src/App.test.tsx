@@ -1,9 +1,175 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen, act } from '@/test/test-utils';
+import { render, screen, act, waitFor } from '@/test/test-utils';
 import App from './App';
 
+const mockDogStats = {
+  Nala: { treats: 0, scritches: 0 },
+  Rosie: { treats: 0, scritches: 0 },
+  Tito: { treats: 0, scritches: 0 },
+};
+
+const mockContributionCalendar = {
+  totalContributions: 6,
+  weeks: [
+    {
+      contributionDays: [
+        {
+          contributionCount: 0,
+          date: '2026-02-22',
+          color: '#161b22',
+          contributionLevel: 'NONE' as const,
+        },
+        {
+          contributionCount: 1,
+          date: '2026-02-23',
+          color: '#0e4429',
+          contributionLevel: 'FIRST_QUARTILE' as const,
+        },
+        {
+          contributionCount: 0,
+          date: '2026-02-24',
+          color: '#161b22',
+          contributionLevel: 'NONE' as const,
+        },
+        {
+          contributionCount: 2,
+          date: '2026-02-25',
+          color: '#006d32',
+          contributionLevel: 'SECOND_QUARTILE' as const,
+        },
+        {
+          contributionCount: 0,
+          date: '2026-02-26',
+          color: '#161b22',
+          contributionLevel: 'NONE' as const,
+        },
+        {
+          contributionCount: 3,
+          date: '2026-02-27',
+          color: '#26a641',
+          contributionLevel: 'THIRD_QUARTILE' as const,
+        },
+        {
+          contributionCount: 0,
+          date: '2026-02-28',
+          color: '#161b22',
+          contributionLevel: 'NONE' as const,
+        },
+      ],
+    },
+  ],
+};
+
+const mockGitHubUser = {
+  login: 'JustinPaoletta',
+  id: 1,
+  avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4',
+  html_url: 'https://github.com/JustinPaoletta',
+  name: 'Justin Paoletta',
+  company: null,
+  blog: '',
+  location: null,
+  email: null,
+  bio: null,
+  public_repos: 10,
+  public_gists: 0,
+  followers: 23,
+  following: 1,
+  created_at: '2020-01-01T00:00:00Z',
+  updated_at: '2026-01-01T00:00:00Z',
+};
+
+const mockGitHubRepos = [
+  {
+    id: 101,
+    name: 'my-portfolio',
+    full_name: 'JustinPaoletta/my-portfolio',
+    html_url: 'https://github.com/JustinPaoletta/my-portfolio',
+    description: 'Portfolio',
+    fork: false,
+    created_at: '2020-01-01T00:00:00Z',
+    updated_at: '2026-01-01T00:00:00Z',
+    pushed_at: '2026-01-01T00:00:00Z',
+    homepage: null,
+    stargazers_count: 12,
+    watchers_count: 12,
+    forks_count: 2,
+    language: 'TypeScript',
+    topics: [],
+    default_branch: 'main',
+  },
+];
+
 describe('App', () => {
+  beforeEach(() => {
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        observe(): void {}
+        unobserve(): void {}
+        disconnect(): void {}
+      }
+    );
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+        const requestUrl =
+          typeof input === 'string'
+            ? input
+            : input instanceof URL
+              ? input.toString()
+              : input.url;
+        const method = (
+          init?.method ?? (input instanceof Request ? input.method : 'GET')
+        ).toUpperCase();
+
+        const jsonResponse = (
+          body: unknown,
+          status = 200,
+          headers: Record<string, string> = {}
+        ): Response =>
+          new Response(JSON.stringify(body), {
+            status,
+            headers: {
+              'Content-Type': 'application/json',
+              ...headers,
+            },
+          });
+
+        if (requestUrl.includes('/api/pet-dogs')) {
+          if (method === 'POST') {
+            return jsonResponse({ ok: true });
+          }
+          return jsonResponse({ stats: mockDogStats });
+        }
+
+        if (requestUrl.includes('/api/github')) {
+          return jsonResponse({
+            contributions: mockContributionCalendar,
+            pinnedRepos: [],
+          });
+        }
+
+        if (requestUrl.includes('https://api.github.com/users/')) {
+          if (requestUrl.includes('/repos')) {
+            return jsonResponse(mockGitHubRepos);
+          }
+          return jsonResponse(mockGitHubUser);
+        }
+
+        throw new Error(`Unhandled fetch URL in App.test.tsx: ${requestUrl}`);
+      })
+    );
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    localStorage.clear();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
   it('renders the heading with app title from env', async () => {
     await act(async () => {
       render(<App />);
@@ -66,5 +232,102 @@ describe('App', () => {
     await user.click(cliOption);
 
     expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+  });
+
+  it('CLI Enter submits typed command', async () => {
+    const user = userEvent.setup();
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    const themeToggle = screen.getByRole('button', {
+      name: /toggle theme switcher/i,
+    });
+    await user.click(themeToggle);
+
+    const cliOption = screen.getByRole('option', { name: /CLI/i });
+    await user.click(cliOption);
+
+    const input = await screen.findByLabelText(/terminal command input/i);
+    await user.click(input);
+    await user.type(input, '9{Enter}');
+
+    await screen.findByText('[HELP]');
+    expect(input).toHaveValue('');
+  });
+
+  it('CLI container Enter still focuses input', async () => {
+    const user = userEvent.setup();
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    const themeToggle = screen.getByRole('button', {
+      name: /toggle theme switcher/i,
+    });
+    await user.click(themeToggle);
+
+    const cliOption = screen.getByRole('option', { name: /CLI/i });
+    await user.click(cliOption);
+
+    const sessionContainer = screen.getByRole('button', {
+      name: /focus command input/i,
+    });
+    const input = await screen.findByLabelText(/terminal command input/i);
+
+    sessionContainer.focus();
+    expect(sessionContainer).toHaveFocus();
+
+    await user.keyboard('{Enter}');
+    expect(input).toHaveFocus();
+  });
+
+  it('Cosmic startup attempts autoplay from persisted theme', async () => {
+    localStorage.setItem('portfolio-theme', 'cosmic');
+
+    const playSpy = vi
+      .spyOn(window.HTMLMediaElement.prototype, 'play')
+      .mockResolvedValue(undefined);
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    await waitFor(() => {
+      expect(playSpy).toHaveBeenCalled();
+    });
+  });
+
+  it('Cosmic retries autoplay after initial block', async () => {
+    localStorage.setItem('portfolio-theme', 'cosmic');
+
+    let callCount = 0;
+    const playSpy = vi
+      .spyOn(window.HTMLMediaElement.prototype, 'play')
+      .mockImplementation(() => {
+        callCount += 1;
+        if (callCount === 1) {
+          return Promise.reject(new Error('autoplay blocked'));
+        }
+        return Promise.resolve(undefined);
+      });
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    await waitFor(() => {
+      expect(playSpy).toHaveBeenCalledTimes(1);
+    });
+
+    await act(async () => {
+      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
+    });
+
+    await waitFor(() => {
+      expect(playSpy.mock.calls.length).toBeGreaterThan(1);
+    });
   });
 });

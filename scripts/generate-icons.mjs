@@ -12,6 +12,7 @@
  */
 
 import sharp from 'sharp';
+import { Buffer } from 'node:buffer';
 import { readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
@@ -82,5 +83,5 @@ for (const { name, size } of sizes) {
     .composite([{ input: Buffer.from(maskSvg), blend: 'dest-in' }])
     .png()
     .toFile(outPath);
-  console.log(`Generated favicons/${name}`);
+  globalThis.console.log(`Generated favicons/${name}`);
 }
