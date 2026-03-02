@@ -481,6 +481,7 @@ export function ThemeProvider({
  * setTheme('darkNeon');
  * setColorMode('light');
  */
+// eslint-disable-next-line react-refresh/only-export-components -- ThemeProvider and useTheme are intentionally colocated.
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
 

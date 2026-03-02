@@ -4,7 +4,7 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -195,6 +195,7 @@ const chipPins = {
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const electronSvgRef = useRef<SVGSVGElement>(null);
+  const cosmicVideoRef = useRef<HTMLVideoElement>(null);
   const loadedThemeStyles = useRef(new Set<string>());
   const { themeName } = useTheme();
   const isCosmicTheme = themeName === 'cosmic';
@@ -278,6 +279,82 @@ function Hero(): React.ReactElement {
     svg.pauseAnimations();
   }, [isEngineerTheme, isHeroInView]);
 
+  const attemptPlay = useCallback((): void => {
+    if (!isCosmicTheme) {
+      return;
+    }
+
+    const video = cosmicVideoRef.current;
+    if (!video) {
+      return;
+    }
+
+    video.muted = true;
+    video.defaultMuted = true;
+    video.playsInline = true;
+
+    const playAttempt = video.play();
+    if (playAttempt && typeof playAttempt.catch === 'function') {
+      void playAttempt.catch(() => {});
+    }
+  }, [isCosmicTheme]);
+
+  useEffect(() => {
+    if (!isCosmicTheme) {
+      return;
+    }
+
+    const video = cosmicVideoRef.current;
+    if (!video || typeof document === 'undefined') {
+      return;
+    }
+
+    let hasRetriedOnInteraction = false;
+
+    const removeInteractionListeners = (): void => {
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    const handleLoadedData = (): void => {
+      attemptPlay();
+    };
+
+    const handleVisibilityChange = (): void => {
+      if (document.visibilityState === 'visible') {
+        attemptPlay();
+      }
+    };
+
+    const handleFirstInteraction = (): void => {
+      if (hasRetriedOnInteraction) {
+        return;
+      }
+      hasRetriedOnInteraction = true;
+      attemptPlay();
+      removeInteractionListeners();
+    };
+
+    attemptPlay();
+
+    video.addEventListener('loadeddata', handleLoadedData);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pointerdown', handleFirstInteraction, {
+      passive: true,
+    });
+    window.addEventListener('touchstart', handleFirstInteraction, {
+      passive: true,
+    });
+    window.addEventListener('keydown', handleFirstInteraction);
+
+    return () => {
+      video.removeEventListener('loadeddata', handleLoadedData);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      removeInteractionListeners();
+    };
+  }, [attemptPlay, isCosmicTheme]);
+
   const electronMotion = useCalmerElectronMotion
     ? {
         baseDuration: 8.8,
@@ -329,6 +406,7 @@ function Hero(): React.ReactElement {
       <div className="hero-background" aria-hidden="true">
         {isCosmicTheme ? (
           <video
+            ref={cosmicVideoRef}
             className="hero-cosmic-video"
             autoPlay
             loop
