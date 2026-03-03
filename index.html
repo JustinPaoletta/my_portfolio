@@ -75,11 +75,18 @@
       (function () {
         try {
           if (localStorage.getItem('portfolio-theme') === 'cosmic') {
-            var link = document.createElement('link');
-            link.rel = 'preload';
-            link.as = 'video';
-            link.href = '/video/cosmos.mp4';
-            document.head.appendChild(link);
+            var videoLink = document.createElement('link');
+            videoLink.rel = 'preload';
+            videoLink.as = 'video';
+            videoLink.href = '/video/cosmos.mp4';
+            document.head.appendChild(videoLink);
+
+            var stillLink = document.createElement('link');
+            stillLink.rel = 'preload';
+            stillLink.as = 'image';
+            stillLink.href = '/images/hero/cosmic/cosmos-first-frame.webp';
+            stillLink.setAttribute('fetchpriority', 'high');
+            document.head.appendChild(stillLink);
           }
         } catch (e) {}
       })();
