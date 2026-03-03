@@ -330,6 +330,15 @@ function Hero(): React.ReactElement {
       setIsCosmicVideoReady(true);
     };
 
+    const syncReadyFromMediaState = (): void => {
+      if (
+        !video.paused &&
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+      ) {
+        setIsCosmicVideoReady(true);
+      }
+    };
+
     const handleVisibilityChange = (): void => {
       if (document.visibilityState === 'visible') {
         attemptPlay();
@@ -357,6 +366,8 @@ function Hero(): React.ReactElement {
       passive: true,
     });
     window.addEventListener('keydown', handleFirstInteraction);
+
+    syncReadyFromMediaState();
 
     return () => {
       video.removeEventListener('playing', handlePlaying);
