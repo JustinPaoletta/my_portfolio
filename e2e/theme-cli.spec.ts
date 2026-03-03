@@ -15,6 +15,12 @@ async function closeThemeSwitcher(page: Page): Promise<void> {
   ).toHaveCount(0);
 }
 
+async function waitForCliBootComplete(page: Page): Promise<void> {
+  await expect(page.locator('.cli-history .cli-line').first()).toHaveText(
+    /Use panel options or type a number\/command\./i
+  );
+}
+
 test('theme selection persists after reload', async ({ page }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
@@ -32,6 +38,40 @@ test('theme selection persists after reload', async ({ page }) => {
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
+});
+
+test('cosmic theme hero video autoplays when restored from localStorage', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.addInitScript(() => {
+    localStorage.setItem('portfolio-theme', 'cosmic');
+  });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
+  await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
+  await expect(page.locator('.hero-background')).toHaveAttribute(
+    'data-cosmic-video-ready',
+    'true'
+  );
+
+  await expect
+    .poll(async () => {
+      return page.evaluate(() => {
+        const video =
+          document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
+        if (!video) {
+          return false;
+        }
+        return (
+          !video.paused &&
+          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+          video.currentTime > 0
+        );
+      });
+    })
+    .toBe(true);
 });
 
 test('color mode selection persists after reload', async ({ page }) => {
@@ -77,7 +117,14 @@ test('query params apply theme and mode overrides', async ({ page }) => {
 });
 
 test('CLI theme supports command execution and exit', async ({ page }) => {
-  await mockPortfolioApis(page);
+  let nalaTreatPosts = 0;
+  await mockPortfolioApis(page, {
+    onPetDogsPost: ({ dogName, action }) => {
+      if (dogName === 'Nala' && action === 'treat') {
+        nalaTreatPosts += 1;
+      }
+    },
+  });
   await page.goto('/');
 
   await openThemeSwitcher(page);
@@ -90,6 +137,7 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
   ).toHaveCount(0);
+  await waitForCliBootComplete(page);
 
   const commandInput = page.getByLabel(/terminal command input/i);
   await commandInput.fill('9');
@@ -98,9 +146,8 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
 
   await commandInput.fill('dog 1 treat');
   await commandInput.press('Enter');
-  await expect(
-    page.getByText(/Nala got a treat\. New treats count: 1/i)
-  ).toBeVisible();
+  await expect.poll(async () => nalaTreatPosts).toBeGreaterThan(0);
+  await expect(page.getByText(/Nala got a treat\./i)).toBeVisible();
 
   await commandInput.fill('exit');
   await commandInput.press('Enter');

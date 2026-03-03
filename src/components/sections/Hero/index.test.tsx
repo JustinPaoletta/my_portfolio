@@ -317,6 +317,16 @@ describe('Hero section', () => {
       video.dispatchEvent(new Event('loadeddata'));
     });
     expect(playSpy.mock.calls.length).toBeGreaterThan(callsAfterMount);
+    const callsAfterLoadedData = playSpy.mock.calls.length;
+    act(() => {
+      video.dispatchEvent(new Event('loadedmetadata'));
+    });
+    expect(playSpy.mock.calls.length).toBeGreaterThan(callsAfterLoadedData);
+    const callsAfterLoadedMetadata = playSpy.mock.calls.length;
+    act(() => {
+      video.dispatchEvent(new Event('canplay'));
+    });
+    expect(playSpy.mock.calls.length).toBeGreaterThan(callsAfterLoadedMetadata);
 
     act(() => {
       video.dispatchEvent(new Event('playing'));
