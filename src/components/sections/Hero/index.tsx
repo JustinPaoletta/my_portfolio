@@ -315,6 +315,7 @@ function Hero(): React.ReactElement {
     }
 
     let hasRetriedOnInteraction = false;
+    let delayedRetryTimer: ReturnType<typeof setTimeout> | undefined;
 
     const removeInteractionListeners = (): void => {
       window.removeEventListener('pointerdown', handleFirstInteraction);
@@ -322,26 +323,32 @@ function Hero(): React.ReactElement {
       window.removeEventListener('keydown', handleFirstInteraction);
     };
 
-    const handleLoadedData = (): void => {
-      attemptPlay();
-    };
-
     const handlePlaying = (): void => {
       setIsCosmicVideoReady(true);
+      if (delayedRetryTimer) {
+        clearTimeout(delayedRetryTimer);
+        delayedRetryTimer = undefined;
+      }
     };
 
     const syncReadyFromMediaState = (): void => {
       if (
-        !video.paused &&
-        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+        (!video.paused || video.currentTime > 0)
       ) {
         setIsCosmicVideoReady(true);
       }
     };
 
+    const handleMediaReady = (): void => {
+      attemptPlay();
+      syncReadyFromMediaState();
+    };
+
     const handleVisibilityChange = (): void => {
       if (document.visibilityState === 'visible') {
         attemptPlay();
+        syncReadyFromMediaState();
       }
     };
 
@@ -351,13 +358,14 @@ function Hero(): React.ReactElement {
       }
       hasRetriedOnInteraction = true;
       attemptPlay();
+      syncReadyFromMediaState();
       removeInteractionListeners();
     };
 
-    attemptPlay();
-
     video.addEventListener('playing', handlePlaying);
-    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('loadeddata', handleMediaReady);
+    video.addEventListener('loadedmetadata', handleMediaReady);
+    video.addEventListener('canplay', handleMediaReady);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('pointerdown', handleFirstInteraction, {
       passive: true,
@@ -367,11 +375,24 @@ function Hero(): React.ReactElement {
     });
     window.addEventListener('keydown', handleFirstInteraction);
 
+    attemptPlay();
     syncReadyFromMediaState();
 
+    // Some browsers briefly reject the first play() while the media pipeline
+    // is still attaching source data. A short retry hardens initial startup.
+    delayedRetryTimer = setTimeout(() => {
+      attemptPlay();
+      syncReadyFromMediaState();
+    }, 180);
+
     return () => {
+      if (delayedRetryTimer) {
+        clearTimeout(delayedRetryTimer);
+      }
       video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('loadeddata', handleMediaReady);
+      video.removeEventListener('loadedmetadata', handleMediaReady);
+      video.removeEventListener('canplay', handleMediaReady);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       removeInteractionListeners();
     };
