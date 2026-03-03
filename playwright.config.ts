@@ -16,6 +16,7 @@ export default defineConfig({
   ],
   use: {
     baseURL,
+    serviceWorkers: 'block',
     navigationTimeout: 30_000,
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',

@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components -- Theme module exports hook, provider, and utilities */
 import React, {
   createContext,
   useCallback,
@@ -29,7 +30,7 @@ const deprecatedThemeAliases: Record<string, ThemeName> = {
 };
 let faviconTemplatePromise: Promise<string | null> | null = null;
 
-function normalizeThemeName(value: string | null): ThemeName | null {
+export function normalizeThemeName(value: string | null): ThemeName | null {
   if (!value) {
     return null;
   }
@@ -53,7 +54,7 @@ const ThemeContext = createContext<ThemeContextValue | null>(null);
 /**
  * Get system color scheme preference
  */
-function getSystemPreference(): 'dark' | 'light' {
+export function getSystemPreference(): 'dark' | 'light' {
   if (typeof window === 'undefined') {
     return 'dark';
   }
@@ -65,7 +66,9 @@ function getSystemPreference(): 'dark' | 'light' {
 /**
  * Parse a hex color to RGB components
  */
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+export function hexToRgb(
+  hex: string
+): { r: number; g: number; b: number } | null {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result
     ? {
@@ -76,7 +79,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
     : null;
 }
 
-function rgbToHex(rgb: { r: number; g: number; b: number }): string {
+export function rgbToHex(rgb: { r: number; g: number; b: number }): string {
   const toHex = (value: number): string =>
     Math.max(0, Math.min(255, Math.round(value)))
       .toString(16)
@@ -97,7 +100,7 @@ function relativeLuminance(rgb: { r: number; g: number; b: number }): number {
   );
 }
 
-function contrastRatio(foreground: string, background: string): number {
+export function contrastRatio(foreground: string, background: string): number {
   const fg = hexToRgb(foreground);
   const bg = hexToRgb(background);
   if (!fg || !bg) {
@@ -110,7 +113,7 @@ function contrastRatio(foreground: string, background: string): number {
   return (lighter + 0.05) / (darker + 0.05);
 }
 
-function mixColors(bgHex: string, fgHex: string, alpha: number): string {
+export function mixColors(bgHex: string, fgHex: string, alpha: number): string {
   const bg = hexToRgb(bgHex);
   const fg = hexToRgb(fgHex);
   if (!bg || !fg) {
@@ -124,7 +127,7 @@ function mixColors(bgHex: string, fgHex: string, alpha: number): string {
   return rgbToHex(mixed);
 }
 
-function ensureContrast(
+export function ensureContrast(
   foreground: string,
   background: string,
   minRatio = 4.5
@@ -153,7 +156,7 @@ function ensureContrast(
   return best;
 }
 
-function pickOnColor(background: string, minRatio = 4.5): string {
+export function pickOnColor(background: string, minRatio = 4.5): string {
   const white = contrastRatio('#ffffff', background);
   const black = contrastRatio('#000000', background);
   if (white >= minRatio && white >= black) {
@@ -165,7 +168,7 @@ function pickOnColor(background: string, minRatio = 4.5): string {
   return white >= black ? '#ffffff' : '#000000';
 }
 
-function setThemeMetaColor(color: string): void {
+export function setThemeMetaColor(color: string): void {
   const themeColorMeta = document.querySelector<HTMLMetaElement>(
     'meta[name="theme-color"]'
   );
@@ -182,7 +185,7 @@ function setThemeMetaColor(color: string): void {
   }
 }
 
-function setSvgFaviconHref(href: string): void {
+export function setSvgFaviconHref(href: string): void {
   const iconLinks = document.querySelectorAll<HTMLLinkElement>(
     'link[rel="icon"][type="image/svg+xml"], link[rel="shortcut icon"][type="image/svg+xml"]'
   );
@@ -194,7 +197,7 @@ function setSvgFaviconHref(href: string): void {
   });
 }
 
-function getFaviconTemplate(): Promise<string | null> {
+export function getFaviconTemplate(): Promise<string | null> {
   if (!faviconTemplatePromise) {
     faviconTemplatePromise = fetch(FAVICON_TEMPLATE_PATH)
       .then((response) => (response.ok ? response.text() : null))
@@ -204,7 +207,7 @@ function getFaviconTemplate(): Promise<string | null> {
   return faviconTemplatePromise;
 }
 
-async function updateFavicon(
+export async function updateFavicon(
   theme: Theme,
   resolvedMode: 'dark' | 'light'
 ): Promise<void> {
@@ -326,7 +329,7 @@ function applyThemeToDocument(
 /**
  * Get the initial theme from localStorage or default
  */
-function getThemeFromQuery(): ThemeName | null {
+export function getThemeFromQuery(): ThemeName | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -335,7 +338,7 @@ function getThemeFromQuery(): ThemeName | null {
   return normalizeThemeName(themeParam);
 }
 
-function getInitialTheme(): ThemeName {
+export function getInitialTheme(): ThemeName {
   if (typeof window === 'undefined') {
     return defaultTheme;
   }
@@ -361,7 +364,7 @@ function getInitialTheme(): ThemeName {
 /**
  * Get the initial color mode from localStorage or default
  */
-function getModeFromQuery(): ColorMode | null {
+export function getModeFromQuery(): ColorMode | null {
   if (typeof window === 'undefined') {
     return null;
   }
@@ -373,7 +376,7 @@ function getModeFromQuery(): ColorMode | null {
   return null;
 }
 
-function getInitialMode(): ColorMode {
+export function getInitialMode(): ColorMode {
   if (typeof window === 'undefined') {
     return defaultMode;
   }
@@ -481,7 +484,7 @@ export function ThemeProvider({
  * setTheme('darkNeon');
  * setColorMode('light');
  */
-// eslint-disable-next-line react-refresh/only-export-components -- ThemeProvider and useTheme are intentionally colocated.
+
 export function useTheme(): ThemeContextValue {
   const context = useContext(ThemeContext);
 

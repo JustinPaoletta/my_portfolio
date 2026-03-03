@@ -204,6 +204,7 @@ function Hero(): React.ReactElement {
   const prefersReducedMotion = useReducedMotion();
   const disableParallax = prefersReducedMotion || isCliTheme;
   const [useCalmerElectronMotion, setUseCalmerElectronMotion] = useState(false);
+  const [isCosmicVideoReady, setIsCosmicVideoReady] = useState(false);
   const isHeroInView = useIntersectionObserver(sectionRef, {
     threshold: 0.01,
     rootMargin: '0px',
@@ -223,6 +224,10 @@ function Hero(): React.ReactElement {
     loadThemeStyles();
     loadedThemeStyles.current.add(themeName);
   }, [themeName]);
+
+  useEffect(() => {
+    setIsCosmicVideoReady(false);
+  }, [isCosmicTheme]);
 
   useEffect(() => {
     if (!isEngineerTheme) {
@@ -321,6 +326,19 @@ function Hero(): React.ReactElement {
       attemptPlay();
     };
 
+    const handlePlaying = (): void => {
+      setIsCosmicVideoReady(true);
+    };
+
+    const syncReadyFromMediaState = (): void => {
+      if (
+        !video.paused &&
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+      ) {
+        setIsCosmicVideoReady(true);
+      }
+    };
+
     const handleVisibilityChange = (): void => {
       if (document.visibilityState === 'visible') {
         attemptPlay();
@@ -338,6 +356,7 @@ function Hero(): React.ReactElement {
 
     attemptPlay();
 
+    video.addEventListener('playing', handlePlaying);
     video.addEventListener('loadeddata', handleLoadedData);
     document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('pointerdown', handleFirstInteraction, {
@@ -348,7 +367,10 @@ function Hero(): React.ReactElement {
     });
     window.addEventListener('keydown', handleFirstInteraction);
 
+    syncReadyFromMediaState();
+
     return () => {
+      video.removeEventListener('playing', handlePlaying);
       video.removeEventListener('loadeddata', handleLoadedData);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       removeInteractionListeners();
@@ -403,19 +425,29 @@ function Hero(): React.ReactElement {
       className="hero-section visible"
       aria-labelledby="hero-heading"
     >
-      <div className="hero-background" aria-hidden="true">
+      <div
+        className="hero-background"
+        data-cosmic-video-ready={
+          isCosmicTheme && isCosmicVideoReady ? 'true' : 'false'
+        }
+        aria-hidden="true"
+      >
         {isCosmicTheme ? (
-          <video
-            ref={cosmicVideoRef}
-            className="hero-cosmic-video"
-            autoPlay
-            loop
-            muted
-            playsInline
-            preload="auto"
-          >
-            <source src="/video/cosmos.mp4" type="video/mp4" />
-          </video>
+          <>
+            <span className="hero-cosmic-still" />
+            <video
+              ref={cosmicVideoRef}
+              className="hero-cosmic-video"
+              autoPlay
+              loop
+              muted
+              playsInline
+              preload="auto"
+              poster="/images/hero/cosmic/cosmos-first-frame.webp"
+            >
+              <source src="/video/cosmos.mp4" type="video/mp4" />
+            </video>
+          </>
         ) : isEngineerTheme ? (
           <>
             <div className="hero-circuit">

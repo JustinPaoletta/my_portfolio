@@ -298,6 +298,26 @@ describe('App', () => {
     await waitFor(() => {
       expect(playSpy).toHaveBeenCalled();
     });
+
+    const heroBackground = document.querySelector('.hero-background');
+    expect(heroBackground).toBeInTheDocument();
+    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
+
+    const cosmicVideo = document.querySelector('.hero-cosmic-video');
+    expect(cosmicVideo).toBeInTheDocument();
+    expect(cosmicVideo).toHaveAttribute(
+      'poster',
+      '/images/hero/cosmic/cosmos-first-frame.webp'
+    );
+    if (!cosmicVideo) {
+      throw new Error('Expected cosmic video element to exist');
+    }
+
+    await act(async () => {
+      cosmicVideo.dispatchEvent(new Event('playing'));
+    });
+
+    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'true');
   });
 
   it('Cosmic retries autoplay after initial block', async () => {
@@ -322,6 +342,10 @@ describe('App', () => {
       expect(playSpy).toHaveBeenCalledTimes(1);
     });
 
+    const heroBackground = document.querySelector('.hero-background');
+    expect(heroBackground).toBeInTheDocument();
+    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
+
     await act(async () => {
       window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
     });
@@ -329,5 +353,18 @@ describe('App', () => {
     await waitFor(() => {
       expect(playSpy.mock.calls.length).toBeGreaterThan(1);
     });
+
+    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
+
+    const cosmicVideo = document.querySelector('.hero-cosmic-video');
+    expect(cosmicVideo).toBeInTheDocument();
+    if (!cosmicVideo) {
+      throw new Error('Expected cosmic video element to exist');
+    }
+    await act(async () => {
+      cosmicVideo.dispatchEvent(new Event('playing'));
+    });
+
+    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'true');
   });
 });
