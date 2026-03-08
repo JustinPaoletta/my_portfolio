@@ -478,13 +478,28 @@
   opacity: 0.4;
 }
 
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-cosmic-still,
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-cosmic-video {
+  filter: saturate(0.72) brightness(1.22) contrast(0.82);
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-cosmic-still {
+  opacity: 0.2;
+}
+
+:root[data-theme='cosmic'][data-color-mode='light']
+  .hero-background[data-cosmic-video-ready='true']
+  .hero-cosmic-video {
+  opacity: 0.2;
+}
+
 :root[data-theme='cosmic'] .hero-name-text {
   opacity: 1;
 }
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-name-text {
   background: none;
-  color: #fff;
+  color: var(--text-primary);
   -webkit-text-fill-color: currentColor;
 }
 
@@ -502,39 +517,16 @@
 }
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-greeting {
-  color: #fff;
+  color: var(--color-primary-ink);
 }
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-title .title-text,
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-tagline p {
-  color: #fff;
+  color: var(--text-secondary);
 }
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-title-list-item {
-  color: #fff;
-}
-
-:root[data-theme='cosmic'][data-color-mode='light'] .cta-primary,
-:root[data-theme='cosmic'][data-color-mode='light'] .cta-primary:hover {
-  color: #fff;
-}
-
-:root[data-theme='cosmic'][data-color-mode='light'] .cta-secondary,
-:root[data-theme='cosmic'][data-color-mode='light'] .cta-secondary:hover {
-  color: #000;
-}
-
-:root[data-theme='cosmic'][data-color-mode='light'] .cta-secondary::before,
-:root[data-theme='cosmic'][data-color-mode='light']
-  .cta-secondary:hover::before {
-  background: #fff;
-  opacity: 0.6;
-  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.92);
-}
-
-:root[data-theme='cosmic'][data-color-mode='light'] .social-link,
-:root[data-theme='cosmic'][data-color-mode='light'] .social-link:hover {
-  color: #fff;
+  color: var(--text-secondary);
 }
 
 :root[data-theme='cosmic'][data-color-mode='light']
@@ -545,7 +537,7 @@
 :root[data-theme='cosmic'][data-color-mode='light']
   .hero-tagline
   .hero-tagline-subtext {
-  color: #fff;
+  color: var(--text-muted);
 }
 
 :root[data-theme='cosmic'] {
@@ -729,4 +721,21 @@
     --cosmic-rig-scale: 1.4;
     --cosmic-rig-scale-drift: 1.44;
   }
+}
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background {
+  background: none;
+}
+
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: #000000;
+  opacity: 0.5;
+}
+
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::after {
+  content: none;
 }

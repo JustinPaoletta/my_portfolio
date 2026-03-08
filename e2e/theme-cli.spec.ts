@@ -127,7 +127,7 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
 
     return {
       backgroundImage: heroStyle.backgroundImage,
-      stillOpacity: stillStyle.opacity,
+      stillOpacity: Number.parseFloat(stillStyle.opacity),
       videoPoster: video.getAttribute('poster'),
       videoHasCurrentData:
         video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA,
@@ -137,7 +137,7 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
 
   expect(startupState).not.toBeNull();
   expect(startupState?.backgroundImage).not.toBe('none');
-  expect(startupState?.stillOpacity).toBe('1');
+  expect(startupState?.stillOpacity).toBeGreaterThan(0);
   expect(startupState?.videoPoster).toBe(
     '/images/hero/cosmic/cosmos-first-frame.webp'
   );
@@ -206,6 +206,49 @@ test('query params apply theme and mode overrides', async ({ page }) => {
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
   ).toHaveCount(0);
+});
+
+test('cosmic light mode applies light hero styling', async ({ page }) => {
+  await mockPortfolioApis(page);
+  await page.goto('/?theme=cosmic&mode=light');
+
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-color-mode',
+    'light'
+  );
+
+  await expect
+    .poll(async () => {
+      return page.evaluate(() => {
+        const hero = document.querySelector<HTMLElement>('.hero-background');
+        const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
+        const name = document.querySelector<HTMLElement>('.hero-name-text');
+        const greeting = document.querySelector<HTMLElement>('.hero-greeting');
+
+        if (!hero || !still || !name || !greeting) {
+          return null;
+        }
+
+        const heroStyles = getComputedStyle(hero);
+        const beforeStyles = getComputedStyle(hero, '::before');
+
+        return {
+          heroBackground: heroStyles.backgroundImage,
+          beforeBackground: beforeStyles.backgroundColor,
+          stillOpacity: Number.parseFloat(getComputedStyle(still).opacity),
+          nameColor: getComputedStyle(name).color,
+          greetingColor: getComputedStyle(greeting).color,
+        };
+      });
+    })
+    .toEqual({
+      heroBackground: expect.stringContaining('rgb(253, 248, 255)'),
+      beforeBackground: 'rgba(0, 0, 0, 0)',
+      stillOpacity: 0.2,
+      nameColor: 'rgb(26, 10, 46)',
+      greetingColor: 'rgb(123, 44, 191)',
+    });
 });
 
 test('CLI theme supports command execution and exit', async ({ page }) => {
