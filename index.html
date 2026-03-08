@@ -72,24 +72,65 @@
       (function () {
         try {
           var root = document.documentElement;
+          var params = new URLSearchParams(window.location.search);
+          var defaultTheme = 'minimal';
+          var defaultMode = 'system';
+          var themeAliases = {
+            dewTheDew: 'cli',
+          };
+          var normalizeTheme = function (value) {
+            if (!value) {
+              return null;
+            }
+
+            var normalized = themeAliases[value] || value;
+            return /^(engineer|cosmic|cli|minimal)$/.test(normalized)
+              ? normalized
+              : null;
+          };
+          var normalizeMode = function (value) {
+            return value === 'dark' || value === 'light' || value === 'system'
+              ? value
+              : null;
+          };
+          var queryTheme = normalizeTheme(params.get('theme'));
+          if (queryTheme) {
+            localStorage.setItem('portfolio-theme', queryTheme);
+          }
+
           var storedTheme = localStorage.getItem('portfolio-theme');
+          var resolvedTheme = queryTheme;
+          if (!resolvedTheme) {
+            var normalizedStoredTheme = normalizeTheme(storedTheme);
+            if (normalizedStoredTheme) {
+              if (storedTheme !== normalizedStoredTheme) {
+                localStorage.setItem('portfolio-theme', normalizedStoredTheme);
+              }
+              resolvedTheme = normalizedStoredTheme;
+            }
+          }
+
+          if (!resolvedTheme) {
+            resolvedTheme = defaultTheme;
+          }
+
+          var queryMode = normalizeMode(params.get('mode'));
+          if (queryMode) {
+            localStorage.setItem('portfolio-color-mode', queryMode);
+          }
+
           var storedMode = localStorage.getItem('portfolio-color-mode');
-          var validTheme = /^(engineer|cosmic|cli|minimal)$/.test(
-            storedTheme || ''
-          )
-            ? storedTheme
-            : null;
+          var configuredMode =
+            queryMode || normalizeMode(storedMode) || defaultMode;
           var resolvedMode =
-            storedMode === 'dark' || storedMode === 'light'
-              ? storedMode
+            configuredMode === 'dark' || configuredMode === 'light'
+              ? configuredMode
               : window.matchMedia &&
                   window.matchMedia('(prefers-color-scheme: dark)').matches
                 ? 'dark'
                 : 'light';
 
-          if (validTheme) {
-            root.dataset.theme = validTheme;
-          }
+          root.dataset.theme = resolvedTheme;
 
           root.dataset.colorMode = resolvedMode;
 
@@ -100,10 +141,7 @@
             minimal: { dark: '#0f1115', light: '#f7f7f5' },
           };
 
-          var bg =
-            validTheme && bgByTheme[validTheme]
-              ? bgByTheme[validTheme][resolvedMode]
-              : bgByTheme.engineer.dark;
+          var bg = bgByTheme[resolvedTheme][resolvedMode];
 
           root.style.setProperty('--bg-main', bg);
           root.style.backgroundColor = bg;
