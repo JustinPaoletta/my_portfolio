@@ -16,8 +16,8 @@
  * statically in index.html to ensure social sharing previews work correctly.
  *
  * If you need to update OG/Twitter meta tags, update BOTH:
- * 1. This component (for Google SEO and future SSR compatibility)
- * 2. index.html (for social media crawlers)
+ * 1. index.html (for social media crawlers)
+ * 2. src/content/site.ts and src/config/seo.ts (for runtime SEO defaults)
  */
 
 import { Helmet } from 'react-helmet-async';

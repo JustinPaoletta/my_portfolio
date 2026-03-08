@@ -31,79 +31,7 @@ export default function ThemeSwitcher({
   const { themeName, setTheme, themes, colorMode, setColorMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
   const [pulseOnLoad, setPulseOnLoad] = useState(placement === 'floating');
-  const switcherRef = useRef<HTMLDivElement>(null);
   const toggleRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (placement !== 'floating') {
-      return;
-    }
-
-    const switcher = switcherRef.current;
-    if (!switcher) {
-      return;
-    }
-
-    const footer =
-      document.querySelector<HTMLElement>('footer.footer') ||
-      document.querySelector<HTMLElement>('footer[role="contentinfo"]') ||
-      document.querySelector<HTMLElement>('footer');
-
-    if (!footer) {
-      switcher.style.setProperty('--theme-switcher-offset', '0px');
-      return;
-    }
-
-    const extraGap = 24;
-    let rafId: number | null = null;
-
-    const updateOffset = (): void => {
-      rafId = null;
-      const rect = footer.getBoundingClientRect();
-      const viewportHeight = window.innerHeight || 0;
-      const baseValue = getComputedStyle(switcher).getPropertyValue(
-        '--theme-switcher-base-bottom'
-      );
-      const baseBottom = Number.parseFloat(baseValue) || 0;
-      const desiredBottom = Math.max(
-        baseBottom,
-        viewportHeight - rect.top + extraGap
-      );
-      const offset = Math.max(0, desiredBottom - baseBottom);
-      switcher.style.setProperty('--theme-switcher-offset', `${offset}px`);
-    };
-
-    const scheduleUpdate = (): void => {
-      if (rafId !== null) {
-        return;
-      }
-      rafId = window.requestAnimationFrame(updateOffset);
-    };
-
-    // Defer initial update to allow layout to settle after theme switch (e.g. CLI
-    // → other). When switching from CLI, overflow/height change triggers reflow;
-    // running immediately can use stale rects and push the switcher off-screen.
-    let cancelled = false;
-    const initialRafId = window.requestAnimationFrame(() => {
-      if (cancelled) return;
-      window.requestAnimationFrame(() => {
-        if (cancelled) return;
-        updateOffset();
-        window.addEventListener('scroll', scheduleUpdate, { passive: true });
-        window.addEventListener('resize', scheduleUpdate);
-      });
-    });
-
-    return () => {
-      cancelled = true;
-      window.cancelAnimationFrame(initialRafId);
-      if (rafId !== null) {
-        window.cancelAnimationFrame(rafId);
-      }
-      window.removeEventListener('scroll', scheduleUpdate);
-      window.removeEventListener('resize', scheduleUpdate);
-    };
-  }, [placement, themeName]);
 
   const toggleOpen = useCallback(() => {
     setIsOpen((prev) => !prev);
@@ -172,7 +100,6 @@ export default function ThemeSwitcher({
   return (
     <div
       className={`theme-switcher theme-switcher--${placement} ${isOpen ? 'open' : ''}`}
-      ref={switcherRef}
     >
       <button
         ref={toggleRef}

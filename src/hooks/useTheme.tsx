@@ -4,6 +4,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -20,7 +21,7 @@ import {
 
 const THEME_STORAGE_KEY = 'portfolio-theme';
 const MODE_STORAGE_KEY = 'portfolio-color-mode';
-const FAVICON_TEMPLATE_PATH = '/JP-no-cursor.svg';
+const FAVICON_TEMPLATE_PATH = '/branding/JP-no-cursor.svg';
 const FAVICON_LOGO_FILL = '#7ed957';
 const FAVICON_CURSOR_FILL = '#ffffff';
 const hasOwnTheme = (value: string): value is ThemeName =>
@@ -435,7 +436,7 @@ export function ThemeProvider({
   }, []);
 
   // Apply theme to document when it changes
-  useEffect(() => {
+  useLayoutEffect(() => {
     applyThemeToDocument(theme, resolvedMode);
     localStorage.setItem(THEME_STORAGE_KEY, themeName);
     localStorage.setItem(MODE_STORAGE_KEY, colorMode);

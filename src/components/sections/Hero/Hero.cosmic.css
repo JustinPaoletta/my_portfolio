@@ -669,26 +669,3 @@
     --cosmic-rig-scale-drift: 1.44;
   }
 }
-
-:root[data-theme='cosmic'] .hero-background {
-  background: none;
-}
-
-:root[data-theme='cosmic'] .hero-background::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: #000000;
-  opacity: 0.5;
-}
-
-:root[data-theme='cosmic'][data-color-mode='light'] .hero-background::before {
-  background: #000000;
-  opacity: 0.5;
-}
-
-:root[data-theme='cosmic'] .hero-background::after {
-  content: none;
-}

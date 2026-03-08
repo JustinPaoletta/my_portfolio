@@ -13,6 +13,7 @@ import {
   useTransform,
 } from 'framer-motion';
 import { env } from '@/config/env';
+import { HERO_TAGLINE } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useTheme } from '@/hooks/useTheme';
 import CliTerminal from './CliTerminal';
@@ -314,6 +315,16 @@ function Hero(): React.ReactElement {
       return;
     }
 
+    const canWarmVideoSource =
+      typeof navigator === 'undefined' || !/jsdom/i.test(navigator.userAgent);
+
+    if (
+      canWarmVideoSource &&
+      video.networkState === HTMLMediaElement.NETWORK_EMPTY
+    ) {
+      video.load();
+    }
+
     let hasRetriedOnInteraction = false;
     let delayedRetryTimer: ReturnType<typeof setTimeout> | undefined;
 
@@ -448,6 +459,7 @@ function Hero(): React.ReactElement {
     >
       <div
         className="hero-background"
+        data-cosmic-theme={isCosmicTheme ? 'true' : 'false'}
         data-cosmic-video-ready={
           isCosmicTheme && isCosmicVideoReady ? 'true' : 'false'
         }
@@ -455,7 +467,24 @@ function Hero(): React.ReactElement {
       >
         {isCosmicTheme ? (
           <>
-            <span className="hero-cosmic-still" />
+            <div className="hero-cosmic-fallback" aria-hidden="true">
+              <span className="nebula-layer nebula-layer-1" />
+              <span className="nebula-layer nebula-layer-2" />
+              <span className="nebula-layer nebula-layer-3" />
+              <span className="nebula-layer nebula-layer-4" />
+              <span className="star-layer star-layer-back" />
+              <span className="star-layer star-layer-front" />
+            </div>
+            <img
+              className="hero-cosmic-still"
+              src="/images/hero/cosmic/cosmos-first-frame.webp"
+              alt=""
+              aria-hidden="true"
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              draggable={false}
+            />
             <video
               ref={cosmicVideoRef}
               className="hero-cosmic-video"
@@ -464,10 +493,8 @@ function Hero(): React.ReactElement {
               muted
               playsInline
               preload="auto"
-              poster="/images/hero/cosmic/cosmos-first-frame.webp"
-            >
-              <source src="/video/cosmos.mp4" type="video/mp4" />
-            </video>
+              src="/video/cosmos.mp4"
+            />
           </>
         ) : isEngineerTheme ? (
           <>
@@ -674,10 +701,7 @@ function Hero(): React.ReactElement {
 
                 {!isCosmicTheme && (
                   <div className="hero-tagline">
-                    <p>
-                      I turn evolving business requirements into high-quality
-                      software delivered with precision and consistency.
-                    </p>
+                    <p>{HERO_TAGLINE}</p>
                   </div>
                 )}
               </div>
@@ -700,10 +724,7 @@ function Hero(): React.ReactElement {
 
             {isCosmicTheme && (
               <div className="hero-tagline">
-                <p>
-                  I turn evolving business requirements into high-quality
-                  software delivered with precision and consistency.
-                </p>
+                <p>{HERO_TAGLINE}</p>
               </div>
             )}
 
