@@ -161,6 +161,21 @@ describe('App', () => {
         throw new Error(`Unhandled fetch URL in App.test.tsx: ${requestUrl}`);
       })
     );
+    vi.stubGlobal(
+      'requestIdleCallback',
+      (callback: IdleRequestCallback): number =>
+        window.setTimeout(
+          () =>
+            callback({
+              didTimeout: false,
+              timeRemaining: () => 50,
+            } as IdleDeadline),
+          0
+        )
+    );
+    vi.stubGlobal('cancelIdleCallback', (handle: number): void => {
+      window.clearTimeout(handle);
+    });
     localStorage.clear();
   });
 
@@ -186,7 +201,7 @@ describe('App', () => {
       render(<App />);
     });
 
-    const jpImage = screen.getByAltText(/Justin working on code/i);
+    const jpImage = await screen.findByAltText(/Justin working on code/i);
     expect(jpImage).toBeInTheDocument();
     expect(jpImage).toHaveAttribute('width', '400');
     expect(jpImage).toHaveAttribute('height', '400');
@@ -211,10 +226,10 @@ describe('App', () => {
     });
 
     expect(
-      screen.getByRole('navigation', { name: /main navigation/i })
+      await screen.findByRole('navigation', { name: /main navigation/i })
     ).toBeInTheDocument(); // main nav
     expect(screen.getByRole('main')).toBeInTheDocument(); // main
-    expect(screen.getByRole('contentinfo')).toBeInTheDocument(); // footer
+    expect(await screen.findByRole('contentinfo')).toBeInTheDocument(); // footer
   });
 
   it('has no footer in CLI view', async () => {
@@ -231,7 +246,9 @@ describe('App', () => {
     const cliOption = screen.getByRole('option', { name: /CLI/i });
     await user.click(cliOption);
 
-    expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
+    });
   });
 
   it('CLI Enter submits typed command', async () => {
@@ -253,7 +270,7 @@ describe('App', () => {
     await user.click(input);
     await user.type(input, '9{Enter}');
 
-    await screen.findByText('[HELP]');
+    await screen.findByText(/\[HELP\]/);
     expect(input).toHaveValue('');
   });
 
@@ -301,14 +318,21 @@ describe('App', () => {
 
     const heroBackground = document.querySelector('.hero-background');
     expect(heroBackground).toBeInTheDocument();
+    expect(heroBackground).toHaveAttribute('data-cosmic-theme', 'true');
     expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
 
+    const cosmicStill = document.querySelector('.hero-cosmic-still');
+    expect(cosmicStill).toBeInTheDocument();
+    await waitFor(() => {
+      expect(document.querySelector('.hero-cosmic-video')).toBeInTheDocument();
+    });
     const cosmicVideo = document.querySelector('.hero-cosmic-video');
-    expect(cosmicVideo).toBeInTheDocument();
     expect(cosmicVideo).toHaveAttribute(
       'poster',
       '/images/hero/cosmic/cosmos-first-frame.webp'
     );
+    const cosmicVideoSource = cosmicVideo?.querySelector('source');
+    expect(cosmicVideoSource).toHaveAttribute('src', '/video/cosmos.mp4');
     if (!cosmicVideo) {
       throw new Error('Expected cosmic video element to exist');
     }
@@ -344,6 +368,7 @@ describe('App', () => {
 
     const heroBackground = document.querySelector('.hero-background');
     expect(heroBackground).toBeInTheDocument();
+    expect(heroBackground).toHaveAttribute('data-cosmic-theme', 'true');
     expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
 
     await act(async () => {
@@ -356,8 +381,10 @@ describe('App', () => {
 
     expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
 
+    await waitFor(() => {
+      expect(document.querySelector('.hero-cosmic-video')).toBeInTheDocument();
+    });
     const cosmicVideo = document.querySelector('.hero-cosmic-video');
-    expect(cosmicVideo).toBeInTheDocument();
     if (!cosmicVideo) {
       throw new Error('Expected cosmic video element to exist');
     }

@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@/test/test-utils';
+import { fireEvent, render, screen } from '@/test/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { themes } from '@/config/themes';
 import ThemeSwitcher from '.';
@@ -95,39 +95,10 @@ describe('ThemeSwitcher', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('updates floating offset from footer geometry and no-footer fallback branch', () => {
-    const rafSpy = vi
-      .spyOn(window, 'requestAnimationFrame')
-      .mockImplementation((cb) => {
-        cb(0);
-        return 1;
-      });
-    vi.spyOn(window, 'cancelAnimationFrame').mockImplementation(() => {});
-
-    const footer = document.createElement('footer');
-    footer.className = 'footer';
-    Object.defineProperty(footer, 'getBoundingClientRect', {
-      configurable: true,
-      value: () => ({
-        top: 600,
-        bottom: 700,
-        left: 0,
-        right: 0,
-        width: 0,
-        height: 100,
-      }),
-    });
-    document.body.appendChild(footer);
-
-    const { rerender } = render(<ThemeSwitcher placement="floating" />);
+  it('keeps floating placement free of footer-coupled inline offsets', () => {
+    render(<ThemeSwitcher placement="floating" />);
     const root = document.querySelector('.theme-switcher') as HTMLElement;
-    expect(root.style.getPropertyValue('--theme-switcher-offset')).not.toBe('');
-
-    footer.remove();
-    themeName = 'cosmic';
-    rerender(<ThemeSwitcher placement="floating" />);
-    expect(root.style.getPropertyValue('--theme-switcher-offset')).toBe('0px');
-    expect(rafSpy).toHaveBeenCalled();
+    expect(root.style.getPropertyValue('--theme-switcher-offset')).toBe('');
   });
 
   it('skips floating placement effect when placement is nav', () => {
@@ -154,37 +125,8 @@ describe('ThemeSwitcher', () => {
     );
   });
 
-  it('ignores non-activation keys and cleans up pending raf work on unmount', () => {
-    const queuedRafs: FrameRequestCallback[] = [];
-    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
-      queuedRafs.push(cb);
-      return queuedRafs.length;
-    });
-    const cancelSpy = vi
-      .spyOn(window, 'cancelAnimationFrame')
-      .mockImplementation(() => {});
-
-    Object.defineProperty(window, 'innerHeight', {
-      configurable: true,
-      value: 0,
-    });
-
-    const footer = document.createElement('footer');
-    footer.className = 'footer';
-    Object.defineProperty(footer, 'getBoundingClientRect', {
-      configurable: true,
-      value: () => ({
-        top: 0,
-        bottom: 100,
-        left: 0,
-        right: 0,
-        width: 0,
-        height: 100,
-      }),
-    });
-    document.body.appendChild(footer);
-
-    const { unmount } = render(<ThemeSwitcher placement="floating" />);
+  it('ignores non-activation keys', () => {
+    render(<ThemeSwitcher placement="floating" />);
     fireEvent.click(
       screen.getByRole('button', { name: 'Toggle theme switcher' })
     );
@@ -197,15 +139,5 @@ describe('ThemeSwitcher', () => {
     });
     expect(setColorModeMock).not.toHaveBeenCalled();
     expect(setThemeMock).not.toHaveBeenCalled();
-
-    act(() => {
-      window.dispatchEvent(new Event('scroll'));
-      window.dispatchEvent(new Event('scroll'));
-    });
-
-    unmount();
-
-    queuedRafs.forEach((cb) => cb(0));
-    expect(cancelSpy).toHaveBeenCalled();
   });
 });

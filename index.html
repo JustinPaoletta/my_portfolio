@@ -2,48 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Tab favicon -->
+    <!-- Stable crawler-facing favicon URL -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <!-- Modern SVG favicon -->
     <link
       rel="icon"
       type="image/svg+xml"
       sizes="any"
-      href="/branding/JP-no-cursor.svg?v=2"
+      href="/branding/JP-no-cursor.svg"
     />
     <!-- PNG favicons (48x48 recommended by Google for search results) -->
     <link
       rel="icon"
       type="image/png"
       sizes="48x48"
-      href="/favicons/favicon-48x48.png?v=2"
+      href="/favicons/favicon-48x48.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="/favicons/pwa-192x192.png?v=2"
+      href="/favicons/pwa-192x192.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="512x512"
-      href="/favicons/pwa-512x512.png?v=2"
+      href="/favicons/pwa-512x512.png"
     />
     <!-- Apple Touch Icons (iOS home screen) -->
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/favicons/apple-touch-icon.png?v=2"
+      href="/favicons/apple-touch-icon.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="512x512"
-      href="/favicons/pwa-512x512.png?v=2"
-    />
-    <!-- Shortcut icon for older browsers -->
-    <link
-      rel="shortcut icon"
-      type="image/svg+xml"
-      href="/branding/JP-no-cursor.svg?v=2"
+      href="/favicons/pwa-512x512.png"
     />
 
     <!-- Microsoft Windows Tiles -->
@@ -58,47 +55,106 @@
     <title>JP Engineering</title>
     <meta
       name="description"
-      content="My personal portfolio showcasing my work and skills"
+      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
     />
     <meta name="theme-color" content="#1a1918" />
 
-    <!-- Preload LCP image for CLI theme -->
-    <link
-      rel="preload"
-      as="image"
-      href="/images/hero/dew/dew-text.webp"
-      fetchpriority="high"
-    />
-
-    <!-- Preload cosmic theme video when user's saved theme is cosmic (instant playback) -->
+    <!-- Apply persisted theme attributes before React mounts -->
     <script>
       (function () {
         try {
-          if (localStorage.getItem('portfolio-theme') === 'cosmic') {
-            var videoLink = document.createElement('link');
-            videoLink.rel = 'preload';
-            videoLink.as = 'video';
-            videoLink.href = '/video/cosmos.mp4';
-            document.head.appendChild(videoLink);
+          var root = document.documentElement;
+          var params = new URLSearchParams(window.location.search);
+          var defaultTheme = 'minimal';
+          var defaultMode = 'system';
+          var normalizeTheme = function (value) {
+            return value && /^(engineer|cosmic|cli|minimal)$/.test(value)
+              ? value
+              : null;
+          };
+          var normalizeMode = function (value) {
+            return value === 'dark' || value === 'light' || value === 'system'
+              ? value
+              : null;
+          };
+          var queryTheme = normalizeTheme(params.get('theme'));
+          if (queryTheme) {
+            localStorage.setItem('portfolio-theme', queryTheme);
+          }
 
-            var stillLink = document.createElement('link');
-            stillLink.rel = 'preload';
-            stillLink.as = 'image';
-            stillLink.href = '/images/hero/cosmic/cosmos-first-frame.webp';
-            stillLink.setAttribute('fetchpriority', 'high');
-            document.head.appendChild(stillLink);
+          var storedTheme = localStorage.getItem('portfolio-theme');
+          var resolvedTheme = queryTheme || normalizeTheme(storedTheme);
+
+          if (!resolvedTheme) {
+            resolvedTheme = defaultTheme;
+          }
+
+          var queryMode = normalizeMode(params.get('mode'));
+          if (queryMode) {
+            localStorage.setItem('portfolio-color-mode', queryMode);
+          }
+
+          var storedMode = localStorage.getItem('portfolio-color-mode');
+          var configuredMode =
+            queryMode || normalizeMode(storedMode) || defaultMode;
+          var resolvedMode =
+            configuredMode === 'dark' || configuredMode === 'light'
+              ? configuredMode
+              : window.matchMedia &&
+                  window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+
+          root.dataset.theme = resolvedTheme;
+
+          root.dataset.colorMode = resolvedMode;
+
+          var bgByTheme = {
+            engineer: { dark: '#0a0e12', light: '#f0f8ff' },
+            cosmic: { dark: '#0b0014', light: '#fdf8ff' },
+            cli: { dark: '#0a0f0a', light: '#f5fff5' },
+            minimal: { dark: '#0f1115', light: '#f7f7f5' },
+          };
+
+          var bg = bgByTheme[resolvedTheme][resolvedMode];
+
+          root.style.setProperty('--bg-main', bg);
+          root.style.backgroundColor = bg;
+          if (document.body) {
+            document.body.style.backgroundColor = bg;
+          } else {
+            document.addEventListener(
+              'DOMContentLoaded',
+              function () {
+                if (document.body) {
+                  document.body.style.backgroundColor = bg;
+                }
+              },
+              { once: true }
+            );
+          }
+
+          var preloadAsset = function (as, href, fetchpriority) {
+            var link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = as;
+            link.href = href;
+            if (fetchpriority) {
+              link.setAttribute('fetchpriority', fetchpriority);
+            }
+            document.head.appendChild(link);
+          };
+
+          if (resolvedTheme === 'cosmic') {
+            preloadAsset(
+              'image',
+              '/images/hero/cosmic/cosmos-first-frame.webp',
+              'high'
+            );
           }
         } catch (e) {}
       })();
     </script>
-
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;700&family=Inter:wght@400;500;600&family=Orbitron:wght@700;900&family=VT323&family=Share+Tech+Mono&display=swap"
-      rel="stylesheet"
-    />
 
     <!--
       Open Graph & Twitter Card Meta Tags
@@ -112,7 +168,7 @@
       - Dynamic page updates during client-side navigation
       - Future SSR/SSG compatibility
 
-      If you update these values, also update src/components/SEO.tsx and src/config/seo.ts
+      If you update these values, also update src/content/site.ts and src/config/seo.ts
     -->
 
     <!-- Open Graph -->
@@ -121,7 +177,7 @@
     <meta property="og:title" content="JP Engineering" />
     <meta
       property="og:description"
-      content="My personal portfolio showcasing my work and skills"
+      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
     />
     <meta
       property="og:image"
@@ -137,7 +193,7 @@
     <meta name="twitter:title" content="JP Engineering" />
     <meta
       name="twitter:description"
-      content="My personal portfolio showcasing my work and skills"
+      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
     />
     <meta
       name="twitter:image"

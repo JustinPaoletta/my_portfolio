@@ -11,6 +11,7 @@
 
 import { MicroAgent } from '@newrelic/browser-agent/loaders/micro-agent';
 import { env } from '@/config/env';
+import { isAutomatedClient } from '@/utils/userAgent';
 
 // Type definitions for New Relic API
 interface NewRelicCustomAttributes {
@@ -44,6 +45,13 @@ export function initializeNewRelic(): void {
   ) {
     if (shouldLog) {
       console.log('[New Relic] Skipped - disabled or not configured');
+    }
+    return;
+  }
+
+  if (isAutomatedClient()) {
+    if (shouldLog) {
+      console.log('[New Relic] Skipped - automated client detected');
     }
     return;
   }

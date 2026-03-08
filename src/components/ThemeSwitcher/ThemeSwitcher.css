@@ -1,13 +1,10 @@
 .theme-switcher {
   position: fixed;
-  --theme-switcher-base-bottom: 20px;
-  --theme-switcher-offset: 0px;
-  bottom: calc(
-    var(--theme-switcher-base-bottom) + var(--theme-switcher-offset)
-  );
-  right: 20px;
+  bottom: max(20px, env(safe-area-inset-bottom, 0px));
+  right: max(20px, env(safe-area-inset-right, 0px));
   z-index: 1000;
   font-family: var(--font-sans);
+  transform: translateZ(0);
 }
 
 .theme-switcher--nav {
@@ -61,8 +58,13 @@
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.15),
     0 1px 3px rgba(0, 0, 0, 0.1);
-  transition: all 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
   backdrop-filter: blur(8px);
+  will-change: transform;
 
   &:hover,
   &:focus {
@@ -107,7 +109,8 @@
   box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.2),
     0 2px 8px rgba(0, 0, 0, 0.1);
-  animation: slideUp 0.2s ease;
+  animation: slideUp 0.16s var(--ease-out-expo);
+  transform-origin: bottom right;
 }
 
 @keyframes slideUp {
@@ -259,8 +262,8 @@
 
 @media (max-width: 980px) {
   .theme-switcher--floating {
-    --theme-switcher-base-bottom: 16px;
     right: 16px;
+    bottom: max(16px, env(safe-area-inset-bottom, 0px));
   }
 
   .theme-switcher-menu {

@@ -165,8 +165,8 @@ describe('useTheme', () => {
     });
   });
 
-  it('normalizes deprecated theme aliases from localStorage', () => {
-    localStorage.setItem('portfolio-theme', 'dewTheDew');
+  it('initializes the current theme from localStorage', () => {
+    localStorage.setItem('portfolio-theme', 'cli');
     localStorage.setItem('portfolio-color-mode', 'system');
 
     renderWithThemeProvider();
@@ -217,8 +217,8 @@ describe('useTheme', () => {
     document.head.innerHTML = `
       <meta name="theme-color" content="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
-      <link rel="icon" type="image/svg+xml" href="/JP-no-cursor.svg" />
-      <link rel="shortcut icon" type="image/svg+xml" href="/JP-no-cursor.svg" />
+      <link rel="icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg" />
+      <link rel="shortcut icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg" />
     `;
 
     vi.resetModules();
@@ -262,7 +262,7 @@ describe('useTheme', () => {
       expect(icon?.getAttribute('href')).toContain('data:image/svg+xml');
     });
 
-    expect(fetchSpy).toHaveBeenCalledWith('/JP-no-cursor.svg');
+    expect(fetchSpy).toHaveBeenCalledWith('/branding/JP-no-cursor.svg');
   });
 
   it('updates resolved mode when system preference changes', async () => {
@@ -326,7 +326,7 @@ describe('useTheme', () => {
     document.head.innerHTML = `
       <meta name="theme-color" content="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
-      <link rel="icon" type="image/svg+xml" href="/JP-no-cursor.svg" />
+      <link rel="icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg" />
     `;
     localStorage.setItem('portfolio-color-mode', 'dark');
 

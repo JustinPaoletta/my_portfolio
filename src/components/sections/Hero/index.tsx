@@ -4,7 +4,7 @@
  * Uses Framer Motion for smooth parallax scrolling
  */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { Suspense, lazy, useEffect, useRef, useState } from 'react';
 import {
   motion,
   useReducedMotion,
@@ -13,10 +13,18 @@ import {
   useTransform,
 } from 'framer-motion';
 import { env } from '@/config/env';
+import { HERO_TAGLINE } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useTheme } from '@/hooks/useTheme';
-import CliTerminal from './CliTerminal';
 import './Hero.css';
+
+const CliTerminal = lazy(() => import('./CliTerminal'));
+
+const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
+  cli: () => import('./Hero.cli.css'),
+  cosmic: () => import('./Hero.cosmic.css'),
+  engineer: () => import('./Hero.engineer.css'),
+};
 
 const tracePaths = [
   { id: 'trace-top-2', d: 'M687.5 300 L687.5 250 L660.5 170 L660.5 110' },
@@ -110,6 +118,318 @@ type TracePoint = {
   y: number;
 };
 
+type NavigatorConnectionLike = {
+  saveData?: boolean;
+  effectiveType?: string;
+  addEventListener?: (type: 'change', listener: () => void) => void;
+  removeEventListener?: (type: 'change', listener: () => void) => void;
+};
+
+const HERO_ENVIRONMENT_FLAGS = {
+  compactViewport: 1 << 0,
+  reducedMotion: 1 << 1,
+  saveData: 1 << 2,
+  slowNetwork: 1 << 3,
+} as const;
+
+function getNavigatorConnection(): NavigatorConnectionLike | undefined {
+  return (navigator as Navigator & { connection?: NavigatorConnectionLike })
+    .connection;
+}
+
+function getHeroEnvironmentFlags(): number {
+  if (typeof window === 'undefined') {
+    return 0;
+  }
+
+  let flags = 0;
+
+  if (window.matchMedia('(max-width: 768px)').matches) {
+    flags |= HERO_ENVIRONMENT_FLAGS.compactViewport;
+  }
+
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    flags |= HERO_ENVIRONMENT_FLAGS.reducedMotion;
+  }
+
+  const connection = getNavigatorConnection();
+
+  if (connection?.saveData) {
+    flags |= HERO_ENVIRONMENT_FLAGS.saveData;
+  }
+
+  if (['slow-2g', '2g', '3g'].includes(connection?.effectiveType ?? '')) {
+    flags |= HERO_ENVIRONMENT_FLAGS.slowNetwork;
+  }
+
+  return flags;
+}
+
+function subscribeToMediaQuery(
+  mediaQuery: MediaQueryList,
+  listener: () => void
+): () => void {
+  if (typeof mediaQuery.addEventListener === 'function') {
+    mediaQuery.addEventListener('change', listener);
+    return () => mediaQuery.removeEventListener('change', listener);
+  }
+
+  mediaQuery.addListener(listener);
+  return () => mediaQuery.removeListener(listener);
+}
+
+function useHeroEnvironmentFlags(): number {
+  const [flags, setFlags] = useState(() => getHeroEnvironmentFlags());
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const compactViewportQuery = window.matchMedia('(max-width: 768px)');
+    const reducedMotionQuery = window.matchMedia(
+      '(prefers-reduced-motion: reduce)'
+    );
+    const connection = getNavigatorConnection();
+
+    const updateFlags = (): void => {
+      setFlags((currentFlags) => {
+        const nextFlags = getHeroEnvironmentFlags();
+        return currentFlags === nextFlags ? currentFlags : nextFlags;
+      });
+    };
+
+    const unsubscribeCompactViewport = subscribeToMediaQuery(
+      compactViewportQuery,
+      updateFlags
+    );
+    const unsubscribeReducedMotion = subscribeToMediaQuery(
+      reducedMotionQuery,
+      updateFlags
+    );
+
+    connection?.addEventListener?.('change', updateFlags);
+
+    return () => {
+      unsubscribeCompactViewport();
+      unsubscribeReducedMotion();
+      connection?.removeEventListener?.('change', updateFlags);
+    };
+  }, []);
+
+  return flags;
+}
+
+interface CosmicHeroBackgroundProps {
+  prefersReducedMotion: boolean;
+  prefersStillImage: boolean;
+}
+
+function CosmicHeroBackground({
+  prefersReducedMotion,
+  prefersStillImage,
+}: CosmicHeroBackgroundProps): React.ReactElement {
+  const cosmicVideoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoadCosmicVideo, setShouldLoadCosmicVideo] = useState(false);
+  const [isCosmicVideoReady, setIsCosmicVideoReady] = useState(false);
+
+  useEffect(() => {
+    if (
+      prefersReducedMotion ||
+      prefersStillImage ||
+      typeof document === 'undefined'
+    ) {
+      return;
+    }
+
+    let timeoutId: number | undefined;
+    let idleId: number | undefined;
+
+    const queueVideoLoad = (): void => {
+      if (timeoutId !== undefined || idleId !== undefined) {
+        return;
+      }
+
+      if (document.visibilityState === 'hidden') {
+        return;
+      }
+
+      const startLoading = (): void => {
+        setShouldLoadCosmicVideo(true);
+      };
+
+      if (typeof window.requestIdleCallback === 'function') {
+        idleId = window.requestIdleCallback(startLoading, { timeout: 1800 });
+        return;
+      }
+
+      timeoutId = window.setTimeout(startLoading, 1200);
+    };
+
+    const handleVisibilityChange = (): void => {
+      if (!shouldLoadCosmicVideo && document.visibilityState === 'visible') {
+        queueVideoLoad();
+      }
+    };
+
+    queueVideoLoad();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      if (
+        idleId !== undefined &&
+        typeof window.cancelIdleCallback === 'function'
+      ) {
+        window.cancelIdleCallback(idleId);
+      }
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [prefersReducedMotion, prefersStillImage, shouldLoadCosmicVideo]);
+
+  useEffect(() => {
+    if (!shouldLoadCosmicVideo || typeof document === 'undefined') {
+      return;
+    }
+
+    const video = cosmicVideoRef.current;
+    if (!video) {
+      return;
+    }
+
+    const attemptPlay = (): void => {
+      video.muted = true;
+      video.defaultMuted = true;
+      video.playsInline = true;
+
+      const playAttempt = video.play();
+      if (playAttempt && typeof playAttempt.catch === 'function') {
+        void playAttempt.catch(() => {});
+      }
+    };
+
+    const canWarmVideoSource =
+      typeof navigator === 'undefined' || !/jsdom/i.test(navigator.userAgent);
+
+    if (
+      canWarmVideoSource &&
+      video.networkState === HTMLMediaElement.NETWORK_EMPTY
+    ) {
+      video.load();
+    }
+
+    let hasRetriedOnInteraction = false;
+    let delayedRetryTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const removeInteractionListeners = (): void => {
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+      window.removeEventListener('touchstart', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    const syncReadyFromMediaState = (): void => {
+      if (
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+        (!video.paused || video.currentTime > 0)
+      ) {
+        setIsCosmicVideoReady(true);
+      }
+    };
+
+    const handlePlaying = (): void => {
+      setIsCosmicVideoReady(true);
+      if (delayedRetryTimer) {
+        clearTimeout(delayedRetryTimer);
+        delayedRetryTimer = undefined;
+      }
+    };
+
+    const handleMediaReady = (): void => {
+      attemptPlay();
+      syncReadyFromMediaState();
+    };
+
+    const handleVisibilityChange = (): void => {
+      if (document.visibilityState === 'visible') {
+        attemptPlay();
+        syncReadyFromMediaState();
+      }
+    };
+
+    const handleFirstInteraction = (): void => {
+      if (hasRetriedOnInteraction) {
+        return;
+      }
+      hasRetriedOnInteraction = true;
+      attemptPlay();
+      syncReadyFromMediaState();
+      removeInteractionListeners();
+    };
+
+    video.addEventListener('playing', handlePlaying);
+    video.addEventListener('loadeddata', handleMediaReady);
+    video.addEventListener('loadedmetadata', handleMediaReady);
+    video.addEventListener('canplay', handleMediaReady);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pointerdown', handleFirstInteraction, {
+      passive: true,
+    });
+    window.addEventListener('touchstart', handleFirstInteraction, {
+      passive: true,
+    });
+    window.addEventListener('keydown', handleFirstInteraction);
+
+    attemptPlay();
+    syncReadyFromMediaState();
+
+    // Some browsers briefly reject the first play() while the media pipeline
+    // is still attaching source data. A short retry hardens initial startup.
+    delayedRetryTimer = setTimeout(() => {
+      attemptPlay();
+      syncReadyFromMediaState();
+    }, 180);
+
+    return () => {
+      if (delayedRetryTimer) {
+        clearTimeout(delayedRetryTimer);
+      }
+      video.removeEventListener('playing', handlePlaying);
+      video.removeEventListener('loadeddata', handleMediaReady);
+      video.removeEventListener('loadedmetadata', handleMediaReady);
+      video.removeEventListener('canplay', handleMediaReady);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      removeInteractionListeners();
+    };
+  }, [shouldLoadCosmicVideo]);
+
+  return (
+    <div
+      className="hero-background"
+      data-cosmic-theme="true"
+      data-cosmic-video-ready={isCosmicVideoReady ? 'true' : 'false'}
+      aria-hidden="true"
+    >
+      <span className="hero-cosmic-still" />
+      {shouldLoadCosmicVideo ? (
+        <video
+          ref={cosmicVideoRef}
+          className="hero-cosmic-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+          poster="/images/hero/cosmic/cosmos-first-frame.webp"
+        >
+          <source src="/video/cosmos.mp4" type="video/mp4" />
+        </video>
+      ) : null}
+    </div>
+  );
+}
+
 type TraceSegment = {
   start: TracePoint;
   end: TracePoint;
@@ -195,16 +515,24 @@ const chipPins = {
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const electronSvgRef = useRef<SVGSVGElement>(null);
-  const cosmicVideoRef = useRef<HTMLVideoElement>(null);
   const loadedThemeStyles = useRef(new Set<string>());
   const { themeName } = useTheme();
   const isCosmicTheme = themeName === 'cosmic';
   const isEngineerTheme = themeName === 'engineer';
   const isCliTheme = themeName === 'cli';
-  const prefersReducedMotion = useReducedMotion();
+  const prefersReducedMotion = Boolean(useReducedMotion());
+  const heroEnvironmentFlags = useHeroEnvironmentFlags();
+  const prefersStillCosmicVideo = Boolean(
+    heroEnvironmentFlags &
+    (HERO_ENVIRONMENT_FLAGS.saveData | HERO_ENVIRONMENT_FLAGS.slowNetwork)
+  );
+  const useCalmerElectronMotion = Boolean(
+    heroEnvironmentFlags &
+    (HERO_ENVIRONMENT_FLAGS.compactViewport |
+      HERO_ENVIRONMENT_FLAGS.reducedMotion |
+      HERO_ENVIRONMENT_FLAGS.saveData)
+  );
   const disableParallax = prefersReducedMotion || isCliTheme;
-  const [useCalmerElectronMotion, setUseCalmerElectronMotion] = useState(false);
-  const [isCosmicVideoReady, setIsCosmicVideoReady] = useState(false);
   const isHeroInView = useIntersectionObserver(sectionRef, {
     threshold: 0.01,
     rootMargin: '0px',
@@ -212,59 +540,14 @@ function Hero(): React.ReactElement {
   });
 
   useEffect(() => {
-    const loaders: Record<string, () => Promise<unknown>> = {
-      cosmic: () => import('./Hero.cosmic.css'),
-    };
-
-    const loadThemeStyles = loaders[themeName];
+    const loadThemeStyles = themeStyleLoaders[themeName];
     if (!loadThemeStyles || loadedThemeStyles.current.has(themeName)) {
       return;
     }
 
-    loadThemeStyles();
+    void loadThemeStyles();
     loadedThemeStyles.current.add(themeName);
   }, [themeName]);
-
-  useEffect(() => {
-    setIsCosmicVideoReady(false);
-  }, [isCosmicTheme]);
-
-  useEffect(() => {
-    if (!isEngineerTheme) {
-      setUseCalmerElectronMotion(false);
-      return;
-    }
-
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    const compactViewportQuery = window.matchMedia('(max-width: 768px)');
-    const reducedMotionQuery = window.matchMedia(
-      '(prefers-reduced-motion: reduce)'
-    );
-
-    const updateMotionProfile = (): void => {
-      const nav = navigator as Navigator & {
-        connection?: { saveData?: boolean };
-      };
-      const saveDataEnabled = Boolean(nav.connection?.saveData);
-      const useCalmerProfile =
-        compactViewportQuery.matches ||
-        reducedMotionQuery.matches ||
-        saveDataEnabled;
-      setUseCalmerElectronMotion(useCalmerProfile);
-    };
-
-    updateMotionProfile();
-    compactViewportQuery.addEventListener('change', updateMotionProfile);
-    reducedMotionQuery.addEventListener('change', updateMotionProfile);
-
-    return () => {
-      compactViewportQuery.removeEventListener('change', updateMotionProfile);
-      reducedMotionQuery.removeEventListener('change', updateMotionProfile);
-    };
-  }, [isEngineerTheme]);
 
   useEffect(() => {
     if (!isEngineerTheme) {
@@ -283,120 +566,6 @@ function Hero(): React.ReactElement {
 
     svg.pauseAnimations();
   }, [isEngineerTheme, isHeroInView]);
-
-  const attemptPlay = useCallback((): void => {
-    if (!isCosmicTheme) {
-      return;
-    }
-
-    const video = cosmicVideoRef.current;
-    if (!video) {
-      return;
-    }
-
-    video.muted = true;
-    video.defaultMuted = true;
-    video.playsInline = true;
-
-    const playAttempt = video.play();
-    if (playAttempt && typeof playAttempt.catch === 'function') {
-      void playAttempt.catch(() => {});
-    }
-  }, [isCosmicTheme]);
-
-  useEffect(() => {
-    if (!isCosmicTheme) {
-      return;
-    }
-
-    const video = cosmicVideoRef.current;
-    if (!video || typeof document === 'undefined') {
-      return;
-    }
-
-    let hasRetriedOnInteraction = false;
-    let delayedRetryTimer: ReturnType<typeof setTimeout> | undefined;
-
-    const removeInteractionListeners = (): void => {
-      window.removeEventListener('pointerdown', handleFirstInteraction);
-      window.removeEventListener('touchstart', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-    };
-
-    const handlePlaying = (): void => {
-      setIsCosmicVideoReady(true);
-      if (delayedRetryTimer) {
-        clearTimeout(delayedRetryTimer);
-        delayedRetryTimer = undefined;
-      }
-    };
-
-    const syncReadyFromMediaState = (): void => {
-      if (
-        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-        (!video.paused || video.currentTime > 0)
-      ) {
-        setIsCosmicVideoReady(true);
-      }
-    };
-
-    const handleMediaReady = (): void => {
-      attemptPlay();
-      syncReadyFromMediaState();
-    };
-
-    const handleVisibilityChange = (): void => {
-      if (document.visibilityState === 'visible') {
-        attemptPlay();
-        syncReadyFromMediaState();
-      }
-    };
-
-    const handleFirstInteraction = (): void => {
-      if (hasRetriedOnInteraction) {
-        return;
-      }
-      hasRetriedOnInteraction = true;
-      attemptPlay();
-      syncReadyFromMediaState();
-      removeInteractionListeners();
-    };
-
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('loadeddata', handleMediaReady);
-    video.addEventListener('loadedmetadata', handleMediaReady);
-    video.addEventListener('canplay', handleMediaReady);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('pointerdown', handleFirstInteraction, {
-      passive: true,
-    });
-    window.addEventListener('touchstart', handleFirstInteraction, {
-      passive: true,
-    });
-    window.addEventListener('keydown', handleFirstInteraction);
-
-    attemptPlay();
-    syncReadyFromMediaState();
-
-    // Some browsers briefly reject the first play() while the media pipeline
-    // is still attaching source data. A short retry hardens initial startup.
-    delayedRetryTimer = setTimeout(() => {
-      attemptPlay();
-      syncReadyFromMediaState();
-    }, 180);
-
-    return () => {
-      if (delayedRetryTimer) {
-        clearTimeout(delayedRetryTimer);
-      }
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('loadeddata', handleMediaReady);
-      video.removeEventListener('loadedmetadata', handleMediaReady);
-      video.removeEventListener('canplay', handleMediaReady);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      removeInteractionListeners();
-    };
-  }, [attemptPlay, isCosmicTheme]);
 
   const electronMotion = useCalmerElectronMotion
     ? {
@@ -446,181 +615,174 @@ function Hero(): React.ReactElement {
       className="hero-section visible"
       aria-labelledby="hero-heading"
     >
-      <div
-        className="hero-background"
-        data-cosmic-video-ready={
-          isCosmicTheme && isCosmicVideoReady ? 'true' : 'false'
-        }
-        aria-hidden="true"
-      >
-        {isCosmicTheme ? (
-          <>
-            <span className="hero-cosmic-still" />
-            <video
-              ref={cosmicVideoRef}
-              className="hero-cosmic-video"
-              autoPlay
-              loop
-              muted
-              playsInline
-              preload="auto"
-              poster="/images/hero/cosmic/cosmos-first-frame.webp"
-            >
-              <source src="/video/cosmos.mp4" type="video/mp4" />
-            </video>
-          </>
-        ) : isEngineerTheme ? (
-          <>
-            <div className="hero-circuit">
-              <div className="circuit-board" />
-              <div className="circuit-traces" />
-              <div className="circuit-chip-svg" aria-hidden="true">
-                <svg
-                  viewBox="0 0 1600 900"
-                  preserveAspectRatio="xMidYMid slice"
-                  aria-hidden="true"
-                >
-                  <g className="chip-svg">
-                    <rect
-                      className="chip-body"
-                      x={chip.x}
-                      y={chip.y}
-                      width={chip.size}
-                      height={chip.size}
-                      rx={chip.radius}
-                    />
-                    <rect
-                      className="chip-core"
-                      x={chip.x + chipCoreOffset}
-                      y={chip.y + chipCoreOffset}
-                      width={chip.coreSize}
-                      height={chip.coreSize}
-                      rx={chip.coreRadius}
-                    />
-                    <circle
-                      className="chip-marker"
-                      cx={chip.x + chip.size - 24}
-                      cy={chip.y + 24}
-                      r="8"
-                    />
-                    {chipPins.top.map((segment, index) => (
-                      <line
-                        key={`chip-top-${index}`}
-                        className="chip-pin"
-                        x1={segment.start.x}
-                        y1={segment.start.y}
-                        x2={segment.end.x}
-                        y2={segment.end.y}
+      {isCosmicTheme ? (
+        <CosmicHeroBackground
+          key={`${prefersReducedMotion ? 'reduced' : 'motion'}-${
+            prefersStillCosmicVideo ? 'still' : 'video'
+          }`}
+          prefersReducedMotion={prefersReducedMotion}
+          prefersStillImage={prefersStillCosmicVideo}
+        />
+      ) : (
+        <div
+          className="hero-background"
+          data-cosmic-theme="false"
+          data-cosmic-video-ready="false"
+          aria-hidden="true"
+        >
+          {isEngineerTheme ? (
+            <>
+              <div className="hero-circuit">
+                <div className="circuit-board" />
+                <div className="circuit-traces" />
+                <div className="circuit-chip-svg" aria-hidden="true">
+                  <svg
+                    viewBox="0 0 1600 900"
+                    preserveAspectRatio="xMidYMid slice"
+                    aria-hidden="true"
+                  >
+                    <g className="chip-svg">
+                      <rect
+                        className="chip-body"
+                        x={chip.x}
+                        y={chip.y}
+                        width={chip.size}
+                        height={chip.size}
+                        rx={chip.radius}
                       />
-                    ))}
-                    {chipPins.bottom.map((segment, index) => (
-                      <line
-                        key={`chip-bottom-${index}`}
-                        className="chip-pin"
-                        x1={segment.start.x}
-                        y1={segment.start.y}
-                        x2={segment.end.x}
-                        y2={segment.end.y}
+                      <rect
+                        className="chip-core"
+                        x={chip.x + chipCoreOffset}
+                        y={chip.y + chipCoreOffset}
+                        width={chip.coreSize}
+                        height={chip.coreSize}
+                        rx={chip.coreRadius}
                       />
-                    ))}
-                    {chipPins.left.map((segment, index) => (
-                      <line
-                        key={`chip-left-${index}`}
-                        className="chip-pin"
-                        x1={segment.start.x}
-                        y1={segment.start.y}
-                        x2={segment.end.x}
-                        y2={segment.end.y}
+                      <circle
+                        className="chip-marker"
+                        cx={chip.x + chip.size - 24}
+                        cy={chip.y + 24}
+                        r="8"
                       />
-                    ))}
-                    {chipPins.right.map((segment, index) => (
+                      {chipPins.top.map((segment, index) => (
+                        <line
+                          key={`chip-top-${index}`}
+                          className="chip-pin"
+                          x1={segment.start.x}
+                          y1={segment.start.y}
+                          x2={segment.end.x}
+                          y2={segment.end.y}
+                        />
+                      ))}
+                      {chipPins.bottom.map((segment, index) => (
+                        <line
+                          key={`chip-bottom-${index}`}
+                          className="chip-pin"
+                          x1={segment.start.x}
+                          y1={segment.start.y}
+                          x2={segment.end.x}
+                          y2={segment.end.y}
+                        />
+                      ))}
+                      {chipPins.left.map((segment, index) => (
+                        <line
+                          key={`chip-left-${index}`}
+                          className="chip-pin"
+                          x1={segment.start.x}
+                          y1={segment.start.y}
+                          x2={segment.end.x}
+                          y2={segment.end.y}
+                        />
+                      ))}
+                      {chipPins.right.map((segment, index) => (
+                        <line
+                          key={`chip-right-${index}`}
+                          className="chip-pin"
+                          x1={segment.start.x}
+                          y1={segment.start.y}
+                          x2={segment.end.x}
+                          y2={segment.end.y}
+                        />
+                      ))}
                       <line
-                        key={`chip-right-${index}`}
-                        className="chip-pin"
-                        x1={segment.start.x}
-                        y1={segment.start.y}
-                        x2={segment.end.x}
-                        y2={segment.end.y}
+                        className="chip-pin-diagonal"
+                        x1={chip.x}
+                        y1={chip.y}
+                        x2={chip.x - chip.diagonalLength}
+                        y2={chip.y - chip.diagonalLength}
                       />
-                    ))}
-                    <line
-                      className="chip-pin-diagonal"
-                      x1={chip.x}
-                      y1={chip.y}
-                      x2={chip.x - chip.diagonalLength}
-                      y2={chip.y - chip.diagonalLength}
-                    />
-                    <line
-                      className="chip-pin-diagonal"
-                      x1={chip.x + chip.size}
-                      y1={chip.y}
-                      x2={chip.x + chip.size + chip.diagonalLength}
-                      y2={chip.y - chip.diagonalLength}
-                    />
-                    <line
-                      className="chip-pin-diagonal"
-                      x1={chip.x}
-                      y1={chip.y + chip.size}
-                      x2={chip.x - chip.diagonalLength}
-                      y2={chip.y + chip.size + chip.diagonalLength}
-                    />
-                    <line
-                      className="chip-pin-diagonal"
-                      x1={chip.x + chip.size}
-                      y1={chip.y + chip.size}
-                      x2={chip.x + chip.size + chip.diagonalLength}
-                      y2={chip.y + chip.size + chip.diagonalLength}
-                    />
-                  </g>
-                </svg>
+                      <line
+                        className="chip-pin-diagonal"
+                        x1={chip.x + chip.size}
+                        y1={chip.y}
+                        x2={chip.x + chip.size + chip.diagonalLength}
+                        y2={chip.y - chip.diagonalLength}
+                      />
+                      <line
+                        className="chip-pin-diagonal"
+                        x1={chip.x}
+                        y1={chip.y + chip.size}
+                        x2={chip.x - chip.diagonalLength}
+                        y2={chip.y + chip.size + chip.diagonalLength}
+                      />
+                      <line
+                        className="chip-pin-diagonal"
+                        x1={chip.x + chip.size}
+                        y1={chip.y + chip.size}
+                        x2={chip.x + chip.size + chip.diagonalLength}
+                        y2={chip.y + chip.size + chip.diagonalLength}
+                      />
+                    </g>
+                  </svg>
+                </div>
+                <div className="circuit-nodes" />
+                <div className="circuit-electrons">
+                  <svg
+                    ref={electronSvgRef}
+                    className="electron-svg"
+                    viewBox="0 0 1600 900"
+                    preserveAspectRatio="xMidYMid slice"
+                    aria-hidden="true"
+                  >
+                    <defs>
+                      {tracePaths.map((trace) => (
+                        <path key={trace.id} id={trace.id} d={trace.d} />
+                      ))}
+                    </defs>
+                    {tracePaths.map((trace, index) => {
+                      const duration =
+                        electronMotion.baseDuration +
+                        (index % 5) * electronMotion.durationStep;
+                      const begin =
+                        (index * electronMotion.beginStep) %
+                        electronMotion.beginCycleWindow;
+                      const reverse = index % 4 === 0;
+                      return (
+                        <circle key={trace.id} className="electron-dot" r="3">
+                          <animateMotion
+                            dur={`${duration.toFixed(1)}s`}
+                            repeatCount="indefinite"
+                            begin={`${begin.toFixed(2)}s`}
+                            {...(reverse
+                              ? {
+                                  keyPoints: '1;0',
+                                  keyTimes: '0;1',
+                                  calcMode: 'linear',
+                                }
+                              : {})}
+                          >
+                            <mpath href={`#${trace.id}`} />
+                          </animateMotion>
+                        </circle>
+                      );
+                    })}
+                  </svg>
+                </div>
               </div>
-              <div className="circuit-nodes" />
-              <div className="circuit-electrons">
-                <svg
-                  ref={electronSvgRef}
-                  className="electron-svg"
-                  viewBox="0 0 1600 900"
-                  preserveAspectRatio="xMidYMid slice"
-                  aria-hidden="true"
-                >
-                  <defs>
-                    {tracePaths.map((trace) => (
-                      <path key={trace.id} id={trace.id} d={trace.d} />
-                    ))}
-                  </defs>
-                  {tracePaths.map((trace, index) => {
-                    const duration =
-                      electronMotion.baseDuration +
-                      (index % 5) * electronMotion.durationStep;
-                    const begin =
-                      (index * electronMotion.beginStep) %
-                      electronMotion.beginCycleWindow;
-                    const reverse = index % 4 === 0;
-                    return (
-                      <circle key={trace.id} className="electron-dot" r="3">
-                        <animateMotion
-                          dur={`${duration.toFixed(1)}s`}
-                          repeatCount="indefinite"
-                          begin={`${begin.toFixed(2)}s`}
-                          {...(reverse
-                            ? {
-                                keyPoints: '1;0',
-                                keyTimes: '0;1',
-                                calcMode: 'linear',
-                              }
-                            : {})}
-                        >
-                          <mpath href={`#${trace.id}`} />
-                        </animateMotion>
-                      </circle>
-                    );
-                  })}
-                </svg>
-              </div>
-            </div>
-          </>
-        ) : null}
-      </div>
+            </>
+          ) : null}
+        </div>
+      )}
 
       <motion.div
         className="hero-content"
@@ -631,7 +793,9 @@ function Hero(): React.ReactElement {
       >
         <div className="hero-text-stack">
           {isCliTheme ? (
-            <CliTerminal />
+            <Suspense fallback={null}>
+              <CliTerminal />
+            </Suspense>
           ) : (
             <>
               <span className="hero-greeting">Hello, I&apos;m</span>
@@ -674,10 +838,7 @@ function Hero(): React.ReactElement {
 
                 {!isCosmicTheme && (
                   <div className="hero-tagline">
-                    <p>
-                      I turn evolving business requirements into high-quality
-                      software delivered with precision and consistency.
-                    </p>
+                    <p>{HERO_TAGLINE}</p>
                   </div>
                 )}
               </div>
@@ -700,10 +861,7 @@ function Hero(): React.ReactElement {
 
             {isCosmicTheme && (
               <div className="hero-tagline">
-                <p>
-                  I turn evolving business requirements into high-quality
-                  software delivered with precision and consistency.
-                </p>
+                <p>{HERO_TAGLINE}</p>
               </div>
             )}
 
