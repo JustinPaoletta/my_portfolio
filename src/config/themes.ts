@@ -86,7 +86,7 @@ export const themes: Record<string, Theme> = {
     colors: {
       primary: '#c77dff', // Lighter purple - 7:1 on #0b0014
       primaryLight: '#d9a3ff',
-      primaryDark: '#7b2cbf', // Darker for light mode, 5:1 on #fdf8ff
+      primaryDark: '#5c1f99', // Deeper violet for stronger contrast on the light cosmic palette
       accent: '#f72585',
       accentTeal: '#4cc9f0',
     },
@@ -102,15 +102,15 @@ export const themes: Record<string, Theme> = {
       navBgScrolled: 'rgba(11, 0, 20, 0.95)',
     },
     light: {
-      textPrimary: '#1a0a2e', // 14:1 on #fdf8ff
-      textSecondary: '#3a2454', // 9:1 on #fdf8ff
-      textMuted: '#5c4478', // 5:1 on #fdf8ff
-      bgMain: '#fdf8ff',
-      bgCard: 'rgba(123, 44, 191, 0.05)',
-      bgCardHover: 'rgba(123, 44, 191, 0.1)',
-      borderSubtle: 'rgba(123, 44, 191, 0.25)',
-      borderHover: 'rgba(123, 44, 191, 0.4)',
-      navBgScrolled: 'rgba(253, 248, 255, 0.95)',
+      textPrimary: '#14051f', // 14:1 on #efe2f6
+      textSecondary: '#2d1448', // 9:1 on #efe2f6
+      textMuted: '#4d2f68', // 5:1 on #efe2f6
+      bgMain: '#efe2f6',
+      bgCard: 'rgba(92, 31, 153, 0.11)',
+      bgCardHover: 'rgba(92, 31, 153, 0.18)',
+      borderSubtle: 'rgba(92, 31, 153, 0.34)',
+      borderHover: 'rgba(92, 31, 153, 0.54)',
+      navBgScrolled: 'rgba(239, 226, 246, 0.9)',
     },
   },
   cli: {
