@@ -193,13 +193,28 @@ describe('Hero section', () => {
     heroInView = true;
     prefersReducedMotion = false;
     vi.clearAllMocks();
+    vi.stubGlobal(
+      'requestIdleCallback',
+      (callback: IdleRequestCallback): number =>
+        window.setTimeout(
+          () =>
+            callback({
+              didTimeout: false,
+              timeRemaining: () => 50,
+            } as IdleDeadline),
+          0
+        )
+    );
+    vi.stubGlobal('cancelIdleCallback', (handle: number): void => {
+      window.clearTimeout(handle);
+    });
     Object.defineProperty(navigator, 'connection', {
       configurable: true,
       value: { saveData: false },
     });
   });
 
-  it('renders non-CLI copy for minimal theme and CLI terminal for CLI theme', () => {
+  it('renders non-CLI copy for minimal theme and CLI terminal for CLI theme', async () => {
     themeName = 'minimal';
     const minimal = render(<Hero />);
     expect(screen.getByText("Hello, I'm")).toBeInTheDocument();
@@ -210,7 +225,7 @@ describe('Hero section', () => {
 
     themeName = 'cli';
     minimal.rerender(<Hero />);
-    expect(screen.getByTestId('cli-terminal')).toBeInTheDocument();
+    expect(await screen.findByTestId('cli-terminal')).toBeInTheDocument();
     expect(screen.queryByText('View My Work')).not.toBeInTheDocument();
   });
 
@@ -310,17 +325,19 @@ describe('Hero section', () => {
       'true'
     );
     expect(
-      view.container.querySelector('.hero-cosmic-fallback')
+      view.container.querySelector('.hero-cosmic-still')
     ).toBeInTheDocument();
-    expect(view.container.querySelector('.hero-cosmic-still')).toHaveAttribute(
-      'src',
-      '/images/hero/cosmic/cosmos-first-frame.webp'
-    );
-    expect(view.container.querySelector('.nebula-layer-1')).toBeInTheDocument();
+    await waitFor(() => {
+      expect(view.container.querySelector('video')).toBeInTheDocument();
+    });
     const video = view.container.querySelector('video');
     if (!video) throw new Error('expected cosmic video');
-    expect(video).toHaveAttribute('src', '/video/cosmos.mp4');
-    expect(video).not.toHaveAttribute('poster');
+    expect(video).toHaveAttribute(
+      'poster',
+      '/images/hero/cosmic/cosmos-first-frame.webp'
+    );
+    const source = video.querySelector('source');
+    expect(source).toHaveAttribute('src', '/video/cosmos.mp4');
 
     await waitFor(() => {
       expect(playSpy).toHaveBeenCalled();

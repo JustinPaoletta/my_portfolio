@@ -3,21 +3,17 @@
  * Portfolio with parallax scrolling and animated sections
  */
 
+import { Suspense, lazy } from 'react';
 import '@/App.css';
 import SEO from '@/components/SEO';
 import PWAUpdatePrompt from '@/components/pwa-update-prompt';
-import Navigation from '@/components/Navigation';
 import Hero from '@/components/sections/Hero';
-import About from '@/components/sections/About';
-import Projects from '@/components/sections/Projects';
-import Skills from '@/components/sections/Skills';
-import Experience from '@/components/sections/Experience';
-import GitHub from '@/components/sections/GitHub';
-import Contact from '@/components/sections/Contact';
-import PetDogs from '@/components/sections/PetDogs';
-import Footer from '@/components/Footer';
 import { ThemeProvider, useTheme } from '@/hooks/useTheme';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+
+const Navigation = lazy(() => import('@/components/Navigation'));
+const Footer = lazy(() => import('@/components/Footer'));
+const NonCliSections = lazy(() => import('@/components/AppNonCliSections'));
 
 function AppLayout(): React.ReactElement {
   const { themeName } = useTheme();
@@ -34,7 +30,11 @@ function AppLayout(): React.ReactElement {
       </a>
 
       {/* Fixed Navigation */}
-      {!isCliTheme && <Navigation />}
+      {!isCliTheme && (
+        <Suspense fallback={null}>
+          <Navigation />
+        </Suspense>
+      )}
 
       {/* Theme switcher - always floating bottom-right */}
       <ThemeSwitcher placement="floating" />
@@ -49,20 +49,18 @@ function AppLayout(): React.ReactElement {
       >
         <Hero />
         {!isCliTheme && (
-          <>
-            <About />
-            <Projects />
-            <Skills />
-            <Experience />
-            <GitHub />
-            <Contact />
-            <PetDogs />
-          </>
+          <Suspense fallback={null}>
+            <NonCliSections />
+          </Suspense>
         )}
       </main>
 
       {/* Footer */}
-      {!isCliTheme && <Footer />}
+      {!isCliTheme && (
+        <Suspense fallback={null}>
+          <Footer />
+        </Suspense>
+      )}
     </>
   );
 }

@@ -165,8 +165,8 @@ describe('useTheme', () => {
     });
   });
 
-  it('normalizes deprecated theme aliases from localStorage', () => {
-    localStorage.setItem('portfolio-theme', 'dewTheDew');
+  it('initializes the current theme from localStorage', () => {
+    localStorage.setItem('portfolio-theme', 'cli');
     localStorage.setItem('portfolio-color-mode', 'system');
 
     renderWithThemeProvider();

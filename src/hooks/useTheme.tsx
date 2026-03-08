@@ -26,9 +26,6 @@ const FAVICON_LOGO_FILL = '#7ed957';
 const FAVICON_CURSOR_FILL = '#ffffff';
 const hasOwnTheme = (value: string): value is ThemeName =>
   Object.prototype.hasOwnProperty.call(themes, value);
-const deprecatedThemeAliases: Record<string, ThemeName> = {
-  dewTheDew: 'cli',
-};
 let faviconTemplatePromise: Promise<string | null> | null = null;
 
 export function normalizeThemeName(value: string | null): ThemeName | null {
@@ -36,8 +33,7 @@ export function normalizeThemeName(value: string | null): ThemeName | null {
     return null;
   }
 
-  const normalized = deprecatedThemeAliases[value] ?? value;
-  return hasOwnTheme(normalized) ? normalized : null;
+  return hasOwnTheme(value) ? value : null;
 }
 
 interface ThemeContextValue {

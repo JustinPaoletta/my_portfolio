@@ -74,8 +74,8 @@ describe('index.html theme bootstrap', () => {
     );
   });
 
-  it('normalizes deprecated theme aliases before first paint', () => {
-    localStorage.setItem('portfolio-theme', 'dewTheDew');
+  it('restores a persisted current theme before first paint', () => {
+    localStorage.setItem('portfolio-theme', 'cli');
     localStorage.setItem('portfolio-color-mode', 'system');
     installMatchMediaMock(true);
 
@@ -83,7 +83,6 @@ describe('index.html theme bootstrap', () => {
 
     expect(document.documentElement.dataset.theme).toBe('cli');
     expect(document.documentElement.dataset.colorMode).toBe('dark');
-    expect(localStorage.getItem('portfolio-theme')).toBe('cli');
     expect(document.documentElement.style.getPropertyValue('--bg-main')).toBe(
       '#0a0f0a'
     );

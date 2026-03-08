@@ -59,14 +59,6 @@
     />
     <meta name="theme-color" content="#1a1918" />
 
-    <!-- Preload LCP image for CLI theme -->
-    <link
-      rel="preload"
-      as="image"
-      href="/images/hero/dew/dew-text.webp"
-      fetchpriority="high"
-    />
-
     <!-- Apply persisted theme attributes before React mounts -->
     <script>
       (function () {
@@ -75,17 +67,9 @@
           var params = new URLSearchParams(window.location.search);
           var defaultTheme = 'minimal';
           var defaultMode = 'system';
-          var themeAliases = {
-            dewTheDew: 'cli',
-          };
           var normalizeTheme = function (value) {
-            if (!value) {
-              return null;
-            }
-
-            var normalized = themeAliases[value] || value;
-            return /^(engineer|cosmic|cli|minimal)$/.test(normalized)
-              ? normalized
+            return value && /^(engineer|cosmic|cli|minimal)$/.test(value)
+              ? value
               : null;
           };
           var normalizeMode = function (value) {
@@ -99,16 +83,7 @@
           }
 
           var storedTheme = localStorage.getItem('portfolio-theme');
-          var resolvedTheme = queryTheme;
-          if (!resolvedTheme) {
-            var normalizedStoredTheme = normalizeTheme(storedTheme);
-            if (normalizedStoredTheme) {
-              if (storedTheme !== normalizedStoredTheme) {
-                localStorage.setItem('portfolio-theme', normalizedStoredTheme);
-              }
-              resolvedTheme = normalizedStoredTheme;
-            }
-          }
+          var resolvedTheme = queryTheme || normalizeTheme(storedTheme);
 
           if (!resolvedTheme) {
             resolvedTheme = defaultTheme;
@@ -147,6 +122,35 @@
           root.style.backgroundColor = bg;
           if (document.body) {
             document.body.style.backgroundColor = bg;
+          } else {
+            document.addEventListener(
+              'DOMContentLoaded',
+              function () {
+                if (document.body) {
+                  document.body.style.backgroundColor = bg;
+                }
+              },
+              { once: true }
+            );
+          }
+
+          var preloadAsset = function (as, href, fetchpriority) {
+            var link = document.createElement('link');
+            link.rel = 'preload';
+            link.as = as;
+            link.href = href;
+            if (fetchpriority) {
+              link.setAttribute('fetchpriority', fetchpriority);
+            }
+            document.head.appendChild(link);
+          };
+
+          if (resolvedTheme === 'cosmic') {
+            preloadAsset(
+              'image',
+              '/images/hero/cosmic/cosmos-first-frame.webp',
+              'high'
+            );
           }
         } catch (e) {}
       })();

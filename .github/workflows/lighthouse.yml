@@ -73,12 +73,11 @@ jobs:
         run: npx @lhci/cli@latest collect --staticDistDir=./dist
 
       - name: Assert Lighthouse Results
-        run: npx @lhci/cli@latest assert || echo "Some assertions failed, but continuing..."
+        run: npx @lhci/cli@latest assert
 
       - name: Upload to LHCI Temporary Storage
+        if: always()
         run: npx @lhci/cli@latest upload
-        env:
-          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
 
       - name: Upload LHCI artifacts
         if: always()
@@ -91,7 +90,7 @@ jobs:
 
       - name: Comment PR with Lighthouse results
         uses: actions/github-script@v8
-        if: github.event_name == 'pull_request'
+        if: always() && github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
