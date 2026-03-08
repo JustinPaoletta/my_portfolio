@@ -2,48 +2,45 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Tab favicon -->
+    <!-- Stable crawler-facing favicon URL -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <!-- Modern SVG favicon -->
     <link
       rel="icon"
       type="image/svg+xml"
       sizes="any"
-      href="/branding/JP-no-cursor.svg?v=2"
+      href="/branding/JP-no-cursor.svg"
     />
     <!-- PNG favicons (48x48 recommended by Google for search results) -->
     <link
       rel="icon"
       type="image/png"
       sizes="48x48"
-      href="/favicons/favicon-48x48.png?v=2"
+      href="/favicons/favicon-48x48.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="192x192"
-      href="/favicons/pwa-192x192.png?v=2"
+      href="/favicons/pwa-192x192.png"
     />
     <link
       rel="icon"
       type="image/png"
       sizes="512x512"
-      href="/favicons/pwa-512x512.png?v=2"
+      href="/favicons/pwa-512x512.png"
     />
     <!-- Apple Touch Icons (iOS home screen) -->
     <link
       rel="apple-touch-icon"
       sizes="180x180"
-      href="/favicons/apple-touch-icon.png?v=2"
+      href="/favicons/apple-touch-icon.png"
     />
     <link
       rel="apple-touch-icon"
       sizes="512x512"
-      href="/favicons/pwa-512x512.png?v=2"
-    />
-    <!-- Shortcut icon for older browsers -->
-    <link
-      rel="shortcut icon"
-      type="image/svg+xml"
-      href="/branding/JP-no-cursor.svg?v=2"
+      href="/favicons/pwa-512x512.png"
     />
 
     <!-- Microsoft Windows Tiles -->
@@ -58,7 +55,7 @@
     <title>JP Engineering</title>
     <meta
       name="description"
-      content="My personal portfolio showcasing my work and skills"
+      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
     />
     <meta name="theme-color" content="#1a1918" />
 
@@ -70,23 +67,48 @@
       fetchpriority="high"
     />
 
-    <!-- Preload cosmic theme video when user's saved theme is cosmic (instant playback) -->
+    <!-- Apply persisted theme attributes before React mounts -->
     <script>
       (function () {
         try {
-          if (localStorage.getItem('portfolio-theme') === 'cosmic') {
-            var videoLink = document.createElement('link');
-            videoLink.rel = 'preload';
-            videoLink.as = 'video';
-            videoLink.href = '/video/cosmos.mp4';
-            document.head.appendChild(videoLink);
+          var root = document.documentElement;
+          var storedTheme = localStorage.getItem('portfolio-theme');
+          var storedMode = localStorage.getItem('portfolio-color-mode');
+          var validTheme = /^(engineer|cosmic|cli|minimal)$/.test(
+            storedTheme || ''
+          )
+            ? storedTheme
+            : null;
+          var resolvedMode =
+            storedMode === 'dark' || storedMode === 'light'
+              ? storedMode
+              : window.matchMedia &&
+                  window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
 
-            var stillLink = document.createElement('link');
-            stillLink.rel = 'preload';
-            stillLink.as = 'image';
-            stillLink.href = '/images/hero/cosmic/cosmos-first-frame.webp';
-            stillLink.setAttribute('fetchpriority', 'high');
-            document.head.appendChild(stillLink);
+          if (validTheme) {
+            root.dataset.theme = validTheme;
+          }
+
+          root.dataset.colorMode = resolvedMode;
+
+          var bgByTheme = {
+            engineer: { dark: '#0a0e12', light: '#f0f8ff' },
+            cosmic: { dark: '#0b0014', light: '#fdf8ff' },
+            cli: { dark: '#0a0f0a', light: '#f5fff5' },
+            minimal: { dark: '#0f1115', light: '#f7f7f5' },
+          };
+
+          var bg =
+            validTheme && bgByTheme[validTheme]
+              ? bgByTheme[validTheme][resolvedMode]
+              : bgByTheme.engineer.dark;
+
+          root.style.setProperty('--bg-main', bg);
+          root.style.backgroundColor = bg;
+          if (document.body) {
+            document.body.style.backgroundColor = bg;
           }
         } catch (e) {}
       })();
@@ -112,7 +134,7 @@
       - Dynamic page updates during client-side navigation
       - Future SSR/SSG compatibility
 
-      If you update these values, also update src/components/SEO.tsx and src/config/seo.ts
+      If you update these values, also update src/content/site.ts and src/config/seo.ts
     -->
 
     <!-- Open Graph -->
@@ -121,7 +143,7 @@
     <meta property="og:title" content="JP Engineering" />
     <meta
       property="og:description"
-      content="My personal portfolio showcasing my work and skills"
+      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
     />
     <meta
       property="og:image"
@@ -137,7 +159,7 @@
     <meta name="twitter:title" content="JP Engineering" />
     <meta
       name="twitter:description"
-      content="My personal portfolio showcasing my work and skills"
+      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
     />
     <meta
       name="twitter:image"

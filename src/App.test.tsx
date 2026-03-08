@@ -301,14 +301,23 @@ describe('App', () => {
 
     const heroBackground = document.querySelector('.hero-background');
     expect(heroBackground).toBeInTheDocument();
+    expect(heroBackground).toHaveAttribute('data-cosmic-theme', 'true');
     expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
+
+    const cosmicFallback = document.querySelector('.hero-cosmic-fallback');
+    expect(cosmicFallback).toBeInTheDocument();
+    const cosmicStill = document.querySelector('.hero-cosmic-still');
+    expect(cosmicStill).toBeInTheDocument();
+    expect(cosmicStill).toHaveAttribute(
+      'src',
+      '/images/hero/cosmic/cosmos-first-frame.webp'
+    );
+    expect(document.querySelector('.nebula-layer-1')).toBeInTheDocument();
 
     const cosmicVideo = document.querySelector('.hero-cosmic-video');
     expect(cosmicVideo).toBeInTheDocument();
-    expect(cosmicVideo).toHaveAttribute(
-      'poster',
-      '/images/hero/cosmic/cosmos-first-frame.webp'
-    );
+    expect(cosmicVideo).toHaveAttribute('src', '/video/cosmos.mp4');
+    expect(cosmicVideo).not.toHaveAttribute('poster');
     if (!cosmicVideo) {
       throw new Error('Expected cosmic video element to exist');
     }
@@ -344,6 +353,7 @@ describe('App', () => {
 
     const heroBackground = document.querySelector('.hero-background');
     expect(heroBackground).toBeInTheDocument();
+    expect(heroBackground).toHaveAttribute('data-cosmic-theme', 'true');
     expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
 
     await act(async () => {

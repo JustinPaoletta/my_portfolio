@@ -4,6 +4,7 @@
  */
 
 import { env } from './env';
+import { HERO_TAGLINE } from '@/content/site';
 
 export interface SEOConfig {
   title: string;
@@ -29,7 +30,7 @@ export interface SEOConfig {
  */
 export const defaultSEO: SEOConfig = {
   title: env.app.title,
-  description: env.app.description,
+  description: HERO_TAGLINE,
   keywords: [
     // Primary role/job titles
     'software engineer',

@@ -305,8 +305,22 @@ describe('Hero section', () => {
     themeName = 'cosmic';
 
     const view = render(<Hero />);
+    expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+      'data-cosmic-theme',
+      'true'
+    );
+    expect(
+      view.container.querySelector('.hero-cosmic-fallback')
+    ).toBeInTheDocument();
+    expect(view.container.querySelector('.hero-cosmic-still')).toHaveAttribute(
+      'src',
+      '/images/hero/cosmic/cosmos-first-frame.webp'
+    );
+    expect(view.container.querySelector('.nebula-layer-1')).toBeInTheDocument();
     const video = view.container.querySelector('video');
     if (!video) throw new Error('expected cosmic video');
+    expect(video).toHaveAttribute('src', '/video/cosmos.mp4');
+    expect(video).not.toHaveAttribute('poster');
 
     await waitFor(() => {
       expect(playSpy).toHaveBeenCalled();

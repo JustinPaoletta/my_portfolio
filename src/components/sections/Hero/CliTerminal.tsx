@@ -88,7 +88,7 @@ const ABOUT_SUMMARY = [
 
 const ABOUT_HIGHLIGHTS = [
   '5+ years of professional software engineering experience',
-  '300+ Jira tickets completed',
+  '330+ Jira tickets completed',
   '1500+ Diet Dews converted to code',
 ];
 

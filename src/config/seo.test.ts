@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { HERO_TAGLINE } from '@/content/site';
 
 describe('seo config helpers', () => {
   it('formats page and tab titles and builds full URLs', async () => {
@@ -9,6 +10,7 @@ describe('seo config helpers', () => {
 
     expect(seo.getBrowserTabTitle()).toBe(seo.defaultSEO.title);
     expect(seo.getBrowserTabTitle('Contact')).toBe('Contact');
+    expect(seo.defaultSEO.description).toBe(HERO_TAGLINE);
 
     expect(seo.getFullUrl()).toBe(`${seo.defaultSEO.siteUrl}`);
     expect(seo.getFullUrl('/projects')).toBe(
