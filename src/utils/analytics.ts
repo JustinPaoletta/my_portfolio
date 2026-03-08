@@ -3,6 +3,7 @@
  * Privacy-friendly analytics tracking
  */
 import { env } from '@/config/env';
+import { isAutomatedClient } from '@/utils/userAgent';
 
 // Check if we're in CI environment (analytics disabled in CI)
 const mode = import.meta.env.MODE;
@@ -41,6 +42,13 @@ export async function initializeAnalytics(): Promise<void> {
   if (!env.features.analytics || !env.analytics.umami.websiteId) {
     if (shouldLog) {
       console.log('[Analytics] Skipped - disabled or not configured');
+    }
+    return;
+  }
+
+  if (isAutomatedClient()) {
+    if (shouldLog) {
+      console.log('[Analytics] Skipped - automated client detected');
     }
     return;
   }

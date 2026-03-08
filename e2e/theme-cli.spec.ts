@@ -51,6 +51,11 @@ test('cosmic theme hero video autoplays when restored from localStorage', async 
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
   await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
+  await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
+  await expect(page.locator('.hero-cosmic-video')).toHaveAttribute(
+    'poster',
+    '/images/hero/cosmic/cosmos-first-frame.webp'
+  );
   await expect(page.locator('.hero-background')).toHaveAttribute(
     'data-cosmic-video-ready',
     'true'
@@ -65,6 +70,93 @@ test('cosmic theme hero video autoplays when restored from localStorage', async 
           return false;
         }
         return (
+          !video.paused &&
+          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+          video.currentTime > 0
+        );
+      });
+    })
+    .toBe(true);
+});
+
+test('cosmic restore keeps a visible fallback while video is delayed', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.route('**/video/cosmos.mp4', async (route) => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await route.continue();
+  });
+  await page.route(
+    '**/images/hero/cosmic/cosmos-first-frame.webp',
+    async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await route.continue();
+    }
+  );
+  await page.addInitScript(() => {
+    localStorage.setItem('portfolio-theme', 'cosmic');
+  });
+
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
+  await expect(
+    page.getByRole('heading', { name: 'Justin Paoletta' })
+  ).toBeVisible();
+  await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
+  await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
+  await expect(page.locator('.hero-background')).toHaveAttribute(
+    'data-cosmic-video-ready',
+    'false'
+  );
+
+  const startupState = await page.evaluate(() => {
+    const heroBackground =
+      document.querySelector<HTMLElement>('.hero-background');
+    const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
+    const video =
+      document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
+
+    if (!heroBackground || !still || !video) {
+      return null;
+    }
+
+    const heroStyle = getComputedStyle(heroBackground);
+    const stillStyle = getComputedStyle(still);
+
+    return {
+      backgroundImage: heroStyle.backgroundImage,
+      stillOpacity: stillStyle.opacity,
+      videoPoster: video.getAttribute('poster'),
+      videoHasCurrentData:
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA,
+      videoCurrentTime: video.currentTime,
+    };
+  });
+
+  expect(startupState).not.toBeNull();
+  expect(startupState?.backgroundImage).not.toBe('none');
+  expect(startupState?.stillOpacity).toBe('1');
+  expect(startupState?.videoPoster).toBe(
+    '/images/hero/cosmic/cosmos-first-frame.webp'
+  );
+  expect(startupState?.videoHasCurrentData).toBe(false);
+  expect(startupState?.videoCurrentTime).toBe(0);
+
+  await expect
+    .poll(async () => {
+      return page.evaluate(() => {
+        const heroBackground =
+          document.querySelector<HTMLElement>('.hero-background');
+        const video =
+          document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
+        if (!heroBackground || !video) {
+          return false;
+        }
+
+        return (
+          heroBackground.getAttribute('data-cosmic-video-ready') === 'true' &&
           !video.paused &&
           video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
           video.currentTime > 0

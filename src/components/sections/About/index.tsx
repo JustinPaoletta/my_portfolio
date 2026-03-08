@@ -261,7 +261,7 @@ function About(): React.ReactElement {
                     className="highlight-number"
                     style={isSmallHighlights ? { marginBottom: 0 } : undefined}
                   >
-                    300+
+                    330+
                   </span>
                   <span className="highlight-label">
                     Jira Tickets Completed
