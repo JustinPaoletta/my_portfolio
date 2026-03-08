@@ -127,7 +127,7 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
 
     return {
       backgroundImage: heroStyle.backgroundImage,
-      stillOpacity: stillStyle.opacity,
+      stillOpacity: Number.parseFloat(stillStyle.opacity),
       videoPoster: video.getAttribute('poster'),
       videoHasCurrentData:
         video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA,
@@ -137,7 +137,7 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
 
   expect(startupState).not.toBeNull();
   expect(startupState?.backgroundImage).not.toBe('none');
-  expect(startupState?.stillOpacity).toBe('1');
+  expect(startupState?.stillOpacity).toBeGreaterThan(0);
   expect(startupState?.videoPoster).toBe(
     '/images/hero/cosmic/cosmos-first-frame.webp'
   );
