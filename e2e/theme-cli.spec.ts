@@ -52,9 +52,9 @@ test('cosmic theme hero video autoplays when restored from localStorage', async 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
   await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('.hero-cosmic-video')).not.toHaveAttribute(
+  await expect(page.locator('.hero-cosmic-video')).toHaveAttribute(
     'poster',
-    /.+/
+    '/images/hero/cosmic/cosmos-first-frame.webp'
   );
   await expect(page.locator('.hero-background')).toHaveAttribute(
     'data-cosmic-video-ready',
@@ -104,6 +104,8 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
   await expect(
     page.getByRole('heading', { name: 'Justin Paoletta' })
   ).toBeVisible();
+  await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
+  await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
   await expect(page.locator('.hero-background')).toHaveAttribute(
     'data-cosmic-video-ready',
     'false'
@@ -112,28 +114,21 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
   const startupState = await page.evaluate(() => {
     const heroBackground =
       document.querySelector<HTMLElement>('.hero-background');
-    const fallback = document.querySelector<HTMLElement>(
-      '.hero-cosmic-fallback'
-    );
-    const still =
-      document.querySelector<HTMLImageElement>('.hero-cosmic-still');
+    const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
     const video =
       document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
 
-    if (!heroBackground || !fallback || !still || !video) {
+    if (!heroBackground || !still || !video) {
       return null;
     }
 
     const heroStyle = getComputedStyle(heroBackground);
-    const fallbackStyle = getComputedStyle(fallback);
     const stillStyle = getComputedStyle(still);
 
     return {
       backgroundImage: heroStyle.backgroundImage,
-      fallbackOpacity: fallbackStyle.opacity,
       stillOpacity: stillStyle.opacity,
-      stillSrc: still.currentSrc || still.src,
-      videoHasPoster: video.hasAttribute('poster'),
+      videoPoster: video.getAttribute('poster'),
       videoHasCurrentData:
         video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA,
       videoCurrentTime: video.currentTime,
@@ -142,12 +137,10 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
 
   expect(startupState).not.toBeNull();
   expect(startupState?.backgroundImage).not.toBe('none');
-  expect(startupState?.fallbackOpacity).toBe('1');
   expect(startupState?.stillOpacity).toBe('1');
-  expect(startupState?.stillSrc).toContain(
+  expect(startupState?.videoPoster).toBe(
     '/images/hero/cosmic/cosmos-first-frame.webp'
   );
-  expect(startupState?.videoHasPoster).toBe(false);
   expect(startupState?.videoHasCurrentData).toBe(false);
   expect(startupState?.videoCurrentTime).toBe(0);
 
