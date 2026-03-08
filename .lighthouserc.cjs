@@ -11,7 +11,6 @@ module.exports = {
         '/?theme=cosmic&mode=light',
         '/?theme=cli&mode=light',
         '/?theme=minimal&mode=light',
-        '/?theme=breezy&mode=light',
       ],
       numberOfRuns: 3,
       settings: {
