@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build": "npm run type-check && npm run contrast:check && node ./node_modules/vite/bin/vite.js build",
+    "build": "npm run type-check && npm run contrast:check && node ./node_modules/vite/bin/vite.js build && npm run prerender",
     "build:analyze": "npm run type-check && ANALYZE=true node ./node_modules/vite/bin/vite.js build && npx vite-bundle-visualizer",
     "analyze": "npm run build:analyze",
     "clean:cache": "rm -rf dist coverage .vite .lighthouseci playwright-report test-results",
@@ -34,7 +34,8 @@
     "test:ui": "vitest --ui",
     "test:unit": "vitest run",
     "type-check": "tsc -b --noEmit",
-    "type-check:watch": "tsc -b --noEmit --watch"
+    "type-check:watch": "tsc -b --noEmit --watch",
+    "prerender": "tsx scripts/prerender.ts"
   },
   "dependencies": {
     "@newrelic/browser-agent": "^1.310.1",

@@ -1,6 +1,7 @@
 import type { Plugin } from 'vite';
 import fs from 'fs';
 import path from 'path';
+import { execFileSync } from 'node:child_process';
 import { config } from 'dotenv';
 
 // load environment variables from .env file
@@ -24,6 +25,7 @@ interface RouteConfig {
     | 'never';
   priority?: number;
   lastmod?: string;
+  contentPaths?: string[];
 }
 
 const routes: RouteConfig[] = [
@@ -31,22 +33,26 @@ const routes: RouteConfig[] = [
     path: '/',
     changefreq: 'monthly',
     priority: 1.0,
+    contentPaths: ['index.html', 'src', 'public'],
   },
   // Example: Add more routes as needed:
   // {
   //   path: '/about',
   //   changefreq: 'monthly',
   //   priority: 0.8,
+  //   contentPaths: ['index.html', 'src'],
   // },
   // {
   //   path: '/projects',
   //   changefreq: 'weekly',
   //   priority: 0.9,
+  //   contentPaths: ['index.html', 'src'],
   // },
   // {
   //   path: '/contact',
   //   changefreq: 'monthly',
   //   priority: 0.7,
+  //   contentPaths: ['index.html', 'src'],
   // },
 ];
 
@@ -65,14 +71,91 @@ function getBaseUrl(): string {
   return 'https://jpengineering.dev';
 }
 
+function getRouteLastModified(contentPaths: string[]): string {
+  const gitLastModified = getGitLastModified(contentPaths);
+
+  if (gitLastModified) {
+    return gitLastModified;
+  }
+
+  const fileSystemLastModified = getLatestFileSystemModifiedDate(contentPaths);
+
+  if (fileSystemLastModified) {
+    return fileSystemLastModified;
+  }
+
+  return new Date().toISOString().split('T')[0];
+}
+
+function getGitLastModified(contentPaths: string[]): string | null {
+  if (!contentPaths.length) {
+    return null;
+  }
+
+  try {
+    const output = execFileSync(
+      'git',
+      ['log', '-1', '--format=%cs', '--', ...contentPaths],
+      {
+        cwd: process.cwd(),
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }
+    ).trim();
+
+    return output || null;
+  } catch {
+    return null;
+  }
+}
+
+function getLatestFileSystemModifiedDate(
+  contentPaths: string[]
+): string | null {
+  let latestModifiedTime = 0;
+
+  for (const contentPath of contentPaths) {
+    const absolutePath = path.resolve(process.cwd(), contentPath);
+    const modifiedTime = getLatestModifiedTime(absolutePath);
+    latestModifiedTime = Math.max(latestModifiedTime, modifiedTime);
+  }
+
+  if (!latestModifiedTime) {
+    return null;
+  }
+
+  return new Date(latestModifiedTime).toISOString().split('T')[0];
+}
+
+function getLatestModifiedTime(targetPath: string): number {
+  if (!fs.existsSync(targetPath)) {
+    return 0;
+  }
+
+  const stats = fs.statSync(targetPath);
+
+  if (stats.isFile()) {
+    return stats.mtimeMs;
+  }
+
+  if (!stats.isDirectory()) {
+    return 0;
+  }
+
+  return fs.readdirSync(targetPath).reduce((latestModifiedTime, entryName) => {
+    const entryPath = path.join(targetPath, entryName);
+    return Math.max(latestModifiedTime, getLatestModifiedTime(entryPath));
+  }, stats.mtimeMs);
+}
+
 function generateSitemapXML(config: SitemapConfig): string {
   const { baseUrl, routes } = config;
-  const currentDate = new Date().toISOString().split('T')[0];
 
   const urlEntries = routes
     .map((route) => {
       const url = `${baseUrl}${route.path}`;
-      const lastmod = route.lastmod || currentDate;
+      const lastmod =
+        route.lastmod || getRouteLastModified(route.contentPaths || []);
       const changefreq = route.changefreq || 'monthly';
       const priority = route.priority?.toFixed(1) || '0.5';
 

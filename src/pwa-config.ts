@@ -21,7 +21,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   manifestFilename: 'manifest.webmanifest',
 
   manifest: {
-    name: 'JP - Engineering',
+    name: 'JP Engineering',
     short_name: 'Portfolio',
     description: 'A modern portfolio showcasing my projects and skills',
     theme_color: '#242424',

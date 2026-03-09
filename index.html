@@ -53,11 +53,31 @@
     <!-- CSP is set via HTTP headers in vercel.json -->
 
     <title>JP Engineering</title>
+    <meta name="author" content="Justin Paoletta" />
     <meta
       name="description"
-      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
+      content="Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling."
     />
+    <meta
+      name="keywords"
+      content="Justin Paoletta, software engineer, UI engineer, frontend engineer, React developer, TypeScript developer, Angular developer, web developer, portfolio"
+    />
+    <meta
+      name="robots"
+      content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
+    />
+    <meta name="language" content="en-US" />
+    <meta name="application-name" content="JP Engineering" />
     <meta name="theme-color" content="#1a1918" />
+    <link rel="canonical" href="https://jpengineering.dev/" />
+    <link rel="alternate" hreflang="en-US" href="https://jpengineering.dev/" />
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href="https://jpengineering.dev/"
+    />
+    <link rel="me" href="https://github.com/JustinPaoletta/" />
+    <link rel="me" href="https://www.linkedin.com/in/justin-paoletta/" />
 
     <!-- Apply persisted theme attributes before React mounts -->
     <script>
@@ -173,15 +193,20 @@
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://jpengineering.dev" />
+    <meta property="og:url" content="https://jpengineering.dev/" />
     <meta property="og:title" content="JP Engineering" />
+    <meta property="og:site_name" content="JP Engineering" />
     <meta
       property="og:description"
-      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
+      content="Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling."
     />
     <meta
       property="og:image"
       content="https://jpengineering.dev/og/og-image.png"
+    />
+    <meta
+      property="og:image:alt"
+      content="Preview image for the JP Engineering software engineering portfolio"
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -189,21 +214,106 @@
 
     <!-- Twitter/X -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://jpengineering.dev" />
+    <meta name="twitter:url" content="https://jpengineering.dev/" />
     <meta name="twitter:title" content="JP Engineering" />
     <meta
       name="twitter:description"
-      content="I turn evolving business requirements into high-quality software delivered with precision and consistency."
+      content="Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling."
     />
     <meta
       name="twitter:image"
       content="https://jpengineering.dev/og/og-image.png"
     />
+    <meta
+      name="twitter:image:alt"
+      content="Preview image for the JP Engineering software engineering portfolio"
+    />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Person",
+            "@id": "https://jpengineering.dev/#person",
+            "name": "Justin Paoletta",
+            "url": "https://jpengineering.dev/",
+            "image": "https://jpengineering.dev/branding/jp-headshot/jp-400.webp",
+            "jobTitle": "Software Engineer",
+            "description": "Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling.",
+            "email": "mailto:justinpaoletta@gmail.com",
+            "sameAs": [
+              "https://github.com/JustinPaoletta/",
+              "https://www.linkedin.com/in/justin-paoletta/"
+            ],
+            "knowsAbout": [
+              "React",
+              "TypeScript",
+              "Angular",
+              "JavaScript",
+              "UI Engineering",
+              "Web Accessibility",
+              "Performance",
+              "Design Systems"
+            ]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://jpengineering.dev/#website",
+            "url": "https://jpengineering.dev/",
+            "name": "JP Engineering",
+            "alternateName": "JPEngineering",
+            "description": "Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling.",
+            "publisher": {
+              "@id": "https://jpengineering.dev/#person"
+            },
+            "inLanguage": "en-US"
+          },
+          {
+            "@type": "WebPage",
+            "@id": "https://jpengineering.dev/#webpage",
+            "url": "https://jpengineering.dev/",
+            "name": "JP Engineering",
+            "description": "Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling.",
+            "isPartOf": {
+              "@id": "https://jpengineering.dev/#website"
+            },
+            "about": {
+              "@id": "https://jpengineering.dev/#person"
+            },
+            "primaryImageOfPage": "https://jpengineering.dev/og/og-image.png",
+            "inLanguage": "en-US"
+          }
+        ]
+      }
+    </script>
 
     <!-- Umami Analytics - injected at runtime from env config -->
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <main>
+        <h1>Justin Paoletta</h1>
+        <p>
+          Software engineer building accessible, performant web applications
+          with React, TypeScript, Angular, and modern frontend tooling.
+        </p>
+        <p>
+          The interactive portfolio includes project work, technical skills,
+          experience, and contact details.
+        </p>
+        <p>
+          <a href="/resume/Justin-Paoletta_Software-Engineer.pdf">Resume</a>
+          |
+          <a href="https://github.com/JustinPaoletta/">GitHub</a>
+          |
+          <a href="https://www.linkedin.com/in/justin-paoletta/">LinkedIn</a>
+          |
+          <a href="mailto:justinpaoletta@gmail.com">Email</a>
+        </p>
+      </main>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
