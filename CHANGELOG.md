@@ -9,17 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- CLI theme command `exit`/`quit` to switch from CLI back to the default `engineer` theme
-- `docs/CLI_THEME.md` with CLI layout, controls, and command reference
+- No unreleased changes yet.
 
 ### Changed
-
-- CLI theme presentation and interactions:
-- Fullscreen terminal-focused layout with navbar hidden
-- Keyboard-first staged input model (`Arrow`/`Space`/`0-9` stage, `Enter` executes)
-- Compact/mobile view ordering updated so terminal content appears before the menu
-- CLI prompt/title naming updated to `jp@cli: ~%` and `JP CLI`
-- CLI theme switcher moved to bottom-right with upward-opening options menu
 
 ### Deprecated
 
@@ -31,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2025-01-27
+## [1.0.0] - 2026-03-08
 
 ### Added
 
@@ -68,8 +60,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Performance budgets and bundle size monitoring
 - Vercel deployment configuration and documentation
 - Comprehensive documentation in docs/ folder
+- CLI theme command `exit`/`quit` to switch from CLI back to the default `engineer` theme
+- `docs/CLI_THEME.md` with CLI layout, controls, and command reference
 
 ### Changed
+
+- CLI theme presentation and interactions:
+  - Fullscreen terminal-focused layout with navbar hidden
+  - Keyboard-first staged input model (`Arrow`/`Space`/`0-9` stage, `Enter` executes)
+  - Compact/mobile view ordering updated so terminal content appears before the menu
+  - CLI prompt/title naming updated to `jp@cli: ~%` and `JP CLI`
+  - CLI theme switcher moved to bottom-right with upward-opening options menu
 
 ### Deprecated
 
@@ -98,6 +99,12 @@ Use `npm run release` to automatically:
 - Commit the changes
 
 ### Manual
+
+Every PR targeting `main` or `master` must:
+
+- Update `CHANGELOG.md`
+- Bump the version in `package.json`
+- Keep `package-lock.json` in sync with the new version
 
 Add changes under the `[Unreleased]` section in the appropriate category:
 

@@ -210,6 +210,9 @@ test('query params apply theme and mode overrides', async ({ page }) => {
 
 test('cosmic light mode applies light hero styling', async ({ page }) => {
   await mockPortfolioApis(page);
+  await page.route('**/video/cosmos.mp4', async (route) => {
+    await route.abort();
+  });
   await page.goto('/?theme=cosmic&mode=light');
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
@@ -217,16 +220,22 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
     'data-color-mode',
     'light'
   );
+  await expect(page.locator('.hero-background')).toHaveAttribute(
+    'data-cosmic-video-ready',
+    'false'
+  );
 
   await expect
     .poll(async () => {
       return page.evaluate(() => {
         const hero = document.querySelector<HTMLElement>('.hero-background');
         const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
+        const video =
+          document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
         const name = document.querySelector<HTMLElement>('.hero-name-text');
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
 
-        if (!hero || !still || !name || !greeting) {
+        if (!hero || !still || !video || !name || !greeting) {
           return null;
         }
 
@@ -237,17 +246,19 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
           heroBackground: heroStyles.backgroundImage,
           beforeBackground: beforeStyles.backgroundColor,
           stillOpacity: Number.parseFloat(getComputedStyle(still).opacity),
+          videoOpacity: Number.parseFloat(getComputedStyle(video).opacity),
           nameColor: getComputedStyle(name).color,
           greetingColor: getComputedStyle(greeting).color,
         };
       });
     })
     .toEqual({
-      heroBackground: expect.stringContaining('rgb(253, 248, 255)'),
+      heroBackground: expect.stringContaining('rgb(239, 226, 246)'),
       beforeBackground: 'rgba(0, 0, 0, 0)',
-      stillOpacity: 0.2,
-      nameColor: 'rgb(26, 10, 46)',
-      greetingColor: 'rgb(123, 44, 191)',
+      stillOpacity: 0.3,
+      videoOpacity: 0,
+      nameColor: 'rgb(20, 5, 31)',
+      greetingColor: 'rgb(92, 31, 153)',
     });
 });
 
