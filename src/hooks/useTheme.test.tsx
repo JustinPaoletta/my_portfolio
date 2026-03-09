@@ -137,6 +137,7 @@ describe('useTheme', () => {
     document.documentElement.removeAttribute('data-theme');
     document.documentElement.removeAttribute('data-color-mode');
     document.documentElement.setAttribute('style', '');
+    document.body.setAttribute('style', '');
     window.history.pushState({}, '', '/');
     vi.restoreAllMocks();
     installMatchMediaMock(false);
@@ -248,6 +249,11 @@ describe('useTheme', () => {
       expect(
         document.documentElement.style.getPropertyValue('--text-primary')
       ).not.toBe('');
+      expect(document.documentElement.style.backgroundColor).toBe(
+        'rgb(247, 247, 245)'
+      );
+      expect(document.body.style.backgroundColor).toBe('rgb(247, 247, 245)');
+      expect(document.documentElement.style.colorScheme).toBe('light');
       expect(
         document
           .querySelector('meta[name="theme-color"]')
@@ -263,6 +269,53 @@ describe('useTheme', () => {
     });
 
     expect(fetchSpy).toHaveBeenCalledWith('/branding/JP-no-cursor.svg');
+  });
+
+  it('updates bootstrap background styles when switching to minimal light mode', async () => {
+    localStorage.setItem('portfolio-theme', 'cosmic');
+    localStorage.setItem('portfolio-color-mode', 'dark');
+    document.documentElement.style.backgroundColor = 'rgb(11, 0, 20)';
+    document.body.style.backgroundColor = 'rgb(11, 0, 20)';
+
+    function BackgroundProbe(): ReactElement {
+      const { themeName, resolvedMode, setTheme, setColorMode } = useTheme();
+      return (
+        <div>
+          <p data-testid="background-theme">{themeName}</p>
+          <p data-testid="background-mode">{resolvedMode}</p>
+          <button type="button" onClick={() => setTheme('minimal')}>
+            switch-minimal
+          </button>
+          <button type="button" onClick={() => setColorMode('light')}>
+            switch-light
+          </button>
+        </div>
+      );
+    }
+
+    render(
+      <ThemeProvider>
+        <BackgroundProbe />
+      </ThemeProvider>
+    );
+
+    expect(screen.getByTestId('background-theme')).toHaveTextContent('cosmic');
+    expect(screen.getByTestId('background-mode')).toHaveTextContent('dark');
+
+    fireEvent.click(screen.getByRole('button', { name: 'switch-light' }));
+    fireEvent.click(screen.getByRole('button', { name: 'switch-minimal' }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('background-theme')).toHaveTextContent(
+        'minimal'
+      );
+      expect(screen.getByTestId('background-mode')).toHaveTextContent('light');
+      expect(document.documentElement.style.backgroundColor).toBe(
+        'rgb(247, 247, 245)'
+      );
+      expect(document.body.style.backgroundColor).toBe('rgb(247, 247, 245)');
+      expect(document.documentElement.style.colorScheme).toBe('light');
+    });
   });
 
   it('updates resolved mode when system preference changes', async () => {

@@ -1,0 +1,29 @@
+name: Release Guard
+
+on:
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  changelog-and-version:
+    name: Require changelog and version bump
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Validate release metadata
+        env:
+          GITHUB_BASE_REF: ${{ github.base_ref }}
+        run: npm run release:check

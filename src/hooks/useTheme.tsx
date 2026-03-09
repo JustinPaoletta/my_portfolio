@@ -301,6 +301,12 @@ function applyThemeToDocument(
   root.style.setProperty('--border-subtle', modeColors.borderSubtle);
   root.style.setProperty('--border-hover', modeColors.borderHover);
   root.style.setProperty('--nav-bg-scrolled', modeColors.navBgScrolled);
+  root.style.backgroundColor = modeColors.bgMain;
+  root.style.colorScheme = resolvedMode;
+
+  if (document.body) {
+    document.body.style.backgroundColor = modeColors.bgMain;
+  }
 
   const contributionGridBg = mixColors(
     modeColors.bgMain,

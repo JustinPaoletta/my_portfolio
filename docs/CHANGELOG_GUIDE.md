@@ -12,6 +12,16 @@ When you make commits following the [Conventional Commits](docs/COMMIT_CONVENTIO
 4. **Creates a git tag** for the release
 5. **Commits changes** automatically
 
+## Pull Request Requirements
+
+Every pull request targeting `main` or `master` must update:
+
+- `CHANGELOG.md`
+- `package.json`
+- `package-lock.json`
+
+The version in `package.json` must be higher than the version on the base branch, and the lockfile versions must match it exactly. GitHub Actions enforces this with `npm run release:check`.
+
 ## 🚀 Creating a Release
 
 ### Automatic Version (Recommended)
@@ -34,13 +44,13 @@ This will:
 If you want to specify the version bump:
 
 ```bash
-# Patch release (0.0.0 → 0.0.1)
+# Patch release (1.0.0 → 1.0.1)
 npm run release:patch
 
-# Minor release (0.0.0 → 0.1.0)
+# Minor release (1.0.0 → 1.1.0)
 npm run release:minor
 
-# Major release (0.0.0 → 1.0.0)
+# Major release (1.0.0 → 2.0.0)
 npm run release:major
 ```
 
@@ -56,10 +66,10 @@ npm run release:dry-run
 
 | Commit Type        | Version Bump                 | Example                  |
 | ------------------ | ---------------------------- | ------------------------ |
-| `fix:`             | **Patch** (0.0.X)            | Bug fixes                |
-| `feat:`            | **Minor** (0.X.0)            | New features             |
+| `fix:`             | **Patch** (1.0.X)            | Bug fixes                |
+| `feat:`            | **Minor** (1.X.0)            | New features             |
 | `BREAKING CHANGE:` | **Major** (X.0.0)            | Breaking changes         |
-| `perf:`            | **Patch** (0.0.X)            | Performance improvements |
+| `perf:`            | **Patch** (1.0.X)            | Performance improvements |
 | `refactor:`        | None (included in changelog) | Code refactoring         |
 | `docs:`            | None (included in changelog) | Documentation updates    |
 | `test:`            | None (included in changelog) | Test updates             |
@@ -127,7 +137,7 @@ npm run release:dry-run
 npm run release
 
 # 5. Push changes and tags to remote
-git push --follow-tags origin main
+git push --follow-tags origin <default-branch>
 ```
 
 ## 📖 Changelog Format
@@ -164,17 +174,9 @@ The changelog behavior is configured in `.versionrc.json`:
 - **URL formats** for commits and comparisons
 - **Hidden sections** (e.g., chore commits)
 
-## 🚨 First Release
+## 🚨 Current Baseline
 
-For the first release from version `0.0.0`:
-
-```bash
-# Create your first release
-npm run release:minor  # Creates v0.1.0
-
-# Or for a 1.0.0 release
-npm run release:major  # Creates v1.0.0
-```
+This repository now ships from version `1.0.0`. Future releases should bump from that baseline and keep the changelog and lockfile version in sync in the same pull request.
 
 ## 📚 Additional Resources
 
@@ -186,6 +188,9 @@ npm run release:major  # Creates v1.0.0
 ## 💡 Quick Reference
 
 ```bash
+# Validate PR metadata
+npm run release:check
+
 # Create a release (automatic version)
 npm run release
 
@@ -198,5 +203,5 @@ npm run release:major   # Breaking changes
 npm run release:dry-run
 
 # Push release to remote
-git push --follow-tags origin main
+git push --follow-tags origin <default-branch>
 ```

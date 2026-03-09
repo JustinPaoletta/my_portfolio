@@ -116,8 +116,9 @@ This project includes a comprehensive set of npm scripts for development, testin
 ### 🏷️ Release & Versioning Scripts
 
 - **`npm run release`** - Automatically determine version bump (patch/minor/major) based on commit messages and create a release with changelog.
-- **`npm run release:patch`** - Create a patch release (0.0.X) - bug fixes.
-- **`npm run release:minor`** - Create a minor release (0.X.0) - new features, backward compatible.
+- **`npm run release:check`** - Validate that `CHANGELOG.md`, `package.json`, and `package-lock.json` satisfy the PR release guard rules.
+- **`npm run release:patch`** - Create a patch release (1.0.X) - bug fixes.
+- **`npm run release:minor`** - Create a minor release (1.X.0) - new features, backward compatible.
 - **`npm run release:major`** - Create a major release (X.0.0) - breaking changes.
 - **`npm run release:dry-run`** - Preview what the release would do without making any changes.
 
@@ -147,11 +148,14 @@ npm run build:analyze     # Analyze bundle size
 
 ```bash
 npm run release           # Create a new release (auto-determines version)
-npm run release:patch     # Patch release (0.0.X)
-npm run release:minor     # Minor release (0.X.0)
+npm run release:check     # Validate changelog + version bump requirements
+npm run release:patch     # Patch release (1.0.X)
+npm run release:minor     # Minor release (1.X.0)
 npm run release:major     # Major release (X.0.0)
 npm run release:dry-run   # Preview release without changes
 ```
+
+Every pull request targeting `main` or `master` must also update `CHANGELOG.md` and bump the version in `package.json` and `package-lock.json`.
 
 See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.md](docs/CHANGELOG_GUIDE.md) for details.
 
