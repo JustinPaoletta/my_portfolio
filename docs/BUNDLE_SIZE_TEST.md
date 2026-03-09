@@ -12,10 +12,10 @@ Edit `vite.config.ts`:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 5, // Lowered from 150 to 5 KB
+  appChunk: 5, // Lowered from 155 to 5 KB
   vendorChunk: 400,
-  totalSize: 650,
-  cssFile: 70,
+  totalSize: 700,
+  cssFile: 85,
 };
 ```
 
@@ -49,10 +49,10 @@ Revert `vite.config.ts` to original values:
 
 ```typescript
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 150,
+  appChunk: 155,
   vendorChunk: 400,
-  totalSize: 650,
-  cssFile: 70,
+  totalSize: 700,
+  cssFile: 85,
 };
 ```
 

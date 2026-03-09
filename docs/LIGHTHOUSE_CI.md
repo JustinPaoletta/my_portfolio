@@ -28,20 +28,22 @@ The Lighthouse CI configuration is in `.lighthouserc.cjs`:
 - **Upload**: Uses `temporary-public-storage` - reports are publicly accessible for 7 days via a temporary URL
 - **Chrome Flags**: Headless Chrome with disabled features for CI consistency
 
-### Performance Thresholds (Errors)
+### Category Thresholds
 
-- **Performance Score**: Minimum 85% (realistic for apps with monitoring)
-- **Accessibility Score**: Minimum 95%
-- **Best Practices Score**: Minimum 90%
-- **SEO Score**: Minimum 90%
+- **Performance Score**: Warning below 70%
+- **Accessibility Score**: Error below 95%
+- **Best Practices Score**: Error below 90%
+- **SEO Score**: Error below 90%
 
 ### Performance Metrics (Warnings)
 
-- **First Contentful Paint (FCP)**: < 2500ms
-- **Largest Contentful Paint (LCP)**: < 3000ms
+- **First Contentful Paint (FCP)**: < 4000ms
+- **Largest Contentful Paint (LCP)**: < 4500ms
 - **Total Blocking Time (TBT)**: < 400ms
 - **Cumulative Layout Shift (CLS)**: < 0.1
-- **Total Byte Weight**: < 500KB
+- **Total Byte Weight**:
+  - 500KB for `engineer`, `cli`, and `minimal`
+  - 1.3MB for `cosmic`
 
 ### Accessibility Checks (Errors)
 
@@ -106,12 +108,12 @@ npx @lhci/cli autorun
 
 ### Score Interpretation
 
-- **🟢 90-100%**: Excellent - Exceeds thresholds
-- **🟢 85-89%**: Good - Meets performance threshold (85% minimum)
-- **🟡 50-84%**: Needs improvement - Below thresholds
+- **🟢 90-100%**: Excellent
+- **🟢 70-89%**: Passing for performance, depending on category
+- **🟡 50-69%**: Needs improvement
 - **🔴 0-49%**: Poor - Significant issues
 
-Note: Performance threshold is 85% (not 90%) to account for monitoring overhead from New Relic.
+Note: performance is intentionally a warning-level threshold in CI because the static test environment is noisy and the app exercises multiple visual themes.
 
 ### Common Issues and Fixes
 

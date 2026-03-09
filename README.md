@@ -12,7 +12,7 @@ A modern, performant portfolio website showcasing my projects and skills. Built 
 - **Responsive Design** - Mobile-first, works seamlessly on all devices
 - **Interactive CLI Theme** - Fullscreen terminal experience with keyboard-first navigation and command-driven portfolio browsing
 - **Accessibility First** - Built with accessibility best practices and ESLint a11y linting
-- **SEO Optimized** - Dynamic meta tags, automated sitemap generation, robots.txt
+- **SEO Optimized** - Static and runtime metadata, structured data, automated sitemap/robots generation, and homepage prerendering
 - **Privacy-Friendly Analytics** - Umami integration for visitor tracking
 - **Error Monitoring** - New Relic integration for real-time error tracking and performance monitoring
 - **Type-Safe** - Full TypeScript coverage for robust development
@@ -68,7 +68,7 @@ This project includes a comprehensive set of npm scripts for development, testin
 
 ### 🏗️ Build Scripts
 
-- **`npm run build`** - Build the project for production. Runs type-check first, then Vite build.
+- **`npm run build`** - Build the project for production. Runs type-check, contrast checks, the Vite build, and homepage prerendering.
 - **`npm run build:analyze`** - Build with analysis mode and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
 
 ### 🧹 Cleanup Scripts
@@ -193,7 +193,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 
 ### Developer Experience
 
-- **React Helmet Async** - Dynamic SEO meta tags
+- **React Helmet Async** - Runtime SEO metadata for the live SPA
 - **Umami** - Privacy-friendly analytics
 - **New Relic Browser** - Real-time error and performance monitoring
 - **VS Code Debugging** - Integrated debugging configurations
@@ -220,7 +220,7 @@ See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.m
 - **[PWA Guide](docs/PWA.md)** - Progressive Web App configuration, offline support, and icon setup
 - **[Analytics Guide](docs/ANALYTICS.md)** - Umami integration and usage guide
 - **[New Relic Setup](docs/NEWRELIC.md)** - Error monitoring and performance tracking
-- **[SEO Guide](docs/SEO.md)** - SEO configuration and best practices
+- **[SEO Guide](docs/SEO.md)** - SEO architecture, metadata strategy, sitemap generation, and prerendering
 - **[Environment Variables](docs/ENV.md)** - Environment variable configuration and validation
 
 ### Security

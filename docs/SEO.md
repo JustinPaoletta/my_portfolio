@@ -1,612 +1,458 @@
-# SEO Setup Guide
+# SEO Architecture Guide
 
-This portfolio has been configured with comprehensive SEO support using `react-helmet-async`.
+This document explains how SEO works in this app today, why each piece exists, where it lives, and how to maintain it without creating drift between files.
 
-## 📋 Features
+## Current SEO Model
 
-- ✅ Dynamic meta tags (title, description, keywords)
-- ✅ Open Graph tags for social media sharing (Facebook, LinkedIn)
-- ✅ Twitter Card support
-- ✅ Canonical URLs
-- ✅ Robots meta tags
-- ✅ Structured data ready
-- ✅ Environment-based configuration
+This portfolio is not a traditional server-rendered app. It is a React single-page app that now uses a layered SEO approach:
 
-## 🎯 Quick Start
+1. `index.html` ships crawler-critical metadata in the raw HTML response.
+2. `npm run build` prerenders the homepage into `dist/index.html` so crawlers also see real page content, not just an empty root node.
+3. `src/components/SEO.tsx` keeps browser metadata correct after React mounts and during any future client-side route changes.
+4. `plugins/vite-plugin-sitemap.ts` generates `sitemap.xml` and keeps `robots.txt` pointing at it.
+5. tests protect the important SEO contracts from accidental regressions.
 
-The SEO component is already configured in your app. To customize it for different pages:
+That combination is deliberate. No single SEO technique is enough for a modern client-rendered site:
 
-### Basic Usage
+- Static tags are best for first-response crawlers and social scrapers.
+- Runtime tags are best for SPA navigation and browser state.
+- Prerendered body content is best for crawlers that are weak at JavaScript rendering.
+- Sitemap and robots help discovery and crawl behavior.
+- Structured data helps search engines understand the site as an entity, not just a page of text.
 
-```tsx
-import SEO from '@/components/SEO';
+## High-Level Flow
 
-function HomePage() {
-  return (
-    <>
-      <SEO />
-      {/* Your page content */}
-    </>
-  );
-}
+```mermaid
+flowchart TD
+  A["User or crawler requests /"] --> B["Static head from index.html"]
+  B --> C["Prerendered homepage markup in dist/index.html"]
+  C --> D["Search engines and social crawlers read HTML"]
+  C --> E["Browser loads src/main.tsx"]
+  E --> F["React remounts app"]
+  F --> G["SEO.tsx keeps head metadata in sync at runtime"]
+  H["Build step"] --> I["Vite build"]
+  I --> J["Generate sitemap.xml and robots.txt"]
+  J --> K["Prerender homepage with Playwright"]
 ```
 
-### Custom Page Title
-
-```tsx
-<SEO title="About Me" />
-// Results in: "About Me | My Portfolio"
-```
-
-### Full Customization
-
-```tsx
-<SEO
-  title="My Projects"
-  description="Check out my latest web development projects"
-  keywords={['projects', 'portfolio', 'web development']}
-  image="/images/projects-og.png"
-  type="website"
-/>
-```
-
-### Blog Post Example
-
-```tsx
-<SEO
-  title="How to Build a Portfolio with React"
-  description="A comprehensive guide to building a modern portfolio website"
-  type="article"
-  keywords={['react', 'portfolio', 'tutorial']}
-  image="/images/blog/portfolio-guide.png"
-/>
-```
-
-### Custom Canonical URL
-
-```tsx
-<SEO title="Contact" canonical="https://yourportfolio.com/contact" />
-```
-
-### Noindex Page (e.g., Draft or Private)
-
-```tsx
-<SEO title="Draft Project" noindex={true} nofollow={true} />
-```
-
-## 📄 Per-Page SEO for Routes
-
-### What is Per-Page SEO?
-
-**Per-page SEO** means customizing meta tags (title, description, keywords, images) for each route/page in your application. Instead of using the same SEO defaults everywhere, you provide unique, page-specific information that:
-
-- **Improves search rankings**: Each page targets relevant keywords
-- **Enhances social sharing**: Each page can have its own preview image and description
-- **Provides better UX**: Users see clear, relevant page titles in browser tabs and bookmarks
-- **Increases click-through rates**: Compelling, unique descriptions encourage clicks from search results
-
-### Current Setup (Single Page)
-
-Currently, your app is a single-page application, so you're using default SEO:
-
-```tsx
-// src/App.tsx
-function App() {
-  return (
-    <>
-      <SEO /> {/* Uses defaultSEO from src/config/seo.ts */}
-      {/* Your content */}
-    </>
-  );
-}
-```
-
-### When You Add Routes
-
-If you add routing (e.g., using React Router), you'll want per-page SEO. Here's how:
-
-#### Example 1: Using React Router
-
-```tsx
-// src/App.tsx
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import SEO from '@/components/SEO';
-
-// Home page
-function HomePage() {
-  return (
-    <>
-      <SEO
-        title="Home"
-        description="Portfolio of Justin Paoletta - Software Engineer specializing in React and TypeScript"
-        keywords={['portfolio', 'software engineer', 'React developer']}
-      />
-      <h1>Welcome</h1>
-      {/* Home content */}
-    </>
-  );
-}
-
-// About page
-function AboutPage() {
-  return (
-    <>
-      <SEO
-        title="About"
-        description="Learn about my background, skills, and experience as a software engineer"
-        keywords={['about', 'background', 'experience', 'software engineer']}
-        canonical="https://jpengineering.dev/about"
-      />
-      <h1>About Me</h1>
-      {/* About content */}
-    </>
-  );
-}
-
-// Projects page
-function ProjectsPage() {
-  return (
-    <>
-      <SEO
-        title="Projects"
-        description="View my portfolio of web development projects built with React, TypeScript, and modern tools"
-        keywords={[
-          'projects',
-          'portfolio',
-          'web development',
-          'React projects',
-        ]}
-        image="/images/projects-og.png" // Custom OG image for projects
-        canonical="https://jpengineering.dev/projects"
-      />
-      <h1>My Projects</h1>
-      {/* Projects content */}
-    </>
-  );
-}
-
-// Contact page
-function ContactPage() {
-  return (
-    <>
-      <SEO
-        title="Contact"
-        description="Get in touch with me for collaboration opportunities or questions about my work"
-        keywords={['contact', 'hire', 'collaboration', 'software engineer']}
-        canonical="https://jpengineering.dev/contact"
-      />
-      <h1>Contact Me</h1>
-      {/* Contact form */}
-    </>
-  );
-}
-
-// Blog post page (dynamic route)
-function BlogPostPage({ slug }: { slug: string }) {
-  // In a real app, you'd fetch post data
-  const post = {
-    title: 'How to Build a Portfolio',
-    description: 'A guide to building a modern portfolio website',
-    image: '/images/blog/portfolio-guide.png',
-  };
-
-  return (
-    <>
-      <SEO
-        title={post.title}
-        description={post.description}
-        type="article" // Important for blog posts!
-        keywords={['blog', 'tutorial', 'web development']}
-        image={post.image}
-        canonical={`https://jpengineering.dev/blog/${slug}`}
-      />
-      <article>
-        <h1>{post.title}</h1>
-        {/* Blog content */}
-      </article>
-    </>
-  );
-}
-
-// Main App component
-function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/projects" element={<ProjectsPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/blog/:slug" element={<BlogPostPage slug="..." />} />
-      </Routes>
-    </BrowserRouter>
-  );
-}
-```
-
-#### Example 2: Helper Function for Route-Specific SEO
-
-Create a helper to centralize SEO configs:
-
-```tsx
-// src/config/pageSEO.ts
-import { defaultSEO } from './seo';
-import type { SEOConfig } from './seo';
-
-export const pageSEOConfig: Record<string, Partial<SEOConfig>> = {
-  home: {
-    title: 'Home',
-    description: 'Portfolio of Justin Paoletta - Software Engineer',
-    keywords: ['portfolio', 'software engineer', 'React developer'],
-  },
-  about: {
-    title: 'About',
-    description: 'Learn about my background and experience',
-    keywords: ['about', 'background', 'experience'],
-    canonical: `${defaultSEO.siteUrl}/about`,
-  },
-  projects: {
-    title: 'Projects',
-    description: 'View my web development projects',
-    keywords: ['projects', 'portfolio', 'web development'],
-    image: '/images/projects-og.png',
-    canonical: `${defaultSEO.siteUrl}/projects`,
-  },
-  contact: {
-    title: 'Contact',
-    description: 'Get in touch with me',
-    keywords: ['contact', 'hire', 'collaboration'],
-    canonical: `${defaultSEO.siteUrl}/contact`,
-  },
-};
-
-// Usage in components
-function AboutPage() {
-  const seoConfig = pageSEOConfig.about;
-
-  return (
-    <>
-      <SEO {...seoConfig} />
-      <h1>About Me</h1>
-    </>
-  );
-}
-```
-
-#### Example 3: Dynamic Routes (Blog, Project Details)
-
-For dynamic routes like `/blog/:slug` or `/projects/:id`:
-
-```tsx
-import { useParams } from 'react-router-dom';
-
-function BlogPostPage() {
-  const { slug } = useParams<{ slug: string }>();
-
-  // Fetch post data (from API, CMS, or static files)
-  const post = getBlogPost(slug);
-
-  if (!post) {
-    return <div>Post not found</div>;
-  }
-
-  return (
-    <>
-      <SEO
-        title={post.title}
-        description={post.excerpt || post.description}
-        type="article"
-        keywords={post.tags}
-        image={post.featuredImage}
-        canonical={`https://jpengineering.dev/blog/${slug}`}
-      />
-      <article>
-        <h1>{post.title}</h1>
-        {/* Post content */}
-      </article>
-    </>
-  );
-}
-```
-
-### Best Practices for Per-Page SEO
-
-1. **Always set a unique title** - Helps users identify the page
-2. **Write compelling descriptions** - 150-160 characters, include a CTA
-3. **Use relevant keywords** - 5-10 keywords specific to that page's content
-4. **Set canonical URLs** - Prevents duplicate content issues
-5. **Use custom OG images** - Create unique preview images for major pages
-6. **Match content to SEO** - Ensure meta tags accurately reflect page content
-
-### SEO Component Props Reference
-
-```tsx
-interface SEOProps {
-  // Basic
-  title?: string; // Page title (will be combined with default)
-  description?: string; // Meta description
-  keywords?: string[]; // Meta keywords
-
-  // Advanced
-  author?: string; // Content author
-  image?: string; // OG/Twitter image URL
-  siteUrl?: string; // Base site URL
-  twitterHandle?: string; // Twitter @handle
-  locale?: string; // Language/locale (e.g., 'en_US')
-  type?: string; // Open Graph type ('website', 'article', etc.)
-
-  // Special
-  canonical?: string; // Canonical URL for this page
-  noindex?: boolean; // Prevent search indexing
-  nofollow?: boolean; // Prevent link following
-}
-```
-
-All props are optional - if omitted, defaults from `src/config/seo.ts` are used.
-
-## ⚙️ Configuration
-
-### Default SEO Settings
-
-Edit `src/config/seo.ts` to update default values:
-
-```typescript
-export const defaultSEO: SEOConfig = {
-  title: 'My Portfolio',
-  description: 'My personal portfolio website',
-  keywords: ['portfolio', 'web developer', 'React'],
-  author: 'Your Name', // ← Update this
-  siteUrl: 'https://yourportfolio.com', // ← Update this
-  image: '/og-image.png',
-  twitterHandle: '@yourusername', // ← Update this
-  locale: 'en_US',
-  type: 'website',
-};
-```
-
-### Environment Variables
-
-SEO uses environment variables from `.env`:
-
-```bash
-VITE_APP_TITLE=My Portfolio
-VITE_APP_DESCRIPTION=My personal portfolio website
-```
-
-## 🖼️ Open Graph Images
-
-### Requirements
-
-- **Recommended size**: 1200x630px
-- **Min size**: 600x315px
-- **Max file size**: < 8MB
-- **Format**: JPG, PNG, or WebP
-
-### Create Your OG Image
-
-1. Create an image at `public/og-image.png` (1200x630px)
-2. Include:
-   - Your name/brand
-   - Professional photo (optional)
-   - Clean, readable design
-   - High contrast
-
-### Tools to Create OG Images
-
-- [Canva](https://www.canva.com/) - Free templates
-- [Figma](https://www.figma.com/) - Custom designs
-- [og-img.vercel.app](https://og-img.vercel.app/) - Generated images
-
-### Test Your OG Images
-
-- [Facebook Sharing Debugger](https://developers.facebook.com/tools/debug/)
-- [Twitter Card Validator](https://cards-dev.twitter.com/validator)
-- [LinkedIn Post Inspector](https://www.linkedin.com/post-inspector/)
-
-## 🤖 robots.txt
-
-Create `public/robots.txt`:
+## Source Of Truth
+
+| Concern                         | Files                                                                             | Why it exists                                                                                             |
+| ------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Shared SEO constants            | `src/config/seo.ts`, `src/content/site.ts`                                        | Central place for the brand name, canonical origin, default description, OG defaults, and robots defaults |
+| First-response crawler metadata | `index.html`                                                                      | Search crawlers and link preview bots can read this before JavaScript runs                                |
+| Runtime metadata                | `src/components/SEO.tsx`                                                          | Keeps the browser tab, canonical, OG, and robots state correct after React mounts                         |
+| Structured data                 | `index.html`                                                                      | JSON-LD is most reliable when shipped in the initial HTML                                                 |
+| Sitemap and robots              | `plugins/vite-plugin-sitemap.ts`, `public/robots.txt`, `public/sitemap.xml`       | Helps engines discover URLs and understand crawl policy                                                   |
+| Prerendered content             | `scripts/prerender.ts`, `src/main.tsx`, `package.json`                            | Ensures the homepage body is visible in HTML without requiring full SSR                                   |
+| Regression tests                | `src/static-seo.test.ts`, `src/config/seo.test.ts`, `src/components/SEO.test.tsx` | Prevents accidental metadata drift or broken defaults                                                     |
+
+## What Search Engines Actually See
+
+For the homepage, the important crawler path is:
+
+1. the raw HTML response already contains the title, description, canonical, robots, `hreflang`, Open Graph tags, Twitter tags, JSON-LD, favicon links, and `noscript` fallback.
+2. the production build then replaces the empty root with prerendered homepage markup, so the HTML also contains visible content.
+3. after the browser boots React, the app remounts and `SEO.tsx` keeps the metadata aligned with the shared config.
+
+This matters because not all bots behave the same way:
+
+- Google can render JavaScript, but it still benefits from correct first-response HTML and prerendered content.
+- Bing also understands the same HTML standards and benefits from the same signals.
+- Social scrapers often do not execute app JavaScript at all, so they depend on the static tags in `index.html`.
+
+## Why We Have Each SEO Signal
+
+### Critical Signals
+
+| Signal                     | Where                                         | Why we need it                                                                    |
+| -------------------------- | --------------------------------------------- | --------------------------------------------------------------------------------- |
+| `<title>`                  | `index.html`, `src/components/SEO.tsx`        | Primary page label for search results, browser tabs, bookmarks, and previews      |
+| `meta[name="description"]` | `index.html`, `src/components/SEO.tsx`        | Summary snippet candidate for search results and link previews                    |
+| `link[rel="canonical"]`    | `index.html`, `src/components/SEO.tsx`        | Prevents duplicate-URL ambiguity and tells engines which URL is authoritative     |
+| `meta[name="robots"]`      | `index.html`, `src/components/SEO.tsx`        | Controls whether the page should be indexed and how rich a snippet may be         |
+| `sitemap.xml`              | generated by `plugins/vite-plugin-sitemap.ts` | Helps crawlers discover URLs and revisit them efficiently                         |
+| JSON-LD structured data    | `index.html`                                  | Gives search engines explicit entity relationships for the person, site, and page |
+| Prerendered body content   | `scripts/prerender.ts`                        | Ensures the homepage content is visible without requiring JavaScript execution    |
+
+### Important Secondary Signals
+
+| Signal                                    | Where                                                  | Why we keep it                                                                      |
+| ----------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Open Graph tags                           | `index.html`, `src/components/SEO.tsx`                 | Power rich previews in LinkedIn, Facebook, Discord, Slack, and other unfurlers      |
+| Twitter card tags                         | `index.html`, `src/components/SEO.tsx`                 | Improve previews on X and any tool that honors Twitter metadata                     |
+| `og:site_name` and consistent site naming | `index.html`, `src/config/seo.ts`, `src/pwa-config.ts` | Prevent brand drift across search, social, and installed surfaces                   |
+| `lastmod` in sitemap                      | generated by `plugins/vite-plugin-sitemap.ts`          | Gives engines a trustworthy freshness signal when it reflects a real content update |
+| `sameAs` on `Person`                      | JSON-LD in `index.html`                                | Helps search engines connect the site owner to their public identity profiles       |
+
+### Supporting Signals
+
+| Signal                                          | Where                                  | Why we keep it                                                                                                   |
+| ----------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `hreflang="en-US"` and `x-default`              | `index.html`                           | Makes the default locale explicit and gives us a clean base if localized versions are added later                |
+| `rel="me"` links                                | `index.html`                           | Extra identity linking between the site and public profiles; not a major ranking factor, but low-risk and useful |
+| `meta[name="keywords"]`                         | `index.html`, `src/components/SEO.tsx` | Modern engines largely ignore this for ranking, but it is harmless metadata and currently kept for completeness  |
+| `meta[name="application-name"]` and favicon set | `index.html`, `src/pwa-config.ts`      | Not a ranking signal, but helps search/browser surfaces present the site consistently                            |
+| `noscript` fallback                             | `index.html`                           | Last-resort readable content if JavaScript fails or a crawler is extremely limited                               |
+
+## Static Head In `index.html`
+
+`index.html` is the crawler-facing contract for the homepage. It currently contains:
+
+- the canonical production URL: `https://jpengineering.dev/`
+- the site name: `JP Engineering`
+- the core description used across the app
+- robots directives with rich-snippet allowances
+- `hreflang` links for `en-US` and `x-default`
+- identity links via `rel="me"`
+- Open Graph and Twitter image metadata
+- JSON-LD for `Person`, `WebSite`, and `WebPage`
+- a `noscript` fallback block
+
+This file exists because the initial HTML matters. If the static head and runtime head disagree, search engines have to choose which version to trust. That is exactly the kind of ambiguity we want to avoid.
+
+### Why Static Metadata Still Matters In A React App
+
+Even though React updates the page after load, static metadata still does the heavy lifting for:
+
+- crawlers that do not execute JavaScript well
+- social media scrapers
+- first-wave indexing before rendering
+- resilience when client JavaScript fails
+
+For this app, `index.html` should always be treated as the authoritative homepage metadata.
+
+## Runtime SEO In `src/components/SEO.tsx`
+
+`src/components/SEO.tsx` uses `react-helmet-async` to manage metadata after React mounts.
+
+That runtime layer exists for three reasons:
+
+1. browser tab titles should still be correct once the app is live
+2. future client-side routes may need unique titles, descriptions, canonicals, or `noindex`
+3. metadata should stay consistent even when content changes after load
+
+### What The Runtime Layer Does
+
+- computes the browser tab title
+- computes the SEO title with the `Page | Site` format
+- resolves relative OG image paths to absolute URLs
+- applies the canonical URL
+- applies robots rules
+- writes Open Graph and Twitter metadata
+
+### Why Static And Runtime Tags Both Exist
+
+They solve different problems:
+
+- static tags are for the initial response
+- runtime tags are for the live SPA after mount
+
+The rule is simple: for the homepage, both layers must describe the same page in the same way.
+
+If you change the site name, description, canonical URL, or default image, update:
+
+- `index.html`
+- `src/content/site.ts`
+- `src/config/seo.ts`
+- any affected tests
+
+## Shared SEO Config In `src/config/seo.ts`
+
+`src/config/seo.ts` is the shared metadata config used by the runtime SEO layer and the tests. It defines:
+
+- `SITE_NAME = 'JP Engineering'`
+- `SITE_ALTERNATE_NAME = 'JPEngineering'`
+- `SITE_ORIGIN = 'https://jpengineering.dev'`
+- `SITE_URL = 'https://jpengineering.dev/'`
+- `DEFAULT_OG_IMAGE`
+- `DEFAULT_OG_IMAGE_ALT`
+- `DEFAULT_ROBOTS_CONTENT`
+
+This file exists to keep the runtime layer consistent and to avoid magic strings being duplicated across the React codebase.
+
+### Why The Site Name Was Standardized
+
+The site now consistently uses `JP Engineering` instead of `JP - Engineering`.
+
+That matters because search engines and browsers pick up the site name from multiple places:
+
+- the page title
+- `og:site_name`
+- `application-name`
+- `WebSite` structured data
+- the PWA manifest
+
+Using one form everywhere reduces brand drift and gives search engines a clearer site-name signal. The `alternateName` field preserves `JPEngineering` as a secondary recognized form.
+
+## Structured Data In `index.html`
+
+The app ships JSON-LD with three entities:
+
+### `Person`
+
+Represents Justin Paoletta as the subject and publisher of the site.
+
+Why we include it:
+
+- clarifies who the site is about
+- connects the site to GitHub and LinkedIn with `sameAs`
+- gives engines machine-readable context for skills and role
+
+### `WebSite`
+
+Represents the site as a whole.
+
+Why we include it:
+
+- helps with site-name understanding
+- gives the site a stable identity separate from an individual page
+- provides `alternateName` for the no-hyphen brand form
+
+### `WebPage`
+
+Represents the current homepage.
+
+Why we include it:
+
+- links the page back to the site and the person
+- tells engines what the page is about
+- identifies the primary page image
+
+### Why JSON-LD Lives In Static HTML
+
+Structured data is most reliable when it is present in the first HTML response. It does not depend on React mounting, and testing it becomes much simpler because the page contract is visible directly in `index.html`.
+
+## Robots Meta And `robots.txt`
+
+These two pieces are related, but they are not the same thing.
+
+### `meta[name="robots"]`
+
+Current homepage value:
 
 ```txt
-# Allow all crawlers
-User-agent: *
-Allow: /
-
-# Disallow admin or draft pages
-Disallow: /admin/
-Disallow: /drafts/
-
-# Sitemap location
-Sitemap: https://yourportfolio.com/sitemap.xml
+index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1
 ```
 
-## 🗺️ Sitemap
+Why we use it:
 
-For a single-page portfolio, create `public/sitemap.xml`:
+- `index, follow` allows the page to be indexed and its links crawled
+- the `max-*` directives allow large image previews and unrestricted text/video snippets where engines support them
 
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://yourportfolio.com/</loc>
-    <lastmod>2024-01-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-</urlset>
+This is page-level behavior. It belongs in the document head because it describes how a specific page should be handled.
+
+### `robots.txt`
+
+Current behavior:
+
+- allows all crawlers
+- advertises the sitemap location
+
+This is crawl-level behavior. It tells bots where they may go, but it does not replace page-level metadata.
+
+Important rule:
+
+- do not block a page in `robots.txt` if you expect search engines to read that page's canonical or robots meta tags, because blocked pages may not be fetched deeply enough to see them
+
+## Sitemap Generation
+
+The sitemap is generated by `plugins/vite-plugin-sitemap.ts`.
+
+### What It Does
+
+- reads the base URL from `VITE_SITE_URL` or related env vars
+- defines indexable routes in a local `routes` array
+- writes `dist/sitemap.xml` for production
+- writes `public/sitemap.xml` for local/dev visibility
+- updates `robots.txt` so it always points at the correct sitemap URL
+
+### Why `lastmod` Uses Git Or File Timestamps
+
+The sitemap no longer uses the build date as `lastmod`.
+
+That change matters because `lastmod` is only useful when it reflects a real page change. If every deploy says a page changed even when the content did not, search engines learn to distrust the field.
+
+Current logic:
+
+1. try `git log -1 --format=%cs -- <contentPaths>`
+2. if git history is unavailable, inspect the latest filesystem modification time
+3. if neither works, fall back to today's date
+
+That is a pragmatic compromise between accuracy and operational simplicity.
+
+## Prerendering
+
+The most important recent SEO improvement is prerendering the homepage.
+
+### Why We Added It
+
+Before prerendering, the raw body was basically:
+
+```html
+<div id="root"></div>
 ```
 
-For multi-page sites, consider using a sitemap generator or package.
+That meant crawlers had to execute JavaScript to see the actual page content. Some can do that. Some do it slowly. Some do it poorly. Some social tools do not do it at all.
 
-## 📊 SEO Best Practices
+Prerendering fixes that by making the built homepage HTML contain real content before the browser executes any JavaScript.
 
-### 1. Page Titles
+### How It Works
 
-- Keep under 60 characters
-- Include primary keyword
-- Make it unique per page
-- Front-load important keywords
+`npm run build` now does this:
 
-```tsx
-// ✅ Good
-<SEO title="Full Stack Developer Portfolio" />
+1. type-check
+2. run the contrast check
+3. build the app with Vite
+4. run `tsx scripts/prerender.ts`
 
-// ❌ Too long
-<SEO title="My Awesome Portfolio Website with All My Projects and Contact Information" />
-```
+The prerender script:
 
-### 2. Meta Descriptions
+- starts a tiny local HTTP server over `dist`
+- opens the built site in headless Chromium
+- waits for the homepage content to render
+- serializes `document.documentElement.outerHTML`
+- writes the result back to `dist/index.html`
 
-- 150-160 characters optimal
-- Include call-to-action
-- Unique per page
-- Naturally include keywords
+### Why We Remount Instead Of Hydrate
 
-```tsx
-// ✅ Good
-<SEO description="Experienced React developer specializing in modern web applications. View my projects and get in touch." />
+`src/main.tsx` intentionally clears any prerendered children inside `#root` and then calls `createRoot(...).render(...)`.
 
-// ❌ Too short
-<SEO description="My portfolio." />
-```
+We do that because this is not true React SSR output. It is browser-serialized DOM captured after the app runs. Hydrating that markup as if it were byte-for-byte server-rendered React markup can produce hydration mismatch errors.
 
-### 3. Keywords
+The tradeoff is acceptable for this site:
 
-- 5-10 relevant keywords
-- Mix of broad and specific
-- Natural language
+- crawlers still get real HTML content
+- users still get the full interactive app
+- React avoids fragile hydration errors
 
-```tsx
-<SEO
-  keywords={[
-    'full stack developer',
-    'React developer',
-    'TypeScript',
-    'web development',
-    'frontend engineer',
-  ]}
-/>
-```
+If the site grows into many indexable routes, a true SSR or SSG framework would become the cleaner long-term option.
 
-### 4. Images
+## Why The `noscript` Fallback Still Exists
 
-- Always include alt text
-- Optimize file sizes
-- Use descriptive filenames
-- Create unique OG images for key pages
+Prerendering is now the primary way crawlers see body content, but the `noscript` block is still useful as a last fallback.
 
-## 🔍 Testing Your SEO
+It helps when:
 
-### Browser DevTools
+- JavaScript fails to load
+- a browser has scripting disabled
+- a crawler is extremely limited
 
-1. Open DevTools (F12)
-2. View `<head>` section
-3. Verify meta tags are present
+It is intentionally simple and should stay simple.
 
-### Online Tools
+## Validation And Regression Coverage
 
-- [Google Rich Results Test](https://search.google.com/test/rich-results)
-- [Meta Tags Checker](https://metatags.io/)
-- [SEO Site Checkup](https://seositecheckup.com/)
-- [PageSpeed Insights](https://pagespeed.web.dev/)
+### Automated Tests
 
-### Manual Testing
+These tests protect the important SEO contracts:
+
+- `src/static-seo.test.ts`
+  - verifies the static HTML contract in `index.html`
+  - checks canonical, robots, `hreflang`, `rel="me"`, and structured data
+- `src/config/seo.test.ts`
+  - verifies the shared SEO constants and helper behavior
+- `src/components/SEO.test.tsx`
+  - verifies runtime `Helmet` output such as canonical handling, robots content, and OG/Twitter tags
+
+Useful commands:
 
 ```bash
-# View rendered HTML
-curl https://yourportfolio.com | grep "<meta"
+npx vitest run src/static-seo.test.ts src/config/seo.test.ts src/components/SEO.test.tsx
+npm run build
 ```
 
-## 📱 Social Media Preview
+### Manual Validation
 
-### When Sharing Your Portfolio:
+After a production deploy, validate the live homepage with:
 
-1. **LinkedIn**: Supports Open Graph tags
-2. **Twitter**: Uses Twitter Card tags
-3. **Facebook**: Uses Open Graph tags
-4. **Discord**: Uses Open Graph tags
-5. **Slack**: Uses Open Graph tags
+- Google Search Console URL Inspection
+- Bing Webmaster Tools URL Inspection
+- Google's Rich Results / structured data validation tools
+- a quick `curl https://jpengineering.dev/` spot-check
 
-All are configured automatically! 🎉
+For local checks, remember that `/api/*` routes may 404 outside Vercel. That is expected in a plain static preview and does not mean SEO is broken.
 
-## 🚀 Deployment Checklist
+## Maintenance Rules
 
-Before deploying:
+When changing SEO-related content, use this checklist.
 
-- [ ] Update `siteUrl` in `src/config/seo.ts`
-- [ ] Update `author` name
-- [ ] Update `twitterHandle`
-- [ ] Create and add OG image (`public/og-image.png`)
-- [ ] Create `public/robots.txt`
-- [ ] Create `public/sitemap.xml`
-- [ ] Update `index.html` base meta tags
-- [ ] Test with [Meta Tags Checker](https://metatags.io/)
-- [ ] Verify social media previews
-- [ ] Submit sitemap to Google Search Console
-- [ ] Set up Google Analytics (if using)
+### If You Change The Brand Name Or Description
 
-## 🎓 Advanced: Structured Data
+Update all of:
 
-For better search results, consider adding structured data (JSON-LD):
+- `index.html`
+- `src/content/site.ts`
+- `src/config/seo.ts`
+- `src/pwa-config.ts`
+- tests that assert those values
 
-```tsx
-import { Helmet } from 'react-helmet-async';
+### If You Change The Production Domain
 
-<Helmet>
-  <script type="application/ld+json">
-    {JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: 'Your Name',
-      url: 'https://yourportfolio.com',
-      sameAs: [
-        'https://linkedin.com/in/yourusername',
-        'https://github.com/yourusername',
-      ],
-      jobTitle: 'Full Stack Developer',
-      worksFor: {
-        '@type': 'Organization',
-        name: 'Your Company',
-      },
-    })}
-  </script>
-</Helmet>;
-```
+Update all of:
 
-## 📚 Resources
+- hardcoded absolute URLs in `index.html`
+- `SITE_ORIGIN` and `SITE_URL` in `src/config/seo.ts`
+- `VITE_SITE_URL` in deployment config so sitemap generation stays correct
 
-- [Google SEO Starter Guide](https://developers.google.com/search/docs/fundamentals/seo-starter-guide)
-- [Open Graph Protocol](https://ogp.me/)
-- [Twitter Cards Documentation](https://developer.twitter.com/en/docs/twitter-for-websites/cards/overview/abouts-cards)
-- [Schema.org](https://schema.org/)
-- [MDN SEO Basics](https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_SEO)
+### If You Add A New Indexable Route
 
-## 🆘 Troubleshooting
+Do all of:
 
-### Meta tags not showing up?
+1. render `<SEO />` with a unique title, description, and canonical for that route
+2. add the route to `plugins/vite-plugin-sitemap.ts`
+3. decide whether the route should be prerendered too
+4. add or update tests for the new route behavior
 
-- Ensure `<HelmetProvider>` wraps your app in `main.tsx`
-- Check that SEO component is rendered
-- Verify no JavaScript errors in console
+### If You Add Alternate Languages
 
-### Social media not showing preview?
+Do all of:
 
-- Clear social media cache
-- Use debugging tools (Facebook Debugger, Twitter Validator)
-- Ensure OG image is publicly accessible
-- Check image meets size requirements
+1. add real localized URLs
+2. expand `hreflang` links
+3. update canonical behavior per locale
+4. extend sitemap coverage to those URLs
 
-### Search engines not indexing?
+## What Matters Most If We Need To Simplify
 
-- Verify robots.txt allows crawling
-- Submit sitemap to Google Search Console
-- Check for `noindex` meta tag
-- Ensure site is publicly accessible
+If we ever need to reduce complexity, keep these first:
 
-## 💡 Tips
+1. correct title, description, canonical, and robots meta
+2. prerendered homepage content
+3. accurate sitemap and robots.txt
+4. JSON-LD for the site and person
 
-1. **Update regularly**: Keep content fresh
-2. **Performance matters**: Fast sites rank better
-3. **Mobile-first**: Ensure mobile responsiveness
-4. **Quality content**: Best SEO is great content
-5. **Monitor**: Use Google Search Console to track performance
+These are the highest-value signals for this app.
+
+The lower-priority items are:
+
+- `meta keywords`
+- `rel="me"`
+- single-locale `hreflang`
+- extra presentation metadata
+
+Those are useful but not the foundation.
+
+## External References
+
+These are the standards and platform docs this setup is based on:
+
+- Google Search Central: [JavaScript SEO basics](https://developers.google.com/search/docs/crawling-indexing/javascript/javascript-seo-basics)
+- Google Search Central: [Build and submit a sitemap](https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap)
+- Google Search Central: [Robots meta tag, data-nosnippet, and X-Robots-Tag](https://developers.google.com/search/docs/crawling-indexing/robots-meta-tag)
+- Google Search Central: [Site names in Google Search](https://developers.google.com/search/docs/appearance/site-names)
+- Google Search Central: [How to specify a canonical URL](https://developers.google.com/search/docs/crawling-indexing/consolidate-duplicate-urls)
+- Schema.org: [WebSite](https://schema.org/WebSite), [WebPage](https://schema.org/WebPage), [Person](https://schema.org/Person)
+- Sitemaps.org: [XML sitemap protocol](https://www.sitemaps.org/protocol.html)
+
+## Summary
+
+The SEO strategy in this app is intentionally layered:
+
+- static metadata for the first response
+- runtime metadata for the live SPA
+- prerendered content for crawler-visible body text
+- structured data for entity understanding
+- sitemap and robots for discovery and crawl control
+- tests to keep all of it from drifting
+
+That is why the app currently has more than just a single `SEO.tsx` component. Each piece solves a different failure mode, and together they make a client-rendered portfolio behave much more like a search-friendly static site.

@@ -86,14 +86,14 @@ Complete step-by-step guide to deploy your portfolio to Vercel.
 
 ```
 Name: VITE_SITE_URL
-Value: (leave empty for now, we'll add after deploy)
+Value: your production origin (for example, https://jpengineering.dev)
 ```
 
 #### Optional (add if you're using them):
 
 ```
 VITE_APP_TITLE
-JP - Engineering
+JP Engineering
 
 VITE_APP_DESCRIPTION
 A modern portfolio showcasing my projects and skills
@@ -105,7 +105,7 @@ VITE_UMAMI_WEBSITE_ID
 (your Umami website ID - if using)
 ```
 
-💡 **Tip:** You can add these later in Settings → Environment Variables
+💡 **Tip:** Set `VITE_SITE_URL` before the first production deploy if you already know the live origin you want search engines to use.
 
 ---
 
@@ -123,30 +123,16 @@ VITE_UMAMI_WEBSITE_ID
 
 ---
 
-### Step 6: Update Your Site URL
+### Step 6: If Your Live Origin Changes Later
 
-**Important for PWA and sitemap:**
+If you move from a Vercel preview URL to a custom domain, or change the production origin for any reason:
 
-1. **Copy your Vercel URL** (e.g., `https://my-portfolio-abc123.vercel.app`)
-
-2. **Add it to Vercel:**
-   - Go to Project Settings → Environment Variables
-   - Add: `VITE_SITE_URL` = your Vercel URL
-   - Click "Save"
-
-3. **Redeploy:**
-   - Go to Deployments tab
-   - Click "..." on latest deployment → "Redeploy"
-   - Or just push a new commit
-
-4. **Update your code:**
-   ```bash
-   # Update src/pwa-config.ts and src/config/seo.ts with your real URL
-   # Then commit and push
-   git add .
-   git commit -m "chore: update site URL"
-   git push origin main
-   ```
+1. Update `VITE_SITE_URL` in Vercel to the new origin
+2. Redeploy the app so `sitemap.xml` and `robots.txt` regenerate correctly
+3. If the canonical domain itself is changing, also update the hardcoded production URLs used by the app's static SEO layer:
+   - `index.html`
+   - `src/config/seo.ts`
+4. Re-run Google Search Console and Bing Webmaster URL inspection after the redeploy
 
 ---
 
@@ -305,9 +291,9 @@ git push origin main
 
 **Check these URLs work:**
 
-- `https://your-site.vercel.app/sitemap.xml` ✓
-- `https://your-site.vercel.app/robots.txt` ✓
-- `https://your-site.vercel.app/manifest.webmanifest` ✓
+- `https://your-live-origin/sitemap.xml` ✓
+- `https://your-live-origin/robots.txt` ✓
+- `https://your-live-origin/manifest.webmanifest` ✓
 
 ---
 
@@ -475,7 +461,7 @@ Vercel automatically sets:
    Google Search Console: https://search.google.com/search-console
    Bing Webmaster: https://www.bing.com/webmasters
 
-   Submit: https://your-site.vercel.app/sitemap.xml
+   Submit: https://your-live-origin/sitemap.xml
    ```
 
 4. **Share Your Portfolio!** 🎉

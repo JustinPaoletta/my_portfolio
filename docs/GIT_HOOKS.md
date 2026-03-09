@@ -27,8 +27,8 @@ This project uses [Husky](https://typicode.github.io/husky/) to manage Git hooks
 
 This project includes **two pre-push hook versions** to balance speed and thoroughness:
 
-- **Light (default):** Fast checks (TypeScript + unit tests) - ~10-15 seconds
-- **Full (optional):** Comprehensive checks (+ linting + E2E tests) - ~30-60 seconds
+- **Light (default):** TypeScript + production build + unit tests - usually the fastest practical safety net
+- **Full (optional):** Production build + linting + unit + E2E tests - slower, higher confidence
 
 You can switch between them based on your workflow. See [Pre-Push Hook](#3-pre-push-hook-light-version---default) section for details.
 
@@ -41,7 +41,7 @@ You can switch between them based on your workflow. See [Pre-Push Hook](#3-pre-p
 
 **What it does:**
 
-1. ✅ TypeScript type checking (`tsc -b --noEmit`)
+1. ✅ TypeScript type checking (`tsc -b`)
 2. ✅ Lint and format staged files (`npx lint-staged`)
    - ESLint auto-fix for `.ts` and `.tsx` files
    - Prettier formatting for all files
@@ -107,21 +107,23 @@ chore: update dependencies
 
 **What it does:**
 
-1. ✅ TypeScript type checking (`tsc -b --noEmit`)
-2. ✅ Run all unit tests (`npm run test:unit`)
-3. ⚠️ **Skips E2E tests** for speed (reminder shown to run before PR)
+1. ✅ TypeScript type checking (`tsc -b`)
+2. ✅ Run the production build (`npm run build`)
+3. ✅ Run all unit tests (`npm run test:unit`)
+4. ⚠️ **Skips E2E tests** for speed (reminder shown to run before PR)
 
 **Why it's useful:**
 
 - Prevents pushing broken code
-- Fast feedback (10-15 seconds)
-- Catches most issues without slowing you down
+- Catches build failures, bundle-budget failures, and prerender issues before push
+- Slower than a pure unit-test hook, but much closer to real deployment safety
 - Still maintains code quality
 
 **Example output:**
 
 ```
 🔍 Running TypeScript type checking...
+🏗️ Running production build...
 🧪 Running unit tests...
 ✓ src/App.test.tsx (1 test) 234ms
 
@@ -140,10 +142,11 @@ Tests  1 passed (1)
 
 **What it does:**
 
-1. ✅ TypeScript type checking (`tsc -b --noEmit`)
-2. ✅ Full linting with auto-fix (`npm run lint:fix`)
-3. ✅ Run all unit tests (`npm run test:unit`)
-4. ✅ Run all E2E tests (`npm run test:e2e`)
+1. ✅ TypeScript type checking (`tsc -b`)
+2. ✅ Run the production build (`npm run build`)
+3. ✅ Full linting with auto-fix (`npm run lint:fix`)
+4. ✅ Run all unit tests (`npm run test:unit`)
+5. ✅ Run all E2E tests (`npm run test:e2e`)
 
 **Why it's useful:**
 
@@ -156,6 +159,7 @@ Tests  1 passed (1)
 
 ```
 🔍 Running TypeScript type checking...
+🏗️ Running production build...
 🧹 Running linter on all committed files...
 🧪 Running unit tests...
 ✓ src/App.test.tsx (1 test) 234ms
@@ -170,7 +174,7 @@ Running 3 tests using 3 workers
 ✅ All checks passed! Proceeding with push...
 ```
 
-**⚠️ Note:** This hook takes 30-60 seconds. Good for final checks before creating PRs.
+**⚠️ Note:** This hook can take a while because it runs the full production build and E2E suite. Use it before PRs or when you want near-CI confidence.
 
 #### How to Switch Between Light and Full Versions
 

@@ -34,7 +34,7 @@ All environment variables must be prefixed with `VITE_` to be exposed to your ap
 
 ```bash
 # 1-100 characters, cannot be empty
-VITE_APP_TITLE=JP - Engineering
+VITE_APP_TITLE=JP Engineering
 
 # 1-500 characters, cannot be empty
 VITE_APP_DESCRIPTION=My personal portfolio website
@@ -187,8 +187,8 @@ VITE_GITHUB_API_ENABLED=false
 ### PWA & SEO (Optional)
 
 ```bash
-# Your site's production URL - used for sitemap generation
-VITE_SITE_URL=https://yourportfolio.com
+# Your site's production origin - used for sitemap and robots generation
+VITE_SITE_URL=https://jpengineering.dev
 ```
 
 **Validation:**
@@ -197,12 +197,12 @@ VITE_SITE_URL=https://yourportfolio.com
 
 **When to set:**
 
-- Not required for development or initial deployment
-- Set this in production environment variables on Vercel/hosting platform
-- Used by the build process to generate `sitemap.xml` with correct URLs
-- Can be added after initial deployment and redeployed
+- Recommended for all production builds, especially if the deployed origin differs from the default hardcoded site origin
+- Set this in production environment variables on Vercel or your hosting platform
+- Used by the sitemap generator to write the correct absolute sitemap URL and `robots.txt` sitemap reference
+- Not required for local development
 
-**Note:** If not set, the sitemap will generate with placeholder URLs. You can also manually generate the sitemap by running `npm run sitemap:generate` after setting this variable.
+**Note:** If not set, the sitemap generator falls back to `https://jpengineering.dev`. That is fine for this production site, but if you deploy the app somewhere else you should set `VITE_SITE_URL` before building.
 
 ## 💻 Usage in Code
 

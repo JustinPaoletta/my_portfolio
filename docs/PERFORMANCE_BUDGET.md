@@ -19,18 +19,18 @@ The build will **automatically fail** if any bundle exceeds these limits. This h
 - ✅ In CI/CD pipelines
 - ✅ Before deployment
 
-## 📈 Current Bundle Sizes
+## 📈 Current Passing Snapshot
 
-As of last build:
+From the current production build in `dist/assets`:
 
 ```
-✅ CSS: 1.52 KB (limit: 80 KB)
-✅ App code: 6.13 KB (limit: 150 KB)
-✅ Vendor (React): 194.92 KB (limit: 400 KB)
-✅ Total: 211.40 KB (limit: 700 KB)
+✅ Largest CSS file: 34.17 KB (limit: 85 KB)
+✅ Largest app JS chunk: 54.24 KB (limit: 155 KB)
+✅ Largest vendor JS chunk: 193.58 KB (limit: 400 KB)
+✅ Total JS + CSS asset weight: 677.08 KB (limit: 700 KB)
 ```
 
-**Status**: 🟢 All limits passing with plenty of headroom!
+**Status**: 🟢 Currently passing, but total bundle size is close enough to the 700 KB cap that larger features should be measured carefully.
 
 ## 🔧 Adjusting Limits
 
@@ -141,7 +141,7 @@ If the build fails due to bundle size:
 ```
 🚨 Bundle size limit exceeded:
 
-❌ app-chunk.js: 200.43 KB (limit: 150 KB)
+❌ app-chunk.js: 200.43 KB (limit: 155 KB)
 ❌ Total bundle size 700.12 KB exceeds limit of 700 KB
 
 💡 Consider:
@@ -214,7 +214,7 @@ npm run lighthouse
 
 ## 📚 Resources
 
-- [Web.dev: Performance Budgets](https://web.dev/performance-budgets-101/)
+- [Web.dev: Performance Budgets](https://web.dev/articles/performance-budgets-101)
 - [Vite: Build Optimizations](https://vitejs.dev/guide/build.html)
 - [React: Code Splitting](https://react.dev/reference/react/lazy)
 - [Webpack Bundle Analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer)

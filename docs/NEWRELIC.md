@@ -1,126 +1,141 @@
-# ✨ New Relic Error Monitoring ✨
+# New Relic Guide
 
-- **@newrelic/browser-agent** - Official New Relic browser monitoring package
+This project supports optional browser-side error monitoring with New Relic.
 
-## 📝 Files Modified
+## What The Current Setup Does
 
-1. **`src/config/env.ts`** - Added New Relic configuration with Valibot validation:
-   - `VITE_ENABLE_ERROR_MONITORING` - Feature flag
-   - `VITE_NEWRELIC_ACCOUNT_ID` - Your account ID
-   - `VITE_NEWRELIC_TRUST_KEY` - Trust key
-   - `VITE_NEWRELIC_AGENT_ID` - Agent ID
-   - `VITE_NEWRELIC_LICENSE_KEY` - License key
-   - `VITE_NEWRELIC_APPLICATION_ID` - Application ID
-   - `VITE_NEWRELIC_AJAX_DENY_LIST` - Optional URL exclusions
-   - `VITE_APP_VERSION` - App version tracking
+- uses `@newrelic/browser-agent` via the smaller `MicroAgent` loader
+- loads New Relic only when monitoring is enabled and fully configured
+- defers initialization until after the page is interactive to reduce Lighthouse impact
+- reports React render errors through `ErrorBoundary`
+- exposes helpers for manual error reporting, page actions, timings, and custom attributes
 
-2. **`src/components/ErrorBoundary.tsx`** - Updated to report errors to New Relic automatically
+## Files Involved
 
-3. **`src/main.tsx`** - Added New Relic initialization (runs before app renders)
+- `src/main.tsx`
+  - lazy-loads the New Relic module after `DOMContentLoaded`
+  - prefers `requestIdleCallback` and falls back to `setTimeout`
+- `src/utils/newrelic.ts`
+  - initializes the `MicroAgent`
+  - exports helper utilities
+- `src/components/ErrorBoundary.tsx`
+  - reports caught React errors through `reportError`
+- `src/config/env.ts`
+  - validates all `VITE_NEWRELIC_*` variables
 
-4. **`docs/ENV.md`** - Updated with New Relic configuration details
+## Initialization Rules
 
-5. **`README.md`** - Updated to mention New Relic monitoring
+New Relic initializes only if all of the following are true:
 
-6. **`package.json`** - Added New Relic browser agent dependency
+- `__ENABLE_ERROR_MONITORING__` is enabled at build time
+- `VITE_ENABLE_ERROR_MONITORING=true`
+- all required `VITE_NEWRELIC_*` variables are present
+- the visitor is not detected as an automated client
 
-## 🧪 Error Tracking Examples
+If any of those checks fail, the app skips New Relic cleanly.
 
-**Simple Test**
+## Why It Loads Lazily
 
-Temporarily add this to your `App.tsx`:
+The app does not initialize New Relic before the first render.
 
-```typescript
-// Test error (remove after testing)
-throw new Error('Test error for New Relic');
+Instead, `src/main.tsx` waits until the page is interactive and then schedules loading during idle time. That tradeoff is intentional:
+
+- the page becomes interactive sooner
+- Lighthouse is less affected by monitoring overhead
+- monitoring stays out of the critical rendering path
+
+## What You Can Track
+
+The current helper layer supports:
+
+- React errors caught by `ErrorBoundary`
+- manual `reportError(...)` calls
+- custom page actions via `trackPageAction(...)`
+- custom attributes via `setGlobalAttributes(...)`
+- user context via `setUser(...)`
+- custom timings via `addTiming(...)`
+- wrapped async functions via `withErrorReporting(...)`
+
+The module also sets default attributes for:
+
+- app environment
+- app version
+- development mode
+
+## Production Setup
+
+Add these Vercel environment variables:
+
+```env
+VITE_ENABLE_ERROR_MONITORING=true
+VITE_NEWRELIC_ACCOUNT_ID=...
+VITE_NEWRELIC_TRUST_KEY=...
+VITE_NEWRELIC_AGENT_ID=...
+VITE_NEWRELIC_LICENSE_KEY=...
+VITE_NEWRELIC_APPLICATION_ID=...
+VITE_NEWRELIC_AJAX_DENY_LIST=/api/internal,/health
 ```
 
-Wait 1-2 minutes, then check your New Relic dashboard to see the error appear.
+Then redeploy the app.
 
-**Production Setup**
+## Manual Usage
 
-For production (e.g., Vercel):
+### Report an error
 
-1. Go to your project settings → **Environment Variables**
-2. Add all the `VITE_NEWRELIC_*` variables
-3. Set `VITE_ENABLE_ERROR_MONITORING=true`
-4. Redeploy your application
-
-## 📈 What's Getting Tracked
-
-✅ **React errors** - Caught by ErrorBoundary component
-✅ **Unhandled exceptions** - Global error handler
-✅ **Promise rejections** - Unhandled async errors
-✅ **AJAX/Fetch requests** - Performance and errors
-✅ **Page load metrics** - Timing and resources
-✅ **Core Web Vitals** - LCP, FID, CLS
-✅ **Route changes** - SPA navigation
-
-## 🔧 Manual Error Reporting
-
-```typescript
+```ts
 import { reportError } from '@/utils/newrelic';
 
 try {
-  // Your code
+  // your code
 } catch (error) {
   if (error instanceof Error) {
-    reportError(error, {
-      context: 'user-action',
-      userId: user.id,
-      feature: 'checkout',
-    });
+    reportError(error, { context: 'contact-form-submit' });
   }
 }
 ```
 
-## 📊 Custom Events
+### Track a custom action
 
-```typescript
+```ts
 import { trackPageAction } from '@/utils/newrelic';
 
-trackPageAction('button_click', {
-  buttonName: 'subscribe',
-  page: 'homepage',
+trackPageAction('resume_download', {
+  source: 'hero',
 });
 ```
 
-## 🏷️ Global Attributes
+### Attach persistent attributes
 
-```typescript
+```ts
 import { setGlobalAttributes } from '@/utils/newrelic';
 
 setGlobalAttributes({
-  userPlan: 'premium',
-  deployDate: new Date().toISOString(),
+  portfolioTheme: 'cosmic',
+  deployChannel: 'production',
 });
 ```
 
-## ✅ Code Quality
+## Testing
 
-All code follows your strict project standards:
+### Local smoke test
 
-- ✅ **No `any` types** - Fully type-safe TypeScript
-- ✅ **Proper error handling** - All errors are typed correctly
-- ✅ **Named exports** - No anonymous components
-- ✅ **Accessibility** - Mouse events have keyboard equivalents (where applicable)
-- ✅ **Environment validation** - All config validated with Valibot
-- ✅ **No linter errors** - Passes ESLint and TypeScript checks
-- ✅ **Production ready** - Optimized and tested
+1. set the required `VITE_NEWRELIC_*` variables locally
+2. set `VITE_ENABLE_ERROR_MONITORING=true`
+3. run `npm run start:dev`
+4. trigger a handled error or call `reportError(...)`
 
-## 🎯 Features
+### Safe test idea
 
-- **Real-time error monitoring** - See errors as they happen
-- **Full stack traces** - Debug with source maps support
-- **User session tracking** - Understand user context during errors
-- **Performance monitoring** - Track page load and Core Web Vitals
-- **Custom attributes** - Add context to every error
-- **Privacy-first** - Only tracks what you explicitly configure
-- **Free tier** - 100GB/month data (generous for portfolio sites)
+Temporarily add a button that throws inside an event handler and verify the error reaches New Relic. Remove the test code afterward.
 
-## 📊 Bundle Impact
+## Operational Notes
 
-New Relic adds minimal overhead:
+- this setup is optional and should stay disabled in environments where the credentials are not present
+- automated clients are skipped to avoid polluting telemetry during tests and audits
+- the New Relic code path is lazy-loaded, so it should not be treated as critical-path application logic
 
-- **Bundle increase:** ~60KB gzipped
-- **Performance impact:** <1% overhead
+## Related Docs
+
+- [Environment Variables](/Users/justinpaoletta/Desktop/PROJECTS/APPS/my_portfolio/docs/ENV.md)
+- [Lighthouse CI](/Users/justinpaoletta/Desktop/PROJECTS/APPS/my_portfolio/docs/LIGHTHOUSE_CI.md)
+- [Vercel Deployment](/Users/justinpaoletta/Desktop/PROJECTS/APPS/my_portfolio/docs/VERCEL_DEPLOYMENT.md)

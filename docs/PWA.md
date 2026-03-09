@@ -143,7 +143,7 @@ export const pwaConfig = {
     'favicons/pwa-512x512.png',
   ],
   manifest: {
-    name: 'JP - Engineering', // Full app name
+    name: 'JP Engineering', // Full app name
     short_name: 'Portfolio', // Short name for home screen
     description: '...', // App description
     theme_color: '#242424', // Browser theme color
@@ -186,7 +186,7 @@ Edit `src/pwa-config.ts` to customize your PWA:
 
 ```typescript
 manifest: {
-  name: 'JP - Engineering',
+  name: 'JP Engineering',
   short_name: 'Portfolio',
   description: 'My personal portfolio website',
   theme_color: '#242424',
@@ -488,7 +488,7 @@ Add to your Vercel deployment (Settings → Environment Variables):
 VITE_SITE_URL=https://yourdomain.com
 ```
 
-This ensures the manifest uses the correct URLs.
+This keeps sitemap and `robots.txt` generation aligned with your deployed origin. The manifest itself uses relative asset paths, so it does not depend on `VITE_SITE_URL`.
 
 ### Deployment Checklist
 
@@ -496,7 +496,7 @@ This ensures the manifest uses the correct URLs.
 - [ ] `VITE_SITE_URL` environment variable set
 - [ ] Build succeeds without errors
 - [ ] Service worker generates correctly
-- [ ] Manifest contains correct URLs
+- [ ] Manifest is accessible and icons resolve correctly
 - [ ] HTTPS enabled (required for PWA)
 - [ ] Test PWA score with Lighthouse
 
