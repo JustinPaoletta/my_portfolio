@@ -108,37 +108,43 @@ async function startStaticServer(): Promise<{
 
 async function prerenderHomepage(): Promise<void> {
   const server = await startStaticServer();
-  const browser = await chromium.launch({ headless: true });
 
   try {
-    const page = await browser.newPage({
-      viewport: { width: 1440, height: 2200 },
-    });
+    const browser = await chromium.launch({ headless: true });
 
-    await page.route('https://cloud.umami.is/**', (route) => route.abort());
-    await page.route('https://bam.nr-data.net/**', (route) => route.abort());
-    await page.route('https://js-agent.newrelic.com/**', (route) =>
-      route.abort()
-    );
+    try {
+      const page = await browser.newPage({
+        viewport: { width: 1440, height: 2200 },
+      });
 
-    await page.goto(server.url, { waitUntil: 'load' });
-    await page.waitForSelector('main#main');
-    await page.waitForSelector('h1');
-    await page.waitForSelector('section#contact');
-    await page.waitForTimeout(1500);
-    await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      await page.route('https://cloud.umami.is/**', (route) => route.abort());
+      await page.route('https://bam.nr-data.net/**', (route) => route.abort());
+      await page.route('https://js-agent.newrelic.com/**', (route) =>
+        route.abort()
+      );
 
-    const prerenderedHtml = await page.evaluate(() => {
-      return `<!doctype html>\n${document.documentElement.outerHTML}`;
-    });
+      await page.goto(server.url, { waitUntil: 'load' });
+      await page.waitForSelector('main#main');
+      await page.waitForSelector('h1');
+      await page.waitForSelector('section#contact');
+      await page.waitForTimeout(1500);
+      await page.evaluate(() =>
+        window.scrollTo({ top: 0, behavior: 'instant' })
+      );
 
-    await fs.writeFile(
-      path.join(DIST_DIR, 'index.html'),
-      prerenderedHtml,
-      'utf8'
-    );
+      const prerenderedHtml = await page.evaluate(() => {
+        return `<!doctype html>\n${document.documentElement.outerHTML}`;
+      });
+
+      await fs.writeFile(
+        path.join(DIST_DIR, 'index.html'),
+        prerenderedHtml,
+        'utf8'
+      );
+    } finally {
+      await browser.close();
+    }
   } finally {
-    await browser.close();
     await server.close();
   }
 }
