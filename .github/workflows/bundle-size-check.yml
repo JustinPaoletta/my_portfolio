@@ -66,6 +66,9 @@ jobs:
           npm install --no-save --force rolldown-vite
           npm install --no-save @rolldown/binding-linux-x64-gnu || echo "Note: Binding may already be installed via rolldown-vite"
 
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
       - name: Build and check bundle size
         run: npm run build
         id: build
@@ -130,9 +133,3 @@ jobs:
         run: |
           npm run analyze
           echo "Bundle analysis complete. Check the artifacts for details."
-
-      - name: Fail if bundle too large
-        if: failure()
-        run: |
-          echo "::error::Bundle size limit exceeded! See build logs for details."
-          exit 1

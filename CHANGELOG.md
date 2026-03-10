@@ -9,15 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- No unreleased changes yet.
+- Homepage prerendering during production builds so crawlers receive
+  rendered homepage HTML.
 
 ### Changed
+
+- SEO metadata, structured data, and sitemap output for improved search
+  visibility and richer link previews.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- Prerender server cleanup when Chromium launch fails during build-time
+  rendering.
 
 ### Security
 
