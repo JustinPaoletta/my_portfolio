@@ -8,6 +8,7 @@
       "docs/*": false
     }
   },
+  "buildCommand": "npx playwright install chromium && npm run build",
   "rewrites": [
     {
       "source": "/JP-no-cursor.svg",

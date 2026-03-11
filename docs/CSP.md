@@ -1,29 +1,18 @@
-# Content Security Policy (CSP) Configuration
+# Content Security Policy
 
-This project uses Content Security Policy to enhance security by restricting what resources can be loaded and executed.
+The production CSP is defined in `vercel.json`. This document summarizes the current policy and what each directive is protecting.
 
-## Overview
+## Current Policy
 
-CSP headers are set via `vercel.json` and ensure that:
-
-- Only trusted scripts from whitelisted domains can execute
-- External resources are restricted to approved sources
-- Data exfiltration is limited through controlled `connect-src`
-- Clickjacking is prevented via `frame-ancestors`
-
-## Current CSP Policy
-
-The CSP is defined in `vercel.json` and applies to all Vercel deployments.
-
-```
+```text
 default-src 'self';
 script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live;
 script-src-attr 'none';
 object-src 'none';
-style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+style-src 'self' 'unsafe-inline';
 img-src 'self' data: https:;
-font-src 'self' data: https://fonts.gstatic.com;
-connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net https://api.github.com https://fonts.googleapis.com https://fonts.gstatic.com;
+font-src 'self' data:;
+connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net https://api.github.com;
 frame-src 'self' https://vercel.live;
 base-uri 'self';
 form-action 'self';
@@ -32,209 +21,61 @@ manifest-src 'self';
 upgrade-insecure-requests;
 ```
 
-## Directive Explanations
-
-### `default-src 'self'`
-
-- Default fallback for all resource types
-- Only allows resources from the same origin
-
-### `script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live`
-
-- Allows scripts from same origin, Umami analytics, and Vercel live preview
-- `'unsafe-inline'` is required because Vite may inject inline scripts
-- `vercel.live` for Vercel's live preview functionality (preview toolbar, comments)
-
-### `script-src-attr 'none'`
-
-- Blocks inline event handlers like `onclick="..."` in HTML attributes
-- These are a common XSS vector and should use addEventListener instead
-
-### `object-src 'none'`
-
-- Blocks `<object>`, `<embed>`, and `<applet>` elements
-- Prevents Flash and other plugin-based attacks
-
-### `style-src 'self' 'unsafe-inline' https://fonts.googleapis.com`
-
-- Allows stylesheets from same origin and Google Fonts
-- `'unsafe-inline'` allows inline styles (Vite may inject these, React style props)
-
-### `img-src 'self' data: https:`
-
-- Allows images from same origin, data URIs, and any HTTPS URL
-- Necessary for external images (GitHub avatars, project screenshots, etc.)
-
-### `font-src 'self' data: https://fonts.gstatic.com`
-
-- Allows fonts from same origin, data URIs, and Google Fonts CDN
-- `fonts.gstatic.com` serves the actual font files (while `fonts.googleapis.com` serves the CSS)
-
-### `connect-src 'self' ...`
-
-- Controls AJAX, WebSocket, and fetch requests
-- Whitelisted domains:
-  - `cloud.umami.is` & `api-gateway.umami.dev` - Umami analytics
-  - `vercel.live` - Vercel live preview
-  - `bam.nr-data.net` - New Relic error monitoring
-  - `api.github.com` - GitHub API for fetching profile and repository data
-  - `fonts.googleapis.com` & `fonts.gstatic.com` - Google Fonts (required for PWA service worker caching)
-
-### `frame-src 'self' https://vercel.live`
-
-- Controls what can be loaded in `<iframe>` elements
-- `vercel.live` is needed for Vercel's preview toolbar iframe
-
-### `frame-ancestors 'self'`
-
-- Only allows the site to be embedded in iframes on the same origin
-- Protects against clickjacking attacks from external sites
-- Use `'none'` instead if you never need iframes
-
-### `base-uri 'self'`
-
-- Restricts `<base>` tag URLs to same origin
-- Prevents base tag hijacking
-
-### `form-action 'self'`
-
-- Restricts form submissions to same origin
-- Prevents form data exfiltration
-
-### `manifest-src 'self'`
-
-- Allows PWA manifest from same origin
-- Required for PWA installability
-
-### `upgrade-insecure-requests`
-
-- Automatically upgrades HTTP requests to HTTPS
-- Ensures all resources are loaded securely
-
-## Why `'unsafe-inline'` Instead of Nonces?
-
-This project uses `'unsafe-inline'` instead of CSP nonces because:
-
-1. **Vercel injects scripts** - Vercel's preview toolbar injects scripts without nonces, which would be blocked by a strict nonce-based CSP
-2. **Simpler configuration** - One CSP in `vercel.json`, no build-time nonce generation needed
-3. **`script-src-attr 'none'` still protects** - Inline event handlers (`onclick="..."`) are still blocked, which is a major XSS vector
-
-**Trade-off:** `'unsafe-inline'` is less secure than nonces because it allows any inline script. However:
-
-- Your main scripts are external (bundled by Vite)
-- Inline event handlers are still blocked
-- XSS via injected `<script>` tags would need to bypass other protections first
-
-**To use nonces instead:** You'd need to generate nonces at build time, add them to all script tags, and ensure Vercel's scripts have nonces (which isn't possible for preview deployments).
-
-## Adding New External Services
-
-When adding new third-party scripts or services, update `vercel.json`:
-
-1. **External Scripts**: Add the domain to `script-src`
-
-   ```
-   script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live https://new-service.com
-   ```
-
-2. **API/Fetch Requests**: Add the domain to `connect-src`
-
-   ```
-   connect-src 'self' ... https://api.newservice.com
-   ```
-
-3. **Fonts**: Add CSS source to `style-src`, font files to `font-src`
-   ```
-   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com
-   font-src 'self' data: https://fonts.gstatic.com
-   ```
-
-## Files Involved
-
-### `vercel.json`
-
-- Sets CSP header on all responses for Vercel deployments
-- Located at project root
-- Applied via Vercel's header configuration
-
-## Testing CSP
-
-### Browser DevTools
-
-1. Open DevTools → Network tab
-2. Check response headers for `Content-Security-Policy`
-3. Open Console tab - check for CSP violation warnings
-
-### Common Violations
-
-**Blocked Script:**
-
-```
-Refused to load the script 'https://example.com/script.js' because it violates
-the following Content Security Policy directive: "script-src 'self' ..."
-```
-
-**Solution**: Add domain to `script-src` in `vercel.json`
-
-**Blocked Fetch:**
-
-```
-Refused to connect to 'https://api.example.com' because it violates
-the following Content Security Policy directive: "connect-src 'self' ..."
-```
-
-**Solution**: Add domain to `connect-src` in `vercel.json`
-
-### CSP Report-Only Mode
-
-To test CSP without blocking resources, temporarily change the header key in `vercel.json`:
-
-```json
-{
-  "key": "Content-Security-Policy-Report-Only",
-  "value": "..."
-}
-```
-
-This reports violations without blocking them. Check browser console for reports.
-
-## Security Benefits
-
-- ✅ **XSS Protection** - Inline event handlers blocked (`script-src-attr 'none'`)
-- ✅ **Plugin Attacks Blocked** - `object-src 'none'` blocks Flash/plugins
-- ✅ **Data Exfiltration Prevention** - Limited external connections via `connect-src`
-- ✅ **Clickjacking Protection** - `frame-ancestors 'self'`
-- ✅ **Base Tag Protection** - `base-uri 'self'`
-- ✅ **Form Protection** - `form-action 'self'`
-- ✅ **HTTPS Enforced** - `upgrade-insecure-requests`
-
-## Troubleshooting
-
-### Scripts Not Loading
-
-- Check browser console for CSP violation messages
-- Verify domain is whitelisted in `script-src`
-- Ensure script uses `src` attribute (not inline code)
-
-### Styles Not Applying
-
-- React inline styles (via `style` prop) work fine
-- External CSS must be from `'self'` or `fonts.googleapis.com`
-- Inline `<style>` tags are allowed (we use `'unsafe-inline'`)
-
-### API Calls Failing
-
-- Check `connect-src` directive includes the API domain
-- Verify network requests in DevTools → Network tab
-
-### Service Worker Issues
-
-- Ensure `manifest-src 'self'` is present
-- Service worker registration doesn't need nonces
-- Check that service worker file is served from same origin
-
-## Additional Resources
-
-- [MDN: Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
-- [CSP Evaluator](https://csp-evaluator.withgoogle.com/) - Test your CSP policy
-- [CSP Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Content_Security_Policy_Cheat_Sheet.html)
+## What Changed Recently
+
+- Fonts are served locally from `public/fonts`, so the policy no longer needs `fonts.googleapis.com` or `fonts.gstatic.com`.
+- The `style-src` directive is now same-origin only plus inline styles.
+- `connect-src` is limited to Umami, Vercel Live preview tooling, New Relic, and the public GitHub API.
+
+## Directive Notes
+
+- `default-src 'self'`
+  Only same-origin resources are allowed unless a more specific directive overrides it.
+- `script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live`
+  Allows the app bundle, Umami, and Vercel preview tooling. Inline scripts are still allowed because Vite and preview tooling can inject them.
+- `script-src-attr 'none'`
+  Blocks inline event-handler attributes such as `onclick`.
+- `object-src 'none'`
+  Disables legacy plugin content.
+- `style-src 'self' 'unsafe-inline'`
+  Allows same-origin stylesheets plus inline styles.
+- `img-src 'self' data: https:`
+  Allows local images, data URLs, and remote HTTPS images such as GitHub avatars.
+- `font-src 'self' data:`
+  Allows locally hosted fonts and data URLs.
+- `connect-src ...`
+  Allows fetch/XHR/WebSocket style connections only to explicitly approved origins.
+- `frame-src 'self' https://vercel.live`
+  Required for Vercel preview overlays.
+- `frame-ancestors 'self'`
+  Prevents third-party sites from embedding the app.
+- `manifest-src 'self'`
+  Allows the generated `manifest.webmanifest`.
+- `upgrade-insecure-requests`
+  Forces insecure requests to upgrade to HTTPS where possible.
+
+## Source Files
+
+- `vercel.json` - CSP and related security headers
+- `docs/PWA.md` - manifest and service worker behavior
+- `docs/OBSERVABILITY.md` - Umami and New Relic integration
+
+## When You Add a New External Service
+
+Update `vercel.json` based on what the service actually needs:
+
+- Add script origins to `script-src`
+- Add API origins to `connect-src`
+- Add image/CDN origins to `img-src`
+- Add iframe origins to `frame-src`
+
+Do not widen directives casually. Prefer adding the smallest possible origin set.
+
+## Testing
+
+1. Deploy or run through `vercel dev`.
+2. Open DevTools.
+3. Check the response headers for `Content-Security-Policy`.
+4. Watch the console for CSP violations while exercising the app.
+
+If a resource is blocked, fix `vercel.json` and redeploy. Lighthouse CI does not validate the production CSP because its static server does not send these headers.

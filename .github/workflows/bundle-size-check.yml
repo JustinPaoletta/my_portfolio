@@ -131,5 +131,5 @@ jobs:
       - name: Analyze bundle (on failure)
         if: failure()
         run: |
-          npm run analyze
+          npm run build:analyze
           echo "Bundle analysis complete. Check the artifacts for details."

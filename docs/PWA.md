@@ -1,569 +1,98 @@
-# 📱 Progressive Web App (PWA) Guide
+# PWA Guide
 
-Your portfolio is configured as a Progressive Web App with offline support, caching strategies, and installability features.
+The app uses `vite-plugin-pwa` with the configuration in `src/pwa-config.ts`.
 
-## 🎯 What's Included
+## What the Current Setup Does
 
-### Core Features
+- generates `manifest.webmanifest` during production builds
+- generates `sw.js` and Workbox runtime files during production builds
+- precaches the built app shell and local assets
+- shows an in-app update prompt through `src/components/pwa-update-prompt`
+- keeps PWA features disabled in normal dev mode (`devOptions.enabled = false`)
 
-- ✅ **Offline Support** - Works without internet connection
-- ✅ **Installable** - Can be added to home screen on mobile/desktop
-- ✅ **Auto-Updates** - Automatically checks for and prompts updates
-- ✅ **Service Worker** - Handles caching and offline functionality
-- ✅ **Web App Manifest** - Defines app metadata and appearance
-- ✅ **Cache Strategies** - Optimized caching for different resource types
+## Key Files
 
-### Caching Strategies
+- `src/pwa-config.ts`
+- `src/hooks/usePWA.ts`
+- `src/components/pwa-update-prompt/index.tsx`
+- `vercel.json`
 
-| Resource Type  | Strategy               | Cache Duration |
-| -------------- | ---------------------- | -------------- |
-| Images (local) | Cache First            | 30 days        |
-| CSS/JS files   | Stale While Revalidate | 7 days         |
-| Google Fonts   | Cache First            | 1 year         |
-| API calls      | Network First          | 5 minutes      |
+## Manifest Assets
 
-## 🚀 Quick Start
+The manifest and included assets currently reference:
 
-### 1. Generate PWA Icons
+- `branding/JP-no-cursor.svg`
+- `favicons/favicon-48x48.png`
+- `favicons/apple-touch-icon.png`
+- `favicons/pwa-192x192.png`
+- `favicons/pwa-512x512.png`
+- `og/og-image.png`
+- `robots.txt`
+- `sitemap.xml`
 
-You need these icon files in your `public/` folder:
-
-- `branding/JP.svg` (primary SVG favicon/manifest icon, with cursor)
-- `favicons/favicon-48x48.png` (48 × 48 pixels, Google search + browser)
-- `favicons/apple-touch-icon.png` (180 × 180 pixels, iOS home screen)
-- `favicons/pwa-192x192.png` (192 × 192 pixels, Android/Chrome PWA, Windows)
-- `favicons/pwa-512x512.png` (512 × 512 pixels, PWA splash, app stores)
-
-#### Platform Coverage
-
-| Platform             | Icon(s)                  | Purpose                              |
-| -------------------- | ------------------------ | ------------------------------------ |
-| **Browser tab**      | SVG, 48 PNG              | Favicon                              |
-| **Google Search**    | 48×48 PNG                | Search result favicon                |
-| **Android / Chrome** | 192, 512 PNG             | PWA install, home screen             |
-| **iOS / Safari**     | 180×180, 512 PNG         | Add to Home Screen                   |
-| **Windows**          | 192 PNG                  | Start menu / taskbar tile            |
-| **Social (OG)**      | og/og-image.png 1200×630 | Facebook, Twitter, LinkedIn previews |
-
-#### Quickest Method: Script (Recommended)
-
-If you have `JP.svg` in `public/`, run:
+Generate the PNG icon set from the SVG source with:
 
 ```bash
 npm run generate:icons
 ```
 
-This generates all icon sizes from the SVG using sharp. Run whenever you update the logo.
+## Runtime Caching Rules
 
-#### Alternative: Online Generator
+| Pattern             | Strategy               | Notes                                                                   |
+| ------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| Remote images       | `CacheFirst`           | 30-day cache                                                            |
+| Remote JS and CSS   | `StaleWhileRevalidate` | 7-day cache                                                             |
+| Google Fonts URLs   | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
+| `/api/*` over HTTPS | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
 
-**Option 1: Favicon.io (Easiest)**
+Most local assets are handled by the precache, not those runtime rules.
 
-1. Go to [https://favicon.io/favicon-converter/](https://favicon.io/favicon-converter/)
-2. Upload your logo (PNG or JPG)
-3. Click "Download"
-4. Extract the zip file
-5. Copy `android-chrome-192x192.png` → Rename to `pwa-192x192.png`
-6. Copy `android-chrome-512x512.png` → Rename to `pwa-512x512.png`
-7. Move both files to your `public/` folder
-
-**Option 2: PWA Builder (Recommended)**
-
-1. Go to [https://www.pwabuilder.com/imageGenerator](https://www.pwabuilder.com/imageGenerator)
-2. Upload your logo (1024×1024 recommended)
-3. Adjust padding if needed
-4. Click "Download"
-5. Extract and rename:
-   - `android-chrome-192.png` → `pwa-192x192.png`
-   - `android-chrome-512.png` → `pwa-512x512.png`
-6. Move to `public/` folder
-
-**Option 3: Command Line**
+## Build and Preview
 
 ```bash
-# Install globally
-npm install -g pwa-asset-generator
-
-# Generate from a single source image (1024x1024 recommended)
-pwa-asset-generator path/to/JP.svg public/ \
-  --icon-only \
-  --type png \
-  --background "#242424" \
-  --padding "10%"
-```
-
-### 2. Build Your PWA
-
-```bash
-# Build for production (includes PWA generation)
 npm run build
-
-# Preview the PWA locally
 npm run start:prod
 ```
 
-The PWA assets are automatically generated during build:
+Use the production preview when testing service workers. Plain `npm run start:dev` does not enable the PWA.
 
-- Service Worker (`sw.js`)
-- Web App Manifest (`manifest.webmanifest`)
-- Workbox runtime files
+## Testing Checklist
 
-### 3. Test Your PWA
+1. Open the production preview.
+2. In DevTools, check `Application -> Manifest`.
+3. Confirm `sw.js` is registered under `Application -> Service Workers`.
+4. Reload once while online so the cache is populated.
+5. Switch DevTools to offline mode and verify the app shell still loads.
+6. Deploy a change and confirm the in-app update prompt appears.
 
-1. **Open Chrome DevTools:**
-   - Go to `Application` tab
-   - Check `Manifest` section (icons should be listed)
-   - Check `Service Workers` section (should be active)
-   - Test offline in `Network` tab
+## Common Issues
 
-2. **Lighthouse Audit:**
-   - Open Chrome DevTools
-   - Go to `Lighthouse` tab
-   - Run PWA audit
-   - Aim for 100% PWA score
+### Service worker never registers
 
-## 🔧 How It's Configured
+- Test a production build, not the dev server
+- Make sure the site is served over HTTPS or `localhost`
+- Confirm `dist/sw.js` exists after `npm run build`
 
-### Project Structure
+### Manifest does not load
 
-- **`src/pwa-config.ts`** - PWA configuration (manifest, workbox, etc.)
-- **`vite.config.ts`** - Includes `VitePWA` plugin
-- **`public/branding/JP.svg`** - Primary SVG icon for favicon + manifest
-- **`public/favicons/pwa-*.png`** - PNG app icons (192x192 and 512x512)
+- Check `vercel.json` for the explicit manifest headers
+- Confirm `dist/manifest.webmanifest` exists
+- Verify the CSP still includes `manifest-src 'self'`
 
-### Configuration Files
+### Old content sticks after deploy
 
-The PWA is configured via `src/pwa-config.ts`. Key settings:
+- The project uses `registerType: 'autoUpdate'`
+- The prompt component can trigger an immediate reload
+- If needed, clear site data in DevTools and reload once
 
-```typescript
-export const pwaConfig = {
-  includeAssets: [
-    'branding/JP-no-cursor.svg',
-    'favicons/pwa-192x192.png',
-    'favicons/pwa-512x512.png',
-  ],
-  manifest: {
-    name: 'JP Engineering', // Full app name
-    short_name: 'Portfolio', // Short name for home screen
-    description: '...', // App description
-    theme_color: '#242424', // Browser theme color
-    background_color: '#242424', // Splash screen background
-    display: 'standalone', // Display mode
-    icons: [
-      {
-        src: '/branding/JP-no-cursor.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
-      },
-      {
-        src: '/favicons/pwa-192x192.png',
-        sizes: '192x192',
-        type: 'image/png',
-      },
-      {
-        src: '/favicons/pwa-512x512.png',
-        sizes: '512x512',
-        type: 'image/png',
-      },
-    ],
-  },
-  workbox: {
-    // Increase default 2 MiB limit when using larger SVG assets
-    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-    // Caching strategies
-    runtimeCaching: [
-      /* ... */
-    ],
-  },
-};
-```
+## Deployment Notes
 
-## ⚙️ Customization
+- `VITE_SITE_URL` affects generated `sitemap.xml` and `robots.txt`
+- `VITE_SITE_URL` does not change the manifest asset paths
+- `vercel.json` sets headers for `manifest.webmanifest` and `sw.js`
 
-### Manifest Settings
+## Related Docs
 
-Edit `src/pwa-config.ts` to customize your PWA:
-
-```typescript
-manifest: {
-  name: 'JP Engineering',
-  short_name: 'Portfolio',
-  description: 'My personal portfolio website',
-  theme_color: '#242424',
-  background_color: '#242424',
-  display: 'standalone', // or 'fullscreen', 'minimal-ui', 'browser'
-  start_url: '/',
-  scope: '/',
-}
-```
-
-### Cache Configuration
-
-Customize caching strategies in `src/pwa-config.ts`:
-
-```typescript
-workbox: {
-  maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-  runtimeCaching: [
-    {
-      urlPattern: /your-pattern/,
-      handler: 'CacheFirst', // or NetworkFirst, StaleWhileRevalidate
-      options: {
-        cacheName: 'your-cache-name',
-        expiration: {
-          maxEntries: 50,
-          maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-        },
-      },
-    },
-  ],
-}
-```
-
-### Available Cache Strategies
-
-| Strategy                 | When to Use                | Behavior                               |
-| ------------------------ | -------------------------- | -------------------------------------- |
-| **CacheFirst**           | Static assets, images      | Check cache first, fallback to network |
-| **NetworkFirst**         | API calls, dynamic content | Try network first, fallback to cache   |
-| **StaleWhileRevalidate** | CSS, JS files              | Serve from cache, update in background |
-| **NetworkOnly**          | Always fresh data          | Never cache, always network            |
-| **CacheOnly**            | Offline-only content       | Never use network, only cache          |
-
-## 📱 Installation
-
-### Desktop (Chrome/Edge)
-
-Users will see an install button in the address bar:
-
-- Click the install icon (+) in the address bar
-- Or: Settings menu → "Install [App Name]"
-
-### Mobile (Android/iOS)
-
-**Android (Chrome):**
-
-- Tap menu (⋮) → "Add to Home Screen"
-- Or automatic install prompt
-
-**iOS (Safari):**
-
-- Tap share button (↑)
-- Scroll down and tap "Add to Home Screen"
-
-## 🔄 Update Flow
-
-When you deploy a new version:
-
-1. Service worker detects the update
-2. Update prompt appears to users
-3. User clicks "Reload"
-4. New version activates immediately
-
-### Force Update (Development)
-
-```bash
-# Unregister service worker in DevTools
-# Application → Service Workers → Unregister
-
-# Or use Skip Waiting
-# Application → Service Workers → Click "skipWaiting"
-```
-
-## 🧪 Testing
-
-### Testing Checklist
-
-- [ ] Icons load correctly in manifest
-- [ ] Service worker registers successfully
-- [ ] App works offline (disconnect network)
-- [ ] Update prompt appears when changes are made
-- [ ] App can be installed (look for install prompt)
-- [ ] Cache sizes are reasonable
-- [ ] Lighthouse PWA score is 90+
-
-### Testing Offline Mode
-
-1. Build and serve your app
-2. Open DevTools → Network tab
-3. Select "Offline" from throttling dropdown
-4. Reload the page
-5. App should still work! ✅
-
-### Check Icons in Browser
-
-1. Build your project: `npm run build`
-2. Open DevTools (F12)
-3. Go to **Application** tab
-4. Click **Manifest** in the sidebar
-5. Verify icons are listed and load correctly
-
-## 🎨 Icon Guidelines
-
-### Source Image Guidelines
-
-| Aspect      | Recommendation                        |
-| ----------- | ------------------------------------- |
-| **Size**    | 1024×1024 pixels (or larger)          |
-| **Format**  | PNG with transparent background       |
-| **Content** | Keep important elements in center 80% |
-| **Design**  | Simple, recognizable at small sizes   |
-| **Text**    | Avoid (or use large, bold text only)  |
-| **Colors**  | High contrast, 2-3 colors max         |
-
-### What Makes a Good PWA Icon?
-
-✅ **Good:**
-
-- Simple geometric shapes
-- Single letter/monogram
-- Iconic symbol
-- Bold colors
-- Transparent background
-
-❌ **Avoid:**
-
-- Complex illustrations
-- Small text
-- Detailed photos
-- Thin lines
-- Gradients (use sparingly)
-
-### Manual Creation (Photoshop/GIMP)
-
-1. **Open your logo** (high resolution)
-2. **Canvas size:** Make it square (e.g., 1024×1024)
-3. **Center your logo**
-4. **Add padding:** Keep logo in center ~80% area
-5. **Export 512×512:**
-   - File → Export → PNG
-   - Width: 512, Height: 512
-   - Name: `pwa-512x512.png`
-6. **Export 192×192:**
-   - Resize to 192×192
-   - Export as `pwa-192x192.png`
-7. **Move to `public/` folder**
-
-## 🚨 Troubleshooting
-
-### Service Worker Not Registering
-
-**Issue:** Service worker doesn't register in production
-
-**Solutions:**
-
-- Ensure site is served over HTTPS (or localhost)
-- Check browser console for errors
-- Verify `sw.js` exists in `dist/` after build
-- Clear browser cache and reload
-
-### Icons Not Showing
-
-**Issue:** PWA icons don't appear in manifest
-
-**Solutions:**
-
-- Verify icon files exist in `public/branding/` and `public/favicons/` folders
-- Check file names match exactly: `branding/JP.svg`, `favicons/pwa-192x192.png`, `favicons/pwa-512x512.png`
-- Rebuild the project: `npm run build`
-- Clear manifest cache in DevTools
-
-**If icons look blurry:**
-
-- Use a higher resolution source image
-- Export at exact sizes (don't let browser scale)
-- Use PNG format, not JPG
-
-### Offline Mode Not Working
-
-**Issue:** App doesn't work offline
-
-**Solutions:**
-
-- Check service worker status in DevTools
-- Verify caching strategies in `src/pwa-config.ts`
-- Test after visiting the site at least once while online
-- Check Network tab for cached requests
-
-### Build Fails Due to Large Icon in Precache
-
-**Issue:** Build fails with `missing-assets-from-sw-precache-manifest` for large SVG assets
-
-**Solutions:**
-
-- Set `workbox.maximumFileSizeToCacheInBytes` in `src/pwa-config.ts`
-- Example value used here: `4 * 1024 * 1024` (4 MiB)
-- Rebuild the project: `npm run build`
-
-### Old Content After Update
-
-**Issue:** Users see old content after deployment
-
-**Solutions:**
-
-- Ensure `updateServiceWorker(true)` is called on update
-- Set `skipWaiting: true` in workbox config
-- Clear all caches: DevTools → Application → Clear Storage
-
-### Manifest 401 Unauthorized Error
-
-**Issue:** Console error: "GET /manifest.webmanifest 401 (Unauthorized)"
-
-**Solutions:**
-
-1. **Add explicit manifest configuration in `vercel.json`:**
-
-```json
-{
-  "rewrites": [
-    {
-      "source": "/manifest.webmanifest",
-      "destination": "/manifest.webmanifest"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/manifest.webmanifest",
-      "headers": [
-        {
-          "key": "Content-Type",
-          "value": "application/manifest+json"
-        },
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    }
-  ]
-}
-```
-
-2. **Add `manifest-src` to CSP:**
-
-```
-Content-Security-Policy: manifest-src 'self';
-```
-
-3. **Verify manifest is generated:**
-
-```bash
-npm run build
-ls -la dist/manifest.webmanifest
-```
-
-### CSP Violation for Vercel Live Scripts
-
-**Issue:** Console error: "Refused to load the script 'https://vercel.live/_next-live/feedback/feedback.js'"
-
-**Solution:**
-
-Add `https://vercel.live` to your CSP in `vercel.json`:
-
-```json
-{
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "Content-Security-Policy",
-          "value": "script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live; connect-src 'self' https://vercel.live;"
-        }
-      ]
-    }
-  ]
-}
-```
-
-**Note:** This only affects Vercel preview deployments, not production.
-
-## 🚀 Production Deployment
-
-### Environment Variables
-
-Add to your Vercel deployment (Settings → Environment Variables):
-
-```env
-VITE_SITE_URL=https://yourdomain.com
-```
-
-This keeps sitemap and `robots.txt` generation aligned with your deployed origin. The manifest itself uses relative asset paths, so it does not depend on `VITE_SITE_URL`.
-
-### Deployment Checklist
-
-- [ ] PWA icons generated and in `public/`
-- [ ] `VITE_SITE_URL` environment variable set
-- [ ] Build succeeds without errors
-- [ ] Service worker generates correctly
-- [ ] Manifest is accessible and icons resolve correctly
-- [ ] HTTPS enabled (required for PWA)
-- [ ] Test PWA score with Lighthouse
-
-## 📊 Monitoring PWA Performance
-
-### Key Metrics to Track
-
-- **Install Rate:** How many users install your PWA
-- **Offline Usage:** How often users access offline
-- **Cache Hit Rate:** Percentage of requests served from cache
-- **Update Adoption:** How quickly users update to new versions
-
-### Using Chrome DevTools
-
-```
-DevTools → Application Tab:
-- Manifest: Check metadata and icons
-- Service Workers: Monitor status and updates
-- Cache Storage: View cached resources
-- Storage: Check storage usage
-```
-
-## 🔒 Security Considerations
-
-### HTTPS Required
-
-PWAs **require HTTPS** to work (except on localhost for development).
-
-### Content Security Policy (CSP)
-
-If you add CSP headers, allow service worker scripts:
-
-```
-Content-Security-Policy: script-src 'self' 'unsafe-inline'
-```
-
-### Cache Security
-
-- Don't cache sensitive user data
-- Use secure cache names
-- Clear caches on logout (if you have auth)
-
-## 💡 Pro Tips
-
-1. **Start Simple:** Begin with basic caching, optimize later
-2. **Test Offline:** Always test offline functionality before deploying
-3. **Monitor Size:** Keep service worker bundle size small
-4. **Update Frequently:** Don't let caches become stale
-5. **User Choice:** Always give users control over updates
-6. **Analytics:** Track PWA installation and usage metrics
-
-## 📚 Additional Resources
-
-### Documentation
-
-- [PWA Documentation](https://web.dev/progressive-web-apps/)
-- [Workbox Documentation](https://developers.google.com/web/tools/workbox)
-- [vite-plugin-pwa Docs](https://vite-pwa-org.netlify.app/)
-- [Web App Manifest](https://developer.mozilla.org/en-US/docs/Web/Manifest)
-- [Service Worker API](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API)
-
-### Icon Tools
-
-- [PWA Icons Guidelines](https://web.dev/add-manifest/#icons)
-- [Maskable Icons Editor](https://maskable.app/)
-- [Android Adaptive Icons](https://developer.android.com/develop/ui/views/launch/icon_design_adaptive)
-
----
-
-**Remember**: PWAs require HTTPS (except localhost). Always test offline functionality before deploying to production.
+- [Vercel deployment](VERCEL_DEPLOYMENT.md)
+- [Content Security Policy](CSP.md)
+- [SEO architecture](SEO.md)

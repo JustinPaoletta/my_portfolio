@@ -10,6 +10,9 @@ import { inlineCssPlugin } from './plugins/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
 
 const cssTargets = browserslistToTargets(browserslist());
+const packageJson = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')
+) as { version: string };
 
 /**
  * Plugin to exclude API directory from Vite processing
@@ -163,6 +166,7 @@ export default defineConfig(({ mode }) => {
       inlineCssPlugin(),
     ],
     define: {
+      __APP_VERSION__: JSON.stringify(packageJson.version),
       __ENABLE_ANALYTICS__: JSON.stringify(analyticsEnabled),
       __ENABLE_ERROR_MONITORING__: JSON.stringify(errorMonitoringEnabled),
       __ENABLE_DEBUG_TOOLS__: JSON.stringify(debugEnabled),

@@ -43,3 +43,4 @@ interface ImportMeta {
 declare const __ENABLE_ANALYTICS__: boolean;
 declare const __ENABLE_ERROR_MONITORING__: boolean;
 declare const __ENABLE_DEBUG_TOOLS__: boolean;
+declare const __APP_VERSION__: string;

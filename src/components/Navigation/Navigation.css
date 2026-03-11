@@ -129,6 +129,15 @@
   color: var(--color-primary-ink);
 }
 
+:root[data-color-mode='light'][data-theme='cosmic']
+  .navigation:not(.scrolled)
+  .nav-logo {
+  --jp-logo-primary: #f8f1ff;
+  --jp-logo-cursor: #ffffff;
+  filter: drop-shadow(0 1px 0 rgba(70, 38, 126, 0.34))
+    drop-shadow(0 8px 18px rgba(38, 14, 74, 0.28));
+}
+
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-link:hover,
 :root[data-color-mode='light'][data-theme='cosmic'] .nav-link.active {
   color: var(--color-primary-ink);
