@@ -222,75 +222,33 @@ function useHeroEnvironmentFlags(): number {
 
 interface CosmicHeroBackgroundProps {
   prefersReducedMotion: boolean;
-  prefersStillImage: boolean;
 }
 
 function CosmicHeroBackground({
   prefersReducedMotion,
-  prefersStillImage,
 }: CosmicHeroBackgroundProps): React.ReactElement {
+  if (prefersReducedMotion) {
+    return (
+      <div
+        className="hero-background"
+        data-cosmic-theme="true"
+        data-cosmic-video-ready="false"
+        aria-hidden="true"
+      >
+        <span className="hero-cosmic-still" />
+      </div>
+    );
+  }
+
+  return <ActiveCosmicHeroBackground />;
+}
+
+function ActiveCosmicHeroBackground(): React.ReactElement {
   const cosmicVideoRef = useRef<HTMLVideoElement>(null);
-  const [shouldLoadCosmicVideo, setShouldLoadCosmicVideo] = useState(false);
   const [isCosmicVideoReady, setIsCosmicVideoReady] = useState(false);
 
   useEffect(() => {
-    if (
-      prefersReducedMotion ||
-      prefersStillImage ||
-      typeof document === 'undefined'
-    ) {
-      return;
-    }
-
-    let timeoutId: number | undefined;
-    let idleId: number | undefined;
-
-    const queueVideoLoad = (): void => {
-      if (timeoutId !== undefined || idleId !== undefined) {
-        return;
-      }
-
-      if (document.visibilityState === 'hidden') {
-        return;
-      }
-
-      const startLoading = (): void => {
-        setShouldLoadCosmicVideo(true);
-      };
-
-      if (typeof window.requestIdleCallback === 'function') {
-        idleId = window.requestIdleCallback(startLoading, { timeout: 1800 });
-        return;
-      }
-
-      timeoutId = window.setTimeout(startLoading, 1200);
-    };
-
-    const handleVisibilityChange = (): void => {
-      if (!shouldLoadCosmicVideo && document.visibilityState === 'visible') {
-        queueVideoLoad();
-      }
-    };
-
-    queueVideoLoad();
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    return () => {
-      if (
-        idleId !== undefined &&
-        typeof window.cancelIdleCallback === 'function'
-      ) {
-        window.cancelIdleCallback(idleId);
-      }
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-    };
-  }, [prefersReducedMotion, prefersStillImage, shouldLoadCosmicVideo]);
-
-  useEffect(() => {
-    if (!shouldLoadCosmicVideo || typeof document === 'undefined') {
+    if (typeof document === 'undefined') {
       return;
     }
 
@@ -402,7 +360,7 @@ function CosmicHeroBackground({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       removeInteractionListeners();
     };
-  }, [shouldLoadCosmicVideo]);
+  }, []);
 
   return (
     <div
@@ -412,20 +370,18 @@ function CosmicHeroBackground({
       aria-hidden="true"
     >
       <span className="hero-cosmic-still" />
-      {shouldLoadCosmicVideo ? (
-        <video
-          ref={cosmicVideoRef}
-          className="hero-cosmic-video"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="none"
-          poster="/images/hero/cosmic/cosmos-first-frame.webp"
-        >
-          <source src="/video/cosmos.mp4" type="video/mp4" />
-        </video>
-      ) : null}
+      <video
+        ref={cosmicVideoRef}
+        className="hero-cosmic-video"
+        autoPlay
+        loop
+        muted
+        playsInline
+        preload="auto"
+        poster="/images/hero/cosmic/cosmos-first-frame.webp"
+      >
+        <source src="/video/cosmos.mp4" type="video/mp4" />
+      </video>
     </div>
   );
 }
@@ -522,10 +478,6 @@ function Hero(): React.ReactElement {
   const isCliTheme = themeName === 'cli';
   const prefersReducedMotion = Boolean(useReducedMotion());
   const heroEnvironmentFlags = useHeroEnvironmentFlags();
-  const prefersStillCosmicVideo = Boolean(
-    heroEnvironmentFlags &
-    (HERO_ENVIRONMENT_FLAGS.saveData | HERO_ENVIRONMENT_FLAGS.slowNetwork)
-  );
   const useCalmerElectronMotion = Boolean(
     heroEnvironmentFlags &
     (HERO_ENVIRONMENT_FLAGS.compactViewport |
@@ -617,11 +569,8 @@ function Hero(): React.ReactElement {
     >
       {isCosmicTheme ? (
         <CosmicHeroBackground
-          key={`${prefersReducedMotion ? 'reduced' : 'motion'}-${
-            prefersStillCosmicVideo ? 'still' : 'video'
-          }`}
+          key={prefersReducedMotion ? 'reduced' : 'motion'}
           prefersReducedMotion={prefersReducedMotion}
-          prefersStillImage={prefersStillCosmicVideo}
         />
       ) : (
         <div

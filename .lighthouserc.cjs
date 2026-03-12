@@ -1,6 +1,6 @@
 // Lighthouse CI Configuration
 
-const createAssertions = totalByteWeightBudget => ({
+const createAssertions = (totalByteWeightBudget) => ({
   // ============================================================
   // CATEGORY SCORES
   // Sites like Vercel, Netlify, and major apps score 0.80-0.90

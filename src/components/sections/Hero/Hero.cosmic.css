@@ -525,9 +525,10 @@
 }
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-name {
-  font-family: 'Space Grotesk', var(--font-sans);
+  font-family: 'Inter', var(--font-sans);
   font-size: calc(clamp(2.95rem, 8.9vw, 5.8rem) + 2px);
-  font-weight: 700;
+  font-weight: 800;
+  font-style: italic;
   letter-spacing: -0.045em;
 }
 

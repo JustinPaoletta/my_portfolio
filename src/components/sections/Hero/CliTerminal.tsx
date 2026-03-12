@@ -1097,8 +1097,8 @@ function CliTerminal(): React.ReactElement {
 
   const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
   const shouldAutoFocusPrompt = !isCompactLayout;
-  /** Height for options panel sized to fit all 10 main-menu options (5 rows × 2 cols) */
-  const compactOptionsPanelHeight = '16rem';
+  /** Height sized to fit all 10 main-menu options with larger tap targets (5 rows × 2 cols). */
+  const compactOptionsPanelHeight = '18rem';
 
   const focusPromptInput = (): void => {
     inputRef.current?.focus();
@@ -1233,7 +1233,7 @@ function CliTerminal(): React.ReactElement {
             display: 'grid',
             gridTemplateColumns: isCompactLayout
               ? '1fr'
-              : 'minmax(210px, 260px) minmax(0, 1fr)',
+              : 'minmax(230px, 290px) minmax(0, 1fr)',
             gridTemplateRows: isCompactLayout
               ? `1fr ${compactOptionsPanelHeight}`
               : undefined,
@@ -1253,10 +1253,10 @@ function CliTerminal(): React.ReactElement {
                 ? '1px solid var(--border-subtle)'
                 : 'none',
               background: 'var(--bg-card)',
-              padding: '0.7rem 0.65rem',
+              padding: '0.85rem 0.8rem',
               display: 'flex',
               flexDirection: 'column',
-              gap: '0.55rem',
+              gap: '0.7rem',
               minHeight: isCompactLayout ? compactOptionsPanelHeight : 0,
               maxHeight: isCompactLayout ? compactOptionsPanelHeight : 'none',
               flexShrink: isCompactLayout ? 0 : undefined,
@@ -1268,10 +1268,17 @@ function CliTerminal(): React.ReactElement {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
-                gap: '0.5rem',
+                gap: '0.65rem',
               }}
             >
-              <p className="cli-line cli-line--system" style={{ margin: 0 }}>
+              <p
+                className="cli-line cli-line--system"
+                style={{
+                  margin: 0,
+                  fontSize: '1.04rem',
+                  letterSpacing: '0.08em',
+                }}
+              >
                 Options
               </p>
               {isCompactLayout ? (
@@ -1279,7 +1286,7 @@ function CliTerminal(): React.ReactElement {
                   style={{
                     alignItems: 'center',
                     display: 'inline-flex',
-                    gap: '0.35rem',
+                    gap: '0.45rem',
                   }}
                 >
                   <button
@@ -1291,14 +1298,14 @@ function CliTerminal(): React.ReactElement {
                     aria-label="Previous list"
                     title="Previous list"
                     style={{
-                      width: '3.1rem',
-                      height: '2rem',
+                      width: '3.5rem',
+                      height: '2.35rem',
                       border: '1px solid var(--border-subtle)',
                       borderRadius: '8px',
                       background: 'var(--bg-main)',
                       color: 'var(--text-primary)',
                       fontFamily: 'inherit',
-                      fontSize: '0.74rem',
+                      fontSize: '0.9rem',
                       fontWeight: 700,
                       lineHeight: 1,
                       display: 'inline-flex',
@@ -1319,20 +1326,20 @@ function CliTerminal(): React.ReactElement {
                     aria-label="Run selected option"
                     title="Run selected option"
                     style={{
-                      width: '4.5rem',
-                      height: '2rem',
+                      width: '5rem',
+                      height: '2.35rem',
                       border: '1px solid var(--border-subtle)',
                       borderRadius: '8px',
                       background: 'var(--bg-main)',
                       color: 'var(--text-primary)',
                       fontFamily: 'inherit',
-                      fontSize: '0.74rem',
+                      fontSize: '0.9rem',
                       fontWeight: 700,
                       lineHeight: 1,
                       display: 'inline-flex',
                       alignItems: 'center',
                       justifyContent: 'center',
-                      gap: '0.25rem',
+                      gap: '0.35rem',
                       padding: 0,
                       touchAction: 'manipulation',
                     }}
@@ -1351,7 +1358,7 @@ function CliTerminal(): React.ReactElement {
                 flexDirection: isCompactLayout ? 'row' : 'column',
                 flexWrap: isCompactLayout ? 'wrap' : 'nowrap',
                 flex: 1,
-                gap: '0.35rem',
+                gap: '0.45rem',
                 overflowY: 'auto',
                 alignContent: isCompactLayout ? 'flex-start' : undefined,
                 minHeight: 0,
@@ -1363,7 +1370,7 @@ function CliTerminal(): React.ReactElement {
                   <li
                     key={`${context}-${option.value}-${option.label}`}
                     style={{
-                      minWidth: isCompactLayout ? 'calc(50% - 0.35rem)' : 0,
+                      minWidth: isCompactLayout ? 'calc(50% - 0.45rem)' : 0,
                     }}
                   >
                     <button
@@ -1385,13 +1392,13 @@ function CliTerminal(): React.ReactElement {
                           ? 'var(--bg-card-hover)'
                           : 'var(--bg-main)',
                         color: 'var(--text-primary)',
-                        padding: '0.42rem 0.46rem',
+                        padding: '0.58rem 0.7rem',
                         display: 'flex',
-                        gap: '0.4rem',
+                        gap: '0.55rem',
                         alignItems: 'center',
-                        fontSize: '0.72rem',
+                        fontSize: '0.98rem',
                         fontFamily: 'inherit',
-                        lineHeight: 1.25,
+                        lineHeight: 1.32,
                       }}
                     >
                       <span style={{ opacity: 0.75, minWidth: '2ch' }}>
