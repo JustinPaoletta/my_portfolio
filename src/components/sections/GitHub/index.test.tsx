@@ -8,6 +8,7 @@ interface GitHubSectionState {
     login: string;
     name: string | null;
     avatar_url: string;
+    html_url: string;
     public_repos: number;
     followers: number;
     following: number;
@@ -25,6 +26,7 @@ let githubState: GitHubSectionState = {
     login: 'justin',
     name: 'Justin',
     avatar_url: 'https://example.com/avatar.png',
+    html_url: 'https://github.com/justin',
     public_repos: 42,
     followers: 8,
     following: 2,
@@ -78,6 +80,7 @@ describe('GitHub section', () => {
         login: 'justin',
         name: 'Justin',
         avatar_url: 'https://example.com/avatar.png',
+        html_url: 'https://github.com/justin',
         public_repos: 42,
         followers: 8,
         following: 2,
@@ -103,7 +106,7 @@ describe('GitHub section', () => {
     );
     expect(
       screen.getByRole('link', { name: 'View Full Profile on GitHub' })
-    ).toBeInTheDocument();
+    ).toHaveAttribute('href', 'https://github.com/justin');
   });
 
   it('renders loading and error states while hiding missing profile data branches', () => {
@@ -130,6 +133,7 @@ describe('GitHub section', () => {
         login: 'justin',
         name: null,
         avatar_url: 'https://example.com/avatar.png',
+        html_url: 'https://github.com/justin',
         public_repos: 10,
         followers: 1,
         following: 1,
