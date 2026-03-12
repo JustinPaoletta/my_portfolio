@@ -232,33 +232,58 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
         const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
         const video =
           document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
+        const content = document.querySelector<HTMLElement>('.hero-content');
         const name = document.querySelector<HTMLElement>('.hero-name-text');
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
+        const nameHeading = document.querySelector<HTMLElement>('.hero-name');
+        const navLogo = document.querySelector<HTMLElement>('.nav-logo');
 
-        if (!hero || !still || !video || !name || !greeting) {
+        if (
+          !hero ||
+          !still ||
+          !video ||
+          !content ||
+          !name ||
+          !greeting ||
+          !nameHeading ||
+          !navLogo
+        ) {
           return null;
         }
 
         const heroStyles = getComputedStyle(hero);
+        const contentStyles = getComputedStyle(content);
         const beforeStyles = getComputedStyle(hero, '::before');
 
         return {
           heroBackground: heroStyles.backgroundImage,
           beforeBackground: beforeStyles.backgroundColor,
+          contentBackground: contentStyles.backgroundImage,
           stillOpacity: Number.parseFloat(getComputedStyle(still).opacity),
           videoOpacity: Number.parseFloat(getComputedStyle(video).opacity),
           nameColor: getComputedStyle(name).color,
           greetingColor: getComputedStyle(greeting).color,
+          contentFontFamily: getComputedStyle(content).fontFamily,
+          greetingFontFamily: getComputedStyle(greeting).fontFamily,
+          nameFontFamily: getComputedStyle(nameHeading).fontFamily,
+          navLogoPrimary: getComputedStyle(navLogo)
+            .getPropertyValue('--jp-logo-primary')
+            .trim(),
         };
       });
     })
     .toEqual({
-      heroBackground: expect.stringContaining('rgb(239, 226, 246)'),
+      heroBackground: expect.stringContaining('rgb(159, 131, 190)'),
       beforeBackground: 'rgba(0, 0, 0, 0)',
-      stillOpacity: 0.3,
+      contentBackground: 'none',
+      stillOpacity: 0.4,
       videoOpacity: 0,
       nameColor: 'rgb(20, 5, 31)',
-      greetingColor: 'rgb(92, 31, 153)',
+      greetingColor: 'rgb(255, 255, 255)',
+      contentFontFamily: expect.stringContaining('Space Grotesk'),
+      greetingFontFamily: expect.stringContaining('Space Grotesk'),
+      nameFontFamily: expect.stringContaining('Inter'),
+      navLogoPrimary: '#f8f1ff',
     });
 });
 

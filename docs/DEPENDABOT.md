@@ -8,7 +8,7 @@ Dependabot is configured to automatically keep your dependencies up to date by c
 
 ### Update Schedule
 
-- **Frequency**: Weekly (every Monday at 9:00 AM EST)
+- **Frequency**: Weekly (every Monday at 9:00 AM America/New_York / Eastern Time)
 - **Maximum Open PRs**: 10 at a time
 
 ### Grouped Updates
@@ -67,6 +67,11 @@ All Dependabot PRs are automatically tagged with:
 - `dependencies` - for npm updates
 - `dependabot` - to identify bot-created PRs
 - `github-actions` - for workflow updates (when applicable)
+
+The repo currently has two Dependabot update blocks:
+
+- `npm` for package updates
+- `github-actions` for workflow updates
 
 ## Customization
 

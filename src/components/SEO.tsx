@@ -22,18 +22,21 @@
 
 import { Helmet } from 'react-helmet-async';
 import {
+  DEFAULT_LANGUAGE,
+  DEFAULT_OG_IMAGE_ALT,
   defaultSEO,
   getPageTitle,
   getBrowserTabTitle,
   getFullUrl,
+  getRobotsContent,
 } from '@/config/seo';
 import type { SEOConfig } from '@/config/seo';
 
 interface SEOProps extends Partial<SEOConfig> {
-  // additional props
   canonical?: string;
   noindex?: boolean;
   nofollow?: boolean;
+  imageAlt?: string;
 }
 
 export const SEO: React.FC<SEOProps> = ({
@@ -49,16 +52,17 @@ export const SEO: React.FC<SEOProps> = ({
   canonical,
   noindex = false,
   nofollow = false,
+  imageAlt = DEFAULT_OG_IMAGE_ALT,
 }) => {
   const seoTitle = getPageTitle(title);
   const browserTabTitle = getBrowserTabTitle(title);
   const fullImageUrl = image?.startsWith('http') ? image : getFullUrl(image);
-  const canonicalUrl = canonical || siteUrl;
-
-  const robotsContent = [
-    noindex ? 'noindex' : 'index',
-    nofollow ? 'nofollow' : 'follow',
-  ].join(', ');
+  const canonicalBaseUrl = (siteUrl || defaultSEO.siteUrl || '').replace(
+    /\/$/,
+    ''
+  );
+  const canonicalUrl = canonical || `${canonicalBaseUrl}/`;
+  const robotsContent = getRobotsContent(noindex, nofollow);
 
   return (
     <Helmet>
@@ -81,6 +85,7 @@ export const SEO: React.FC<SEOProps> = ({
       <meta property="og:title" content={seoTitle} />
       <meta property="og:description" content={description} />
       {image && <meta property="og:image" content={fullImageUrl} />}
+      {image && <meta property="og:image:alt" content={imageAlt} />}
       {locale && <meta property="og:locale" content={locale} />}
       <meta property="og:site_name" content={defaultSEO.title} />
 
@@ -90,13 +95,14 @@ export const SEO: React.FC<SEOProps> = ({
       <meta name="twitter:title" content={seoTitle} />
       <meta name="twitter:description" content={description} />
       {image && <meta name="twitter:image" content={fullImageUrl} />}
+      {image && <meta name="twitter:image:alt" content={imageAlt} />}
       {twitterHandle && <meta name="twitter:creator" content={twitterHandle} />}
       {twitterHandle && <meta name="twitter:site" content={twitterHandle} />}
 
       {/* additional SEO tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
-      <meta name="language" content="English" />
+      <meta name="language" content={DEFAULT_LANGUAGE} />
     </Helmet>
   );
 };

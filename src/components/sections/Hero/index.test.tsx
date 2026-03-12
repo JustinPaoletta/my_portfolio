@@ -336,6 +336,7 @@ describe('Hero section', () => {
       'poster',
       '/images/hero/cosmic/cosmos-first-frame.webp'
     );
+    expect(video).toHaveAttribute('preload', 'auto');
     const source = video.querySelector('source');
     expect(source).toHaveAttribute('src', '/video/cosmos.mp4');
 
@@ -392,5 +393,28 @@ describe('Hero section', () => {
       window.dispatchEvent(new Event('pointerdown'));
     });
     expect(playSpy.mock.calls.length).toBe(callsAfterFirstInteraction);
+  });
+
+  it('loads the cosmic video even when save-data is enabled', async () => {
+    installEngineerMatchMediaMock();
+    Object.defineProperty(navigator, 'connection', {
+      configurable: true,
+      value: { saveData: true, effectiveType: '3g' },
+    });
+
+    const playSpy = vi
+      .spyOn(HTMLMediaElement.prototype, 'play')
+      .mockResolvedValue(undefined);
+
+    themeName = 'cosmic';
+
+    const view = render(<Hero />);
+    const video = view.container.querySelector('.hero-cosmic-video');
+    expect(video).toBeInTheDocument();
+    expect(video).toHaveAttribute('preload', 'auto');
+
+    await waitFor(() => {
+      expect(playSpy).toHaveBeenCalled();
+    });
   });
 });

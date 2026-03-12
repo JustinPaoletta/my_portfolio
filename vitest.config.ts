@@ -1,6 +1,7 @@
 import { defineConfig } from 'vitest/config';
 import { loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
+import fs from 'node:fs';
 import path from 'path';
 
 // Default test environment values for CI/CD where .env files don't exist
@@ -20,13 +21,15 @@ const testEnvDefaults: Record<string, string> = {
   VITE_NEWRELIC_LICENSE_KEY: '',
   VITE_NEWRELIC_APPLICATION_ID: '',
   VITE_NEWRELIC_AJAX_DENY_LIST: '',
-  VITE_APP_VERSION: '1.0.0',
   VITE_GITHUB_URL: 'https://github.com/test',
   VITE_LINKEDIN_URL: 'https://linkedin.com/in/test',
   VITE_EMAIL: 'test@example.com',
   VITE_SITE_URL: 'https://test.example.com',
   VITE_MAPBOX_TOKEN: '',
 };
+const packageJson = JSON.parse(
+  fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')
+) as { version: string };
 
 export default defineConfig(({ mode }) => {
   const testMode = mode || 'test';
@@ -48,6 +51,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'import.meta.env.MODE': JSON.stringify(testMode),
+      __APP_VERSION__: JSON.stringify(packageJson.version),
       __ENABLE_ANALYTICS__: JSON.stringify(false),
       __ENABLE_ERROR_MONITORING__: JSON.stringify(false),
       __ENABLE_DEBUG_TOOLS__: JSON.stringify(false),

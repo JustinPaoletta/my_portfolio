@@ -1,271 +1,113 @@
 # My Portfolio
 
-A modern, performant portfolio website showcasing my projects and skills. Built with production-grade tooling including comprehensive testing and analytics integration.
+A React 19 portfolio site with multiple visual themes, homepage prerendering, strong SEO defaults, PWA support, and optional Vercel-backed integrations for contact, GitHub data, and pet stats.
 
-## 🌐 Live Site
+## Live Site
 
-**[View Portfolio](https://jpengineering.dev/)**
+[jpengineering.dev](https://jpengineering.dev/)
 
-## ✨ Features
+## Highlights
 
-- **Progressive Web App (PWA)** - Installable, works offline, auto-updates
-- **Responsive Design** - Mobile-first, works seamlessly on all devices
-- **Interactive CLI Theme** - Fullscreen terminal experience with keyboard-first navigation and command-driven portfolio browsing
-- **Accessibility First** - Built with accessibility best practices and ESLint a11y linting
-- **SEO Optimized** - Dynamic meta tags, automated sitemap generation, robots.txt
-- **Privacy-Friendly Analytics** - Umami integration for visitor tracking
-- **Error Monitoring** - New Relic integration for real-time error tracking and performance monitoring
-- **Type-Safe** - Full TypeScript coverage for robust development
-- **Comprehensive Testing** - Unit and E2E tests included
-- **Performance Optimized** - Strict bundle size budgets with smart caching
-- **Modern Tooling** - ESLint, Prettier, Husky git hooks, and conventional commits
-- **Production Ready** - Optimized for Vercel deployment with auto-deploy
+- Four presentation modes: `engineer`, `cosmic`, `cli`, and `minimal`
+- Keyboard-first JP_CLI theme with command aliases and drill-in menus
+- Homepage prerendering during `npm run build` for crawler-visible HTML
+- Generated `sitemap.xml` and `robots.txt`
+- Installable PWA with update prompts and offline asset caching
+- Optional Umami analytics and New Relic browser monitoring
+- Optional GitHub GraphQL proxy and Upstash-backed pet stats APIs on Vercel
+- Unit tests, Playwright E2E coverage, Lighthouse CI, and bundle-size budgets
 
-## 🚀 Setup Instructions
+## Prerequisites
 
-### Prerequisites
+- Node.js 20 recommended
+- npm
 
-- Node.js (v18 or higher recommended)
-- npm or yarn
+## Local Setup
 
-### Installation
+1. Clone the repo.
+2. Install dependencies:
 
-1. **Clone the repository**
+   ```bash
+   npm install
+   ```
 
-```bash
-git clone https://github.com/JustinPaoletta/my_portfolio.git
-cd my-portfolio
-```
+3. Create your local env file:
 
-2. **Install dependencies**
+   ```bash
+   cp .env.example .env
+   ```
 
-```bash
-npm install
-```
+4. Update the required `VITE_*` values in `.env`.
+5. Start the frontend dev server:
 
-3. **Set up environment variables** (optional)
-   - See [ENV.md](docs/ENV.md) for configuration details
-   - Configure Umami analytics, etc.
+   ```bash
+   npm run start:dev
+   ```
 
-4. **Start the development server**
+6. Open `http://localhost:5173`.
 
-```bash
-npm run start:dev
-```
+`npm run start:dev` serves the frontend only. If you need the local Vercel functions under `/api/*`, run `npm run start:vercel` instead.
 
-5. **Open your browser**
-   - Navigate to `http://localhost:5173`
+## Common Scripts
 
-### Build for Production
+- `npm run start:dev` - start the Vite dev server
+- `npm run start:vercel` - run the app through `vercel dev` with local serverless functions
+- `npm run build` - type-check, run contrast checks, build, generate sitemap/robots, and prerender the homepage
+- `npm run start:prod` - build and preview the production output on port `4173`
+- `npm test` - run Vitest in watch mode
+- `npm run test:unit` - run unit tests once
+- `npm run test:coverage` - run unit tests with coverage output
+- `npm run test:e2e` - run Playwright E2E tests locally across Chromium, Firefox, and WebKit
+- `npm run lighthouse` - run Lighthouse CI locally with the checked-in config
+- `npm run build:analyze` - build with bundle analysis output
+- `npm run lint:ci` - type-check, eslint, and prettier in check mode
+- `npm run lint:fix` - type-check, then fix lint and formatting issues
 
-```bash
-npm run start:prod  # Preview production build
-```
+## Environment Overview
 
-## 📜 NPM Scripts Reference
+Client-side configuration lives in `VITE_*` variables and is validated in [`src/config/env.ts`](src/config/env.ts).
 
-This project includes a comprehensive set of npm scripts for development, testing, building, and deployment. Here's a complete reference:
+Server-only Vercel functions use unprefixed environment variables:
 
-### 🏗️ Build Scripts
+- `GITHUB_TOKEN` for `/api/github`
+- `KV_REST_API_URL` and `KV_REST_API_TOKEN` for `/api/pet-dogs`
+- `RESEND_API_KEY`, `CONTACT_EMAIL`, and `RESEND_FROM_EMAIL` for `/api/contact`
 
-- **`npm run build`** - Build the project for production. Runs type-check first, then Vite build.
-- **`npm run build:analyze`** - Build with analysis mode and open bundle visualizer to analyze bundle composition and identify optimization opportunities.
+See [docs/ENV.md](docs/ENV.md) for the full matrix.
 
-### 🧹 Cleanup Scripts
+## Tech Stack
 
-- **`npm run clean:cache`** - Remove cache and build artifacts (keeps `node_modules`): `dist`, `coverage`, `.vite`, `.lighthouseci`, `playwright-report`, and `test-results`.
-- **`npm run nuke`** - Remove all generated files including `node_modules` and `package-lock.json`: `node_modules`, `package-lock.json`, `dist`, `coverage`, `.vite`, `.lighthouseci`, `playwright-report`, and `test-results`.
+- React 19
+- TypeScript 5.9
+- rolldown-backed Vite
+- Valibot for runtime env validation
+- Vitest, Testing Library, and Playwright
+- `vite-plugin-pwa` and Workbox
+- `react-helmet-async` for runtime metadata
+- Umami, New Relic Browser Agent, and Upstash Redis
 
-### 🔍 Code Quality & Type Checking Scripts
+## Quality Gates
 
-- **`npm run type-check`** - Run TypeScript type checking without emitting files. Validates type safety across the entire codebase.
-- **`npm run type-check:watch`** - Run TypeScript type checking in watch mode (re-checks on file changes).
-- **`npm run lint:ci`** - Run type-check, ESLint, and Prettier in check mode (CI-friendly, exits with error if issues found).
-- **`npm run lint:fix`** - Run type-check, then automatically fix linting and formatting issues using ESLint and Prettier.
+- `npm run build` enforces bundle-size limits from [`vite.config.ts`](vite.config.ts) and rewrites the production homepage with prerendered HTML
+- Vitest coverage thresholds are `90%` for lines, functions, branches, and statements
+- Playwright can target a custom preview URL with `PLAYWRIGHT_BASE_URL`
+- CI runs Chromium-only E2E tests, Lighthouse audits, and bundle-size checks
 
-### 🚀 Development & Preview Scripts
+## Documentation
 
-- **`npm run start:dev`** - Start the Vite development server with hot module replacement (HMR).
-- **`npm run start:prod`** - Build the project and start a production preview server on port 4173.
-
-### 🧪 Testing Scripts
-
-#### Unit Tests
-
-- **`npm test`** - Run Vitest in watch mode (re-runs tests on file changes).
-- **`npm run test:unit`** - Run unit tests once and exit (used in CI and pre-push hooks).
-- **`npm run test:ui`** - Open Vitest UI for interactive test running and debugging.
-- **`npm run test:coverage`** - Run tests once and generate coverage report.
-- **`npm run test:coverage:ui`** - Run tests with coverage and open Vitest UI.
-
-#### End-to-End Tests
-
-- **`npm run test:e2e`** - Run all Playwright E2E tests across configured browsers.
-- **`npm run test:e2e:ui`** - Run E2E tests with Playwright UI mode for interactive debugging.
-- **`npm run test:e2e:debug`** - Run E2E tests in debug mode with Playwright Inspector.
-
-### 📊 Performance & Analysis Scripts
-
-- **`npm run lighthouse`** - Run Lighthouse CI audits. Builds the project, starts a local server, and runs Lighthouse tests with assertions.
-- **`npm run build:analyze`** - Build with analysis mode and open bundle visualizer.
-
-### 📝 SEO & Sitemap Scripts
-
-- **`npm run sitemap:generate`** - Generate or update `sitemap.xml` and `robots.txt` files based on route configuration.
-
-### 🏷️ Release & Versioning Scripts
-
-- **`npm run release`** - Automatically determine version bump (patch/minor/major) based on commit messages and create a release with changelog.
-- **`npm run release:check`** - Validate that `CHANGELOG.md`, `package.json`, and `package-lock.json` satisfy the PR release guard rules.
-- **`npm run release:patch`** - Create a patch release (1.0.X) - bug fixes.
-- **`npm run release:minor`** - Create a minor release (1.X.0) - new features, backward compatible.
-- **`npm run release:major`** - Create a major release (X.0.0) - breaking changes.
-- **`npm run release:dry-run`** - Preview what the release would do without making any changes.
-
-### ⚙️ Setup Scripts
-
-- **`npm run prepare`** - Husky setup script (runs automatically after `npm install`). Initializes git hooks.
-
-### Run Tests
-
-```bash
-npm test                  # Unit tests (watch mode)
-npm run test:unit         # Unit tests (run once)
-npm run test:coverage     # Tests with coverage report
-npm run test:e2e          # End-to-end tests
-```
-
-### Code Quality & Type Safety
-
-```bash
-npm run type-check        # Check TypeScript types
-npm run type-check:watch  # Watch mode type checking
-npm run lint:fix          # Fix linting, formatting, and type issues
-npm run build:analyze     # Analyze bundle size
-```
-
-### Releases & Versioning
-
-```bash
-npm run release           # Create a new release (auto-determines version)
-npm run release:check     # Validate changelog + version bump requirements
-npm run release:patch     # Patch release (1.0.X)
-npm run release:minor     # Minor release (1.X.0)
-npm run release:major     # Major release (X.0.0)
-npm run release:dry-run   # Preview release without changes
-```
-
-Every pull request targeting `main` or `master` must also update `CHANGELOG.md` and bump the version in `package.json` and `package-lock.json`.
-
-See [CHANGELOG.md](CHANGELOG.md) for release history and [docs/CHANGELOG_GUIDE.md](docs/CHANGELOG_GUIDE.md) for details.
-
-## 🛠️ Tech Stack
-
-### Core
-
-- **React 19.1.1** - Latest version with latest features
-- **TypeScript 5.9.3** - Type-safe JavaScript with strict mode
-- **Vite (rolldown-vite 7.1.14)** - Lightning-fast build tool with advanced bundling
-- **Valibot 1.2.0** - Runtime type validation for environment variables
-
-### Testing
-
-- **Vitest 4.0.5** - Unit testing framework with fast refresh
-- **Playwright 1.56.1** - End-to-end testing with multi-browser support (Chromium, Firefox, WebKit)
-- **Testing Library** - React component testing with accessibility best practices
-- **Coverage reporting** - V8 provider with coverage thresholds (85%)
-
-### Code Quality & Workflow
-
-- **ESLint 9.39.1** - JavaScript/TypeScript linting with strict a11y rules
-- **Prettier 3.6.2** - Code formatting with automatic enforcement
-- **Husky 9.1.7** - Git hooks for pre-commit and pre-push validation
-- **lint-staged 16.2.7** - Run linters on staged files only
-- **Commitlint 20.1.0** - Enforce conventional commits format
-- **commit-and-tag-version 12.6.0** - Automated changelog and semantic versioning
-- **TypeScript strict mode** - Full type safety with `useUnknownInCatchVariables` for proper error handling
-
-### PWA & Performance
-
-- **vite-plugin-pwa** - Progressive Web App support
-- **Workbox** - Service worker and offline caching
-- **Smart Caching** - Cache-first for static, network-first for dynamic content
-
-### Developer Experience
-
-- **React Helmet Async** - Dynamic SEO meta tags
-- **Umami** - Privacy-friendly analytics
-- **New Relic Browser** - Real-time error and performance monitoring
-- **VS Code Debugging** - Integrated debugging configurations
-
-### Accessibility
-
-- **eslint-plugin-jsx-a11y** - JSX accessibility linting
-
-## 📚 Additional Documentation
-
-### Development Guides
-
-- **[VS Code Debugging Guide](docs/VSCODE_DEBUGGING.md)** - Debug configurations and workflows
-- **[Git Hooks Guide](docs/GIT_HOOKS.md)** - Pre-commit, pre-push, and other hooks
-- **[Commit Conventions](docs/COMMIT_CONVENTION.md)** - Git commit guidelines
-- **[Changelog & Releases](docs/CHANGELOG_GUIDE.md)** - Version management with commit-and-tag-version
-- **[Workspace Info](docs/WORKSPACE.md)** - Project structure
-- **[Dependabot Setup](docs/DEPENDABOT.md)** - Automated dependency updates
-- **[Vercel Deployment](docs/VERCEL_DEPLOYMENT.md)** - Deployment configuration and best practices
-- **[CLI Theme Guide](docs/CLI_THEME.md)** - CLI layout, controls, command reference, and exit behavior
-
-### Integrations & Services
-
-- **[PWA Guide](docs/PWA.md)** - Progressive Web App configuration, offline support, and icon setup
-- **[Analytics Guide](docs/ANALYTICS.md)** - Umami integration and usage guide
-- **[New Relic Setup](docs/NEWRELIC.md)** - Error monitoring and performance tracking
-- **[SEO Guide](docs/SEO.md)** - SEO configuration and best practices
-- **[Environment Variables](docs/ENV.md)** - Environment variable configuration and validation
-
-### Security
-
-- **[Content Security Policy](docs/CSP.md)** - CSP configuration and security setup
-
-### Performance & Monitoring
-
-- **[Performance Budget](docs/PERFORMANCE_BUDGET.md)** - Bundle size limits
-- **[Bundle Size Testing](docs/BUNDLE_SIZE_TEST.md)** - Performance monitoring
-- **[Lighthouse CI](docs/LIGHTHOUSE_CI.md)** - Automated performance auditing
-
-## 🔒 Security & Quality Assurance
-
-### Type Safety & Error Handling
-
-- **Strict TypeScript Configuration**
-  - `strict: true` - Strict type checking enabled
-  - `useUnknownInCatchVariables: true` - Enforces proper error handling (no implicit `any` in catch blocks)
-  - `noUnusedLocals: true` - Catches unused variables
-  - `noUnusedParameters: true` - Catches unused function parameters
-  - `forceConsistentCasingInFileNames: true` - Prevents subtle bugs from file path issues
-- **Runtime Validation** - Environment variables validated using Valibot with detailed error messages
-
-### Bundle Size Management
-
-- Strict bundle size budgeting (700 KB total, 155 KB app chunk, 85 KB CSS)
-- Intelligent chunk splitting (React, New Relic, and other vendors in separate chunks)
-- Lazy loading and code splitting for optimal performance
-- Tree shaking optimizations and aggressive minification
-
-### Accessibility Standards
-
-- Full ESLint a11y linting with strict rules
-- WCAG compliance built into development workflow
-- Semantic HTML enforcement
-- Keyboard navigation support requirements
-
-### Testing & CI/CD
-
-- **E2E Testing**: Playwright with video capture on failure, multiple reporters (HTML, JSON, JUnit)
-- **Unit Testing**: Vitest with 85% coverage thresholds across all metrics
-- **Type Checking**: Automatic validation in build and lint scripts
-- **Environment Variables**: Configurable baseURL for Playwright tests via `PLAYWRIGHT_BASE_URL` env var
-
-## 📄 License
-
-Private project
+- [Environment variables](docs/ENV.md)
+- [Vercel deployment](docs/VERCEL_DEPLOYMENT.md)
+- [SEO architecture](docs/SEO.md)
+- [PWA guide](docs/PWA.md)
+- [Observability](docs/OBSERVABILITY.md)
+- [Content Security Policy](docs/CSP.md)
+- [Performance & quality gates](docs/PERFORMANCE_QUALITY.md)
+- [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
+- [Dependabot](docs/DEPENDABOT.md)
+- [JP_CLI theme](docs/JP_CLI.md)
+- [Workspace & debugging](docs/WORKSPACE_DEBUGGING.md)
+- [Pet Dogs API](docs/PET_DOGS_API.md)
+
+## License
+
+Private project.

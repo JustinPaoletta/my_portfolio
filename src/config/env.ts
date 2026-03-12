@@ -114,14 +114,6 @@ const envSchema = v.object({
     )
   ),
 
-  VITE_APP_VERSION: v.pipe(
-    v.fallback(v.string(), '1.0.0'),
-    v.regex(
-      /^\d+\.\d+\.\d+$/,
-      'App version must be in semver format (e.g., 1.0.0)'
-    )
-  ),
-
   VITE_GITHUB_URL: v.pipe(
     v.string(),
     v.url('GitHub URL must be a valid URL'),
@@ -242,7 +234,7 @@ export const env = {
   app: {
     title: validatedEnv.VITE_APP_TITLE,
     description: validatedEnv.VITE_APP_DESCRIPTION,
-    version: validatedEnv.VITE_APP_VERSION,
+    version: __APP_VERSION__,
     isDevelopment: import.meta.env.DEV,
     isProduction: import.meta.env.PROD,
     mode: import.meta.env.MODE,

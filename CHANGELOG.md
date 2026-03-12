@@ -9,15 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- No unreleased changes yet.
+- Homepage prerendering during production builds so crawlers receive
+  rendered homepage HTML.
 
 ### Changed
+
+- SEO metadata, structured data, and sitemap output for improved search
+  visibility and richer link previews.
 
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- Prerender server cleanup when Chromium launch fails during build-time
+  rendering.
 
 ### Security
 
@@ -86,33 +93,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 ---
-
-## How to Update This Changelog
-
-### Automated (Recommended)
-
-Use `npm run release` to automatically:
-
-- Bump version based on commit messages
-- Update CHANGELOG.md with changes
-- Create a git tag
-- Commit the changes
-
-### Manual
-
-Every PR targeting `main` or `master` must:
-
-- Update `CHANGELOG.md`
-- Bump the version in `package.json`
-- Keep `package-lock.json` in sync with the new version
-
-Add changes under the `[Unreleased]` section in the appropriate category:
-
-- **Added** for new features
-- **Changed** for changes in existing functionality
-- **Deprecated** for soon-to-be removed features
-- **Removed** for removed features
-- **Fixed** for bug fixes
-- **Security** for vulnerability fixes
-
-When releasing, move items from `[Unreleased]` to a new version section.

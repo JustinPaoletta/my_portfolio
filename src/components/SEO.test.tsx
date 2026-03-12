@@ -1,5 +1,6 @@
 import { render, waitFor } from '@/test/test-utils';
 import { describe, expect, it } from 'vitest';
+import { DEFAULT_ROBOTS_CONTENT, SITE_NAME, SITE_URL } from '@/config/seo';
 import SEO from './SEO';
 
 function getMeta(name: string): HTMLMetaElement | null {
@@ -24,7 +25,20 @@ describe('SEO component', () => {
 
     await waitFor(() => {
       expect(document.title).toBe('About');
-      expect(getMeta('robots')?.getAttribute('content')).toBe('index, follow');
+      expect(getMeta('robots')?.getAttribute('content')).toBe(
+        DEFAULT_ROBOTS_CONTENT
+      );
+      expect(
+        document.head
+          .querySelector('link[rel="canonical"]')
+          ?.getAttribute('href')
+      ).toBe(SITE_URL);
+      expect(getMetaProperty('og:title')?.getAttribute('content')).toBe(
+        `About | ${SITE_NAME}`
+      );
+      expect(getMetaProperty('og:site_name')?.getAttribute('content')).toBe(
+        SITE_NAME
+      );
       expect(getMetaProperty('og:image')?.getAttribute('content')).toContain(
         '/og/custom.png'
       );

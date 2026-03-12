@@ -245,7 +245,7 @@ Because PWA is disabled in dev (`devOptions.enabled: false`), test with producti
 
 1. Build and preview:
    - `npm run build`
-   - `npm run preview`
+   - `npm run start:prod`
 2. In browser DevTools:
    - Verify service worker registration.
    - Preload GitHub section online.

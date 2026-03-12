@@ -8,6 +8,7 @@
       "docs/*": false
     }
   },
+  "buildCommand": "npm run build",
   "rewrites": [
     {
       "source": "/JP-no-cursor.svg",

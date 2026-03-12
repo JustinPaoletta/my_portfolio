@@ -64,9 +64,9 @@
 }
 
 .hero-name {
-  font-family: var(--font-serif);
+  font-family: 'Inter', var(--font-sans);
   font-size: clamp(2.5rem, 8vw, 5rem);
-  font-weight: 700;
+  font-weight: 800;
   margin: 0 auto 1rem;
   color: var(--text-primary);
   line-height: 1.1;
