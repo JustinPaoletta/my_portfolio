@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import http from 'node:http';
-import { chromium } from '@playwright/test';
+import { chromium, type Browser } from '@playwright/test';
 
 const DIST_DIR = path.resolve(process.cwd(), 'dist');
 
@@ -25,6 +25,20 @@ const CONTENT_TYPES: Record<string, string> = {
 
 function getContentType(filePath: string): string {
   return CONTENT_TYPES[path.extname(filePath)] || 'application/octet-stream';
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+function isSkippableBrowserLaunchError(message: string): boolean {
+  const normalizedMessage = message.toLowerCase();
+
+  return [
+    'error while loading shared libraries',
+    "executable doesn't exist",
+    'host system is missing dependencies',
+  ].some((fragment) => normalizedMessage.includes(fragment));
 }
 
 function resolveRequestPath(urlPath: string): string {
@@ -106,11 +120,31 @@ async function startStaticServer(): Promise<{
   };
 }
 
-async function prerenderHomepage(): Promise<void> {
+async function prerenderHomepage(): Promise<boolean> {
+  if (process.env.SKIP_PLAYWRIGHT_PRERENDER === '1') {
+    console.warn(
+      '⚠️ Skipping browser prerender via SKIP_PLAYWRIGHT_PRERENDER=1'
+    );
+    return false;
+  }
+
   const server = await startStaticServer();
 
   try {
-    const browser = await chromium.launch({ headless: true });
+    let browser: Browser | undefined;
+
+    try {
+      browser = await chromium.launch({ headless: true });
+    } catch (error) {
+      const message = getErrorMessage(error);
+
+      if (isSkippableBrowserLaunchError(message)) {
+        console.warn(`⚠️ Skipping browser prerender: ${message}`);
+        return false;
+      }
+
+      throw error;
+    }
 
     try {
       const page = await browser.newPage({
@@ -141,6 +175,8 @@ async function prerenderHomepage(): Promise<void> {
         prerenderedHtml,
         'utf8'
       );
+
+      return true;
     } finally {
       await browser.close();
     }
@@ -150,8 +186,15 @@ async function prerenderHomepage(): Promise<void> {
 }
 
 void prerenderHomepage()
-  .then(() => {
-    console.log('Prerendered dist/index.html');
+  .then((didPrerender) => {
+    if (didPrerender) {
+      console.log('Prerendered dist/index.html');
+      return;
+    }
+
+    console.log(
+      'Skipped browser prerender; keeping Vite-generated dist/index.html'
+    );
   })
   .catch((error: unknown) => {
     const message =
