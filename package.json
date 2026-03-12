@@ -37,12 +37,12 @@
   },
   "dependencies": {
     "@newrelic/browser-agent": "^1.310.1",
-    "@upstash/redis": "^1.36.3",
+    "@upstash/redis": "^1.36.4",
     "framer-motion": "^12.34.4",
     "lucide-react": "^0.577.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
-    "react-helmet-async": "^2.0.5",
+    "react-helmet-async": "^3.0.0",
     "valibot": "^1.2.0"
   },
   "devDependencies": {
@@ -55,7 +55,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.4.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@vercel/node": "^5.6.15",
