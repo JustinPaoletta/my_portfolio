@@ -21,6 +21,7 @@ function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const isInView = useInView(sectionRef, defaultViewport);
   const { user, contributions, loading, error } = useGitHub();
+  const profileUrl = user?.html_url ?? env.social.github;
 
   return (
     <section
@@ -74,7 +75,7 @@ function GitHub(): React.ReactElement {
             animate={isInView ? 'visible' : 'hidden'}
           >
             <a
-              href={env.social.github}
+              href={profileUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="github-profile-link"
@@ -148,7 +149,7 @@ function GitHub(): React.ReactElement {
           animate={isInView ? 'visible' : 'hidden'}
         >
           <a
-            href={env.social.github}
+            href={profileUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="github-button"
