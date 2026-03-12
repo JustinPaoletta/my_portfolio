@@ -39,7 +39,7 @@
     "@newrelic/browser-agent": "^1.310.1",
     "@upstash/redis": "^1.36.3",
     "framer-motion": "^12.34.4",
-    "lucide-react": "^0.576.0",
+    "lucide-react": "^0.577.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-helmet-async": "^3.0.0",
