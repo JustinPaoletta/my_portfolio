@@ -72,14 +72,12 @@ jobs:
 
       - name: Determine current version
         id: version
-        if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           version="$(node -p 'require("./package.json").version')"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Skip if GitHub release already exists
         id: release-check
-        if: steps.changesets.outputs.hasChangesets == 'false'
         env:
           GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
         run: |
@@ -90,7 +88,7 @@ jobs:
           fi
 
       - name: Create GitHub release
-        if: steps.changesets.outputs.hasChangesets == 'false' && steps.release-check.outputs.exists == 'false'
+        if: steps.release-check.outputs.exists == 'false'
         env:
           GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
         run: |
