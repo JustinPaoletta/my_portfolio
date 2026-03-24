@@ -1,0 +1,56 @@
+name: Dependabot Changeset
+
+on:
+  pull_request_target:
+    branches:
+      - master
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  add-changeset:
+    name: Add Dependabot Changeset
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+
+    steps:
+      - name: Checkout Dependabot branch
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Create deterministic patch changeset
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          mkdir -p .changeset
+          cat > ".changeset/dependabot-pr-${PR_NUMBER}.md" <<EOF
+          ---
+          'my-portfolio': patch
+          ---
+
+          ${PR_TITLE}
+          EOF
+
+      - name: Commit and push changeset
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          if git diff --quiet -- .changeset; then
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ".changeset/dependabot-pr-${PR_NUMBER}.md"
+          git commit -m "chore(changeset): add dependabot changeset for #${PR_NUMBER}"
+          git push

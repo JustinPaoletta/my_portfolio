@@ -1,12 +1,15 @@
 # Development Workflow
 
-This repo uses Husky, commitlint, Conventional Commits, and `commit-and-tag-version` to keep local checks, commit history, and releases aligned.
+This repo uses Husky, commitlint, Conventional Commits, and Changesets to keep local checks, commit history, and releases aligned.
 
 ## Source of Truth
 
 - `.husky/`
 - `commitlint.config.js`
-- `.versionrc.json`
+- `.changeset/config.json`
+- `.github/workflows/changeset-required.yml`
+- `.github/workflows/release.yml`
+- `.github/release.yml`
 - `package.json`
 
 ## Git Hooks
@@ -132,61 +135,77 @@ docs(readme): update local setup instructions
 
 Breaking changes can use `!` or a `BREAKING CHANGE:` footer.
 
+Conventional Commits are still required, but they no longer drive version bumps directly. Version bumps come from committed changeset files.
+
+## Changesets
+
+Every normal PR into `master` must include a `.changeset/*.md` file. Create one with:
+
+```bash
+npm run changeset
+```
+
+Choose:
+
+- `patch` for bug fixes and small dependency updates
+- `minor` for backward-compatible features
+- `major` for breaking changes
+
+The PR check in `.github/workflows/changeset-required.yml` enforces this for normal PRs. The bot-generated release PR is exempt.
+
+To preview the local versioning result without opening a release PR, run:
+
+```bash
+npm run version-packages
+```
+
+That updates `package.json`, `package-lock.json`, and `CHANGELOG.md` based on pending changesets.
+
 ## Releases & Changelog
 
-The repo uses `commit-and-tag-version` to:
+Releases now use the standard Changesets release PR flow on `master`.
 
-1. determine the version bump from commit history
-2. update `CHANGELOG.md`
-3. update `package.json` and `package-lock.json`
-4. create the release commit
-5. create the git tag
+### Normal release flow
 
-Release metadata is created from `main` or `master`, not from normal feature branches.
+1. Open a feature PR with a `.changeset/*.md` file.
+2. Merge the PR into `master`.
+3. `.github/workflows/release.yml` opens or updates the release PR titled `chore(release): version packages`.
+4. Review that release PR and merge it manually.
+5. The same workflow creates the bare semver tag and the GitHub Release with generated notes if that version does not already exist.
 
-### Release commands
+Tags stay in bare semver format such as `1.1.0` and `1.1.1`.
 
-```bash
-npm run release
-npm run release:patch
-npm run release:minor
-npm run release:major
-npm run release:dry-run
-```
+`CHANGELOG.md` remains checked in, but Changesets owns future release entries after the manual `1.1.0` normalization release.
 
-### Typical release flow
+### Manual release checklist
 
 ```bash
-git checkout <default-branch>
+git checkout master
 git pull
-git status
+npm run lint:ci
 npm run test:coverage
 npm run test:e2e
-npm run lint:ci
-npm run release:dry-run
-npm run release
-git push --follow-tags origin <default-branch>
 ```
 
-### How commit types affect versions
-
-- `fix` and `perf` contribute patch releases
-- `feat` contributes minor releases
-- `BREAKING CHANGE` contributes major releases
-- other supported types can still appear in the changelog depending on `.versionrc.json`
+After those checks pass, merge the open release PR from GitHub.
 
 ## Why This Workflow Exists
 
 - hooks catch local issues before code review or CI
-- Conventional Commits keep history machine-readable
-- release tooling can generate consistent versions and changelogs from that history
+- Conventional Commits keep history readable and machine-validated
+- Changesets makes semver intent explicit on each PR
+- release PRs keep version bumps, changelog updates, tags, and GitHub Releases consistent
 
 ## Related Files
 
+- `.changeset/config.json`
+- `.github/release.yml`
+- `.github/workflows/changeset-required.yml`
+- `.github/workflows/release.yml`
+- `.github/workflows/dependabot-changeset.yml`
 - `.husky/pre-commit`
 - `.husky/commit-msg`
 - `.husky/pre-push`
 - `.husky/pre-push.full`
 - `commitlint.config.js`
-- `.versionrc.json`
 - `CHANGELOG.md`

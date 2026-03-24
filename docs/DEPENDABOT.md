@@ -126,6 +126,8 @@ groups:
 
 Auto-merge is **enabled** via the GitHub Actions workflow at `.github/workflows/dependabot-auto-merge.yml`.
 
+Dependabot PRs also receive a deterministic patch changeset from `.github/workflows/dependabot-changeset.yml` so they satisfy the repo-wide Changesets requirement before auto-merge completes.
+
 #### What Gets Auto-Merged?
 
 The workflow automatically enables auto-merge for:
@@ -139,8 +141,9 @@ Major updates to production dependencies require manual review.
 #### How It Works
 
 1. Dependabot creates a PR
-2. Workflow enables auto-merge if criteria met
-3. PR merges automatically once all CI checks pass (and any required approvals are obtained)
+2. `.github/workflows/dependabot-changeset.yml` creates or updates `.changeset/dependabot-pr-<number>.md`
+3. Workflow enables auto-merge if criteria met
+4. PR merges automatically once all CI checks pass, including the required changeset check
 
 #### Customizing Auto-Merge Rules
 
@@ -184,6 +187,7 @@ gh pr merge <PR-NUMBER> --auto --squash
 - Ensure all tests pass before merging
 - Check for deprecation warnings
 - Verify the app builds successfully
+- Verify the `Changeset Required` check passes before auto-merge is expected to complete
 
 ## Troubleshooting
 
@@ -232,10 +236,10 @@ Go to **Settings → General → Pull Requests**:
 
 ### 2. Branch Protection (Recommended)
 
-Go to **Settings → Branches** → Add rule for `main`:
+Go to **Settings → Branches** → Add rule for `master`:
 
 - ✅ Require status checks to pass before merging
-- ✅ Select which checks are required (e.g., lint, test, build)
+- ✅ Select which checks are required (e.g., lint, test, build, `Changeset Required`)
 - ✅ Require branches to be up to date before merging
 - ⚠️ Do NOT require pull request approvals (workflow provides approval)
 

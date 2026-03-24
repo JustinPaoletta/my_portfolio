@@ -1,0 +1,26 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+  categories:
+    - title: Dependencies
+      labels:
+        - dependencies
+        - dependabot
+    - title: Features
+      labels:
+        - enhancement
+        - feature
+    - title: Fixes
+      labels:
+        - bug
+        - fix
+    - title: Internal
+      labels:
+        - ci
+        - chore
+        - github-actions
+        - internal
+    - title: Other Changes
+      labels:
+        - '*'

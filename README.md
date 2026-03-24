@@ -84,15 +84,12 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 ### Release and Maintenance
 
 - `npm run prepare` - install or reinstall Husky git hooks after dependency setup
-- `npm run release` - create a release using conventional commits and `commit-and-tag-version`
-- `npm run release:dry-run` - preview the next release without writing changes
-- `npm run release:patch` - force the next release to use a patch version bump
-- `npm run release:minor` - force the next release to use a minor version bump
-- `npm run release:major` - force the next release to use a major version bump
+- `npm run changeset` - create a `.changeset/*.md` file describing the next patch, minor, or major release
+- `npm run version-packages` - apply pending changesets locally by updating package versions and changelog entries
 - `npm run clean:cache` - remove generated build, coverage, Lighthouse, and Playwright cache/output folders
 - `npm run nuke` - remove dependencies, build artifacts, caches, reports, and local Vercel state for a full reset
 
-Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
+Every normal PR into `master` should include a changeset file. Merging those PRs updates the release PR, and merging the release PR creates the bare semver tag and GitHub Release automatically. Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
 
 ## Environment Overview
 

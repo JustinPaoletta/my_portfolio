@@ -1,0 +1,47 @@
+name: Changeset Required
+
+on:
+  pull_request:
+    branches:
+      - master
+    types:
+      - opened
+      - reopened
+      - synchronize
+      - edited
+      - ready_for_review
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  changeset-required:
+    name: Require Changeset
+    runs-on: ubuntu-latest
+    if: "github.event.pull_request.title != 'chore(release): version packages'"
+
+    steps:
+      - name: Verify PR includes a changeset
+        uses: actions/github-script@v8
+        with:
+          script: |
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const hasChangeset = files.some((file) =>
+              file.filename.startsWith('.changeset/') &&
+              file.filename.endsWith('.md') &&
+              file.filename !== '.changeset/README.md'
+            );
+
+            if (!hasChangeset) {
+              core.setFailed(
+                'Every PR into master must include a .changeset/*.md file. ' +
+                  'Use `npm run changeset` and commit the generated file.'
+              );
+            }
