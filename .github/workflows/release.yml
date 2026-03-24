@@ -39,10 +39,18 @@ jobs:
       VITE_GITHUB_API_ENABLED: 'false'
 
     steps:
+      - name: Require release bot token
+        run: |
+          if [ -z "${{ secrets.CHANGESETS_GITHUB_TOKEN }}" ]; then
+            echo "::error title=Missing CHANGESETS_GITHUB_TOKEN::Set the repository secret CHANGESETS_GITHUB_TOKEN to a PAT or GitHub App token that can open pull requests and trigger workflows."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -60,7 +68,7 @@ jobs:
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
 
       - name: Determine current version
         id: version
@@ -71,7 +79,7 @@ jobs:
         id: release-check
         if: steps.changesets.outputs.hasChangesets == 'false'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
         run: |
           if gh release view "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
@@ -82,7 +90,7 @@ jobs:
       - name: Create GitHub release
         if: steps.changesets.outputs.hasChangesets == 'false' && steps.release-check.outputs.exists == 'false'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
         run: |
           gh release create "${{ steps.version.outputs.version }}" \
             --target "${GITHUB_SHA}" \

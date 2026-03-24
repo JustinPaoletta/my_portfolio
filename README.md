@@ -89,7 +89,7 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 - `npm run clean:cache` - remove generated build, coverage, Lighthouse, and Playwright cache/output folders
 - `npm run nuke` - remove dependencies, build artifacts, caches, reports, and local Vercel state for a full reset
 
-Every normal PR into `master` should include a changeset file. Merging those PRs updates the release PR, and merging the release PR creates the bare semver tag and GitHub Release automatically. Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
+Every normal PR into `master` should include a changeset file. Merging those PRs updates the release PR, and merging the release PR creates the bare semver tag and GitHub Release automatically. The release workflow must use the repository secret `CHANGESETS_GITHUB_TOKEN` so bot-created release PRs still trigger the required PR checks. Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
 
 ## Environment Overview
 
