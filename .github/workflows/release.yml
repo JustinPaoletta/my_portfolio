@@ -70,6 +70,22 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
 
+      - name: Detect release PR merge
+        id: release-merge
+        env:
+          GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
+        run: |
+          release_pr_count="$(
+            gh api "/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+              --jq '[.[] | select(.title == "chore(release): version packages")] | length'
+          )"
+
+          if [ "${release_pr_count}" -gt 0 ]; then
+            echo "merged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Determine current version
         id: version
         run: |
@@ -88,7 +104,7 @@ jobs:
           fi
 
       - name: Create GitHub release
-        if: steps.release-check.outputs.exists == 'false'
+        if: ${{ steps.release-check.outputs.exists == 'false' && (steps.changesets.outputs.hasChangesets == 'false' || steps.release-merge.outputs.merged == 'true') }}
         env:
           GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
         run: |
