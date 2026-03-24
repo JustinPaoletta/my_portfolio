@@ -45,7 +45,7 @@ jobs:
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          if git diff --quiet -- .changeset; then
+          if git diff --quiet -- .changeset && [ -z "$(git ls-files --others --exclude-standard .changeset)" ]; then
             exit 0
           fi
 
