@@ -165,11 +165,19 @@ That updates `package.json`, `package-lock.json`, and `CHANGELOG.md` based on pe
 
 Releases now use the standard Changesets release PR flow on `master`.
 
+Before relying on the automation, configure the repository secret `CHANGESETS_GITHUB_TOKEN` with a token that can:
+
+- push branches and open pull requests in this repository
+- trigger `pull_request` workflows for bot-created release PRs
+- create GitHub Releases
+
+For this repository, a classic or fine-grained PAT on a maintainer account is the simplest option. The default `GITHUB_TOKEN` is not enough because PRs created by that token do not trigger the required `pull_request` checks on the release PR.
+
 ### Normal release flow
 
 1. Open a feature PR with a `.changeset/*.md` file.
 2. Merge the PR into `master`.
-3. `.github/workflows/release.yml` opens or updates the release PR titled `chore(release): version packages`.
+3. `.github/workflows/release.yml` uses `CHANGESETS_GITHUB_TOKEN` to open or update the release PR titled `chore(release): version packages`.
 4. Review that release PR and merge it manually.
 5. The same workflow creates the bare semver tag and the GitHub Release with generated notes if that version does not already exist.
 
