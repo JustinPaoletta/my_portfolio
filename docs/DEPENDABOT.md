@@ -128,6 +128,8 @@ Auto-merge is **enabled** via the GitHub Actions workflow at `.github/workflows/
 
 Dependabot PRs also receive a deterministic patch changeset from `.github/workflows/dependabot-changeset.yml` so they satisfy the repo-wide Changesets requirement before auto-merge completes.
 
+That automatic changeset is only added on Dependabot-originated `pull_request_target` events. If a maintainer manually updates the PR branch later, the changeset workflow does not rerun under the maintainer account.
+
 #### What Gets Auto-Merged?
 
 The workflow automatically enables auto-merge for:
@@ -144,6 +146,7 @@ Major updates to production dependencies require manual review.
 2. `.github/workflows/dependabot-changeset.yml` creates or updates `.changeset/dependabot-pr-<number>.md`
 3. Workflow enables auto-merge if criteria met
 4. PR merges automatically once all CI checks pass, including the required changeset check
+5. If that merged PR carries a real dependency bump, the normal Changesets release PR flow on `master` handles the next version bump and GitHub Release
 
 #### Customizing Auto-Merge Rules
 

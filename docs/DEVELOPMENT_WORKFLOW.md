@@ -151,6 +151,8 @@ Choose:
 - `minor` for backward-compatible features
 - `major` for breaking changes
 
+If the PR should satisfy the repo policy without publishing a new application version, commit an empty changeset instead. That is appropriate for workflow, docs, CI, and other maintenance-only changes.
+
 The PR check in `.github/workflows/changeset-required.yml` enforces this for normal PRs. The bot-generated release PR is exempt.
 
 To preview the local versioning result without opening a release PR, run:
@@ -179,7 +181,13 @@ For this repository, a classic or fine-grained PAT on a maintainer account is th
 2. Merge the PR into `master`.
 3. `.github/workflows/release.yml` uses `CHANGESETS_GITHUB_TOKEN` to open or update the release PR titled `chore(release): version packages`.
 4. Review that release PR and merge it manually.
-5. The same workflow creates the bare semver tag and the GitHub Release with generated notes if that version does not already exist.
+5. The same workflow creates the bare semver tag and the GitHub Release with generated notes from the merge commit of that release PR if that version does not already exist.
+
+### What does not create a release PR
+
+- PRs that contain only empty changesets do not open or update the release PR.
+- Merging a workflow-only, docs-only, or maintenance-only PR with an empty changeset should not publish a new version.
+- If a release is ever missed because the post-merge release job failed, recover that version on the original release PR merge commit instead of waiting for a later unrelated PR.
 
 Tags stay in bare semver format such as `1.1.0` and `1.1.1`.
 
