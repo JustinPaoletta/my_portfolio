@@ -28,8 +28,6 @@ The manifest and included assets currently reference:
 - `favicons/pwa-512x512.png`
 - `images/hero/cosmic/cosmos-first-frame.webp`
 - `og/og-image.png`
-- `robots.txt`
-- `sitemap.xml`
 - `video/cosmos.mp4`
 
 The cosmic hero poster and video are explicitly precached so the restored
@@ -93,6 +91,7 @@ Use the production preview when testing service workers. Plain `npm run start:de
 ## Deployment Notes
 
 - `VITE_SITE_URL` affects generated `sitemap.xml` and `robots.txt`
+- `robots.txt` and `sitemap.xml` are deployment artifacts, not PWA precache assets
 - `VITE_SITE_URL` does not change the manifest asset paths
 - `vercel.json` sets headers for `manifest.webmanifest` and `sw.js`
 

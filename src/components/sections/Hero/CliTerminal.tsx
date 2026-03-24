@@ -81,15 +81,15 @@ const MAIN_MENU = [
 ] as const;
 
 const ABOUT_SUMMARY = [
-  'The drive to challenge myself and understand how things work led me to code; building my first website sparked a career change.',
-  'In 2020, quit my job and joined HRR45 at Hack Reactor for full-stack fundamentals.',
-  'Now frontend-focused as a UI Engineer at accesso, with end-to-end delivery experience.',
+  'Frontend platform engineer focused on modernizing large AngularJS applications without risky all-at-once rewrites.',
+  'At accesso, build Angular, React, and Tailwind micro-frontends inside a legacy AngularJS host serving hundreds of venues worldwide.',
+  'Use CI/CD automation and AI-assisted workflows to speed delivery, tighten QA handoff, and improve engineering velocity.',
 ];
 
 const ABOUT_HIGHLIGHTS = [
   '5+ years of professional software engineering experience',
-  '330+ Jira tickets completed',
-  '1500+ Diet Dews converted to code',
+  '8 Angular micro-frontends migrated into an AngularJS shell',
+  'About 75% faster releases through automation',
 ];
 
 const ABOUT_VALUES = [
@@ -137,9 +137,9 @@ const PROJECTS: CliProject[] = [
     private: true,
   },
   {
-    title: 'Plex Request App',
+    title: 'Plexarr',
     description:
-      'A self-hosted media request system for managing a home Plex Server. Users authenticate via passkeys (WebAuthn). Features include real-time service health monitoring, per-user quality profiles, and an activity audit log.',
+      'A self-hosted media request system for managing a home Plex server. Users authenticate via passkeys (WebAuthn), search for content, and submit requests through a private dashboard. Features include real-time service health monitoring, per-user quality profiles, and an activity audit log.',
     techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
     featured: false,
     private: true,
@@ -153,12 +153,12 @@ const SKILL_CATEGORIES: CliSkillCategory[] = [
       'Angular',
       'React',
       'TypeScript',
-      'JavaScript',
+      'Tailwind CSS',
       'RxJS',
       'HTML5',
       'CSS3',
+      'JavaScript',
       'Playwright',
-      'Jest',
       'AngularJS',
     ],
   },
@@ -171,53 +171,55 @@ const SKILL_CATEGORIES: CliSkillCategory[] = [
     skills: [
       'Git',
       'GitHub',
+      'GitHub Actions',
+      'Jenkins',
+      'Jira',
+      'Figma',
       'GitLab',
       'Docker',
       'AWS',
-      'Vercel',
-      'Jenkins',
-      'Jira',
       'Confluence',
-      'New Relic',
     ],
   },
   {
     name: 'AI',
-    skills: ['ChatGPT', 'GitHub Copilot', 'Claude Code', 'Cursor', 'Codex'],
+    skills: ['Claude Code', 'ChatGPT', 'GitHub Copilot', 'Codex', 'Cursor'],
   },
 ];
 
 const ADDITIONAL_SKILLS = [
-  'REST APIs',
   'CI/CD',
   'Micro-frontends',
-  'State Management',
-  'Design Systems',
-  'Agile',
-  'Scrum',
+  'Platform Architecture',
+  'AngularJS Modernization',
+  'Cross-Framework Integration',
+  'Release Automation',
+  'Developer Tooling',
+  'AI Workflows',
   'Code Reviews',
-  'Pair Programming',
-  'PWA',
-  'Service Workers',
-  'Debugging',
-  'Performance',
+  'Release Notes Automation',
+  'Jira Automation',
+  'QA Documentation',
+  'Unit Testing',
+  'E2E Testing',
+  'Figma Validation',
   'Accessibility',
 ];
 
 const EXPERIENCES: CliExperience[] = [
   {
-    title: 'UI Engineer',
+    title: 'Software Engineer (UI Engineer)',
     organization: 'accesso',
     period: 'May 2021 – Present',
-    location: 'Orlando, FL (Remote)',
+    location: 'Lake Mary, FL',
     summary:
-      'Develop and maintain frontend features for accesso Passport, a cloud-hosted SaaS eCommerce ticketing system used by high-volume entertainment venues worldwide.',
+      'Contribute to the modernization of a large legacy AngularJS platform using micro-frontends, supporting high-volume entertainment venues worldwide.',
     highlights: [
-      'Engineer on a large-scale micro-frontend platform with Angular, AngularJS, React, TypeScript, and RxJS.',
-      'Contribute to shared UI libraries and design systems, balancing consistency with application needs.',
-      'Work in hybrid legacy/modern codebases, incrementally modernizing while maintaining business continuity.',
-      'Participate in architectural discussions around state management, performance, and frontend scalability.',
-      'Contribute to CI/CD pipelines, build processes, and automated testing workflows.',
+      'Architected a React + Tailwind micro-frontend inside a legacy AngularJS + Bootstrap host, isolating framework lifecycles and eliminating cross-framework styling conflicts.',
+      'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental modernization without a full rewrite.',
+      'Engineered release automation tooling that reduced deployment time by about 75% across four applications through Jenkins pipelines, Jira automation, release notes drafting, and internal documentation generation.',
+      'Developed an AI-assisted workflow with Claude Code agents, custom skills, Playwright, and Figma validation to refine requirements, generate plans, iterate on UI work, and prepare QA plus test scaffolding.',
+      'Built a Claude-powered PR review bot with GitHub Actions to enforce linting and testing coverage while flagging logic, security, and memory issues earlier.',
     ],
   },
   {
@@ -1428,7 +1430,8 @@ function CliTerminal(): React.ReactElement {
                 <div className="cli-banner-name">JUSTIN PAOLETTA</div>
               </div>
               <div className="cli-banner-right">
-                Software Engineer • Problem Solver • Fixer of Things
+                Software Engineer • Frontend Platform Architecture •
+                Modernization & Automation
               </div>
             </div>
 

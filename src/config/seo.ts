@@ -20,12 +20,13 @@ export interface SEOConfig {
 export const SITE_NAME = 'JP Engineering';
 export const SITE_ALTERNATE_NAME = 'JPEngineering';
 export const SITE_AUTHOR = 'Justin Paoletta';
+export const SITE_PERSON_NAME = SITE_AUTHOR;
 export const SITE_ORIGIN = 'https://jpengineering.dev';
 export const SITE_URL = `${SITE_ORIGIN}/`;
 export const SITE_LOCALE = 'en_US';
 export const DEFAULT_OG_IMAGE = '/og/og-image.png';
-export const DEFAULT_OG_IMAGE_ALT =
-  'Preview image for the JP Engineering software engineering portfolio';
+export const DEFAULT_HOME_TITLE = `${SITE_PERSON_NAME} | Software Engineer | ${SITE_NAME}`;
+export const DEFAULT_OG_IMAGE_ALT = `${SITE_PERSON_NAME} software engineering portfolio preview`;
 export const DEFAULT_ROBOTS_CONTENT =
   'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 export const DEFAULT_LANGUAGE = 'en-US';
@@ -41,7 +42,7 @@ export const DEFAULT_LANGUAGE = 'en-US';
  * - Avoid keyword stuffing - focus on relevance and quality
  */
 export const defaultSEO: SEOConfig = {
-  title: SITE_NAME,
+  title: DEFAULT_HOME_TITLE,
   description: SEO_DESCRIPTION,
   keywords: [
     'Justin Paoletta',
@@ -77,7 +78,7 @@ export const defaultSEO: SEOConfig = {
 
 export const getPageTitle = (pageTitle?: string): string => {
   if (!pageTitle) return defaultSEO.title;
-  return `${pageTitle} | ${defaultSEO.title}`;
+  return `${pageTitle} | ${SITE_PERSON_NAME} | ${SITE_NAME}`;
 };
 
 export const getBrowserTabTitle = (pageTitle?: string): string => {

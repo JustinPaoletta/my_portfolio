@@ -201,7 +201,9 @@ describe('App', () => {
       render(<App />);
     });
 
-    const jpImage = await screen.findByAltText(/Justin working on code/i);
+    const jpImage = await screen.findByAltText(
+      /Justin Paoletta working on code/i
+    );
     expect(jpImage).toBeInTheDocument();
     expect(jpImage).toHaveAttribute('width', '400');
     expect(jpImage).toHaveAttribute('height', '400');

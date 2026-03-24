@@ -10,20 +10,10 @@ config();
 interface SitemapConfig {
   baseUrl: string;
   routes: RouteConfig[];
-  outputPath: string;
 }
 
 interface RouteConfig {
   path: string;
-  changefreq?:
-    | 'always'
-    | 'hourly'
-    | 'daily'
-    | 'weekly'
-    | 'monthly'
-    | 'yearly'
-    | 'never';
-  priority?: number;
   lastmod?: string;
   contentPaths?: string[];
 }
@@ -31,27 +21,19 @@ interface RouteConfig {
 const routes: RouteConfig[] = [
   {
     path: '/',
-    changefreq: 'monthly',
-    priority: 1.0,
     contentPaths: ['index.html', 'src', 'public'],
   },
   // Example: Add more routes as needed:
   // {
   //   path: '/about',
-  //   changefreq: 'monthly',
-  //   priority: 0.8,
   //   contentPaths: ['index.html', 'src'],
   // },
   // {
   //   path: '/projects',
-  //   changefreq: 'weekly',
-  //   priority: 0.9,
   //   contentPaths: ['index.html', 'src'],
   // },
   // {
   //   path: '/contact',
-  //   changefreq: 'monthly',
-  //   priority: 0.7,
   //   contentPaths: ['index.html', 'src'],
   // },
 ];
@@ -156,14 +138,10 @@ function generateSitemapXML(config: SitemapConfig): string {
       const url = `${baseUrl}${route.path}`;
       const lastmod =
         route.lastmod || getRouteLastModified(route.contentPaths || []);
-      const changefreq = route.changefreq || 'monthly';
-      const priority = route.priority?.toFixed(1) || '0.5';
 
       return `  <url>
     <loc>${url}</loc>
     <lastmod>${lastmod}</lastmod>
-    <changefreq>${changefreq}</changefreq>
-    <priority>${priority}</priority>
   </url>`;
     })
     .join('\n');
@@ -174,12 +152,9 @@ ${urlEntries}
 </urlset>`;
 }
 
-function updateRobotsTxt(
-  baseUrl: string,
-  outputDir: string,
-  publicDir: string
-): void {
+function updateRobotsTxt(baseUrl: string, outputDir: string): void {
   const sitemapUrl = `${baseUrl}/sitemap.xml`;
+  const publicDir = path.resolve(process.cwd(), 'public');
   const publicRobotsPath = path.join(publicDir, 'robots.txt');
   const distRobotsPath = path.join(outputDir, 'robots.txt');
 
@@ -213,14 +188,10 @@ function updateRobotsTxt(
     robotsContent += `\n# Sitemap location\nSitemap: ${sitemapUrl}\n`;
   }
 
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir, { recursive: true });
   }
 
-  fs.writeFileSync(publicRobotsPath, robotsContent, 'utf-8');
   fs.writeFileSync(distRobotsPath, robotsContent, 'utf-8');
 
   console.log(`   Sitemap URL: ${sitemapUrl}`);
@@ -234,7 +205,6 @@ export function generateSitemap(outputDir?: string): void {
   const config: SitemapConfig = {
     baseUrl,
     routes,
-    outputPath,
   };
 
   const sitemapXML = generateSitemapXML(config);
@@ -247,23 +217,12 @@ export function generateSitemap(outputDir?: string): void {
   fs.writeFileSync(outputPath, sitemapXML, 'utf-8');
   console.log(` Sitemap written to: ${outputPath}`);
 
-  // write to public directory (for dev)
-  const publicDir = path.resolve(process.cwd(), 'public');
-  const publicPath = path.join(publicDir, 'sitemap.xml');
-  if (!fs.existsSync(publicDir)) {
-    fs.mkdirSync(publicDir, { recursive: true });
-  }
-  fs.writeFileSync(publicPath, sitemapXML, 'utf-8');
-  console.log(`Sitemap written to: ${publicPath}`);
-
-  updateRobotsTxt(baseUrl, output, publicDir);
+  updateRobotsTxt(baseUrl, output);
 
   console.log(`Base URL: ${baseUrl}`);
   console.log(`Total Routes: ${routes.length}`);
   routes.forEach((route) => {
-    console.log(
-      `   - ${route.path} (priority: ${route.priority || 0.5}, changefreq: ${route.changefreq || 'monthly'})`
-    );
+    console.log(`   - ${route.path}`);
   });
 }
 
@@ -279,6 +238,7 @@ export function sitemapPlugin(): Plugin {
         generateSitemap();
       } catch (error) {
         console.error('❌ Failed to generate sitemap:', error);
+        throw error;
       }
     },
   };

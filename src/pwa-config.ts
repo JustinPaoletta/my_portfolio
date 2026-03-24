@@ -15,8 +15,6 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'favicons/pwa-192x192.png',
     'favicons/pwa-512x512.png',
     'images/hero/cosmic/cosmos-first-frame.webp',
-    'robots.txt',
-    'sitemap.xml',
     'og/og-image.png',
     'video/cosmos.mp4',
   ],

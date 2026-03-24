@@ -394,7 +394,9 @@ describe('CliTerminal', () => {
 
     runCommand('experience');
     runCommand('1');
-    expect(screen.getByText('[TIMELINE 1] UI Engineer')).toBeInTheDocument();
+    expect(
+      screen.getByText('[TIMELINE 1] Software Engineer (UI Engineer)')
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
     expect(
       screen.getAllByText('[EXPERIENCE & EDUCATION]').length

@@ -34,15 +34,16 @@ const experiences: ExperienceItem[] = [
   {
     id: 'exp-1',
     type: 'work',
-    title: 'UI Engineer',
+    title: 'Software Engineer (UI Engineer)',
     organization: 'accesso',
     organizationUrl: 'https://www.accesso.com',
-    location: 'Orlando, FL (Remote)',
+    location: 'Lake Mary, FL',
     period: 'May 2021 – Present',
     current: true,
     description: (
       <>
-        Develop and maintain frontend features for the{' '}
+        Contribute to the modernization of a large legacy AngularJS platform
+        using micro-frontends for the{' '}
         <a
           href="https://accesso.com/capabilities/products/passport/"
           target="_blank"
@@ -50,37 +51,32 @@ const experiences: ExperienceItem[] = [
         >
           accesso Passport
         </a>{' '}
-        platform, a cloud-hosted SaaS eCommerce ticketing system used by
-        high-volume entertainment venues worldwide.
+        platform, supporting high-volume entertainment venues worldwide.
       </>
     ),
     highlights: [
-      'Engineer on a large-scale, production micro-frontend platform supporting multiple independently deployed applications',
-      'Develop and maintain complex user interfaces using Angular (10+), AngularJS, React, TypeScript, and RxJS',
-      'Contribute to shared UI libraries and design systems used across teams, balancing consistency with application-specific needs',
-      'Work in hybrid legacy/modern codebases, incrementally modernizing systems while maintaining business continuity',
-      'Collaborate closely with product managers, designers, and backend engineers to deliver features under tight deadlines',
-      'Regularly unblock teammates by debugging complex issues, clarifying requirements, and proposing pragmatic technical solutions',
-      'Participate in architectural discussions around state management, performance, and frontend scalability',
-      'Write, review, and refactor production code with an emphasis on maintainability, readability, and long-term ownership',
-      'Contribute to CI/CD pipelines, build processes, and automated testing workflows',
-      'Use Git extensively for version control, code reviews, and cross-team collaboration in a multi-repo environment',
+      'Architected a React + Tailwind micro-frontend inside a legacy AngularJS + Bootstrap host, isolating framework lifecycles and eliminating cross-framework styling conflicts.',
+      'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental platform modernization without a full rewrite.',
+      'Engineered release automation tooling that reduced deployment time by about 75% across four applications by coordinating Jenkins pipelines and internal tooling, auto-drafting release notes, updating Jira tickets, and generating internal documentation.',
+      'Developed an AI-assisted engineering workflow using Claude Code agents, custom skills, Playwright, and Figma validation to refine Jira requirements, generate implementation plans, iterate on UI work, and prepare QA documentation plus unit and end-to-end test scaffolding after manual validation.',
+      'Built a Claude-powered PR review bot with GitHub Actions to enforce linting and testing coverage, standardize PR conventions, and flag logic, security, and memory issues earlier in review.',
     ],
     technologies: [
-      'Angular',
       'AngularJS',
+      'Angular',
       'React',
       'TypeScript',
+      'Tailwind CSS',
+      'Bootstrap',
       'RxJS',
-      'GitHub',
-      'CI/CD',
+      'ngUpgrade',
       'Jenkins',
-      'Agile',
-      'Scrum',
+      'GitHub Actions',
+      'CI/CD',
       'Jira',
-      'Confluence',
-      'Docker',
-      'AWS',
+      'Playwright',
+      'Figma',
+      'Claude Code',
     ],
   },
   {

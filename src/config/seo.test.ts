@@ -5,11 +5,13 @@ describe('seo config helpers', () => {
   it('formats page and tab titles and builds full URLs', async () => {
     const seo = await import('./seo');
 
-    expect(seo.defaultSEO.title).toBe(seo.SITE_NAME);
-    expect(seo.getPageTitle()).toBe(seo.SITE_NAME);
-    expect(seo.getPageTitle('About')).toBe(`About | ${seo.SITE_NAME}`);
+    expect(seo.defaultSEO.title).toBe(seo.DEFAULT_HOME_TITLE);
+    expect(seo.getPageTitle()).toBe(seo.DEFAULT_HOME_TITLE);
+    expect(seo.getPageTitle('About')).toBe(
+      `About | ${seo.SITE_PERSON_NAME} | ${seo.SITE_NAME}`
+    );
 
-    expect(seo.getBrowserTabTitle()).toBe(seo.SITE_NAME);
+    expect(seo.getBrowserTabTitle()).toBe(seo.DEFAULT_HOME_TITLE);
     expect(seo.getBrowserTabTitle('Contact')).toBe('Contact');
     expect(seo.defaultSEO.description).toBe(SEO_DESCRIPTION);
     expect(seo.defaultSEO.siteUrl).toBe(seo.SITE_ORIGIN);

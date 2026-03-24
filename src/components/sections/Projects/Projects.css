@@ -146,6 +146,19 @@
   font-weight: 700;
   margin: 0 0 1rem;
   color: var(--text-primary);
+
+  .project-title-logo-frame {
+    display: block;
+    line-height: 0;
+  }
+
+  .project-title-logo {
+    display: block;
+    max-height: 2.75rem;
+    width: auto;
+    object-fit: contain;
+    object-position: left center;
+  }
 }
 
 .project-description {
@@ -208,6 +221,34 @@
   &:hover .card-title {
     color: var(--color-primary-ink);
   }
+
+  /* Title is a wordmark image only: tighter vertical rhythm, clip PNG letterboxing */
+  &.project-card--title-logo .card-header {
+    margin-bottom: 0.4rem;
+  }
+
+  &.project-card--title-logo .card-title:has(.project-title-logo-frame) {
+    line-height: 0;
+    margin: 0 0 0.35rem;
+  }
+
+  &.project-card--title-logo .card-title .project-title-logo-frame {
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    height: 4rem;
+    overflow: hidden;
+  }
+
+  &.project-card--title-logo .card-title .project-title-logo {
+    display: block;
+    height: 4.85rem;
+    width: auto;
+    max-width: none;
+    object-fit: contain;
+    object-position: left top;
+    margin-top: -0.25rem;
+  }
 }
 
 .card-header {
@@ -217,10 +258,52 @@
   margin-bottom: 1.25rem;
 }
 
+.card-image-wrapper {
+  width: 100%;
+  margin-bottom: 1.25rem;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  background:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(255, 184, 0, 0.22),
+      transparent 45%
+    ),
+    linear-gradient(
+      90deg,
+      rgba(20, 20, 20, 0.92) 0%,
+      rgba(96, 62, 0, 0.85) 42%,
+      rgba(247, 240, 226, 0.96) 100%
+    );
+}
+
+.card-image-wrapper--contain {
+  padding: 0.5rem;
+}
+
+.card-image {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 7;
+  object-fit: cover;
+}
+
+.card-image--contain {
+  object-fit: contain;
+}
+
 .folder-icon {
   width: 40px;
   height: 40px;
   color: var(--color-primary-ink);
+}
+
+.folder-icon--image {
+  display: block;
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
 }
 
 .card-links {
@@ -284,6 +367,21 @@
   margin: 0 0 0.75rem;
   color: var(--text-primary);
   transition: color 0.15s ease;
+
+  .project-title-logo-frame {
+    display: block;
+    line-height: 0;
+  }
+
+  .project-title-logo {
+    display: block;
+    max-height: 2.25rem;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: left center;
+  }
 }
 
 .card-description {

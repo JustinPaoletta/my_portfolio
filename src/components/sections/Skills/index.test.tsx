@@ -66,33 +66,29 @@ describe('Skills section', () => {
     );
   });
 
-  it('uses mode-aware icon variants for AWS/New Relic in dark mode', () => {
+  it('uses the dark AWS icon variant in dark mode', () => {
     resolvedMode = 'dark';
     render(<Skills />);
     fireEvent.click(screen.getByRole('tab', { name: 'Tooling' }));
 
     const awsIcon = screen.getByAltText('AWS icon');
-    const newRelicIcon = screen.getByAltText('New Relic icon');
 
     expect(awsIcon).toHaveAttribute('src', '/icons/aws-dark.svg');
-    expect(newRelicIcon).toHaveAttribute('src', '/icons/newrelic-dark.svg');
   });
 
-  it('uses default icon variants in light mode and renders linked additional skills', () => {
+  it('uses default icon variants in light mode and renders updated additional skills', () => {
     resolvedMode = 'light';
     render(<Skills />);
 
     fireEvent.click(screen.getByRole('tab', { name: 'Tooling' }));
 
     const awsIcon = screen.getByAltText('AWS icon');
-    const newRelicIcon = screen.getByAltText('New Relic icon');
 
     expect(awsIcon).toHaveAttribute('src', '/icons/aws.svg');
-    expect(newRelicIcon).toHaveAttribute('src', '/icons/newrelic.svg');
 
     expect(
-      screen.getByRole('link', { name: 'PWA official website' })
-    ).toHaveAttribute('href', 'https://web.dev/learn/pwa/');
-    expect(screen.getByText('REST APIs')).toBeInTheDocument();
+      screen.getByRole('link', { name: 'Accessibility official website' })
+    ).toHaveAttribute('href', 'https://www.w3.org/WAI/');
+    expect(screen.getByText('Platform Architecture')).toBeInTheDocument();
   });
 });

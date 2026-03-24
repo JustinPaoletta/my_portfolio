@@ -1,6 +1,11 @@
 import { render, waitFor } from '@/test/test-utils';
 import { describe, expect, it } from 'vitest';
-import { DEFAULT_ROBOTS_CONTENT, SITE_NAME, SITE_URL } from '@/config/seo';
+import {
+  DEFAULT_ROBOTS_CONTENT,
+  SITE_NAME,
+  SITE_PERSON_NAME,
+  SITE_URL,
+} from '@/config/seo';
 import SEO from './SEO';
 
 function getMeta(name: string): HTMLMetaElement | null {
@@ -34,7 +39,7 @@ describe('SEO component', () => {
           ?.getAttribute('href')
       ).toBe(SITE_URL);
       expect(getMetaProperty('og:title')?.getAttribute('content')).toBe(
-        `About | ${SITE_NAME}`
+        `About | ${SITE_PERSON_NAME} | ${SITE_NAME}`
       );
       expect(getMetaProperty('og:site_name')?.getAttribute('content')).toBe(
         SITE_NAME

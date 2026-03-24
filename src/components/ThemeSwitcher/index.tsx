@@ -155,7 +155,11 @@ export default function ThemeSwitcher({
             {/* Theme Section */}
             <div className="theme-section">
               <div className="theme-section-label">Theme</div>
-              <div role="listbox" aria-label="Select a theme">
+              <div
+                className="theme-options"
+                role="listbox"
+                aria-label="Select a theme"
+              >
                 {Object.values(themes).map((theme) => (
                   <button
                     key={theme.name}

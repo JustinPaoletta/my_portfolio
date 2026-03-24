@@ -16,6 +16,9 @@ updates:
         versions: ['>=10']
       - dependency-name: '@eslint/js'
         versions: ['>=10']
+      # @vitejs/plugin-react 6.x requires vite 8, but this repo is still on rolldown-vite 7.x.
+      - dependency-name: '@vitejs/plugin-react'
+        versions: ['>=6']
     groups:
       # prod deps
       react:
