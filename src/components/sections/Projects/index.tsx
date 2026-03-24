@@ -38,12 +38,41 @@ interface Project {
   title: string;
   description: string;
   image: string;
+  cardImage?: string;
+  cardImageAlt?: string;
+  cardImageFit?: 'cover' | 'contain';
+  cardHeaderIcon?: string;
+  /** When set, shown instead of `title` text in the project heading (e.g. transparent PNG wordmark). */
+  titleLogo?: string;
+  titleLogoAlt?: string;
   techStack: string[];
   liveUrl?: string;
   githubUrl?: string;
   private?: boolean;
   featured: boolean;
   status?: ProjectStatus;
+}
+
+function ProjectHeadingTitle({
+  project,
+}: {
+  project: Project;
+}): React.ReactNode {
+  if (project.titleLogo) {
+    return (
+      <span className="project-title-logo-frame">
+        <img
+          src={project.titleLogo}
+          alt={project.titleLogoAlt ?? project.title}
+          className="project-title-logo"
+          width={1536}
+          height={1024}
+          loading="lazy"
+        />
+      </span>
+    );
+  }
+  return project.title;
 }
 
 const projects: Project[] = [
@@ -93,11 +122,11 @@ const projects: Project[] = [
   },
   {
     id: 'project-6',
-    title: 'Plex Request App',
+    title: 'Plexarr',
+    cardHeaderIcon: '/images/projects/plexarr_icon.png',
     description:
-      'A self-hosted media request system built for managing my at home Plex Server. Users authenticate via passkeys (WebAuthn) and can search for content. API keys are managed entirely server-side and never exposed to the client. Features include real-time service health monitoring, per-user quality profile defaults, and an activity audit log.',
-    image:
-      'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=800&h=600&fit=crop',
+      'A self-hosted media request system built for managing my at-home Plex server. Users authenticate via passkeys (WebAuthn), search for content, and submit requests through a private dashboard. API keys stay entirely server-side, with real-time service health monitoring, per-user quality profile defaults, and an activity audit log.',
+    image: '/images/projects/plexarr.png',
     techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
     private: true,
     featured: false,
@@ -261,7 +290,9 @@ function Projects(): React.ReactElement {
                 </div>
               </div>
               <div className="project-content">
-                <h3 className="project-title">{project.title}</h3>
+                <h3 className="project-title">
+                  <ProjectHeadingTitle project={project} />
+                </h3>
                 <p className="project-description">{project.description}</p>
                 <div className="project-tech">
                   {project.techStack.map((tech) => (
@@ -293,24 +324,40 @@ function Projects(): React.ReactElement {
           {otherProjects.map((project) => (
             <motion.article
               key={project.id}
-              className="project-card"
+              className={`project-card${
+                project.titleLogo && !project.cardImage
+                  ? ' project-card--title-logo'
+                  : ''
+              }`}
               variants={fadeUpVariants}
             >
               <div className="card-header">
-                <svg
-                  className="folder-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                {project.cardHeaderIcon ? (
+                  <img
+                    src={project.cardHeaderIcon}
+                    alt=""
+                    aria-hidden="true"
+                    className="folder-icon folder-icon--image"
+                    width={192}
+                    height={192}
+                    loading="lazy"
                   />
-                </svg>
+                ) : (
+                  <svg
+                    className="folder-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
                 <div className="card-links">
                   {project.private ? (
                     <span
@@ -369,7 +416,29 @@ function Projects(): React.ReactElement {
                   )}
                 </div>
               </div>
-              <h4 className="card-title">{project.title}</h4>
+              {project.cardImage && (
+                <div
+                  className={`card-image-wrapper${
+                    project.cardImageFit === 'contain'
+                      ? ' card-image-wrapper--contain'
+                      : ''
+                  }`}
+                >
+                  <img
+                    src={project.cardImage}
+                    alt={project.cardImageAlt ?? `${project.title} preview`}
+                    className={`card-image${
+                      project.cardImageFit === 'contain'
+                        ? ' card-image--contain'
+                        : ''
+                    }`}
+                    loading="lazy"
+                  />
+                </div>
+              )}
+              <h4 className="card-title">
+                <ProjectHeadingTitle project={project} />
+              </h4>
               <p className="card-description">{project.description}</p>
               <div className="card-tech">
                 {project.techStack.slice(0, 4).map((tech) => (

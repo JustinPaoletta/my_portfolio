@@ -237,6 +237,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
         const nameHeading = document.querySelector<HTMLElement>('.hero-name');
         const navLogo = document.querySelector<HTMLElement>('.nav-logo');
+        const navLink = document.querySelector<HTMLElement>('.nav-link');
 
         if (
           !hero ||
@@ -246,7 +247,8 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
           !name ||
           !greeting ||
           !nameHeading ||
-          !navLogo
+          !navLogo ||
+          !navLink
         ) {
           return null;
         }
@@ -266,6 +268,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
           contentFontFamily: getComputedStyle(content).fontFamily,
           greetingFontFamily: getComputedStyle(greeting).fontFamily,
           nameFontFamily: getComputedStyle(nameHeading).fontFamily,
+          navLinkColor: getComputedStyle(navLink).color,
           navLogoPrimary: getComputedStyle(navLogo)
             .getPropertyValue('--jp-logo-primary')
             .trim(),
@@ -283,8 +286,23 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       contentFontFamily: expect.stringContaining('Space Grotesk'),
       greetingFontFamily: expect.stringContaining('Space Grotesk'),
       nameFontFamily: expect.stringContaining('Inter'),
+      navLinkColor: 'rgb(248, 241, 255)',
       navLogoPrimary: '#f8f1ff',
     });
+
+  await page.evaluate(() => {
+    window.scrollTo({ top: 160, behavior: 'instant' });
+  });
+
+  await expect(page.locator('.navigation')).toHaveClass(/scrolled/);
+  await expect
+    .poll(async () =>
+      page.evaluate(() => {
+        const navLink = document.querySelector<HTMLElement>('.nav-link');
+        return navLink ? getComputedStyle(navLink).color : null;
+      })
+    )
+    .toBe('rgb(92, 31, 153)');
 });
 
 test('CLI theme supports command execution and exit', async ({ page }) => {

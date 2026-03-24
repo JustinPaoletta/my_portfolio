@@ -24,6 +24,7 @@ import { Helmet } from 'react-helmet-async';
 import {
   DEFAULT_LANGUAGE,
   DEFAULT_OG_IMAGE_ALT,
+  SITE_NAME,
   defaultSEO,
   getPageTitle,
   getBrowserTabTitle,
@@ -87,7 +88,7 @@ export const SEO: React.FC<SEOProps> = ({
       {image && <meta property="og:image" content={fullImageUrl} />}
       {image && <meta property="og:image:alt" content={imageAlt} />}
       {locale && <meta property="og:locale" content={locale} />}
-      <meta property="og:site_name" content={defaultSEO.title} />
+      <meta property="og:site_name" content={SITE_NAME} />
 
       {/* twitter/x */}
       <meta name="twitter:card" content="summary_large_image" />

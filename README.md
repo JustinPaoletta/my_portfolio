@@ -48,20 +48,51 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 
 `npm run start:dev` serves the frontend only. If you need the local Vercel functions under `/api/*`, run `npm run start:vercel` instead.
 
-## Common Scripts
+## Scripts
 
-- `npm run start:dev` - start the Vite dev server
-- `npm run start:vercel` - run the app through `vercel dev` with local serverless functions
+### Dev and Build
+
+- `npm run start:dev` - start the Vite dev server for the frontend only
+- `npm run start:vercel` - run the app through `vercel dev` when you need local `/api/*` functions
 - `npm run build` - type-check, run contrast checks, build, generate sitemap/robots, and prerender the homepage
+- `npm run build:analyze` - run the production build with bundle analysis output
 - `npm run start:prod` - build and preview the production output on port `4173`
+- `npm run type-check` - run the TypeScript project build in no-emit mode
+- `npm run type-check:watch` - keep the TypeScript project build running in watch mode
+- `npm run contrast:check` - run the custom contrast audit in `scripts/contrast-check.ts`
+- `npm run prerender` - prerender the built homepage with `scripts/prerender.ts`; usually run via `npm run build`
+- `npm run generate:icons` - regenerate the PNG icon set from the source SVG for favicons and PWA assets
+
+### Linting and Formatting
+
+- `npm run lint` - alias for `npm run lint:ci`
+- `npm run lint:ci` - type-check, run ESLint, and verify formatting with Prettier
+- `npm run lint:fix` - type-check, then auto-fix ESLint and Prettier issues where possible
+
+### Tests and Audits
+
 - `npm test` - run Vitest in watch mode
-- `npm run test:unit` - run unit tests once
-- `npm run test:coverage` - run unit tests with coverage output
-- `npm run test:e2e` - run Playwright E2E tests locally across Chromium, Firefox, and WebKit
+- `npm run test:unit` - run the Vitest suite once
+- `npm run test:ui` - open the Vitest UI
+- `npm run test:coverage` - run Vitest once with coverage output
+- `npm run test:coverage:ui` - open the Vitest UI with coverage enabled
+- `npm run test:e2e` - run Playwright E2E tests locally
+- `npm run test:e2e:debug` - run Playwright in debug mode
+- `npm run test:e2e:ui` - open the Playwright UI runner
 - `npm run lighthouse` - run Lighthouse CI locally with the checked-in config
-- `npm run build:analyze` - build with bundle analysis output
-- `npm run lint:ci` - type-check, eslint, and prettier in check mode
-- `npm run lint:fix` - type-check, then fix lint and formatting issues
+
+### Release and Maintenance
+
+- `npm run prepare` - install or reinstall Husky git hooks after dependency setup
+- `npm run release` - create a release using conventional commits and `commit-and-tag-version`
+- `npm run release:dry-run` - preview the next release without writing changes
+- `npm run release:patch` - force the next release to use a patch version bump
+- `npm run release:minor` - force the next release to use a minor version bump
+- `npm run release:major` - force the next release to use a major version bump
+- `npm run clean:cache` - remove generated build, coverage, Lighthouse, and Playwright cache/output folders
+- `npm run nuke` - remove dependencies, build artifacts, caches, reports, and local Vercel state for a full reset
+
+Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
 
 ## Environment Overview
 

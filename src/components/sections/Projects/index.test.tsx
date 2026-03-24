@@ -44,7 +44,7 @@ describe('Projects section', () => {
       screen.getByLabelText('SideQuest: Pittsburgh repository is private')
     ).toBeInTheDocument();
     expect(
-      screen.getByLabelText('Plex Request App repository is private')
+      screen.getByLabelText('Plexarr repository is private')
     ).toBeInTheDocument();
 
     expect(
@@ -63,6 +63,8 @@ describe('Projects section', () => {
       screen.getByRole('heading', { name: 'My Projects' })
     ).toBeInTheDocument();
     expect(screen.getByText('BitStockerz')).toBeInTheDocument();
-    expect(screen.getByText('Plex Request App')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'Plexarr' })
+    ).toBeInTheDocument();
   });
 });

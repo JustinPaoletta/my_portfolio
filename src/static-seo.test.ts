@@ -2,9 +2,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  DEFAULT_HOME_TITLE,
   DEFAULT_ROBOTS_CONTENT,
   SITE_ALTERNATE_NAME,
   SITE_NAME,
+  SITE_PERSON_NAME,
   SITE_URL,
 } from '@/config/seo';
 
@@ -14,6 +16,9 @@ const documentNode = new DOMParser().parseFromString(indexHtml, 'text/html');
 
 describe('static crawler-facing SEO markup', () => {
   it('includes canonical, robots, hreflang, and identity links', () => {
+    expect(documentNode.querySelector('title')?.textContent).toBe(
+      DEFAULT_HOME_TITLE
+    );
     expect(
       documentNode.querySelector('link[rel="canonical"]')?.getAttribute('href')
     ).toBe(SITE_URL);
@@ -49,10 +54,14 @@ describe('static crawler-facing SEO markup', () => {
     const structuredData = JSON.parse(jsonLdText ?? '{}') as {
       '@graph'?: Array<Record<string, unknown>>;
     };
-    const graphTypes = structuredData['@graph']?.map((entry) => entry['@type']);
+    const graphTypes =
+      structuredData['@graph']?.flatMap((entry) => {
+        const type = entry['@type'];
+        return Array.isArray(type) ? type : [type];
+      }) ?? [];
 
     expect(graphTypes).toEqual(
-      expect.arrayContaining(['Person', 'WebSite', 'WebPage'])
+      expect.arrayContaining(['Person', 'WebSite', 'WebPage', 'ProfilePage'])
     );
 
     const websiteEntry = structuredData['@graph']?.find(
@@ -60,13 +69,27 @@ describe('static crawler-facing SEO markup', () => {
     );
     expect(websiteEntry?.name).toBe(SITE_NAME);
     expect(websiteEntry?.alternateName).toBe(SITE_ALTERNATE_NAME);
+
+    const personEntry = structuredData['@graph']?.find(
+      (entry) => entry['@type'] === 'Person'
+    );
+    expect(personEntry?.name).toBe(SITE_PERSON_NAME);
+
+    const webpageEntry = structuredData['@graph']?.find((entry) => {
+      const type = entry['@type'];
+      return Array.isArray(type) && type.includes('ProfilePage');
+    });
+    expect(webpageEntry?.name).toBe(DEFAULT_HOME_TITLE);
   });
 
   it('provides a no-JavaScript fallback summary for non-interactive crawls', () => {
     const noScript = documentNode.querySelector('noscript');
+    const noScriptText = noScript?.textContent?.replace(/\s+/g, ' ') ?? '';
 
-    expect(noScript?.textContent).toContain('Justin Paoletta');
-    expect(noScript?.textContent).toContain('Software engineer');
+    expect(noScriptText).toContain('Justin Paoletta');
+    expect(noScriptText).toContain(
+      'software engineer focused on frontend platform architecture'
+    );
     expect(noScript?.innerHTML).toContain(
       '/resume/Justin-Paoletta_Software-Engineer.pdf'
     );

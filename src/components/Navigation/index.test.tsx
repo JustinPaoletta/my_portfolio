@@ -53,17 +53,23 @@ describe('Navigation', () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     document.body.innerHTML = '';
 
-    ['about', 'projects', 'skills', 'experience', 'github', 'contact'].forEach(
-      (id, i) => {
-        const section = document.createElement('section');
-        section.id = id;
-        Object.defineProperty(section, 'offsetTop', {
-          configurable: true,
-          value: 500 + i * 100,
-        });
-        document.body.appendChild(section);
-      }
-    );
+    [
+      'about',
+      'projects',
+      'skills',
+      'experience',
+      'articles',
+      'github',
+      'contact',
+    ].forEach((id, i) => {
+      const section = document.createElement('section');
+      section.id = id;
+      Object.defineProperty(section, 'offsetTop', {
+        configurable: true,
+        value: 500 + i * 100,
+      });
+      document.body.appendChild(section);
+    });
   });
 
   afterEach(() => {
@@ -75,6 +81,9 @@ describe('Navigation', () => {
 
     expect(
       screen.getByRole('navigation', { name: 'Main navigation' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('menuitem', { name: 'Articles' })
     ).toBeInTheDocument();
     expect(container.querySelector('.mobile-menu-button')).toBeInTheDocument();
 

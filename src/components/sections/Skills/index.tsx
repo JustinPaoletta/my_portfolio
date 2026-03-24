@@ -51,10 +51,10 @@ const skillCategories: SkillCategory[] = [
         url: 'https://www.typescriptlang.org/',
       },
       {
-        name: 'JavaScript',
-        icon: '/icons/javascript.svg',
-        color: '#F7DF1E',
-        url: 'https://tc39.es/',
+        name: 'Tailwind CSS',
+        icon: 'https://cdn.simpleicons.org/tailwindcss',
+        color: '#06B6D4',
+        url: 'https://tailwindcss.com/',
       },
       {
         name: 'RxJS',
@@ -75,16 +75,16 @@ const skillCategories: SkillCategory[] = [
         url: 'https://www.w3.org/Style/CSS/',
       },
       {
+        name: 'JavaScript',
+        icon: '/icons/javascript.svg',
+        color: '#F7DF1E',
+        url: 'https://tc39.es/',
+      },
+      {
         name: 'Playwright',
         icon: '/icons/playwright.webp',
         color: '#2EAD33',
         url: 'https://playwright.dev/',
-      },
-      {
-        name: 'Jest',
-        icon: '/icons/jest.svg',
-        color: '#C21325',
-        url: 'https://jestjs.io/',
       },
       {
         name: 'AngularJS',
@@ -145,6 +145,30 @@ const skillCategories: SkillCategory[] = [
         url: 'https://github.com/',
       },
       {
+        name: 'GitHub Actions',
+        icon: 'https://cdn.simpleicons.org/githubactions',
+        color: '#2088FF',
+        url: 'https://github.com/features/actions',
+      },
+      {
+        name: 'Jenkins',
+        icon: '/icons/jenkins.svg',
+        color: '#D24939',
+        url: 'https://www.jenkins.io/',
+      },
+      {
+        name: 'Jira',
+        icon: '/icons/jira.svg',
+        color: '#0052CC',
+        url: 'https://www.atlassian.com/software/jira',
+      },
+      {
+        name: 'Figma',
+        icon: 'https://cdn.simpleicons.org/figma',
+        color: '#F24E1E',
+        url: 'https://www.figma.com/',
+      },
+      {
         name: 'GitLab',
         icon: 'https://cdn.simpleicons.org/gitlab',
         color: '#FC6D26',
@@ -163,40 +187,22 @@ const skillCategories: SkillCategory[] = [
         url: 'https://aws.amazon.com/',
       },
       {
-        name: 'Vercel',
-        icon: 'https://cdn.simpleicons.org/vercel',
-        color: '#000000',
-        url: 'https://vercel.com/',
-      },
-      {
-        name: 'Jenkins',
-        icon: '/icons/jenkins.svg',
-        color: '#D24939',
-        url: 'https://www.jenkins.io/',
-      },
-      {
-        name: 'Jira',
-        icon: '/icons/jira.svg',
-        color: '#0052CC',
-        url: 'https://www.atlassian.com/software/jira',
-      },
-      {
         name: 'Confluence',
         icon: '/icons/confluence.svg',
         color: '#172B4D',
         url: 'https://www.atlassian.com/software/confluence',
-      },
-      {
-        name: 'New Relic',
-        icon: '/icons/newrelic.svg',
-        color: '#1CE783',
-        url: 'https://newrelic.com/',
       },
     ],
   },
   {
     name: 'AI',
     skills: [
+      {
+        name: 'Claude Code',
+        icon: '/icons/claude.webp',
+        color: '#8C6A4A',
+        url: 'https://claude.ai/',
+      },
       {
         name: 'ChatGPT',
         icon: '/icons/chatgpt.svg',
@@ -210,10 +216,10 @@ const skillCategories: SkillCategory[] = [
         url: 'https://github.com/features/copilot',
       },
       {
-        name: 'Claude Code',
-        icon: '/icons/claude.webp',
-        color: '#8C6A4A',
-        url: 'https://claude.ai/',
+        name: 'Codex',
+        icon: '/icons/codex.webp',
+        color: '#4A8C6A',
+        url: 'https://openai.com/codex',
       },
       {
         name: 'Cursor',
@@ -221,36 +227,26 @@ const skillCategories: SkillCategory[] = [
         color: '#4A6A8C',
         url: 'https://cursor.com/',
       },
-      {
-        name: 'Codex',
-        icon: '/icons/codex.webp',
-        color: '#4A8C6A',
-        url: 'https://openai.com/codex',
-      },
     ],
   },
 ];
 
 const additionalSkills = [
-  { name: 'REST APIs' },
   { name: 'CI/CD' },
   { name: 'Micro-frontends' },
-  { name: 'State Management' },
-  { name: 'Design Systems' },
-  { name: 'Agile' },
-  { name: 'Scrum' },
+  { name: 'Platform Architecture' },
+  { name: 'AngularJS Modernization' },
+  { name: 'Cross-Framework Integration' },
+  { name: 'Release Automation' },
+  { name: 'Developer Tooling' },
+  { name: 'AI Workflows' },
   { name: 'Code Reviews' },
-  { name: 'Pair Programming' },
-  {
-    name: 'PWA',
-    url: 'https://web.dev/learn/pwa/',
-  },
-  {
-    name: 'Service Workers',
-    url: 'https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API',
-  },
-  { name: 'Debugging' },
-  { name: 'Performance' },
+  { name: 'Release Notes Automation' },
+  { name: 'Jira Automation' },
+  { name: 'QA Documentation' },
+  { name: 'Unit Testing' },
+  { name: 'E2E Testing' },
+  { name: 'Figma Validation' },
   { name: 'Accessibility', url: 'https://www.w3.org/WAI/' },
 ];
 
@@ -362,11 +358,7 @@ function Skills(): React.ReactElement {
                         src={
                           skill.name === 'AWS' && isDarkMode
                             ? '/icons/aws-dark.svg'
-                            : skill.name === 'New Relic'
-                              ? isDarkMode
-                                ? '/icons/newrelic-dark.svg'
-                                : '/icons/newrelic.svg'
-                              : skill.icon
+                            : skill.icon
                         }
                         alt={`${skill.name} icon`}
                         width="48"

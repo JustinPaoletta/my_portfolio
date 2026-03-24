@@ -79,7 +79,7 @@ These variables are used by Vercel functions and must not be prefixed with `VITE
 - Keep `VITE_GITHUB_API_ENABLED=false` for plain Vite dev and CI runs. The GitHub proxy only exists when the app runs through Vercel functions.
 - Keep `VITE_ENABLE_ANALYTICS=false` until `VITE_UMAMI_WEBSITE_ID` is set.
 - Keep `VITE_ENABLE_ERROR_MONITORING=false` until all required New Relic values are present.
-- Set `VITE_SITE_URL` in Vercel so generated `sitemap.xml` and `robots.txt` point at the correct live origin.
+- Set `VITE_SITE_URL` in Vercel so the generated `dist/sitemap.xml` and `dist/robots.txt` point at the correct live origin.
 
 ## Validation Behavior
 

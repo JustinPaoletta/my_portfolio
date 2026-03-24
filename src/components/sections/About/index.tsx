@@ -190,25 +190,20 @@ function About(): React.ReactElement {
           >
             <div className="about-story" ref={storyRef}>
               <p className="about-intro">
-                It was the drive to challenge myself and really understand how
-                things work that led me to learn how to code. When I eventually
-                built my first website I realized I enjoyed the process so
-                immensely, that I chose to take a leap and make a career change.
-                In 2020, the year of the COVID-19 pandemic, I quit my job and
-                joined the HRR45 cohort at Hack Reactor. It was from there, I
-                learned the fundamentals of building full stack web applications
-                and gained the experience and foundation needed for a successful
-                career in software development.
+                I specialize in modernizing large AngularJS applications without
+                forcing risky all-at-once rewrites. At accesso, I work on a
+                platform that supports hundreds of venues worldwide, designing
+                and integrating Angular, React, and Tailwind micro-frontends
+                inside a legacy AngularJS host.
               </p>
 
               <p>
-                Today, I&apos;m primarily frontend-focused, working as a UI
-                Engineer for accesso. I know my way around backend systems, and
-                I can build/support features end to end. I focus on the quality
-                of what I produce and advocate for maintainable solutions that
-                scale without breaking. I care deeply about thoughtful design,
-                reducing unnecessary complexity, and building software that
-                people will find useful and enjoy using.
+                My focus is frontend platform architecture: isolating framework
+                lifecycles, reducing styling conflicts, building release and
+                CI/CD automation, and creating developer tooling that improves
+                engineering velocity. I also design AI-assisted workflows that
+                help refine requirements, validate UI work against designs, and
+                tighten testing and QA handoff without removing human review.
               </p>
             </div>
 
@@ -261,10 +256,10 @@ function About(): React.ReactElement {
                     className="highlight-number"
                     style={isSmallHighlights ? { marginBottom: 0 } : undefined}
                   >
-                    330+
+                    8
                   </span>
                   <span className="highlight-label">
-                    Jira Tickets Completed
+                    Micro-frontends Migrated
                   </span>
                 </motion.div>
                 <motion.div
@@ -280,11 +275,9 @@ function About(): React.ReactElement {
                     className="highlight-number"
                     style={isSmallHighlights ? { marginBottom: 0 } : undefined}
                   >
-                    1500+
+                    ~75%
                   </span>
-                  <span className="highlight-label">
-                    Diet Dews Converted to Code
-                  </span>
+                  <span className="highlight-label">Faster Releases</span>
                 </motion.div>
               </div>
             </motion.div>
@@ -307,19 +300,17 @@ function About(): React.ReactElement {
                 />
               </h3>
               <p className="about-ai-lede">
-                Artificial intelligence is arguably the most significant
-                invention of our lifetimes. At its core, it&apos;s simple, it
-                predicts the next most likely token. The complexity that emerges
-                from such a simple concept though is what makes it
-                extraordinarily valuable.
+                AI is most valuable when it improves execution, not when it
+                replaces judgment. I use it to turn ambiguous requirements into
+                clearer plans, speed up implementation, and tighten feedback
+                loops across testing and QA.
               </p>
               <p>
-                Used properly, we can learn faster, plan more efficiently and
-                code higher quality software with incredible speed. We need to
-                approach it with caution though, it&apos;s not an oracle, and it
-                doesn&apos;t consciously &ldquo;think&rdquo; like we do. It
-                builds statistical models and finds patterns, but it has no
-                awareness, or understanding, its mathematics.
+                At accesso, I&apos;ve built AI-assisted workflows that refine
+                Jira tickets, generate implementation plans, validate UI work
+                with Playwright against Figma designs, and help produce QA notes
+                plus unit and end-to-end test scaffolding after manual
+                validation.
               </p>
               <p>
                 I work daily with{' '}
@@ -330,10 +321,10 @@ function About(): React.ReactElement {
                 >
                   Claude Code
                 </a>
-                , I validate its claims, test its outputs, and treat it as a
-                tool rather than an all knowing authority, and my productivity
-                has multiplied. It&apos;s reshaping what&apos;s possible for a
-                single developer to build, or break, so code responsibly.
+                , but I treat it like any other production tool: useful,
+                fallible, and worth designing carefully. The goal is not blind
+                automation. It&apos;s better engineering velocity, stronger
+                consistency, and more time spent solving the hard parts.
               </p>
             </motion.div>
           </motion.div>
@@ -350,7 +341,7 @@ function About(): React.ReactElement {
                   src="/branding/jp-headshot/jp-400.webp"
                   width={400}
                   height={400}
-                  alt="Justin working on code"
+                  alt="Justin Paoletta working on code"
                   className="about-image"
                 />
                 <div className="image-decoration" aria-hidden="true" />

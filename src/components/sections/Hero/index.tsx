@@ -768,8 +768,12 @@ function Hero(): React.ReactElement {
                 {isCosmicTheme ? (
                   <ul className="hero-title-list" aria-label="Core roles">
                     <li className="hero-title-list-item">Software Engineer</li>
-                    <li className="hero-title-list-item">Problem Solver</li>
-                    <li className="hero-title-list-item">Fixer of Things</li>
+                    <li className="hero-title-list-item">
+                      Frontend Platform Architecture
+                    </li>
+                    <li className="hero-title-list-item">
+                      Modernization &amp; Automation
+                    </li>
                   </ul>
                 ) : (
                   <p className="hero-title">
@@ -777,11 +781,15 @@ function Hero(): React.ReactElement {
                     <span className="title-divider" aria-hidden="true">
                       •
                     </span>
-                    <span className="title-text">Problem Solver</span>
+                    <span className="title-text">
+                      Frontend Platform Architecture
+                    </span>
                     <span className="title-divider" aria-hidden="true">
                       •
                     </span>
-                    <span className="title-text">Fixer of Things</span>
+                    <span className="title-text">
+                      Modernization &amp; Automation
+                    </span>
                   </p>
                 )}
 

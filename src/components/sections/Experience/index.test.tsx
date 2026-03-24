@@ -58,7 +58,9 @@ describe('Experience section', () => {
     isInView = false;
     render(<Experience />);
 
-    expect(screen.getByText('UI Engineer')).toBeInTheDocument();
+    expect(
+      screen.getByText('Software Engineer (UI Engineer)')
+    ).toBeInTheDocument();
     expect(
       screen.getByText('Bachelor of Science (B.S.) in Psychology')
     ).toBeInTheDocument();
