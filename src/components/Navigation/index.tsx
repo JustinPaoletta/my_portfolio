@@ -1,12 +1,15 @@
 /**
  * Navigation Component
  * Responsive navigation with smooth scrolling
- * Uses Framer Motion for scroll detection
+ * Uses passive scroll handling for sticky state
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useScroll, useMotionValueEvent } from 'framer-motion';
 import JPLogo from '@/components/Brand/JPLogo';
+import {
+  PORTFOLIO_REVEAL_TARGET_EVENT,
+  type PortfolioRevealTargetDetail,
+} from '@/constants/deferred-navigation';
 import { useTheme } from '@/hooks/useTheme';
 import './Navigation.css';
 
@@ -33,13 +36,35 @@ function Navigation(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
 
-  // Use Framer Motion's scroll hook
-  const { scrollY } = useScroll();
+  useEffect(() => {
+    if (isCliTheme) {
+      return;
+    }
 
-  // Listen to scroll changes efficiently
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    setIsScrolled(latest > 0);
-  });
+    let frameId = 0;
+    const syncScrollState = (): void => {
+      frameId = 0;
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    const handleScroll = (): void => {
+      if (frameId !== 0) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(syncScrollState);
+    };
+
+    syncScrollState();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [isCliTheme]);
 
   // Track active section based on scroll position
   useEffect(() => {
@@ -88,24 +113,142 @@ function Navigation(): React.ReactElement {
     };
   }, [isCliTheme, isMobileMenuOpen]);
 
+  const scrollToTarget = useCallback(
+    (element: HTMLElement, behavior: ScrollBehavior = 'smooth'): void => {
+      const offsetTop =
+        element.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({
+        top: offsetTop,
+        behavior,
+      });
+    },
+    []
+  );
+
+  const revealDeferredTarget = useCallback(
+    (targetId: string): void => {
+      const existingTarget = document.getElementById(targetId);
+      if (existingTarget) {
+        scrollToTarget(existingTarget);
+        return;
+      }
+
+      window.dispatchEvent(
+        new CustomEvent<PortfolioRevealTargetDetail>(
+          PORTFOLIO_REVEAL_TARGET_EVENT,
+          {
+            detail: { targetId },
+          }
+        )
+      );
+
+      const observerRoot = document.getElementById('main') ?? document.body;
+      let timerId = 0;
+      let attemptsLeft = 20;
+
+      const cleanup = (): void => {
+        mutationObserver.disconnect();
+        window.clearTimeout(timerId);
+      };
+
+      const ensureTargetInView = (
+        mountedTarget: HTMLElement,
+        attemptsLeft = 6
+      ): void => {
+        scrollToTarget(mountedTarget, 'auto');
+
+        if (attemptsLeft <= 1) {
+          return;
+        }
+
+        window.requestAnimationFrame(() => {
+          const rect = mountedTarget.getBoundingClientRect();
+          const isInViewport =
+            rect.top <= window.innerHeight - 80 && rect.bottom >= 80;
+
+          if (isInViewport) {
+            scrollToTarget(mountedTarget);
+            return;
+          }
+
+          ensureTargetInView(mountedTarget, attemptsLeft - 1);
+        });
+      };
+
+      const finishWhenMounted = (): boolean => {
+        const mountedTarget = document.getElementById(targetId);
+        if (!mountedTarget) {
+          return false;
+        }
+
+        cleanup();
+        timerId = window.setTimeout(() => {
+          ensureTargetInView(mountedTarget);
+        }, 80);
+        return true;
+      };
+
+      const waitForTarget = (): void => {
+        if (finishWhenMounted()) {
+          return;
+        }
+
+        if (attemptsLeft <= 0) {
+          cleanup();
+          return;
+        }
+
+        attemptsLeft -= 1;
+        timerId = window.setTimeout(() => {
+          waitForTarget();
+        }, 120);
+      };
+
+      const mutationObserver = new MutationObserver(() => {
+        if (finishWhenMounted()) {
+          return;
+        }
+
+        window.clearTimeout(timerId);
+        timerId = window.setTimeout(() => {
+          waitForTarget();
+        }, 120);
+      });
+
+      mutationObserver.observe(observerRoot, {
+        childList: true,
+        subtree: true,
+      });
+
+      waitForTarget();
+    },
+    [scrollToTarget]
+  );
+
   // Handle smooth scroll
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
       e.preventDefault();
       const targetId = href.replace('#', '');
-      const element = document.getElementById(targetId);
+      const navigateToTarget = (): void => {
+        const element = document.getElementById(targetId);
 
-      if (element) {
-        const offsetTop = element.offsetTop - 80;
-        window.scrollTo({
-          top: offsetTop,
-          behavior: 'smooth',
-        });
+        if (element) {
+          scrollToTarget(element);
+        } else {
+          revealDeferredTarget(targetId);
+        }
+      };
+
+      if (isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+        navigateToTarget();
+        return;
       }
 
-      setIsMobileMenuOpen(false);
+      navigateToTarget();
     },
-    []
+    [isMobileMenuOpen, revealDeferredTarget, scrollToTarget]
   );
 
   // Close mobile menu on escape

@@ -15,8 +15,6 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'favicons/pwa-192x192.png',
     'favicons/pwa-512x512.png',
     'images/hero/cosmic/cosmos-first-frame.webp',
-    'og/og-image.png',
-    'video/cosmos.mp4',
   ],
   manifestFilename: 'manifest.webmanifest',
 
@@ -93,15 +91,15 @@ export const pwaConfig: Partial<VitePWAOptions> = {
   },
 
   workbox: {
-    // Cache configuration - precache static assets for offline support
-    globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
-    // Increase default 2 MiB precache limit to 4 MiB to allow larger SVG assets.
-    maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
-    // Exclude large assets from precaching to avoid exceeding size limits
-    globIgnores: [],
+    // Cache only the shell and essential install assets up front.
+    globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+    maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
+    globIgnores: ['**/images/**', '**/video/**', '**/articles/**', '**/og/**'],
     runtimeCaching: [
       {
-        urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
+        urlPattern: ({ request, url }) =>
+          request.destination === 'image' &&
+          url.origin === self.location.origin,
         handler: 'CacheFirst',
         options: {
           cacheName: 'images-cache',
@@ -115,8 +113,26 @@ export const pwaConfig: Partial<VitePWAOptions> = {
         },
       },
       {
+        urlPattern: ({ request, url }) =>
+          request.destination === 'video' &&
+          url.origin === self.location.origin,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'media-cache',
+          expiration: {
+            maxEntries: 6,
+            maxAgeSeconds: 7 * 24 * 60 * 60,
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
         // Cache CSS and JS with a stale-while-revalidate strategy
-        urlPattern: /^https:\/\/.*\.(?:js|css)$/i,
+        urlPattern: ({ request, url }) =>
+          ['script', 'style'].includes(request.destination) &&
+          url.origin === self.location.origin,
         handler: 'StaleWhileRevalidate',
         options: {
           cacheName: 'static-resources',
@@ -158,7 +174,9 @@ export const pwaConfig: Partial<VitePWAOptions> = {
       },
       {
         // Network-first for API calls (if you have any)
-        urlPattern: /^https:\/\/.*\/api\/.*/i,
+        urlPattern: ({ url }) =>
+          url.origin === self.location.origin &&
+          url.pathname.startsWith('/api/'),
         handler: 'NetworkFirst',
         options: {
           cacheName: 'api-cache',

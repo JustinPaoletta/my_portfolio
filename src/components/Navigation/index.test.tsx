@@ -1,23 +1,11 @@
-import { act, fireEvent, render, screen } from '@/test/test-utils';
+import { act, fireEvent, render, screen, waitFor } from '@/test/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Navigation from '.';
 
 let themeName: 'cli' | 'minimal' | 'cosmic' | 'engineer' = 'minimal';
-let motionChangeHandler: ((latest: number) => void) | null = null;
 
 vi.mock('@/hooks/useTheme', () => ({
   useTheme: () => ({ themeName }),
-}));
-
-vi.mock('framer-motion', () => ({
-  useScroll: () => ({ scrollY: {} }),
-  useMotionValueEvent: (
-    _value: unknown,
-    _event: string,
-    callback: (latest: number) => void
-  ) => {
-    motionChangeHandler = callback;
-  },
 }));
 
 interface ObserverRecord {
@@ -47,10 +35,29 @@ class MockIntersectionObserver implements IntersectionObserver {
 describe('Navigation', () => {
   beforeEach(() => {
     themeName = 'minimal';
-    motionChangeHandler = null;
     observers.length = 0;
     vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
-    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    vi.spyOn(window, 'scrollTo').mockImplementation(((
+      xOrOptions?: number | ScrollToOptions,
+      y?: number
+    ) => {
+      let top = window.scrollY;
+
+      if (typeof xOrOptions === 'object' && xOrOptions) {
+        top = xOrOptions.top ?? top;
+      } else if (typeof xOrOptions === 'number') {
+        top = typeof y === 'number' ? y : xOrOptions;
+      }
+
+      Object.defineProperty(window, 'scrollY', {
+        configurable: true,
+        value: top,
+      });
+    }) as typeof window.scrollTo);
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 0,
+    });
     document.body.innerHTML = '';
 
     [
@@ -64,10 +71,22 @@ describe('Navigation', () => {
     ].forEach((id, i) => {
       const section = document.createElement('section');
       section.id = id;
+      const offsetTop = 500 + i * 100;
       Object.defineProperty(section, 'offsetTop', {
         configurable: true,
-        value: 500 + i * 100,
+        value: offsetTop,
       });
+      section.getBoundingClientRect = vi.fn(() => ({
+        top: offsetTop - window.scrollY,
+        bottom: offsetTop - window.scrollY + 400,
+        left: 0,
+        right: 0,
+        width: 0,
+        height: 400,
+        x: 0,
+        y: offsetTop - window.scrollY,
+        toJSON: () => ({}),
+      }));
       document.body.appendChild(section);
     });
   });
@@ -77,6 +96,10 @@ describe('Navigation', () => {
   });
 
   it('renders full navigation in non-CLI mode and applies scrolled class on scroll', () => {
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback) => {
+      callback(0);
+      return 1;
+    });
     const { container } = render(<Navigation />);
 
     expect(
@@ -88,7 +111,11 @@ describe('Navigation', () => {
     expect(container.querySelector('.mobile-menu-button')).toBeInTheDocument();
 
     act(() => {
-      motionChangeHandler?.(10);
+      Object.defineProperty(window, 'scrollY', {
+        configurable: true,
+        value: 10,
+      });
+      fireEvent.scroll(window);
     });
     expect(document.querySelector('.navigation.scrolled')).toBeInTheDocument();
   });
@@ -121,6 +148,66 @@ describe('Navigation', () => {
       behavior: 'smooth',
     });
     expect(projectsLink.className).toContain('active');
+  });
+
+  it('reveals deferred targets before performing the final scroll', async () => {
+    const rafSpy = vi
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback) => {
+        callback(0);
+        return 1;
+      });
+    document.getElementById('contact')?.remove();
+    Object.defineProperty(document.body, 'scrollHeight', {
+      configurable: true,
+      value: 3200,
+    });
+
+    render(<Navigation />);
+    const contactLink = screen.getAllByRole('menuitem', {
+      name: 'Contact',
+    })[0];
+
+    fireEvent.click(contactLink);
+
+    const contactSection = document.createElement('section');
+    contactSection.id = 'contact';
+    const contactOffsetTop = 2100;
+    Object.defineProperty(contactSection, 'offsetTop', {
+      configurable: true,
+      value: contactOffsetTop,
+    });
+    contactSection.getBoundingClientRect = vi.fn(() => ({
+      top: contactOffsetTop - window.scrollY,
+      bottom: contactOffsetTop - window.scrollY + 400,
+      left: 0,
+      right: 0,
+      width: 0,
+      height: 400,
+      x: 0,
+      y: contactOffsetTop - window.scrollY,
+      toJSON: () => ({}),
+    }));
+    document.body.appendChild(contactSection);
+
+    await waitFor(() => {
+      expect(window.scrollTo).toHaveBeenCalledWith({
+        top: 2020,
+        behavior: 'smooth',
+      });
+    });
+
+    const autoScrollCalls = vi
+      .mocked(window.scrollTo)
+      .mock.calls.filter(
+        ([arg]) =>
+          typeof arg === 'object' &&
+          arg !== null &&
+          (arg as ScrollToOptions).behavior === 'auto'
+      );
+    expect(autoScrollCalls.length).toBeGreaterThan(0);
+
+    expect(rafSpy).toHaveBeenCalled();
   });
 
   it('opens/closes mobile menu, handles escape, and backdrop click', () => {

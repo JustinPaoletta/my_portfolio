@@ -4,10 +4,14 @@
  */
 
 import { useRef, useState, useCallback } from 'react';
-import { Bone, Hand, PawPrint } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
+import {
+  Reveal,
+  getRevealClassName,
+  getRevealStyle,
+  useRevealInView,
+} from '@/components/Reveal';
+import { BoneIcon, HandIcon, PawPrintIcon } from '@/components/icons';
 import { usePetDogs } from '@/hooks/usePetDogs';
-import { defaultViewport } from '@/utils/animations';
 import './PetDogs.css';
 
 interface DogStats {
@@ -45,7 +49,7 @@ const dogMetadata: Record<string, Omit<Dog, 'name' | 'stats'>> = {
 
 function PetDogs(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisible = useRevealInView(sectionRef);
   const [showDogs, setShowDogs] = useState(false);
 
   const [dogsData, updateStats] = usePetDogs(initialDogsData);
@@ -83,32 +87,45 @@ function PetDogs(): React.ReactElement {
     >
       <div className="section-container">
         <header className="section-header">
-          <motion.button
+          <button
             type="button"
-            className="pet-dogs-toggle"
+            className={getRevealClassName({
+              className: 'pet-dogs-toggle',
+              visible: isVisible,
+            })}
             onClick={toggleDogs}
             aria-expanded={showDogs}
             aria-controls="dogs-content"
             aria-label={showDogs ? 'Hide dogs' : 'Show dogs'}
-            initial={{ opacity: 0, y: 20 }}
-            animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
+            style={getRevealStyle(40)}
           >
-            <PawPrint className="pet-dogs-icon" aria-hidden="true" />
+            <PawPrintIcon className="pet-dogs-icon" aria-hidden="true" />
             Can I Pet That Dawg?
-          </motion.button>
+          </button>
         </header>
 
         {showDogs && (
           <div id="dogs-content" className="dogs-content">
-            <p id="pet-dogs-heading" className="dogs-description">
+            <Reveal
+              as="p"
+              id="pet-dogs-heading"
+              className="dogs-description"
+              delay={120}
+              visible={isVisible}
+            >
               <strong>Sure you can!</strong> Meet my 3 rescue dogs{' '}
               <strong>Nala</strong>, <strong>Rosie</strong>, and{' '}
               <strong>Tito</strong>, give them all the virtual love ya got.
-            </p>
+            </Reveal>
             <div className="dogs-list">
-              {dogs.map((dog) => (
-                <article key={dog.name} className="dog-row">
+              {dogs.map((dog, index) => (
+                <Reveal
+                  as="article"
+                  key={dog.name}
+                  className="dog-row"
+                  delay={180 + index * 90}
+                  visible={isVisible}
+                >
                   <div className="dog-avatar-shell">
                     <img
                       src={dog.image}
@@ -116,6 +133,8 @@ function PetDogs(): React.ReactElement {
                       className="dog-avatar"
                       width={90}
                       height={90}
+                      loading="lazy"
+                      decoding="async"
                     />
                     {dog.name === 'Nala' && (
                       <span className="dog-badge-overlay" role="status">
@@ -136,7 +155,10 @@ function PetDogs(): React.ReactElement {
                         onClick={() => handleTreat(dog.name)}
                         aria-label={`Give ${dog.name} a treat. Current treats: ${dog.stats.treats}`}
                       >
-                        <Bone className="dog-stat-icon" aria-hidden="true" />
+                        <BoneIcon
+                          className="dog-stat-icon"
+                          aria-hidden="true"
+                        />
                         <span className="dog-counter-value">
                           {dog.stats.treats}
                         </span>
@@ -148,14 +170,17 @@ function PetDogs(): React.ReactElement {
                         onClick={() => handleScritch(dog.name)}
                         aria-label={`Give ${dog.name} some scritches. Current scritches: ${dog.stats.scritches}`}
                       >
-                        <Hand className="dog-stat-icon" aria-hidden="true" />
+                        <HandIcon
+                          className="dog-stat-icon"
+                          aria-hidden="true"
+                        />
                         <span className="dog-counter-value">
                           {dog.stats.scritches}
                         </span>
                       </button>
                     </div>
                   </div>
-                </article>
+                </Reveal>
               ))}
             </div>
           </div>

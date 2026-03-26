@@ -1,25 +1,18 @@
 /**
  * GitHub Section
  * Displays contribution graph and pinned repositories
- * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { Reveal, useRevealInView } from '@/components/Reveal';
 import { useGitHub } from '@/hooks/useGitHub';
 import { env } from '@/config/env';
-import {
-  fadeUpVariants,
-  fadeOnlyVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
 import ContributionGraph from './ContributionGraph';
 import './GitHub.css';
 
 function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisible = useRevealInView(sectionRef);
   const { user, contributions, loading, error } = useGitHub();
   const profileUrl = user?.html_url ?? env.social.github;
 
@@ -31,31 +24,38 @@ function GitHub(): React.ReactElement {
       aria-labelledby="github-heading"
     >
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             Let's Code
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="github-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             GitHub Activity
-          </motion.h2>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
         {error && (
-          <motion.div
+          <Reveal
+            as="div"
             className="github-error"
             role="alert"
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            delay={180}
+            visible={isVisible}
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
               <circle cx="12" cy="12" r="10" strokeWidth="2" />
@@ -63,16 +63,17 @@ function GitHub(): React.ReactElement {
               <line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
             </svg>
             <span>Unable to load GitHub data. Please try again later.</span>
-          </motion.div>
+          </Reveal>
         )}
 
         {/* GitHub Stats Overview */}
         {user && (
-          <motion.div
+          <Reveal
+            as="div"
             className="github-stats-bar"
-            variants={fadeOnlyVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-only"
+            delay={200}
+            visible={isVisible}
           >
             <a
               href={profileUrl}
@@ -86,6 +87,8 @@ function GitHub(): React.ReactElement {
                 className="github-avatar"
                 width={48}
                 height={48}
+                loading="lazy"
+                decoding="async"
               />
               <div className="github-profile-info">
                 <span className="github-name">{user.name || user.login}</span>
@@ -115,22 +118,18 @@ function GitHub(): React.ReactElement {
                 </div>
               )}
             </div>
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Contribution Graph */}
         {contributions && (
-          <motion.div
-            variants={fadeUpVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
-          >
+          <Reveal as="div" delay={240} visible={isVisible}>
             <ContributionGraph
               contributions={contributions}
               loading={loading}
-              isVisible={isInView}
+              isVisible={isVisible}
             />
-          </motion.div>
+          </Reveal>
         )}
 
         {/* Loading State */}
@@ -142,12 +141,7 @@ function GitHub(): React.ReactElement {
         )}
 
         {/* View Profile CTA */}
-        <motion.div
-          className="github-cta"
-          variants={fadeUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
+        <Reveal as="div" className="github-cta" delay={280} visible={isVisible}>
           <a
             href={profileUrl}
             target="_blank"
@@ -173,7 +167,7 @@ function GitHub(): React.ReactElement {
               />
             </svg>
           </a>
-        </motion.div>
+        </Reveal>
       </div>
     </section>
   );

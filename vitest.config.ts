@@ -3,6 +3,7 @@ import { loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import fs from 'node:fs';
 import path from 'path';
+import { createAppConfig } from './src/config/app-config';
 
 // Default test environment values for CI/CD where .env files don't exist
 const testEnvDefaults: Record<string, string> = {
@@ -26,6 +27,8 @@ const testEnvDefaults: Record<string, string> = {
   VITE_EMAIL: 'test@example.com',
   VITE_SITE_URL: 'https://test.example.com',
   VITE_MAPBOX_TOKEN: '',
+  VITE_GITHUB_USERNAME: 'test-user',
+  VITE_GITHUB_API_ENABLED: 'false',
 };
 const packageJson = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')
@@ -37,6 +40,13 @@ export default defineConfig(({ mode }) => {
 
   // Merge loaded env with defaults (loaded env takes precedence)
   const env = { ...testEnvDefaults, ...loadedEnv };
+  const appConfig = createAppConfig(env, {
+    mode: testMode,
+    version: packageJson.version,
+    analyticsEnabled: false,
+    debugEnabled: false,
+    errorMonitoringEnabled: false,
+  });
 
   return {
     plugins: [react()],
@@ -52,6 +62,7 @@ export default defineConfig(({ mode }) => {
     define: {
       'import.meta.env.MODE': JSON.stringify(testMode),
       __APP_VERSION__: JSON.stringify(packageJson.version),
+      __APP_CONFIG__: JSON.stringify(appConfig),
       __ENABLE_ANALYTICS__: JSON.stringify(false),
       __ENABLE_ERROR_MONITORING__: JSON.stringify(false),
       __ENABLE_DEBUG_TOOLS__: JSON.stringify(false),

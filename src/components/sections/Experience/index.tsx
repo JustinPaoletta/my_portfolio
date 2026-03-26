@@ -1,19 +1,10 @@
 /**
  * Experience Section
  * Work history and education timeline
- * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import {
-  fadeUpVariants,
-  fadeLeftVariants,
-  fadeRightVariants,
-  staggerContainerVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
+import { Reveal, useRevealInView } from '@/components/Reveal';
 import './Experience.css';
 
 interface ExperienceItem {
@@ -135,7 +126,7 @@ const experiences: ExperienceItem[] = [
 
 function Experience(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisible = useRevealInView(sectionRef);
 
   const workExperiences = experiences.filter((e) => e.type === 'work');
   const education = experiences.filter((e) => e.type === 'education');
@@ -164,31 +155,39 @@ function Experience(): React.ReactElement {
       aria-labelledby="experience-heading"
     >
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             Professional
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="experience-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             Experience & Education
-          </motion.h2>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
         <div className="experience-content">
           {/* Work Experience */}
-          <motion.div
+          <Reveal
+            as="div"
             className="experience-column"
-            variants={fadeLeftVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-left"
+            delay={140}
+            visible={isVisible}
           >
             <h3 className="column-title">
               <svg
@@ -214,17 +213,14 @@ function Experience(): React.ReactElement {
               Work Experience
             </h3>
 
-            <motion.div
-              className="timeline"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-            >
-              {workExperiences.map((exp) => (
-                <motion.article
+            <div className="timeline">
+              {workExperiences.map((exp, index) => (
+                <Reveal
+                  as="article"
                   key={exp.id}
                   className={`timeline-item ${exp.current ? 'current' : ''}`}
-                  variants={fadeUpVariants}
+                  delay={200 + index * 90}
+                  visible={isVisible}
                 >
                   <div className="timeline-marker" aria-hidden="true">
                     {exp.current && (
@@ -259,17 +255,18 @@ function Experience(): React.ReactElement {
                       </div>
                     )}
                   </div>
-                </motion.article>
+                </Reveal>
               ))}
-            </motion.div>
-          </motion.div>
+            </div>
+          </Reveal>
 
           {/* Education */}
-          <motion.div
+          <Reveal
+            as="div"
             className="experience-column education-column"
-            variants={fadeRightVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-right"
+            delay={200}
+            visible={isVisible}
           >
             <h3 className="column-title">
               <svg
@@ -285,17 +282,14 @@ function Experience(): React.ReactElement {
               Education
             </h3>
 
-            <motion.div
-              className="timeline"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-            >
-              {education.map((edu) => (
-                <motion.article
+            <div className="timeline">
+              {education.map((edu, index) => (
+                <Reveal
+                  as="article"
                   key={edu.id}
                   className="timeline-item"
-                  variants={fadeUpVariants}
+                  delay={260 + index * 90}
+                  visible={isVisible}
                 >
                   <div className="timeline-marker" aria-hidden="true" />
                   <div className="timeline-content">
@@ -317,16 +311,16 @@ function Experience(): React.ReactElement {
                       ))}
                     </ul>
                   </div>
-                </motion.article>
+                </Reveal>
               ))}
-            </motion.div>
+            </div>
 
             {/* Resume Download */}
-            <motion.div
+            <Reveal
+              as="div"
               className="resume-cta"
-              variants={fadeUpVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
+              delay={420}
+              visible={isVisible}
             >
               <a
                 href="/resume/Justin-Paoletta_Software-Engineer.pdf"
@@ -363,8 +357,8 @@ function Experience(): React.ReactElement {
                 </svg>
                 <span className="resume-button-label">Download Resume</span>
               </a>
-            </motion.div>
-          </motion.div>
+            </Reveal>
+          </Reveal>
         </div>
       </div>
     </section>

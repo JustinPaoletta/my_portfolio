@@ -1,27 +1,19 @@
 /**
  * About Section
- * Background and story with Framer Motion animations
+ * Background and story section
  */
 
-import { Brain, BookOpen } from 'lucide-react';
-import { motion, useInView } from 'framer-motion';
+import { Reveal, useRevealInView } from '@/components/Reveal';
+import { BookOpenIcon, BrainIcon } from '@/components/icons';
 import { useEffect, useRef } from 'react';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
-import {
-  fadeUpVariants,
-  fadeLeftVariants,
-  fadeRightVariants,
-  staggerContainerVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
 import './About.css';
 
 function About(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisible = useRevealInView(sectionRef);
   const breakpoint = useBreakpoint();
   const isSmallHighlights = breakpoint === 'xs' || breakpoint === 'sm';
 
@@ -163,30 +155,38 @@ function About(): React.ReactElement {
       aria-labelledby="about-heading"
     >
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             About Me
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="about-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             My Career
-          </motion.h2>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
         <div className="about-content" ref={contentRef}>
-          <motion.div
+          <Reveal
+            as="div"
             className="about-text"
-            variants={fadeLeftVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-left"
+            delay={140}
+            visible={isVisible}
           >
             <div className="about-story" ref={storyRef}>
               <p className="about-intro">
@@ -207,12 +207,7 @@ function About(): React.ReactElement {
               </p>
             </div>
 
-            <motion.div
-              className="about-highlights"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-            >
+            <div className="about-highlights">
               <div
                 className="about-highlights-lines"
                 style={
@@ -226,9 +221,11 @@ function About(): React.ReactElement {
                     : { display: 'contents' }
                 }
               >
-                <motion.div
+                <Reveal
+                  as="div"
                   className="highlight-item"
-                  variants={fadeUpVariants}
+                  delay={200}
+                  visible={isVisible}
                   style={
                     isSmallHighlights
                       ? { justifyContent: 'flex-start', textAlign: 'left' }
@@ -242,10 +239,12 @@ function About(): React.ReactElement {
                     5+
                   </span>
                   <span className="highlight-label">Years Experience</span>
-                </motion.div>
-                <motion.div
+                </Reveal>
+                <Reveal
+                  as="div"
                   className="highlight-item"
-                  variants={fadeUpVariants}
+                  delay={280}
+                  visible={isVisible}
                   style={
                     isSmallHighlights
                       ? { justifyContent: 'flex-start', textAlign: 'left' }
@@ -261,10 +260,12 @@ function About(): React.ReactElement {
                   <span className="highlight-label">
                     Micro-frontends Migrated
                   </span>
-                </motion.div>
-                <motion.div
+                </Reveal>
+                <Reveal
+                  as="div"
                   className="highlight-item"
-                  variants={fadeUpVariants}
+                  delay={360}
+                  visible={isVisible}
                   style={
                     isSmallHighlights
                       ? { justifyContent: 'flex-start', textAlign: 'left' }
@@ -278,15 +279,15 @@ function About(): React.ReactElement {
                     ~75%
                   </span>
                   <span className="highlight-label">Faster Releases</span>
-                </motion.div>
+                </Reveal>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
+            <Reveal
+              as="div"
               className="about-ai"
-              variants={fadeUpVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
+              delay={420}
+              visible={isVisible}
             >
               <h3 className="about-ai-title">
                 Thoughts on AI
@@ -294,6 +295,8 @@ function About(): React.ReactElement {
                   src="/images/about/thoughts.webp"
                   width={18}
                   height={18}
+                  loading="lazy"
+                  decoding="async"
                   alt=""
                   className="about-ai-icon"
                   aria-hidden="true"
@@ -326,14 +329,15 @@ function About(): React.ReactElement {
                 automation. It&apos;s better engineering velocity, stronger
                 consistency, and more time spent solving the hard parts.
               </p>
-            </motion.div>
-          </motion.div>
+            </Reveal>
+          </Reveal>
 
-          <motion.div
+          <Reveal
+            as="div"
             className="about-center"
-            variants={fadeRightVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-right"
+            delay={180}
+            visible={isVisible}
           >
             <div className="about-image-container">
               <div className="about-image-wrapper">
@@ -341,6 +345,8 @@ function About(): React.ReactElement {
                   src="/branding/jp-headshot/jp-400.webp"
                   width={400}
                   height={400}
+                  loading="lazy"
+                  decoding="async"
                   alt="Justin Paoletta working on code"
                   className="about-image"
                 />
@@ -348,17 +354,14 @@ function About(): React.ReactElement {
               </div>
             </div>
 
-            <motion.div
-              className="about-values"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-            >
+            <div className="about-values">
               <h3 className="values-title">Core Principles</h3>
               <div className="values-grid">
-                <motion.article
+                <Reveal
+                  as="article"
                   className="value-card"
-                  variants={fadeUpVariants}
+                  delay={260}
+                  visible={isVisible}
                 >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -380,11 +383,13 @@ function About(): React.ReactElement {
                       </p>
                     </div>
                   </div>
-                </motion.article>
+                </Reveal>
 
-                <motion.article
+                <Reveal
+                  as="article"
                   className="value-card"
-                  variants={fadeUpVariants}
+                  delay={340}
+                  visible={isVisible}
                 >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -408,14 +413,16 @@ function About(): React.ReactElement {
                       </p>
                     </div>
                   </div>
-                </motion.article>
+                </Reveal>
 
-                <motion.article
+                <Reveal
+                  as="article"
                   className="value-card"
-                  variants={fadeUpVariants}
+                  delay={420}
+                  visible={isVisible}
                 >
                   <div className="value-icon" aria-hidden="true">
-                    <Brain strokeWidth={2} size={24} />
+                    <BrainIcon strokeWidth={2} size={24} />
                   </div>
                   <h4>Continuous Learning</h4>
                   <div className="value-card-content">
@@ -426,14 +433,16 @@ function About(): React.ReactElement {
                       </p>
                     </div>
                   </div>
-                </motion.article>
+                </Reveal>
 
-                <motion.article
+                <Reveal
+                  as="article"
                   className="value-card"
-                  variants={fadeUpVariants}
+                  delay={500}
+                  visible={isVisible}
                 >
                   <div className="value-icon" aria-hidden="true">
-                    <BookOpen strokeWidth={2} size={24} />
+                    <BookOpenIcon strokeWidth={2} size={24} />
                   </div>
                   <h4>Documentation</h4>
                   <div className="value-card-content">
@@ -445,11 +454,13 @@ function About(): React.ReactElement {
                       </p>
                     </div>
                   </div>
-                </motion.article>
+                </Reveal>
 
-                <motion.article
+                <Reveal
+                  as="article"
                   className="value-card"
-                  variants={fadeUpVariants}
+                  delay={580}
+                  visible={isVisible}
                 >
                   <div className="value-icon" aria-hidden="true">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -468,10 +479,10 @@ function About(): React.ReactElement {
                       </p>
                     </div>
                   </div>
-                </motion.article>
+                </Reveal>
               </div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </Reveal>
         </div>
       </div>
     </section>

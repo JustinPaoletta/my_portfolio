@@ -2,8 +2,8 @@
  * Footer Component
  * Site footer with copyright
  */
-import { ArrowRight } from 'lucide-react';
 import JPLogo from '@/components/Brand/JPLogo';
+import { ArrowRightIcon } from '@/components/icons';
 import './Footer.css';
 
 function Footer(): React.ReactElement {
@@ -19,9 +19,15 @@ function Footer(): React.ReactElement {
           </a>
           <p className="footer-tagline">
             <span>Ideas</span>
-            <ArrowRight className="footer-tagline-icon" aria-hidden="true" />
+            <ArrowRightIcon
+              className="footer-tagline-icon"
+              aria-hidden="true"
+            />
             <span>Prompts</span>
-            <ArrowRight className="footer-tagline-icon" aria-hidden="true" />
+            <ArrowRightIcon
+              className="footer-tagline-icon"
+              aria-hidden="true"
+            />
             <span>Production</span>
           </p>
         </div>

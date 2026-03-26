@@ -30,7 +30,7 @@ export const LINKEDIN_ARTICLES: LinkedInArticle[] = [
       'AI-Assisted Development',
       'Engineering Quality',
     ],
-    image: '/articles/article_1.png',
+    image: '/articles/article_1.webp',
     imageAlt: 'The Two Competing Ideas in Agentic Coding article cover',
   },
 ];

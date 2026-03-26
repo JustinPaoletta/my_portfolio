@@ -53,22 +53,31 @@ vi.mock('./ContributionGraph', () => ({
   ),
 }));
 
-vi.mock('framer-motion', async () => {
+vi.mock('@/components/Reveal', async () => {
   const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
   return {
-    motion: {
-      header: motionFactory('header'),
-      span: motionFactory('span'),
-      h2: motionFactory('h2'),
-      div: motionFactory('div'),
-    },
-    useInView: () => isInView,
+    Reveal: React.forwardRef<
+      HTMLElement,
+      React.HTMLAttributes<HTMLElement> & {
+        as?: keyof HTMLElementTagNameMap;
+        visible?: boolean;
+        delay?: number;
+        effect?: string;
+      }
+    >(
+      (
+        {
+          as: Tag = 'div',
+          children,
+          visible: _visible,
+          delay: _delay,
+          effect: _effect,
+          ...props
+        },
+        ref
+      ) => React.createElement(Tag, { ref, ...props }, children)
+    ),
+    useRevealInView: () => isInView,
   };
 });
 

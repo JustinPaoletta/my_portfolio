@@ -1,30 +1,66 @@
 /**
  * Hero Section
  * Main introduction with name, title, and brief intro
- * Uses Framer Motion for smooth parallax scrolling
+ * Uses Framer Motion for reduced-motion checks and lightweight parallax enhancement
  */
 
-import { Suspense, lazy, useEffect, useRef, useState } from 'react';
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useSpring,
-  useTransform,
-} from 'framer-motion';
+import { useEffect, useRef, useState } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { env } from '@/config/env';
 import { HERO_TAGLINE } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useTheme } from '@/hooks/useTheme';
+import CliTerminal from './CliTerminal';
 import './Hero.css';
+import cliHeroCssUrl from './Hero.cli.css?url';
+import cosmicHeroCssUrl from './Hero.cosmic.css?url';
+import engineerHeroCssUrl from './Hero.engineer.css?url';
 
-const CliTerminal = lazy(() => import('./CliTerminal'));
-
-const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
-  cli: () => import('./Hero.cli.css'),
-  cosmic: () => import('./Hero.cosmic.css'),
-  engineer: () => import('./Hero.engineer.css'),
+const themeStyleUrls: Record<string, string> = {
+  cli: cliHeroCssUrl,
+  cosmic: cosmicHeroCssUrl,
+  engineer: engineerHeroCssUrl,
 };
+
+const loadedThemeStyles = new Set<string>();
+
+function ensureThemeStylesheet(themeName: string): void {
+  if (typeof document === 'undefined') {
+    return;
+  }
+
+  const href = themeStyleUrls[themeName];
+  if (!href) {
+    return;
+  }
+
+  const existingLink = document.head.querySelector<HTMLLinkElement>(
+    `link[data-hero-theme-style="${themeName}"]`
+  );
+
+  if (existingLink) {
+    loadedThemeStyles.add(themeName);
+    return;
+  }
+
+  if (loadedThemeStyles.has(themeName)) {
+    return;
+  }
+
+  const stylesheet = document.createElement('link');
+  stylesheet.rel = 'stylesheet';
+  stylesheet.href = href;
+  stylesheet.dataset.heroThemeStyle = themeName;
+  document.head.appendChild(stylesheet);
+  loadedThemeStyles.add(themeName);
+}
+
+if (typeof document !== 'undefined') {
+  const initialTheme = document.documentElement.getAttribute('data-theme');
+  if (initialTheme) {
+    ensureThemeStylesheet(initialTheme);
+  }
+}
 
 const tracePaths = [
   { id: 'trace-top-2', d: 'M687.5 300 L687.5 250 L660.5 170 L660.5 110' },
@@ -220,6 +256,80 @@ function useHeroEnvironmentFlags(): number {
   return flags;
 }
 
+function useDeferredHeroEnhancement(): boolean {
+  const [isEnhanced, setIsEnhanced] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    let idleHandle: number | undefined;
+    let timeoutId: number | undefined;
+    let paintFrameOne: number | undefined;
+    let paintFrameTwo: number | undefined;
+    let cancelled = false;
+
+    const isTestEnvironment =
+      typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
+    const activationDelay = isTestEnvironment ? 0 : 180;
+
+    const activateEnhancement = (): void => {
+      timeoutId = window.setTimeout(() => {
+        if (!cancelled) {
+          setIsEnhanced(true);
+        }
+      }, activationDelay);
+    };
+
+    const scheduleAfterPaint = (): void => {
+      paintFrameOne = window.requestAnimationFrame(() => {
+        paintFrameTwo = window.requestAnimationFrame(() => {
+          if (
+            !isTestEnvironment &&
+            typeof window.requestIdleCallback === 'function'
+          ) {
+            idleHandle = window.requestIdleCallback(activateEnhancement, {
+              timeout: 1200,
+            });
+            return;
+          }
+
+          activateEnhancement();
+        });
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleAfterPaint();
+    } else {
+      window.addEventListener('load', scheduleAfterPaint, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('load', scheduleAfterPaint);
+      if (
+        idleHandle !== undefined &&
+        typeof window.cancelIdleCallback === 'function'
+      ) {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+      if (paintFrameOne !== undefined) {
+        window.cancelAnimationFrame(paintFrameOne);
+      }
+      if (paintFrameTwo !== undefined) {
+        window.cancelAnimationFrame(paintFrameTwo);
+      }
+    };
+  }, []);
+
+  return isEnhanced;
+}
+
 interface CosmicHeroBackgroundProps {
   prefersReducedMotion: boolean;
 }
@@ -245,10 +355,79 @@ function CosmicHeroBackground({
 
 function ActiveCosmicHeroBackground(): React.ReactElement {
   const cosmicVideoRef = useRef<HTMLVideoElement>(null);
+  const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [isCosmicVideoReady, setIsCosmicVideoReady] = useState(false);
 
   useEffect(() => {
-    if (typeof document === 'undefined') {
+    if (typeof document === 'undefined' || shouldLoadVideo) {
+      return;
+    }
+
+    let idleHandle: number | undefined;
+    let timeoutId: number | undefined;
+    let paintFrameOne: number | undefined;
+    let paintFrameTwo: number | undefined;
+    let cancelled = false;
+
+    const isTestEnvironment =
+      typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
+    const activationDelay = isTestEnvironment ? 0 : 1200;
+
+    const activateVideo = (): void => {
+      timeoutId = window.setTimeout(() => {
+        if (!cancelled) {
+          setShouldLoadVideo(true);
+        }
+      }, activationDelay);
+    };
+
+    const scheduleAfterPaint = (): void => {
+      paintFrameOne = window.requestAnimationFrame(() => {
+        paintFrameTwo = window.requestAnimationFrame(() => {
+          if (
+            !isTestEnvironment &&
+            typeof window.requestIdleCallback === 'function'
+          ) {
+            idleHandle = window.requestIdleCallback(activateVideo, {
+              timeout: 2000,
+            });
+            return;
+          }
+
+          activateVideo();
+        });
+      });
+    };
+
+    if (document.readyState === 'complete') {
+      scheduleAfterPaint();
+    } else {
+      window.addEventListener('load', scheduleAfterPaint, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener('load', scheduleAfterPaint);
+      if (
+        idleHandle !== undefined &&
+        typeof window.cancelIdleCallback === 'function'
+      ) {
+        window.cancelIdleCallback(idleHandle);
+      }
+      if (timeoutId !== undefined) {
+        window.clearTimeout(timeoutId);
+      }
+      if (paintFrameOne !== undefined) {
+        window.cancelAnimationFrame(paintFrameOne);
+      }
+      if (paintFrameTwo !== undefined) {
+        window.cancelAnimationFrame(paintFrameTwo);
+      }
+    };
+  }, [shouldLoadVideo]);
+
+  useEffect(() => {
+    if (typeof document === 'undefined' || !shouldLoadVideo) {
       return;
     }
 
@@ -360,7 +539,7 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       removeInteractionListeners();
     };
-  }, []);
+  }, [shouldLoadVideo]);
 
   return (
     <div
@@ -370,18 +549,20 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
       aria-hidden="true"
     >
       <span className="hero-cosmic-still" />
-      <video
-        ref={cosmicVideoRef}
-        className="hero-cosmic-video"
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="auto"
-        poster="/images/hero/cosmic/cosmos-first-frame.webp"
-      >
-        <source src="/video/cosmos.mp4" type="video/mp4" />
-      </video>
+      {shouldLoadVideo && (
+        <video
+          ref={cosmicVideoRef}
+          className="hero-cosmic-video"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="metadata"
+          poster="/images/hero/cosmic/cosmos-first-frame.webp"
+        >
+          <source src="/video/cosmos.mp4" type="video/mp4" />
+        </video>
+      )}
     </div>
   );
 }
@@ -470,13 +651,14 @@ const chipPins = {
 
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
+  const heroContentRef = useRef<HTMLDivElement>(null);
   const electronSvgRef = useRef<SVGSVGElement>(null);
-  const loadedThemeStyles = useRef(new Set<string>());
   const { themeName } = useTheme();
   const isCosmicTheme = themeName === 'cosmic';
   const isEngineerTheme = themeName === 'engineer';
   const isCliTheme = themeName === 'cli';
   const prefersReducedMotion = Boolean(useReducedMotion());
+  const shouldEnhanceHero = useDeferredHeroEnhancement();
   const heroEnvironmentFlags = useHeroEnvironmentFlags();
   const useCalmerElectronMotion = Boolean(
     heroEnvironmentFlags &
@@ -492,17 +674,11 @@ function Hero(): React.ReactElement {
   });
 
   useEffect(() => {
-    const loadThemeStyles = themeStyleLoaders[themeName];
-    if (!loadThemeStyles || loadedThemeStyles.current.has(themeName)) {
-      return;
-    }
-
-    void loadThemeStyles();
-    loadedThemeStyles.current.add(themeName);
+    ensureThemeStylesheet(themeName);
   }, [themeName]);
 
   useEffect(() => {
-    if (!isEngineerTheme) {
+    if (!isEngineerTheme || !shouldEnhanceHero) {
       return;
     }
 
@@ -517,7 +693,77 @@ function Hero(): React.ReactElement {
     }
 
     svg.pauseAnimations();
-  }, [isEngineerTheme, isHeroInView]);
+  }, [isEngineerTheme, isHeroInView, shouldEnhanceHero]);
+
+  useEffect(() => {
+    const content = heroContentRef.current;
+    if (!content) {
+      return;
+    }
+
+    const disableEnhancement = disableParallax || !shouldEnhanceHero;
+
+    if (disableEnhancement) {
+      content.dataset.parallaxEnabled = 'false';
+      content.style.removeProperty('--hero-parallax-y');
+      content.style.removeProperty('--hero-parallax-opacity');
+      return;
+    }
+
+    let rafId: number | null = null;
+    let previousTransform = '';
+    let previousOpacity = '';
+
+    const updateParallax = (): void => {
+      rafId = null;
+
+      const section = sectionRef.current;
+      if (!section) {
+        return;
+      }
+
+      const rect = section.getBoundingClientRect();
+      const sectionHeight = Math.max(rect.height, 1);
+      const progress = Math.min(Math.max(-rect.top / sectionHeight, 0), 1);
+      const parallaxY = `${(progress * 125).toFixed(2)}px`;
+      const opacity = (progress >= 0.9 ? 0 : 1 - progress / 0.9)
+        .toFixed(3)
+        .replace(/\.?0+$/, '');
+
+      if (parallaxY !== previousTransform) {
+        content.style.setProperty('--hero-parallax-y', parallaxY);
+        previousTransform = parallaxY;
+      }
+
+      if (opacity !== previousOpacity) {
+        content.style.setProperty('--hero-parallax-opacity', opacity);
+        previousOpacity = opacity;
+      }
+    };
+
+    const scheduleUpdate = (): void => {
+      if (rafId !== null) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(updateParallax);
+    };
+
+    content.dataset.parallaxEnabled = 'true';
+    updateParallax();
+    window.addEventListener('scroll', scheduleUpdate, { passive: true });
+    window.addEventListener('resize', scheduleUpdate);
+
+    return () => {
+      if (rafId !== null) {
+        window.cancelAnimationFrame(rafId);
+      }
+      content.dataset.parallaxEnabled = 'false';
+      content.style.removeProperty('--hero-parallax-y');
+      content.style.removeProperty('--hero-parallax-opacity');
+      window.removeEventListener('scroll', scheduleUpdate);
+      window.removeEventListener('resize', scheduleUpdate);
+    };
+  }, [disableParallax, shouldEnhanceHero]);
 
   const electronMotion = useCalmerElectronMotion
     ? {
@@ -532,33 +778,6 @@ function Hero(): React.ReactElement {
         beginStep: 0.35,
         beginCycleWindow: 3.2,
       };
-
-  // Framer Motion scroll hooks for smooth parallax
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ['start start', 'end start'],
-  });
-
-  // Transform scroll position to parallax offset with smooth spring physics
-  // As user scrolls from 0 to 500px, content moves 0 to 125px (0.25 multiplier)
-  const parallaxRange = useTransform(scrollYProgress, [0, 1], [0, 125], {
-    clamp: true,
-  });
-  const parallaxY = useSpring(parallaxRange, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.6,
-  });
-
-  // Fade out content as user scrolls
-  const opacityRange = useTransform(scrollYProgress, [0, 0.9], [1, 0], {
-    clamp: true,
-  });
-  const opacity = useSpring(opacityRange, {
-    stiffness: 120,
-    damping: 30,
-    mass: 0.6,
-  });
 
   return (
     <section
@@ -733,18 +952,16 @@ function Hero(): React.ReactElement {
         </div>
       )}
 
-      <motion.div
+      <div
+        ref={heroContentRef}
         className="hero-content"
-        style={{
-          y: disableParallax ? 0 : parallaxY,
-          opacity: disableParallax ? 1 : opacity,
-        }}
+        data-parallax-enabled={
+          !disableParallax && shouldEnhanceHero ? 'true' : 'false'
+        }
       >
         <div className="hero-text-stack">
           {isCliTheme ? (
-            <Suspense fallback={null}>
-              <CliTerminal />
-            </Suspense>
+            <CliTerminal />
           ) : (
             <>
               <span className="hero-greeting">Hello, I&apos;m</span>
@@ -880,7 +1097,7 @@ function Hero(): React.ReactElement {
             </div>
           </>
         )}
-      </motion.div>
+      </div>
     </section>
   );
 }

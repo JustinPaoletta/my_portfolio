@@ -1,11 +1,8 @@
-// CRITICAL: Import env at the TOP of setup file (before anything else)
-// This ensures validation runs at module load time, BEFORE any tests execute
-// Validation happens when this line executes because env.ts calls validateEnv()
-// at module load time (line 217: const validatedEnv = validateEnv();)
-// If validation fails, it throws an error and prevents tests from running
-console.log('[SETUP] Loading and validating environment variables...');
+// CRITICAL: Import env at the TOP of setup file so tests fail fast if the
+// compile-time app config is missing or malformed.
+console.log('[SETUP] Loading application environment config...');
 import '@/config/env';
-console.log('[SETUP] Environment validation completed successfully');
+console.log('[SETUP] Application environment config loaded successfully');
 
 import { expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';

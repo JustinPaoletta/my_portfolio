@@ -278,8 +278,6 @@ const INITIAL_DOGS_DATA: DogData[] = DOGS.map((dog) => ({
 
 const RESUME_PATH = '/resume/Justin-Paoletta_Software-Engineer.pdf';
 
-const BOOT_MESSAGE = 'JP-CLI Initialized';
-
 const MAIN_MENU_LINES: InitialLine[] = [
   { kind: 'hint', text: 'Use panel options or type a number/command.' },
 ];
@@ -291,6 +289,8 @@ function createMainMenuLines(lineIdStart: number): TerminalLine[] {
     id: lineIdStart + index + 1,
   }));
 }
+
+const INITIAL_MENU_LINES = createMainMenuLines(0);
 
 function chunk(items: string[], size: number): string[] {
   const groups: string[] = [];
@@ -314,8 +314,8 @@ function CliTerminal(): React.ReactElement {
   const [inputValue, setInputValue] = useState('');
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
   const [isDetailView, setIsDetailView] = useState(false);
-  const [lines, setLines] = useState<TerminalLine[]>([]);
-  const lineIdRef = useRef(0);
+  const [lines, setLines] = useState<TerminalLine[]>(INITIAL_MENU_LINES);
+  const lineIdRef = useRef(INITIAL_MENU_LINES.length);
   const historyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -447,7 +447,8 @@ function CliTerminal(): React.ReactElement {
     setContext('main');
     setIsDetailView(false);
     setSelectedOptionIndex(0);
-    setLines([]);
+    lineIdRef.current = INITIAL_MENU_LINES.length;
+    setLines(INITIAL_MENU_LINES);
   };
 
   const showAbout = (): void => {
@@ -1146,40 +1147,6 @@ function CliTerminal(): React.ReactElement {
     color: 'rgba(68, 20, 15, 0.8)',
     transform: 'translateY(-0.01rem)',
   } as const;
-
-  /* Boot sequence: typewriter "JP-CLI Initialized", then clear and show main menu */
-  useEffect(() => {
-    const charDelayMs = 50;
-    const pauseAfterBootMs = 500;
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
-    const schedule = (fn: () => void, ms: number) => {
-      timeouts.push(setTimeout(fn, ms));
-    };
-
-    let charIndex = 0;
-    const bootLineId = 1;
-    lineIdRef.current = 1;
-
-    const typeNextChar = (): void => {
-      charIndex += 1;
-      const partial = BOOT_MESSAGE.slice(0, charIndex);
-      setLines([{ id: bootLineId, kind: 'system', text: partial }]);
-
-      if (charIndex < BOOT_MESSAGE.length) {
-        schedule(typeNextChar, charDelayMs);
-      } else {
-        schedule(() => {
-          const menuLines = createMainMenuLines(lineIdRef.current);
-          lineIdRef.current += menuLines.length;
-          setLines(menuLines);
-        }, pauseAfterBootMs);
-      }
-    };
-
-    schedule(typeNextChar, charDelayMs);
-
-    return () => timeouts.forEach(clearTimeout);
-  }, []);
 
   useEffect(() => {
     const history = historyRef.current;

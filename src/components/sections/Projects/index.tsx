@@ -1,17 +1,10 @@
 /**
  * Projects Section
  * Showcase of best work with descriptions, tech stack, and links
- * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
-import {
-  fadeUpVariants,
-  staggerContainerVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
+import { Reveal, useRevealInView } from '@/components/Reveal';
 import { env } from '@/config/env';
 import './Projects.css';
 
@@ -135,7 +128,7 @@ const projects: Project[] = [
 
 function Projects(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisible = useRevealInView(sectionRef);
 
   const featuredProjects = projects.filter((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);
@@ -148,36 +141,40 @@ function Projects(): React.ReactElement {
       aria-labelledby="projects-heading"
     >
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             Portfolio
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="projects-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             My Projects
-          </motion.h2>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
         {/* My Projects */}
-        <motion.div
-          className="featured-projects"
-          variants={staggerContainerVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
-          {featuredProjects.map((project) => (
-            <motion.article
+        <div className="featured-projects">
+          {featuredProjects.map((project, index) => (
+            <Reveal
+              as="article"
               key={project.id}
               className="featured-project"
-              variants={fadeUpVariants}
+              delay={140 + index * 90}
+              visible={isVisible}
             >
               <div className="project-image-wrapper">
                 <img
@@ -302,34 +299,31 @@ function Projects(): React.ReactElement {
                   ))}
                 </div>
               </div>
-            </motion.article>
+            </Reveal>
           ))}
-        </motion.div>
+        </div>
 
         {/* Other Projects */}
-        <motion.h3
+        <Reveal
+          as="h3"
           className="other-projects-title"
-          variants={fadeUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          delay={240}
+          visible={isVisible}
         >
           Other Projects
-        </motion.h3>
-        <motion.div
-          className="other-projects"
-          variants={staggerContainerVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
-          {otherProjects.map((project) => (
-            <motion.article
+        </Reveal>
+        <div className="other-projects">
+          {otherProjects.map((project, index) => (
+            <Reveal
+              as="article"
               key={project.id}
               className={`project-card${
                 project.titleLogo && !project.cardImage
                   ? ' project-card--title-logo'
                   : ''
               }`}
-              variants={fadeUpVariants}
+              delay={280 + index * 80}
+              visible={isVisible}
             >
               <div className="card-header">
                 {project.cardHeaderIcon ? (
@@ -447,9 +441,9 @@ function Projects(): React.ReactElement {
                   </span>
                 ))}
               </div>
-            </motion.article>
+            </Reveal>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -4,15 +4,20 @@
  */
 
 import React, { useState, useCallback, useEffect, useRef } from 'react';
-import { Monitor, Moon, Palette, Sun } from 'lucide-react';
+import {
+  MonitorIcon,
+  MoonIcon,
+  PaletteIcon,
+  SunIcon,
+} from '@/components/icons';
 import { useTheme } from '@/hooks/useTheme';
 import type { ColorMode } from '@/config/themes';
 import './ThemeSwitcher.css';
 
 const modeIcons: Record<ColorMode, React.ReactElement> = {
-  light: <Sun size={20} aria-hidden />,
-  dark: <Moon size={20} aria-hidden />,
-  system: <Monitor size={20} aria-hidden />,
+  light: <SunIcon size={20} aria-hidden />,
+  dark: <MoonIcon size={20} aria-hidden />,
+  system: <MonitorIcon size={20} aria-hidden />,
 };
 
 const modeLabels: Record<ColorMode, string> = {
@@ -112,7 +117,7 @@ export default function ThemeSwitcher({
         aria-haspopup="dialog"
       >
         <span className="theme-icon" aria-hidden="true">
-          <Palette size={20} />
+          <PaletteIcon size={20} />
         </span>
         <span className="theme-label">Theme</span>
       </button>

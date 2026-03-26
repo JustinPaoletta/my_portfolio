@@ -1,5 +1,4 @@
 import { render, type RenderOptions } from '@testing-library/react';
-import { HelmetProvider } from 'react-helmet-async';
 import type { ReactElement } from 'react';
 import { ThemeProvider } from '@/hooks/useTheme';
 
@@ -8,18 +7,14 @@ import { ThemeProvider } from '@/hooks/useTheme';
  */
 function customRender(ui: ReactElement, options?: RenderOptions) {
   return render(ui, {
-    wrapper: ({ children }) => <HelmetProvider>{children}</HelmetProvider>,
+    wrapper: ({ children }) => <>{children}</>,
     ...options,
   });
 }
 
 function renderWithTheme(ui: ReactElement, options?: RenderOptions) {
   return render(ui, {
-    wrapper: ({ children }) => (
-      <HelmetProvider>
-        <ThemeProvider>{children}</ThemeProvider>
-      </HelmetProvider>
-    ),
+    wrapper: ({ children }) => <ThemeProvider>{children}</ThemeProvider>,
     ...options,
   });
 }
