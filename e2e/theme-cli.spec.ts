@@ -171,7 +171,7 @@ test('color mode selection persists after reload', async ({ page }) => {
   await page.goto('/');
 
   await openThemeSwitcher(page);
-  await page.getByRole('radio', { name: 'Light' }).click();
+  await page.getByTitle('Light').click();
   await closeThemeSwitcher(page);
 
   await expect(page.locator('html')).toHaveAttribute(
@@ -317,7 +317,10 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
   await page.goto('/');
 
   await openThemeSwitcher(page);
-  await page.getByText('CLI').click();
+  await page
+    .getByRole('dialog', { name: /theme settings/i })
+    .getByText('CLI', { exact: true })
+    .click();
   await closeThemeSwitcher(page);
 
   await expect(
@@ -354,7 +357,10 @@ test('CLI close control switches back to default theme', async ({ page }) => {
   await page.goto('/');
 
   await openThemeSwitcher(page);
-  await page.getByText('CLI').click();
+  await page
+    .getByRole('dialog', { name: /theme settings/i })
+    .getByText('CLI', { exact: true })
+    .click();
   await closeThemeSwitcher(page);
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cli');
