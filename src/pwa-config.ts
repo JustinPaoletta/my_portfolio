@@ -95,6 +95,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
     maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
     globIgnores: ['**/images/**', '**/video/**', '**/articles/**', '**/og/**'],
+    navigateFallbackDenylist: [/\/[^/?]+\.[^/]+$/],
     runtimeCaching: [
       {
         urlPattern: ({ request, url }) =>

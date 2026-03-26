@@ -98,9 +98,9 @@ h6 {
 }
 
 .skip-link {
-  position: absolute;
-  top: -9999px;
-  left: -9999px;
+  position: fixed;
+  top: 0;
+  left: 0;
   background-color: var(--color-primary);
   color: #ffffff;
   padding: 12px 24px;
@@ -108,16 +108,13 @@ h6 {
   z-index: 9999;
   font-weight: 600;
   border-radius: 0 0 8px 0;
-  opacity: 0;
-  pointer-events: none;
+  opacity: 1;
   font-family: var(--font-sans);
+  transform: translateY(-140%);
+  transition: transform 0.2s ease;
 
   &:focus {
-    position: fixed;
-    top: 0;
-    left: 0;
-    opacity: 1;
-    pointer-events: auto;
+    transform: translateY(0);
     outline: 3px solid #ffffff;
     outline-offset: 2px;
   }
@@ -176,6 +173,29 @@ html {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+html[data-visual-test='true'] {
+  scroll-behavior: auto;
+}
+
+html[data-visual-test='true'] *,
+html[data-visual-test='true'] *::before,
+html[data-visual-test='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-visual-test='true'] :focus,
+html[data-visual-test='true'] :focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html[data-visual-test='true'] .nav-logo .jp-logo-cursor {
+  display: none !important;
 }
 
 ::selection {

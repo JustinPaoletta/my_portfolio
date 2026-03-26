@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@/test/test-utils';
+import { fireEvent, render, screen, waitFor } from '@/test/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { themes } from '@/config/themes';
 import ThemeSwitcher from '.';
@@ -39,10 +39,10 @@ describe('ThemeSwitcher', () => {
     });
     fireEvent.click(toggle);
 
-    fireEvent.click(screen.getByRole('radio', { name: 'Dark' }));
+    fireEvent.click(screen.getByTitle('Dark'));
     expect(setColorModeMock).toHaveBeenCalledWith('dark');
 
-    fireEvent.click(screen.getByRole('option', { name: 'Cosmic' }));
+    fireEvent.click(screen.getByText('Cosmic'));
     expect(setThemeMock).toHaveBeenCalledWith('cosmic');
 
     const backdrop = document.querySelector('.theme-switcher-backdrop');
@@ -53,26 +53,21 @@ describe('ThemeSwitcher', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('supports keyboard selection and escape close path', () => {
+  it('supports keyboard escape close path and restores the toggle focus', async () => {
     render(<ThemeSwitcher placement="floating" />);
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Toggle theme switcher' })
-    );
+    const toggle = screen.getByRole('button', {
+      name: 'Toggle theme switcher',
+    });
+    fireEvent.click(toggle);
 
-    const lightMode = screen.getByRole('radio', { name: 'Light' });
-    fireEvent.keyDown(lightMode, { key: 'Enter' });
-    fireEvent.keyDown(lightMode, { key: ' ' });
-    expect(setColorModeMock).toHaveBeenCalledWith('light');
+    const systemMode = screen.getByRole('radio', { name: 'System' });
+    await waitFor(() => {
+      expect(systemMode).toHaveFocus();
+    });
 
-    const engineerTheme = screen.getByRole('option', { name: 'Engineer' });
-    fireEvent.keyDown(engineerTheme, { key: 'Enter' });
-    fireEvent.keyDown(engineerTheme, { key: ' ' });
-    expect(setThemeMock).toHaveBeenCalledWith('engineer');
-
-    const backdrop = document.querySelector('.theme-switcher-backdrop');
-    if (!backdrop) throw new Error('missing backdrop');
-    fireEvent.keyDown(backdrop, { key: 'Escape' });
+    fireEvent.keyDown(document, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    expect(toggle).toHaveFocus();
   });
 
   it('clears pulse-on-load class after animation and closes menu on scroll', () => {
@@ -115,14 +110,8 @@ describe('ThemeSwitcher', () => {
       screen.getByRole('button', { name: 'Toggle theme switcher' })
     );
 
-    expect(screen.getByRole('radio', { name: 'Dark' })).toHaveAttribute(
-      'aria-checked',
-      'true'
-    );
-    expect(screen.getByRole('option', { name: 'Engineer' })).toHaveAttribute(
-      'aria-selected',
-      'true'
-    );
+    expect(screen.getByRole('radio', { name: 'Dark' })).toBeChecked();
+    expect(screen.getByRole('radio', { name: 'Engineer' })).toBeChecked();
   });
 
   it('ignores non-activation keys', () => {
@@ -134,7 +123,7 @@ describe('ThemeSwitcher', () => {
     fireEvent.keyDown(screen.getByRole('radio', { name: 'Light' }), {
       key: 'Tab',
     });
-    fireEvent.keyDown(screen.getByRole('option', { name: 'Engineer' }), {
+    fireEvent.keyDown(screen.getByRole('radio', { name: 'Engineer' }), {
       key: 'Escape',
     });
     expect(setColorModeMock).not.toHaveBeenCalled();

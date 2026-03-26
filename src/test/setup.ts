@@ -7,9 +7,11 @@ console.log('[SETUP] Application environment config loaded successfully');
 import { expect, afterEach } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
+import { toHaveNoViolations } from 'jest-axe';
 
 // extend vitest's expect with jest-dom matchers
 expect.extend(matchers);
+expect.extend(toHaveNoViolations);
 
 // Mock IntersectionObserver for jsdom (not available in Node.js environment)
 class MockIntersectionObserver implements IntersectionObserver {

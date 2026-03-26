@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen, act, waitFor } from '@/test/test-utils';
+import { fireEvent, render, screen, act, waitFor } from '@/test/test-utils';
 import App from './App';
 
 const mockDogStats = {
@@ -211,6 +211,12 @@ describe('App', () => {
   });
 
   it('renders skip link for keyboard navigation', async () => {
+    const scrollIntoViewMock = vi.fn();
+    Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
+      configurable: true,
+      value: scrollIntoViewMock,
+    });
+
     await act(async () => {
       render(<App />);
     });
@@ -218,8 +224,14 @@ describe('App', () => {
     const skipLink = screen.getByRole('link', {
       name: /skip to main content/i,
     });
+    const main = screen.getByRole('main');
     expect(skipLink).toBeInTheDocument();
     expect(skipLink).toHaveAttribute('href', '#main');
+
+    fireEvent.click(skipLink);
+
+    expect(main).toHaveFocus();
+    expect(scrollIntoViewMock).toHaveBeenCalled();
   });
 
   it('renders semantic HTML structure', async () => {
@@ -287,24 +299,15 @@ describe('App', () => {
     expect(input).toHaveValue('');
   });
 
-  it('CLI container Enter still focuses input', async () => {
-    const user = userEvent.setup();
+  it('CLI input exposes the keyboard shortcuts hint', async () => {
     localStorage.setItem('portfolio-theme', 'cli');
 
     await act(async () => {
       render(<App />);
     });
 
-    const sessionContainer = screen.getByRole('button', {
-      name: /focus command input/i,
-    });
     const input = await screen.findByLabelText(/terminal command input/i);
-
-    sessionContainer.focus();
-    expect(sessionContainer).toHaveFocus();
-
-    await user.keyboard('{Enter}');
-    expect(input).toHaveFocus();
+    expect(input).toHaveAttribute('aria-describedby', 'cli-keyboard-shortcuts');
   });
 
   it('Cosmic startup attempts autoplay from persisted theme', async () => {

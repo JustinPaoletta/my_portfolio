@@ -76,9 +76,15 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 - `npm run test:ui` - open the Vitest UI
 - `npm run test:coverage` - run Vitest once with coverage output
 - `npm run test:coverage:ui` - open the Vitest UI with coverage enabled
+- `npm run test:a11y` - run the accessibility unit and Chromium E2E checks together
+- `npm run test:a11y:unit` - run axe-backed Vitest accessibility coverage for the app shell and custom UI
+- `npm run test:a11y:e2e` - run the tagged accessibility Playwright flows in Chromium
 - `npm run test:e2e` - run Playwright E2E tests locally
 - `npm run test:e2e:debug` - run Playwright in debug mode
 - `npm run test:e2e:ui` - open the Playwright UI runner
+- `npm run test:visual` - run the Chromium-only visual regression suite against committed baselines
+- `npm run test:visual:update` - accept intentional screenshot changes on the current platform
+- `npm run test:visual:update:linux` - refresh the Linux baselines in the pinned Playwright Docker image
 - `npm run lighthouse` - run Lighthouse CI locally with the checked-in config
 
 ### Release and Maintenance
@@ -89,7 +95,7 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 - `npm run clean:cache` - remove generated build, coverage, Lighthouse, and Playwright cache/output folders
 - `npm run nuke` - remove dependencies, build artifacts, caches, reports, and local Vercel state for a full reset
 
-Every normal PR into `master` should include a changeset file. PRs with a real `patch`, `minor`, or `major` changeset update the release PR, and merging that release PR creates the bare semver tag and GitHub Release automatically. PRs that carry only empty changesets are allowed for workflow, docs, or maintenance work, but they do not open a new release PR or publish a new version. The release workflow must use the repository secret `CHANGESETS_GITHUB_TOKEN` so bot-created release PRs still trigger the required PR checks. Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
+Every normal PR into `master` should include a changeset file. PRs with a real `patch`, `minor`, or `major` changeset update the release PR, and merging that release PR creates the bare semver tag and GitHub Release automatically. PRs that carry only empty changesets are allowed for workflow, docs, or maintenance work, but they do not open a new release PR or publish a new version. The release workflow mints a short-lived GitHub App installation token from the repository variable `CHANGESETS_APP_ID` and repository secret `CHANGESETS_APP_PRIVATE_KEY` so bot-created release PRs still trigger the required PR checks. Release details and hook behavior are documented in [docs/DEVELOPMENT_WORKFLOW.md](docs/DEVELOPMENT_WORKFLOW.md).
 
 ## Environment Overview
 
@@ -119,10 +125,13 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - `npm run build` enforces bundle-size limits from [`vite.config.ts`](vite.config.ts) and rewrites the production homepage with prerendered HTML
 - Vitest coverage thresholds are `90%` for lines, functions, branches, and statements
 - Playwright can target a custom preview URL with `PLAYWRIGHT_BASE_URL`
-- CI runs Chromium-only E2E tests, Lighthouse audits, and bundle-size checks
+- CI runs accessibility unit tests, Chromium-only E2E tests, Linux Chromium visual regression, Lighthouse audits, and bundle-size checks
+- Visual regression usage, baseline policy, and contributor workflow are documented in [docs/VISUAL_REGRESSION.md](docs/VISUAL_REGRESSION.md)
 
 ## Documentation
 
+- [Accessibility contract](docs/ACCESSIBILITY.md)
+- [Accessibility manual testing](docs/ACCESSIBILITY_MANUAL_TEST.md)
 - [Environment variables](docs/ENV.md)
 - [Vercel deployment](docs/VERCEL_DEPLOYMENT.md)
 - [SEO architecture](docs/SEO.md)
@@ -130,6 +139,7 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - [Observability](docs/OBSERVABILITY.md)
 - [Content Security Policy](docs/CSP.md)
 - [Performance & quality gates](docs/PERFORMANCE_QUALITY.md)
+- [Visual regression testing](docs/VISUAL_REGRESSION.md)
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
 - [Dependabot](docs/DEPENDABOT.md)
 - [JP_CLI theme](docs/JP_CLI.md)

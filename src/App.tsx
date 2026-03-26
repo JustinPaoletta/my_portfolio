@@ -3,7 +3,7 @@
  * Portfolio with parallax scrolling and animated sections
  */
 
-import { Suspense, lazy, useEffect, useState } from 'react';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import '@/App.css';
 import '@/styles/reveal.css';
 import DeferredSection from '@/components/DeferredSection';
@@ -16,6 +16,7 @@ import {
 import useIdleActivation from '@/hooks/useIdleActivation';
 import { ThemeProvider, useTheme } from '@/hooks/useTheme';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { isVisualTestMode } from '@/utils/visualTest';
 
 const Navigation = lazy(() => import('@/components/Navigation'));
 const Footer = lazy(() => import('@/components/Footer'));
@@ -24,6 +25,7 @@ const PWAUpdatePrompt = lazy(() => import('@/components/pwa-update-prompt'));
 function AppLayout(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
+  const isVisualTest = isVisualTestMode();
   const shouldMountFeaturedSections = useIdleActivation({
     enabled: !isCliTheme,
   });
@@ -42,6 +44,22 @@ function AppLayout(): React.ReactElement {
       currentIds.includes(sectionId) ? currentIds : [...currentIds, sectionId]
     );
   };
+
+  const handleSkipToMain = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+
+      const main = document.getElementById('main');
+      if (!(main instanceof HTMLElement)) {
+        return;
+      }
+
+      main.scrollIntoView({ behavior: 'auto', block: 'start' });
+      main.focus({ preventScroll: true });
+      window.history.replaceState(null, '', '#main');
+    },
+    []
+  );
 
   useEffect(() => {
     const handleRevealTarget = (event: Event): void => {
@@ -89,7 +107,7 @@ function AppLayout(): React.ReactElement {
       )}
 
       {/* Skip link for keyboard users */}
-      <a href="#main" className="skip-link">
+      <a href="#main" className="skip-link" onClick={handleSkipToMain}>
         Skip to main content
       </a>
 
@@ -101,12 +119,12 @@ function AppLayout(): React.ReactElement {
       )}
 
       {/* Theme switcher - always floating bottom-right */}
-      <ThemeSwitcher placement="floating" />
+      {!isVisualTest && <ThemeSwitcher placement="floating" />}
 
       {/* Main Content */}
       <main
         id="main"
-        role="main"
+        tabIndex={-1}
         className={
           isCliTheme ? 'main-content main-content--cli' : 'main-content'
         }

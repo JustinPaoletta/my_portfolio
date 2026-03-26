@@ -90,7 +90,10 @@ test('deferred GitHub and pet dogs requests wait until their sections mount', as
   expect(githubProxyRequests).toBe(0);
   const initialPetDogsGetRequests = petDogsGetRequests;
 
-  await page.getByRole('menuitem', { name: 'GitHub' }).click();
+  await page
+    .getByRole('navigation', { name: /main navigation/i })
+    .getByRole('link', { name: 'GitHub', exact: true })
+    .click();
   await expect(page.locator('section#github')).toBeVisible({ timeout: 10_000 });
   await expect.poll(() => githubProxyRequests).toBeGreaterThan(0);
   await expect(page.locator('section#pet-dogs')).toHaveCount(0);
@@ -129,7 +132,7 @@ test('contact form submits successfully and clears form state', async ({
   await page.getByRole('button', { name: /send message/i }).click();
 
   await expect(
-    contactSection.getByRole('alert').getByText(/Message sent successfully/i)
+    contactSection.getByRole('status').getByText(/Message sent successfully/i)
   ).toBeVisible();
   await expect(page.getByLabel('Your Name')).toHaveValue('');
   await expect(page.getByLabel('Email Address')).toHaveValue('');

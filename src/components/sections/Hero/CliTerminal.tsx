@@ -5,6 +5,7 @@ import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { useTheme } from '@/hooks/useTheme';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './CliTerminal.css';
 
 type LineKind = 'system' | 'output' | 'input' | 'hint' | 'error' | 'success';
@@ -79,6 +80,8 @@ const MAIN_MENU = [
   { number: 9, label: 'Help', command: 'help' },
   { number: 0, label: 'Clear', command: 'clear' },
 ] as const;
+
+const BOOT_MESSAGE = 'JP-CLI Initialized';
 
 const ABOUT_SUMMARY = [
   'Frontend platform engineer focused on modernizing large AngularJS applications without risky all-at-once rewrites.',
@@ -1148,6 +1151,48 @@ function CliTerminal(): React.ReactElement {
     transform: 'translateY(-0.01rem)',
   } as const;
 
+  /* Boot sequence: typewriter "JP-CLI Initialized", then clear and show main menu */
+  useEffect(() => {
+    if (isVisualTestMode()) {
+      lineIdRef.current = 1;
+      const menuLines = createMainMenuLines(lineIdRef.current);
+      lineIdRef.current += menuLines.length;
+      setLines(menuLines);
+      return;
+    }
+
+    const charDelayMs = 50;
+    const pauseAfterBootMs = 500;
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    const schedule = (fn: () => void, ms: number) => {
+      timeouts.push(setTimeout(fn, ms));
+    };
+
+    let charIndex = 0;
+    const bootLineId = 1;
+    lineIdRef.current = 1;
+
+    const typeNextChar = (): void => {
+      charIndex += 1;
+      const partial = BOOT_MESSAGE.slice(0, charIndex);
+      setLines([{ id: bootLineId, kind: 'system', text: partial }]);
+
+      if (charIndex < BOOT_MESSAGE.length) {
+        schedule(typeNextChar, charDelayMs);
+      } else {
+        schedule(() => {
+          const menuLines = createMainMenuLines(lineIdRef.current);
+          lineIdRef.current += menuLines.length;
+          setLines(menuLines);
+        }, pauseAfterBootMs);
+      }
+    };
+
+    schedule(typeNextChar, charDelayMs);
+
+    return () => timeouts.forEach(clearTimeout);
+  }, []);
+
   useEffect(() => {
     const history = historyRef.current;
     if (!history) {
@@ -1210,9 +1255,8 @@ function CliTerminal(): React.ReactElement {
             minHeight: 0,
           }}
         >
-          <aside
+          <div
             className="cli-options-panel"
-            aria-label="Selection menu"
             style={{
               order: isCompactLayout ? 2 : 1,
               borderRight: isCompactLayout
@@ -1349,7 +1393,7 @@ function CliTerminal(): React.ReactElement {
                         setInputValue(String(option.value));
                         requestAnimationFrame(focusPromptInput);
                       }}
-                      aria-current={isSelected ? 'true' : undefined}
+                      aria-pressed={isSelected}
                       style={{
                         width: '100%',
                         textAlign: 'left',
@@ -1379,7 +1423,7 @@ function CliTerminal(): React.ReactElement {
                 );
               })}
             </ul>
-          </aside>
+          </div>
 
           <div
             style={{
@@ -1403,6 +1447,7 @@ function CliTerminal(): React.ReactElement {
             </div>
 
             <p
+              id="cli-keyboard-shortcuts"
               className="cli-line cli-line--hint"
               style={{
                 padding: '0.42rem 1rem',
@@ -1415,24 +1460,7 @@ function CliTerminal(): React.ReactElement {
                 : 'Options left | Keys: ↑ ↓ ← → move | Space/0-9 stage input | Enter run'}
             </p>
 
-            <div
-              className="cli-session"
-              ref={historyRef}
-              role="button"
-              tabIndex={0}
-              aria-label="Focus command input"
-              onClick={focusPromptInput}
-              onKeyDown={(e) => {
-                if (e.target !== e.currentTarget) {
-                  return;
-                }
-
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  focusPromptInput();
-                }
-              }}
-            >
+            <div className="cli-session" ref={historyRef}>
               <div className="cli-history" role="log" aria-live="polite">
                 {lines.map((line) => (
                   <p
@@ -1495,6 +1523,7 @@ function CliTerminal(): React.ReactElement {
                   autoComplete="off"
                   spellCheck={false}
                   aria-label="Terminal command input"
+                  aria-describedby="cli-keyboard-shortcuts"
                   onKeyDown={(event) => {
                     const trimmedInput = inputValue.trim();
                     const isNavigationMode =

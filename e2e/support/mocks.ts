@@ -49,7 +49,7 @@ interface MockPortfolioApisOptions {
 const GITHUB_USER = {
   login: 'JustinPaoletta',
   id: 1,
-  avatar_url: 'https://avatars.githubusercontent.com/u/1?v=4',
+  avatar_url: '/branding/jp-headshot/jp-100.webp',
   html_url: 'https://github.com/JustinPaoletta',
   name: 'Justin Paoletta',
   company: null,

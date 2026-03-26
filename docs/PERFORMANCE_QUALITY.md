@@ -24,19 +24,23 @@ These checks run anywhere `npm run build` runs, including local builds, hooks, C
 
 ## Lighthouse CI
 
-Lighthouse CI audits four theme variants:
+Lighthouse CI audits each theme in both explicit color modes:
 
 - `/?theme=engineer&mode=light`
+- `/?theme=engineer&mode=dark`
 - `/?theme=cosmic&mode=light`
+- `/?theme=cosmic&mode=dark`
 - `/?theme=cli&mode=light`
+- `/?theme=cli&mode=dark`
 - `/?theme=minimal&mode=light`
+- `/?theme=minimal&mode=dark`
 
 Each URL is tested three times.
 
 ### Category thresholds
 
 - Performance: warn below `0.70`
-- Accessibility: error below `0.95`
+- Accessibility: error below `1.00`
 - Best practices: error below `0.90`
 - SEO: error below `0.90`
 
@@ -124,4 +128,5 @@ That is mainly useful when changing the budget enforcement itself.
 ## Related Docs
 
 - [SEO architecture](SEO.md)
+- [Accessibility contract](ACCESSIBILITY.md)
 - [Vercel Deployment](VERCEL_DEPLOYMENT.md)

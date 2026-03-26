@@ -213,11 +213,23 @@
     background: var(--bg-card-hover);
     box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
   }
+
+  &[aria-invalid='true'] {
+    border-color: #dc2626;
+    box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.16);
+  }
 }
 
 .form-textarea {
   resize: vertical;
   min-height: 120px;
+}
+
+.form-field-error {
+  margin: 0.5rem 0 0;
+  color: #f87171;
+  font-size: 0.875rem;
+  line-height: 1.5;
 }
 
 .submit-button {

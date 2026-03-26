@@ -8,12 +8,10 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-
-interface ContactFormData {
-  name: string;
-  email: string;
-  message: string;
-}
+import {
+  type ContactFormData,
+  validateContactFormData,
+} from '../src/shared/contact';
 
 interface ResendEmailPayload {
   from: string;
@@ -31,50 +29,6 @@ interface ResendErrorResponse {
   statusCode: number;
   message: string;
   name: string;
-}
-
-/**
- * Validates the contact form data
- */
-function validateFormData(
-  data: unknown
-): { valid: true; data: ContactFormData } | { valid: false; error: string } {
-  if (!data || typeof data !== 'object') {
-    return { valid: false, error: 'Invalid request body' };
-  }
-
-  const { name, email, message } = data as Record<string, unknown>;
-
-  if (!name || typeof name !== 'string' || name.trim().length < 2) {
-    return { valid: false, error: 'Name is required (minimum 2 characters)' };
-  }
-
-  if (!email || typeof email !== 'string') {
-    return { valid: false, error: 'Email is required' };
-  }
-
-  // Basic email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return { valid: false, error: 'Invalid email address' };
-  }
-
-  if (!message || typeof message !== 'string' || message.trim().length < 10) {
-    return {
-      valid: false,
-      error: 'Message is required (minimum 10 characters)',
-    };
-  }
-
-  // Sanitize inputs
-  return {
-    valid: true,
-    data: {
-      name: name.trim().slice(0, 100),
-      email: email.trim().toLowerCase().slice(0, 254),
-      message: message.trim().slice(0, 5000),
-    },
-  };
 }
 
 /**
@@ -173,9 +127,12 @@ export default async function handler(
   }
 
   // Validate form data
-  const validation = validateFormData(req.body);
+  const validation = validateContactFormData(req.body);
   if (validation.valid === false) {
-    res.status(400).json({ error: validation.error });
+    res.status(400).json({
+      error: validation.error,
+      fieldErrors: validation.fieldErrors,
+    });
     return;
   }
 

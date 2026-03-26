@@ -290,12 +290,10 @@ describe('CliTerminal', () => {
     fireEvent.change(input, { target: { value: 'project 1' } });
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     expect(input).toHaveValue('project 1');
-
-    const session = screen.getByRole('button', { name: 'Focus command input' });
-    session.focus();
-    fireEvent.keyDown(session, { key: 'Enter' });
-    fireEvent.keyDown(session, { key: ' ' });
-    expect(input).toHaveFocus();
+    expect(input).toHaveAttribute(
+      'aria-describedby',
+      screen.getByText(/Type 9 for help/i).getAttribute('id')
+    );
   });
 
   it('supports option click staging and close button behavior', () => {
@@ -306,6 +304,7 @@ describe('CliTerminal', () => {
 
     const input = screen.getByLabelText(/terminal command input/i);
     expect(input).toHaveValue('2');
+    expect(optionButton).toHaveAttribute('aria-pressed', 'true');
 
     fireEvent.click(
       screen.getByRole('button', {

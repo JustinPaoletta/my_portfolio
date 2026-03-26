@@ -88,9 +88,10 @@ test('desktop navigation scrolls to Contact section', async ({ page }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
 
-  await page.getByRole('menuitem', { name: 'Contact' }).click();
+  await page.getByRole('link', { name: 'Contact' }).click();
 
   await expectSectionInViewport(page, 'contact');
+  await expect(page.locator('section#contact')).toBeFocused();
   await expect
     .poll(async () => page.evaluate(() => window.scrollY))
     .toBeGreaterThan(300);
@@ -107,10 +108,13 @@ test('mobile navigation opens, navigates, and closes', async ({ page }) => {
     'aria-hidden',
     'false'
   );
+  await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'About' })).toBeFocused();
 
-  await page.getByRole('menuitem', { name: 'Contact' }).click();
+  await page.getByRole('link', { name: 'Contact' }).click();
 
   await expectSectionInViewport(page, 'contact');
+  await expect(page.locator('section#contact')).toBeFocused();
   await expect(page.locator('#mobile-menu')).toHaveAttribute(
     'aria-hidden',
     'true'

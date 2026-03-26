@@ -3,9 +3,15 @@
  * Contact form and social links
  */
 
-import { useRef, useState, type FormEvent } from 'react';
+import { useCallback, useRef, useState, type FormEvent } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import { env } from '@/config/env';
+import {
+  CONTACT_FIELD_ORDER,
+  type ContactField,
+  type ContactFieldErrors,
+  validateContactFormData,
+} from '@/shared/contact';
 import './Contact.css';
 
 interface FormState {
@@ -13,6 +19,8 @@ interface FormState {
   email: string;
   message: string;
 }
+
+type ContactFieldElement = HTMLInputElement | HTMLTextAreaElement;
 
 function Contact(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
@@ -27,12 +35,35 @@ function Contact(): React.ReactElement {
   const [submitStatus, setSubmitStatus] = useState<
     'idle' | 'success' | 'error'
   >('idle');
+  const [fieldErrors, setFieldErrors] = useState<ContactFieldErrors>({});
+  const fieldRefs = useRef<Record<ContactField, ContactFieldElement | null>>({
+    name: null,
+    email: null,
+    message: null,
+  });
+
+  const focusFirstFieldError = useCallback((errors: ContactFieldErrors) => {
+    for (const field of CONTACT_FIELD_ORDER) {
+      if (errors[field]) {
+        fieldRefs.current[field]?.focus();
+        break;
+      }
+    }
+  }, []);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
-    setEnvelopeFlying(true);
     setSubmitStatus('idle');
+    setFieldErrors({});
 
+    const validation = validateContactFormData(formData);
+    if (validation.valid === false) {
+      setFieldErrors(validation.fieldErrors);
+      focusFirstFieldError(validation.fieldErrors);
+      return;
+    }
+
+    setEnvelopeFlying(true);
     await new Promise<void>((resolve) => setTimeout(resolve, 500));
 
     setEnvelopeFlying(false);
@@ -44,19 +75,25 @@ function Contact(): React.ReactElement {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(validation.data),
       });
 
       const data = (await response.json()) as {
         success?: boolean;
         error?: string;
+        fieldErrors?: ContactFieldErrors;
       };
 
       if (!response.ok) {
+        if (data.fieldErrors) {
+          setFieldErrors(data.fieldErrors);
+          focusFirstFieldError(data.fieldErrors);
+        }
         throw new Error(data.error || 'Failed to send message');
       }
 
       setSubmitStatus('success');
+      setFieldErrors({});
       setFormData({ name: '', email: '', message: '' });
 
       // Reset status after 5 seconds
@@ -76,7 +113,18 @@ function Contact(): React.ReactElement {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
     const { name, value } = e.target;
+    const fieldName = name as ContactField;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    setFieldErrors((prev) => {
+      if (!prev[fieldName]) {
+        return prev;
+      }
+
+      return {
+        ...prev,
+        [fieldName]: undefined,
+      };
+    });
   };
 
   return (
@@ -211,6 +259,7 @@ function Contact(): React.ReactElement {
             as="form"
             className="contact-form"
             onSubmit={handleSubmit}
+            noValidate
             effect="fade-right"
             delay={180}
             visible={isVisible}
@@ -220,16 +269,25 @@ function Contact(): React.ReactElement {
                 Your Name
               </label>
               <input
+                ref={(element) => {
+                  fieldRefs.current.name = element;
+                }}
                 type="text"
                 id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                required
                 className="form-input"
                 placeholder="John Doe"
                 autoComplete="name"
+                aria-invalid={Boolean(fieldErrors.name)}
+                aria-describedby={fieldErrors.name ? 'name-error' : undefined}
               />
+              {fieldErrors.name && (
+                <p id="name-error" className="form-field-error">
+                  {fieldErrors.name}
+                </p>
+              )}
             </div>
 
             <div className="form-group">
@@ -237,16 +295,25 @@ function Contact(): React.ReactElement {
                 Email Address
               </label>
               <input
+                ref={(element) => {
+                  fieldRefs.current.email = element;
+                }}
                 type="email"
                 id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
-                required
                 className="form-input"
                 placeholder="john@example.com"
                 autoComplete="email"
+                aria-invalid={Boolean(fieldErrors.email)}
+                aria-describedby={fieldErrors.email ? 'email-error' : undefined}
               />
+              {fieldErrors.email && (
+                <p id="email-error" className="form-field-error">
+                  {fieldErrors.email}
+                </p>
+              )}
             </div>
 
             <div className="form-group">
@@ -254,15 +321,26 @@ function Contact(): React.ReactElement {
                 Message
               </label>
               <textarea
+                ref={(element) => {
+                  fieldRefs.current.message = element;
+                }}
                 id="message"
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                required
                 rows={5}
                 className="form-input form-textarea"
                 placeholder="Tell me about your project..."
+                aria-invalid={Boolean(fieldErrors.message)}
+                aria-describedby={
+                  fieldErrors.message ? 'message-error' : undefined
+                }
               />
+              {fieldErrors.message && (
+                <p id="message-error" className="form-field-error">
+                  {fieldErrors.message}
+                </p>
+              )}
             </div>
 
             <button
@@ -305,7 +383,7 @@ function Contact(): React.ReactElement {
             </button>
 
             {submitStatus === 'success' && (
-              <div className="form-success" role="alert">
+              <div className="form-success" role="status" aria-live="polite">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                   <path
                     d="M22 11.08V12a10 10 0 1 1-5.93-9.14"

@@ -8,7 +8,7 @@ const createAssertions = (totalByteWeightBudget) => ({
   // due to shared resources and cold starts
   // ============================================================
   'categories:performance': ['warn', { minScore: 0.7 }],
-  'categories:accessibility': ['error', { minScore: 0.95 }],
+  'categories:accessibility': ['error', { minScore: 1 }],
   'categories:best-practices': ['error', { minScore: 0.9 }],
   'categories:seo': ['error', { minScore: 0.9 }],
 
@@ -129,9 +129,13 @@ module.exports = {
       staticDistDir: './dist',
       url: [
         '/?theme=engineer&mode=light',
+        '/?theme=engineer&mode=dark',
         '/?theme=cosmic&mode=light',
+        '/?theme=cosmic&mode=dark',
         '/?theme=cli&mode=light',
+        '/?theme=cli&mode=dark',
         '/?theme=minimal&mode=light',
+        '/?theme=minimal&mode=dark',
       ],
       numberOfRuns: 3,
       settings: {
