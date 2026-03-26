@@ -173,7 +173,7 @@ Before relying on the automation, configure the repository variable `CHANGESETS_
 - trigger `pull_request` workflows for bot-created release PRs
 - create GitHub Releases
 
-For this repository, the app should be installed only on `JustinPaoletta/my_portfolio` with `Contents: Read and write` and `Pull requests: Read and write`. The default `GITHUB_TOKEN` is not enough because PRs created by that token do not trigger the required `pull_request` checks on the release PR.
+For this repository, the production app is `my-portfolio-release-bot`, owned by `JustinPaoletta` and installed only on `JustinPaoletta/my_portfolio`. It has `Contents: Read and write` and `Pull requests: Read and write`. The legacy `CHANGESETS_GITHUB_TOKEN` secret has been removed. The default `GITHUB_TOKEN` is not enough because PRs created by that token do not trigger the required `pull_request` checks on the release PR.
 
 ### Normal release flow
 
