@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- 5dd4ddc: Harden accessibility behavior across navigation, dialogs, tabs, forms, and the CLI theme while adding automated accessibility coverage and stronger contrast regression checks.
+
 ## 1.1.3
 
 ### Patch Changes
