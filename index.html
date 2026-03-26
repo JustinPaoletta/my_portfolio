@@ -97,6 +97,11 @@
               ? value
               : null;
           };
+          var isVisualTest = params.get('visual-test') === '1';
+          if (isVisualTest) {
+            root.dataset.visualTest = 'true';
+          }
+
           var queryTheme = normalizeTheme(params.get('theme'));
           if (queryTheme) {
             localStorage.setItem('portfolio-theme', queryTheme);

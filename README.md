@@ -79,6 +79,9 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 - `npm run test:e2e` - run Playwright E2E tests locally
 - `npm run test:e2e:debug` - run Playwright in debug mode
 - `npm run test:e2e:ui` - open the Playwright UI runner
+- `npm run test:visual` - run the Chromium-only visual regression suite against committed baselines
+- `npm run test:visual:update` - accept intentional screenshot changes on the current platform
+- `npm run test:visual:update:linux` - refresh the Linux baselines in the pinned Playwright Docker image
 - `npm run lighthouse` - run Lighthouse CI locally with the checked-in config
 
 ### Release and Maintenance
@@ -119,7 +122,8 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - `npm run build` enforces bundle-size limits from [`vite.config.ts`](vite.config.ts) and rewrites the production homepage with prerendered HTML
 - Vitest coverage thresholds are `90%` for lines, functions, branches, and statements
 - Playwright can target a custom preview URL with `PLAYWRIGHT_BASE_URL`
-- CI runs Chromium-only E2E tests, Lighthouse audits, and bundle-size checks
+- CI runs Chromium-only E2E tests, Linux Chromium visual regression, Lighthouse audits, and bundle-size checks
+- Visual regression usage, baseline policy, and contributor workflow are documented in [docs/VISUAL_REGRESSION.md](docs/VISUAL_REGRESSION.md)
 
 ## Documentation
 
@@ -130,6 +134,7 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - [Observability](docs/OBSERVABILITY.md)
 - [Content Security Policy](docs/CSP.md)
 - [Performance & quality gates](docs/PERFORMANCE_QUALITY.md)
+- [Visual regression testing](docs/VISUAL_REGRESSION.md)
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
 - [Dependabot](docs/DEPENDABOT.md)
 - [JP_CLI theme](docs/JP_CLI.md)

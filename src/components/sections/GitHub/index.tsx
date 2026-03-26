@@ -14,12 +14,15 @@ import {
   sectionHeaderVariants,
   defaultViewport,
 } from '@/utils/animations';
+import { isVisualTestMode } from '@/utils/visualTest';
 import ContributionGraph from './ContributionGraph';
 import './GitHub.css';
 
 function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
   const { user, contributions, loading, error } = useGitHub();
   const profileUrl = user?.html_url ?? env.social.github;
 

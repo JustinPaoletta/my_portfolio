@@ -10,8 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  playwright:
-    name: Playwright (Chromium)
+  playwright-functional:
+    name: Playwright Functional (Chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -64,7 +64,67 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: playwright-report
+          name: playwright-report-functional
+          path: |
+            playwright-report
+            test-results
+          retention-days: 30
+
+  playwright-visual:
+    name: Playwright Visual (Chromium)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE || 'Portfolio' }}
+      VITE_APP_DESCRIPTION: ${{ secrets.VITE_APP_DESCRIPTION || 'Portfolio website' }}
+      VITE_API_URL: ${{ secrets.VITE_API_URL || 'https://api.example.com' }}
+      VITE_SITE_URL: ${{ secrets.VITE_SITE_URL || '' }}
+      VITE_ENABLE_ANALYTICS: 'false'
+      VITE_ENABLE_DEBUG: 'false'
+      VITE_ENABLE_ERROR_MONITORING: 'false'
+      VITE_GITHUB_URL: ${{ secrets.VITE_GITHUB_URL || 'https://github.com/example' }}
+      VITE_LINKEDIN_URL: ${{ secrets.VITE_LINKEDIN_URL || 'https://linkedin.com/in/example' }}
+      VITE_EMAIL: ${{ secrets.VITE_EMAIL || 'example@example.com' }}
+      VITE_UMAMI_WEBSITE_ID: ${{ secrets.VITE_UMAMI_WEBSITE_ID || '' }}
+      VITE_GOOGLE_ANALYTICS_ID: ${{ secrets.VITE_GOOGLE_ANALYTICS_ID || '' }}
+      VITE_NEWRELIC_LICENSE_KEY: ${{ secrets.VITE_NEWRELIC_LICENSE_KEY || '' }}
+      VITE_NEWRELIC_ACCOUNT_ID: ${{ secrets.VITE_NEWRELIC_ACCOUNT_ID || '' }}
+      VITE_NEWRELIC_TRUST_KEY: ${{ secrets.VITE_NEWRELIC_TRUST_KEY || '' }}
+      VITE_NEWRELIC_AGENT_ID: ${{ secrets.VITE_NEWRELIC_AGENT_ID || '' }}
+      VITE_NEWRELIC_APPLICATION_ID: ${{ secrets.VITE_NEWRELIC_APPLICATION_ID || '' }}
+      VITE_MAPBOX_TOKEN: ${{ secrets.VITE_MAPBOX_TOKEN || '' }}
+      VITE_GITHUB_USERNAME: ${{ secrets.VITE_GITHUB_USERNAME || 'octocat' }}
+      VITE_GITHUB_API_ENABLED: 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund --prefer-offline=false
+
+      - name: Fix rolldown native bindings
+        run: |
+          npm install --no-save --force rolldown-vite
+          npm install --no-save @rolldown/binding-linux-x64-gnu || echo "Binding already installed"
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Run visual regression tests
+        run: npm run test:visual
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-visual
           path: |
             playwright-report
             test-results

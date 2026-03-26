@@ -14,6 +14,7 @@ import {
   sectionHeaderVariants,
   defaultViewport,
 } from '@/utils/animations';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './Skills.css';
 
 interface SkillCategory {
@@ -252,7 +253,9 @@ const additionalSkills = [
 
 function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
   const [activeTab, setActiveTab] = useState(0);
   const { resolvedMode } = useTheme();
   const isDarkMode = resolvedMode === 'dark';

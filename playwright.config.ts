@@ -1,6 +1,8 @@
 import { defineConfig, devices } from '@playwright/test';
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173';
+const reuseExistingServer =
+  !process.env.CI && process.env.PLAYWRIGHT_REUSE_SERVER === 'true';
 
 export default defineConfig({
   testDir: './e2e',
@@ -32,21 +34,29 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      grepInvert: /@visual/,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
+      grepInvert: /@visual/,
       use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
+      grepInvert: /@visual/,
       use: { ...devices['Desktop Safari'] },
+    },
+    {
+      name: 'visual-chromium',
+      grep: /@visual/,
+      use: { ...devices['Desktop Chrome'] },
     },
   ],
   webServer: {
     command: 'npm run start:prod',
     url: baseURL,
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer,
     timeout: 120_000,
     stdout: process.env.CI ? 'ignore' : 'pipe',
   },

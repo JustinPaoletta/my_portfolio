@@ -178,6 +178,29 @@ html {
   }
 }
 
+html[data-visual-test='true'] {
+  scroll-behavior: auto;
+}
+
+html[data-visual-test='true'] *,
+html[data-visual-test='true'] *::before,
+html[data-visual-test='true'] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html[data-visual-test='true'] :focus,
+html[data-visual-test='true'] :focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+html[data-visual-test='true'] .nav-logo .jp-logo-cursor {
+  display: none !important;
+}
+
 ::selection {
   background: rgba(var(--color-primary-rgb), 0.3);
   color: inherit;

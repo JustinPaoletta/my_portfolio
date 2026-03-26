@@ -16,6 +16,7 @@ import { env } from '@/config/env';
 import { HERO_TAGLINE } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useTheme } from '@/hooks/useTheme';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './Hero.css';
 
 const CliTerminal = lazy(() => import('./CliTerminal'));
@@ -473,6 +474,7 @@ function Hero(): React.ReactElement {
   const electronSvgRef = useRef<SVGSVGElement>(null);
   const loadedThemeStyles = useRef(new Set<string>());
   const { themeName } = useTheme();
+  const isVisualTest = isVisualTestMode();
   const isCosmicTheme = themeName === 'cosmic';
   const isEngineerTheme = themeName === 'engineer';
   const isCliTheme = themeName === 'cli';
@@ -484,7 +486,7 @@ function Hero(): React.ReactElement {
       HERO_ENVIRONMENT_FLAGS.reducedMotion |
       HERO_ENVIRONMENT_FLAGS.saveData)
   );
-  const disableParallax = prefersReducedMotion || isCliTheme;
+  const disableParallax = prefersReducedMotion || isCliTheme || isVisualTest;
   const isHeroInView = useIntersectionObserver(sectionRef, {
     threshold: 0.01,
     rootMargin: '0px',
@@ -502,7 +504,7 @@ function Hero(): React.ReactElement {
   }, [themeName]);
 
   useEffect(() => {
-    if (!isEngineerTheme) {
+    if (!isEngineerTheme || isVisualTest) {
       return;
     }
 
@@ -517,7 +519,7 @@ function Hero(): React.ReactElement {
     }
 
     svg.pauseAnimations();
-  }, [isEngineerTheme, isHeroInView]);
+  }, [isEngineerTheme, isHeroInView, isVisualTest]);
 
   const electronMotion = useCalmerElectronMotion
     ? {
@@ -569,8 +571,8 @@ function Hero(): React.ReactElement {
     >
       {isCosmicTheme ? (
         <CosmicHeroBackground
-          key={prefersReducedMotion ? 'reduced' : 'motion'}
-          prefersReducedMotion={prefersReducedMotion}
+          key={prefersReducedMotion || isVisualTest ? 'reduced' : 'motion'}
+          prefersReducedMotion={prefersReducedMotion || isVisualTest}
         />
       ) : (
         <div
@@ -685,48 +687,50 @@ function Hero(): React.ReactElement {
                   </svg>
                 </div>
                 <div className="circuit-nodes" />
-                <div className="circuit-electrons">
-                  <svg
-                    ref={electronSvgRef}
-                    className="electron-svg"
-                    viewBox="0 0 1600 900"
-                    preserveAspectRatio="xMidYMid slice"
-                    aria-hidden="true"
-                  >
-                    <defs>
-                      {tracePaths.map((trace) => (
-                        <path key={trace.id} id={trace.id} d={trace.d} />
-                      ))}
-                    </defs>
-                    {tracePaths.map((trace, index) => {
-                      const duration =
-                        electronMotion.baseDuration +
-                        (index % 5) * electronMotion.durationStep;
-                      const begin =
-                        (index * electronMotion.beginStep) %
-                        electronMotion.beginCycleWindow;
-                      const reverse = index % 4 === 0;
-                      return (
-                        <circle key={trace.id} className="electron-dot" r="3">
-                          <animateMotion
-                            dur={`${duration.toFixed(1)}s`}
-                            repeatCount="indefinite"
-                            begin={`${begin.toFixed(2)}s`}
-                            {...(reverse
-                              ? {
-                                  keyPoints: '1;0',
-                                  keyTimes: '0;1',
-                                  calcMode: 'linear',
-                                }
-                              : {})}
-                          >
-                            <mpath href={`#${trace.id}`} />
-                          </animateMotion>
-                        </circle>
-                      );
-                    })}
-                  </svg>
-                </div>
+                {!isVisualTest ? (
+                  <div className="circuit-electrons">
+                    <svg
+                      ref={electronSvgRef}
+                      className="electron-svg"
+                      viewBox="0 0 1600 900"
+                      preserveAspectRatio="xMidYMid slice"
+                      aria-hidden="true"
+                    >
+                      <defs>
+                        {tracePaths.map((trace) => (
+                          <path key={trace.id} id={trace.id} d={trace.d} />
+                        ))}
+                      </defs>
+                      {tracePaths.map((trace, index) => {
+                        const duration =
+                          electronMotion.baseDuration +
+                          (index % 5) * electronMotion.durationStep;
+                        const begin =
+                          (index * electronMotion.beginStep) %
+                          electronMotion.beginCycleWindow;
+                        const reverse = index % 4 === 0;
+                        return (
+                          <circle key={trace.id} className="electron-dot" r="3">
+                            <animateMotion
+                              dur={`${duration.toFixed(1)}s`}
+                              repeatCount="indefinite"
+                              begin={`${begin.toFixed(2)}s`}
+                              {...(reverse
+                                ? {
+                                    keyPoints: '1;0',
+                                    keyTimes: '0;1',
+                                    calcMode: 'linear',
+                                  }
+                                : {})}
+                            >
+                              <mpath href={`#${trace.id}`} />
+                            </animateMotion>
+                          </circle>
+                        );
+                      })}
+                    </svg>
+                  </div>
+                ) : null}
               </div>
             </>
           ) : null}
