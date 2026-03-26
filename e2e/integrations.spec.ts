@@ -67,7 +67,7 @@ test('contact form submits successfully and clears form state', async ({
   await page.getByRole('button', { name: /send message/i }).click();
 
   await expect(
-    contactSection.getByRole('alert').getByText(/Message sent successfully/i)
+    contactSection.getByRole('status').getByText(/Message sent successfully/i)
   ).toBeVisible();
   await expect(page.getByLabel('Your Name')).toHaveValue('');
   await expect(page.getByLabel('Email Address')).toHaveValue('');

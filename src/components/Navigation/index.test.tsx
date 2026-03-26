@@ -1,4 +1,11 @@
-import { act, fireEvent, render, screen } from '@/test/test-utils';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from '@/test/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Navigation from '.';
 
@@ -82,9 +89,7 @@ describe('Navigation', () => {
     expect(
       screen.getByRole('navigation', { name: 'Main navigation' })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('menuitem', { name: 'Articles' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Articles' })).toBeInTheDocument();
     expect(container.querySelector('.mobile-menu-button')).toBeInTheDocument();
 
     act(() => {
@@ -111,9 +116,7 @@ describe('Navigation', () => {
       );
     });
 
-    const projectsLink = screen.getAllByRole('menuitem', {
-      name: 'Projects',
-    })[0];
+    const projectsLink = screen.getAllByRole('link', { name: 'Projects' })[0];
     fireEvent.click(projectsLink);
 
     expect(window.scrollTo).toHaveBeenCalledWith({
@@ -121,25 +124,43 @@ describe('Navigation', () => {
       behavior: 'smooth',
     });
     expect(projectsLink.className).toContain('active');
+    expect(projectsLink).toHaveAttribute('aria-current', 'location');
   });
 
-  it('opens/closes mobile menu, handles escape, and backdrop click', () => {
+  it('opens/closes mobile menu, traps focus, and restores the trigger focus', async () => {
     const { container } = render(<Navigation />);
 
     const menuButton = container.querySelector('.mobile-menu-button');
     if (!menuButton) throw new Error('missing mobile menu button');
     fireEvent.click(menuButton);
+    const mobileMenu = container.querySelector('#mobile-menu') as HTMLElement;
+    const dialog = container.querySelector(
+      '.mobile-menu-content'
+    ) as HTMLElement;
+    mobileMenu.style.display = 'flex';
+    dialog.style.transform = 'translateX(0)';
+
     expect(menuButton).toHaveAttribute('aria-label', 'Close menu');
     expect(document.body.style.overflow).toBe('hidden');
+    expect(dialog).toHaveAttribute('role', 'dialog');
+
+    const aboutLink = within(dialog).getByRole('link', { name: 'About' });
+    await waitFor(() => {
+      expect(aboutLink).toHaveFocus();
+    });
 
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(document.body.style.overflow).toBe('');
+    expect(menuButton).toHaveFocus();
 
     fireEvent.click(menuButton);
+    mobileMenu.style.display = 'flex';
+    dialog.style.transform = 'translateX(0)';
     const backdrop = document.querySelector('.mobile-menu-backdrop');
     if (!backdrop) throw new Error('missing backdrop');
     fireEvent.click(backdrop);
     expect(menuButton).toHaveAttribute('aria-label', 'Open menu');
+    expect(menuButton).toHaveFocus();
   });
 
   it('hides nav links and mobile menu controls in CLI mode', () => {
@@ -149,7 +170,7 @@ describe('Navigation', () => {
     expect(
       container.querySelector('.mobile-menu-button')
     ).not.toBeInTheDocument();
-    expect(screen.queryByRole('menubar')).not.toBeInTheDocument();
+    expect(container.querySelector('.nav-links')).not.toBeInTheDocument();
   });
 
   it('auto-closes mobile menu after switching from non-CLI to CLI theme', () => {

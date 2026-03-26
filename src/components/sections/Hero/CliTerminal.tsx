@@ -1252,9 +1252,8 @@ function CliTerminal(): React.ReactElement {
             minHeight: 0,
           }}
         >
-          <aside
+          <div
             className="cli-options-panel"
-            aria-label="Selection menu"
             style={{
               order: isCompactLayout ? 2 : 1,
               borderRight: isCompactLayout
@@ -1391,7 +1390,7 @@ function CliTerminal(): React.ReactElement {
                         setInputValue(String(option.value));
                         requestAnimationFrame(focusPromptInput);
                       }}
-                      aria-current={isSelected ? 'true' : undefined}
+                      aria-pressed={isSelected}
                       style={{
                         width: '100%',
                         textAlign: 'left',
@@ -1421,7 +1420,7 @@ function CliTerminal(): React.ReactElement {
                 );
               })}
             </ul>
-          </aside>
+          </div>
 
           <div
             style={{
@@ -1445,6 +1444,7 @@ function CliTerminal(): React.ReactElement {
             </div>
 
             <p
+              id="cli-keyboard-shortcuts"
               className="cli-line cli-line--hint"
               style={{
                 padding: '0.42rem 1rem',
@@ -1457,24 +1457,7 @@ function CliTerminal(): React.ReactElement {
                 : 'Options left | Keys: ↑ ↓ ← → move | Space/0-9 stage input | Enter run'}
             </p>
 
-            <div
-              className="cli-session"
-              ref={historyRef}
-              role="button"
-              tabIndex={0}
-              aria-label="Focus command input"
-              onClick={focusPromptInput}
-              onKeyDown={(e) => {
-                if (e.target !== e.currentTarget) {
-                  return;
-                }
-
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  focusPromptInput();
-                }
-              }}
-            >
+            <div className="cli-session" ref={historyRef}>
               <div className="cli-history" role="log" aria-live="polite">
                 {lines.map((line) => (
                   <p
@@ -1537,6 +1520,7 @@ function CliTerminal(): React.ReactElement {
                   autoComplete="off"
                   spellCheck={false}
                   aria-label="Terminal command input"
+                  aria-describedby="cli-keyboard-shortcuts"
                   onKeyDown={(event) => {
                     const trimmedInput = inputValue.trim();
                     const isNavigationMode =

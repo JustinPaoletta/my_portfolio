@@ -3,10 +3,15 @@
  * Provides UI to switch between different color themes and dark/light modes
  */
 
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useId, useRef } from 'react';
 import { Monitor, Moon, Palette, Sun } from 'lucide-react';
 import { useTheme } from '@/hooks/useTheme';
 import type { ColorMode } from '@/config/themes';
+import {
+  getFocusableElements,
+  temporarilyInertElements,
+  trapFocusWithin,
+} from '@/utils/accessibility';
 import './ThemeSwitcher.css';
 
 const modeIcons: Record<ColorMode, React.ReactElement> = {
@@ -21,6 +26,8 @@ const modeLabels: Record<ColorMode, string> = {
   system: 'System',
 };
 
+const colorModes: ColorMode[] = ['light', 'dark', 'system'];
+
 interface ThemeSwitcherProps {
   placement?: 'floating' | 'nav';
 }
@@ -32,10 +39,27 @@ export default function ThemeSwitcher({
   const [isOpen, setIsOpen] = useState(false);
   const [pulseOnLoad, setPulseOnLoad] = useState(placement === 'floating');
   const toggleRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const shouldRestoreFocus = useRef(true);
+  const dialogId = useId();
+  const dialogTitleId = useId();
+  const colorModeName = `${dialogId}-color-mode`;
+  const themeNameField = `${dialogId}-theme`;
+
+  const closeMenu = useCallback((restoreFocus = true) => {
+    shouldRestoreFocus.current = restoreFocus;
+    setIsOpen(false);
+  }, []);
 
   const toggleOpen = useCallback(() => {
-    setIsOpen((prev) => !prev);
-  }, []);
+    if (isOpen) {
+      closeMenu(true);
+      return;
+    }
+
+    shouldRestoreFocus.current = true;
+    setIsOpen(true);
+  }, [closeMenu, isOpen]);
 
   const handleThemeSelect = useCallback(
     (name: string) => {
@@ -50,30 +74,6 @@ export default function ThemeSwitcher({
     },
     [setColorMode]
   );
-
-  const handleThemeKeyDown = useCallback(
-    (event: React.KeyboardEvent, name: string) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        handleThemeSelect(name);
-      }
-    },
-    [handleThemeSelect]
-  );
-
-  const handleModeKeyDown = useCallback(
-    (event: React.KeyboardEvent, mode: ColorMode) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        handleModeSelect(mode);
-      }
-    },
-    [handleModeSelect]
-  );
-
-  const handleClose = useCallback(() => {
-    setIsOpen(false);
-  }, []);
 
   // Remove pulse-on-load class after animation completes
   useEffect(() => {
@@ -92,10 +92,76 @@ export default function ThemeSwitcher({
   // Close the menu when the user scrolls
   useEffect(() => {
     if (!isOpen) return;
-    const handleScroll = (): void => handleClose();
+    const handleScroll = (): void => closeMenu(false);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [isOpen, handleClose]);
+  }, [closeMenu, isOpen]);
+
+  useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    const dialog = dialogRef.current;
+    if (!dialog) {
+      return;
+    }
+
+    const toggleButton = toggleRef.current;
+    const toggleButtonTabIndex = toggleButton?.getAttribute('tabindex') ?? null;
+    shouldRestoreFocus.current = true;
+    toggleButton?.setAttribute('tabindex', '-1');
+
+    const restoreInertState = temporarilyInertElements([
+      document.querySelector<HTMLElement>('.skip-link'),
+      document.querySelector<HTMLElement>('.navigation'),
+      document.getElementById('main'),
+      document.querySelector<HTMLElement>('footer'),
+    ]);
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMenu(true);
+        return;
+      }
+
+      trapFocusWithin(event, dialog);
+    };
+
+    const focusInitialControl = (): void => {
+      const checkedInput = dialog.querySelector<HTMLInputElement>(
+        'input[type="radio"]:checked'
+      );
+
+      if (checkedInput) {
+        checkedInput.focus();
+        return;
+      }
+
+      const [firstFocusable] = getFocusableElements(dialog);
+      (firstFocusable ?? dialog).focus();
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    window.requestAnimationFrame(focusInitialControl);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      restoreInertState();
+      if (toggleButton) {
+        if (toggleButtonTabIndex === null) {
+          toggleButton.removeAttribute('tabindex');
+        } else {
+          toggleButton.setAttribute('tabindex', toggleButtonTabIndex);
+        }
+      }
+
+      if (shouldRestoreFocus.current) {
+        toggleButton?.focus();
+      }
+    };
+  }, [closeMenu, isOpen]);
 
   return (
     <div
@@ -105,11 +171,11 @@ export default function ThemeSwitcher({
         ref={toggleRef}
         className={`theme-switcher-toggle ${pulseOnLoad ? 'pulse-on-load' : ''}`}
         onClick={toggleOpen}
-        onMouseEnter={() => {}}
-        onFocus={() => {}}
         aria-label="Toggle theme switcher"
         aria-expanded={isOpen}
         aria-haspopup="dialog"
+        aria-controls={dialogId}
+        type="button"
       >
         <span className="theme-icon" aria-hidden="true">
           <Palette size={20} />
@@ -119,71 +185,92 @@ export default function ThemeSwitcher({
 
       {isOpen && (
         <>
-          <div
+          <button
+            type="button"
             className="theme-switcher-backdrop"
-            onClick={handleClose}
-            onKeyDown={(e) => e.key === 'Escape' && handleClose()}
-            role="presentation"
+            tabIndex={-1}
+            aria-hidden="true"
+            onClick={() => closeMenu(true)}
           />
           <div
+            ref={dialogRef}
+            id={dialogId}
             className="theme-switcher-menu"
             role="dialog"
-            aria-label="Theme settings"
+            aria-modal="true"
+            aria-labelledby={dialogTitleId}
+            tabIndex={-1}
           >
-            {/* Color Mode Section - Minimal toggle */}
-            <div
-              className="mode-toggle"
-              role="radiogroup"
-              aria-label="Color mode"
-            >
-              {(['light', 'dark', 'system'] as ColorMode[]).map((mode) => (
-                <button
-                  key={mode}
-                  className={`mode-toggle-btn ${colorMode === mode ? 'active' : ''}`}
-                  onClick={() => handleModeSelect(mode)}
-                  onKeyDown={(e) => handleModeKeyDown(e, mode)}
-                  role="radio"
-                  aria-checked={colorMode === mode}
-                  aria-label={modeLabels[mode]}
-                  title={modeLabels[mode]}
-                >
-                  <span aria-hidden="true">{modeIcons[mode]}</span>
-                </button>
-              ))}
-            </div>
+            <h2 id={dialogTitleId} className="visually-hidden">
+              Theme settings
+            </h2>
+
+            <fieldset className="theme-section mode-toggle">
+              <legend className="theme-section-label">Color Mode</legend>
+              <div className="mode-toggle-options">
+                {colorModes.map((mode) => {
+                  const inputId = `${dialogId}-${mode}`;
+
+                  return (
+                    <div key={mode} className="theme-switcher-choice">
+                      <input
+                        id={inputId}
+                        className="theme-switcher-radio-input"
+                        type="radio"
+                        name={colorModeName}
+                        checked={colorMode === mode}
+                        onChange={() => handleModeSelect(mode)}
+                      />
+                      <label
+                        className={`mode-toggle-btn ${colorMode === mode ? 'active' : ''}`}
+                        htmlFor={inputId}
+                        title={modeLabels[mode]}
+                      >
+                        <span aria-hidden="true">{modeIcons[mode]}</span>
+                        <span className="visually-hidden">
+                          {modeLabels[mode]}
+                        </span>
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            </fieldset>
 
             {/* Theme Section */}
-            <div className="theme-section">
-              <div className="theme-section-label">Theme</div>
-              <div
-                className="theme-options"
-                role="listbox"
-                aria-label="Select a theme"
-              >
+            <fieldset className="theme-section">
+              <legend className="theme-section-label">Theme</legend>
+              <div className="theme-options">
                 {Object.values(themes).map((theme) => (
-                  <button
-                    key={theme.name}
-                    className={`theme-option ${themeName === theme.name ? 'active' : ''}`}
-                    onClick={() => handleThemeSelect(theme.name)}
-                    onKeyDown={(e) => handleThemeKeyDown(e, theme.name)}
-                    role="option"
-                    aria-selected={themeName === theme.name}
-                  >
-                    <span
-                      className="theme-swatch"
-                      style={{ backgroundColor: theme.colors.primary }}
-                      aria-hidden="true"
+                  <div key={theme.name} className="theme-switcher-choice">
+                    <input
+                      id={`${dialogId}-${theme.name}`}
+                      className="theme-switcher-radio-input"
+                      type="radio"
+                      name={themeNameField}
+                      checked={themeName === theme.name}
+                      onChange={() => handleThemeSelect(theme.name)}
                     />
-                    <span className="theme-option-label">{theme.label}</span>
-                    {themeName === theme.name && (
-                      <span className="theme-check" aria-hidden="true">
-                        ✓
-                      </span>
-                    )}
-                  </button>
+                    <label
+                      className={`theme-option ${themeName === theme.name ? 'active' : ''}`}
+                      htmlFor={`${dialogId}-${theme.name}`}
+                    >
+                      <span
+                        className="theme-swatch"
+                        style={{ backgroundColor: theme.colors.primary }}
+                        aria-hidden="true"
+                      />
+                      <span className="theme-option-label">{theme.label}</span>
+                      {themeName === theme.name && (
+                        <span className="theme-check" aria-hidden="true">
+                          ✓
+                        </span>
+                      )}
+                    </label>
+                  </div>
                 ))}
               </div>
-            </div>
+            </fieldset>
           </div>
         </>
       )}

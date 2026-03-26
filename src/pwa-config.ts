@@ -16,6 +16,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'favicons/pwa-512x512.png',
     'images/hero/cosmic/cosmos-first-frame.webp',
     'og/og-image.png',
+    'resume/Justin-Paoletta_Software-Engineer.pdf',
     'video/cosmos.mp4',
   ],
   manifestFilename: 'manifest.webmanifest',
@@ -94,11 +95,13 @@ export const pwaConfig: Partial<VitePWAOptions> = {
 
   workbox: {
     // Cache configuration - precache static assets for offline support
-    globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,woff,woff2}'],
+    globPatterns: ['**/*.{js,css,html,ico,pdf,png,svg,webp,woff,woff2}'],
     // Increase default 2 MiB precache limit to 4 MiB to allow larger SVG assets.
     maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,
     // Exclude large assets from precaching to avoid exceeding size limits
     globIgnores: [],
+    // Let actual static files resolve as files instead of falling back to index.html.
+    navigateFallbackDenylist: [/\/[^/?]+\.[^/]+$/],
     runtimeCaching: [
       {
         urlPattern: /^https:\/\/.*\.(?:png|jpg|jpeg|svg|gif|webp)$/i,

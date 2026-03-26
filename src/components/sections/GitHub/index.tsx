@@ -138,7 +138,13 @@ function GitHub(): React.ReactElement {
 
         {/* Loading State */}
         {loading && (
-          <div className="github-loading" aria-label="Loading GitHub data">
+          <div
+            className="github-loading"
+            role="status"
+            aria-live="polite"
+            aria-busy="true"
+            aria-label="Loading GitHub data"
+          >
             <div className="loading-skeleton contribution-skeleton" />
             <div className="loading-skeleton repos-skeleton" />
           </div>

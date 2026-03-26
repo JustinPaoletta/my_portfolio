@@ -4,11 +4,16 @@
  * Uses Framer Motion for scroll detection
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useScroll, useMotionValueEvent } from 'framer-motion';
 import JPLogo from '@/components/Brand/JPLogo';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
+import {
+  getFocusableElements,
+  temporarilyInertElements,
+  trapFocusWithin,
+} from '@/utils/accessibility';
 import './Navigation.css';
 
 interface NavItem {
@@ -20,9 +25,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'about', label: 'About', href: '#about' },
   { id: 'projects', label: 'Projects', href: '#projects' },
-  { id: 'articles', label: 'Articles', href: '#articles' },
-  { id: 'experience', label: 'Experience', href: '#experience' },
   { id: 'skills', label: 'Skills', href: '#skills' },
+  { id: 'experience', label: 'Experience', href: '#experience' },
+  { id: 'articles', label: 'Articles', href: '#articles' },
   { id: 'github', label: 'GitHub', href: '#github' },
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
@@ -31,6 +36,9 @@ function Navigation(): React.ReactElement {
   const [activeSection, setActiveSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
+  const mobileMenuDialogRef = useRef<HTMLDivElement>(null);
+  const shouldRestoreMobileMenuFocus = useRef(true);
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
   const isVisualTest = isVisualTestMode();
@@ -95,6 +103,27 @@ function Navigation(): React.ReactElement {
     };
   }, [isCliTheme, isMobileMenuOpen]);
 
+  const closeMobileMenu = useCallback((restoreFocus = true): void => {
+    shouldRestoreMobileMenuFocus.current = restoreFocus;
+    setIsMobileMenuOpen(false);
+  }, []);
+
+  const focusSectionTarget = useCallback((targetId: string): void => {
+    const element = document.getElementById(targetId);
+
+    if (!(element instanceof HTMLElement)) {
+      return;
+    }
+
+    if (!element.hasAttribute('tabindex')) {
+      element.setAttribute('tabindex', '-1');
+    }
+
+    window.requestAnimationFrame(() => {
+      element.focus({ preventScroll: true });
+    });
+  }, []);
+
   // Handle smooth scroll
   const handleNavClick = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
@@ -108,37 +137,75 @@ function Navigation(): React.ReactElement {
           top: offsetTop,
           behavior: 'smooth',
         });
+        window.history.replaceState(null, '', href);
+        focusSectionTarget(targetId);
       }
 
-      setIsMobileMenuOpen(false);
+      closeMobileMenu(false);
     },
-    []
+    [closeMobileMenu, focusSectionTarget]
   );
 
-  // Close mobile menu on escape
   useEffect(() => {
-    if (isCliTheme) {
+    if (isCliTheme || !isMobileMenuOpen) {
       return;
     }
 
-    const handleEscape = (e: KeyboardEvent): void => {
-      if (e.key === 'Escape') {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    if (isMobileMenuOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
+    const dialog = mobileMenuDialogRef.current;
+    if (!dialog) {
+      return;
     }
 
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.body.style.overflow = '';
+    const mobileMenuButton = mobileMenuButtonRef.current;
+    const mobileMenuButtonTabIndex =
+      mobileMenuButton?.getAttribute('tabindex') ?? null;
+    shouldRestoreMobileMenuFocus.current = true;
+    mobileMenuButton?.setAttribute('tabindex', '-1');
+
+    const restoreInertState = temporarilyInertElements([
+      mobileMenuButton,
+      document.querySelector<HTMLElement>('.skip-link'),
+      document.getElementById('main'),
+      document.querySelector<HTMLElement>('.theme-switcher'),
+      document.querySelector<HTMLElement>('footer'),
+    ]);
+
+    const focusInitialElement = (): void => {
+      const [firstFocusable] = getFocusableElements(dialog);
+      (firstFocusable ?? dialog).focus();
     };
-  }, [isMobileMenuOpen, isCliTheme]);
+
+    const handleKeyDown = (event: KeyboardEvent): void => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeMobileMenu(true);
+        return;
+      }
+
+      trapFocusWithin(event, dialog);
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', handleKeyDown);
+    window.requestAnimationFrame(focusInitialElement);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      document.body.style.overflow = '';
+      restoreInertState();
+      if (mobileMenuButton) {
+        if (mobileMenuButtonTabIndex === null) {
+          mobileMenuButton.removeAttribute('tabindex');
+        } else {
+          mobileMenuButton.setAttribute('tabindex', mobileMenuButtonTabIndex);
+        }
+      }
+
+      if (shouldRestoreMobileMenuFocus.current) {
+        mobileMenuButton?.focus();
+      }
+    };
+  }, [closeMobileMenu, isCliTheme, isMobileMenuOpen]);
 
   return (
     <nav
@@ -153,13 +220,15 @@ function Navigation(): React.ReactElement {
 
         {/* Desktop Navigation */}
         {!isCliTheme && (
-          <ul className="nav-links" role="menubar">
+          <ul className="nav-links">
             {navItems.map((item) => (
-              <li key={item.id} role="none">
+              <li key={item.id}>
                 <a
                   href={item.href}
-                  role="menuitem"
                   className={`nav-link ${activeSection === item.id ? 'active' : ''}`}
+                  aria-current={
+                    activeSection === item.id ? 'location' : undefined
+                  }
                   onClick={(e) => handleNavClick(e, item.href)}
                 >
                   {item.label}
@@ -172,10 +241,20 @@ function Navigation(): React.ReactElement {
         {/* Mobile Menu Button */}
         {!isCliTheme && (
           <button
+            ref={mobileMenuButtonRef}
             className={`mobile-menu-button ${isMobileMenuOpen ? 'open' : ''}`}
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            type="button"
+            onClick={() => {
+              if (isMobileMenuOpen) {
+                closeMobileMenu(true);
+                return;
+              }
+
+              setIsMobileMenuOpen(true);
+            }}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
+            aria-haspopup="dialog"
             aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <span className="hamburger-line" />
@@ -192,33 +271,44 @@ function Navigation(): React.ReactElement {
           className={`mobile-menu ${isMobileMenuOpen ? 'open' : ''}`}
           aria-hidden={!isMobileMenuOpen}
         >
-          {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-          <div
+          <button
+            type="button"
             className="mobile-menu-backdrop"
-            onClick={() => setIsMobileMenuOpen(false)}
+            tabIndex={-1}
+            aria-hidden="true"
+            onClick={() => closeMobileMenu(true)}
           />
-          <div className="mobile-menu-content">
-            <ul className="mobile-nav-links" role="menu">
-              {navItems.map((item, index) => (
-                <li
-                  key={item.id}
-                  role="none"
-                  style={
-                    { '--delay': `${index * 0.05}s` } as React.CSSProperties
-                  }
-                >
-                  <a
-                    href={item.href}
-                    role="menuitem"
-                    className={`mobile-nav-link ${activeSection === item.id ? 'active' : ''}`}
-                    onClick={(e) => handleNavClick(e, item.href)}
-                    tabIndex={isMobileMenuOpen ? 0 : -1}
+          <div
+            ref={mobileMenuDialogRef}
+            className="mobile-menu-content"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Main menu"
+            tabIndex={-1}
+          >
+            <nav aria-label="Mobile navigation">
+              <ul className="mobile-nav-links">
+                {navItems.map((item, index) => (
+                  <li
+                    key={item.id}
+                    style={
+                      { '--delay': `${index * 0.05}s` } as React.CSSProperties
+                    }
                   >
-                    {item.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
+                    <a
+                      href={item.href}
+                      className={`mobile-nav-link ${activeSection === item.id ? 'active' : ''}`}
+                      onClick={(e) => handleNavClick(e, item.href)}
+                      aria-current={
+                        activeSection === item.id ? 'location' : undefined
+                      }
+                    >
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
           </div>
         </div>
       )}

@@ -1,5 +1,24 @@
 # Changelog
 
+## 1.1.4
+
+### Patch Changes
+
+- 5dd4ddc: Harden accessibility behavior across navigation, dialogs, tabs, forms, and the CLI theme while adding automated accessibility coverage and stronger contrast regression checks.
+
+## 1.1.3
+
+### Patch Changes
+
+- ae14cdf: chore(deps): bump lucide-react from 0.577.0 to 1.0.1
+- 2d4dc3b: chore(deps-dev): bump picomatch from 2.3.1 to 2.3.2
+
+## 1.1.2
+
+### Patch Changes
+
+- fbfef5d: Fix the resume download so PDF requests are not rewritten to the app shell by the PWA service worker.
+
 ## 1.1.1
 
 ### Patch Changes
