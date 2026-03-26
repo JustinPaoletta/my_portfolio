@@ -53,17 +53,24 @@ describe('Skills section', () => {
     frontendTab.focus();
 
     fireEvent.keyDown(frontendTab, { key: 'ArrowRight' });
-    expect(screen.getByRole('tab', { name: 'Backend' })).toHaveAttribute(
-      'aria-selected',
-      'true'
-    );
-
     const backendTab = screen.getByRole('tab', { name: 'Backend' });
+    expect(backendTab).toHaveAttribute('aria-selected', 'true');
+    expect(backendTab).toHaveFocus();
+
     fireEvent.keyDown(backendTab, { key: 'ArrowLeft' });
     expect(screen.getByRole('tab', { name: 'Frontend' })).toHaveAttribute(
       'aria-selected',
       'true'
     );
+
+    fireEvent.keyDown(frontendTab, { key: 'End' });
+    const aiTab = screen.getByRole('tab', { name: 'AI' });
+    expect(aiTab).toHaveAttribute('aria-selected', 'true');
+    expect(aiTab).toHaveFocus();
+
+    fireEvent.keyDown(aiTab, { key: 'Home' });
+    expect(frontendTab).toHaveAttribute('aria-selected', 'true');
+    expect(frontendTab).toHaveFocus();
   });
 
   it('uses the dark AWS icon variant in dark mode', () => {

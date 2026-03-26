@@ -252,6 +252,7 @@ const additionalSkills = [
 
 function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const isInView = useInView(sectionRef, defaultViewport);
   const [activeTab, setActiveTab] = useState(0);
   const { resolvedMode } = useTheme();
@@ -259,6 +260,10 @@ function Skills(): React.ReactElement {
 
   const handleTabChange = (index: number): void => {
     setActiveTab(index);
+  };
+
+  const focusTab = (index: number): void => {
+    tabRefs.current[index]?.focus();
   };
 
   return (
@@ -300,24 +305,39 @@ function Skills(): React.ReactElement {
           >
             {skillCategories.map((category, index) => (
               <button
+                ref={(element) => {
+                  tabRefs.current[index] = element;
+                }}
                 key={category.name}
                 className={`tab-button ${activeTab === index ? 'active' : ''}`}
                 role="tab"
                 aria-selected={activeTab === index}
                 aria-controls={`tabpanel-${index}`}
                 id={`tab-${index}`}
+                tabIndex={activeTab === index ? 0 : -1}
                 onClick={() => handleTabChange(index)}
                 onKeyDown={(e) => {
                   if (e.key === 'ArrowRight') {
                     e.preventDefault();
-                    setActiveTab((prev) => (prev + 1) % skillCategories.length);
+                    const nextIndex = (index + 1) % skillCategories.length;
+                    handleTabChange(nextIndex);
+                    focusTab(nextIndex);
                   } else if (e.key === 'ArrowLeft') {
                     e.preventDefault();
-                    setActiveTab(
-                      (prev) =>
-                        (prev - 1 + skillCategories.length) %
-                        skillCategories.length
-                    );
+                    const previousIndex =
+                      (index - 1 + skillCategories.length) %
+                      skillCategories.length;
+                    handleTabChange(previousIndex);
+                    focusTab(previousIndex);
+                  } else if (e.key === 'Home') {
+                    e.preventDefault();
+                    handleTabChange(0);
+                    focusTab(0);
+                  } else if (e.key === 'End') {
+                    e.preventDefault();
+                    const lastIndex = skillCategories.length - 1;
+                    handleTabChange(lastIndex);
+                    focusTab(lastIndex);
                   }
                 }}
               >
@@ -332,6 +352,7 @@ function Skills(): React.ReactElement {
               id={`tabpanel-${categoryIndex}`}
               role="tabpanel"
               aria-labelledby={`tab-${categoryIndex}`}
+              hidden={activeTab !== categoryIndex}
               className={`tab-panel ${activeTab === categoryIndex ? 'active' : ''}`}
             >
               <motion.div
