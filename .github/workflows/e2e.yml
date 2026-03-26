@@ -77,6 +77,8 @@ jobs:
     name: Playwright Visual (Chromium)
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    container:
+      image: mcr.microsoft.com/playwright:v1.58.2-noble
 
     env:
       VITE_APP_TITLE: ${{ secrets.VITE_APP_TITLE || 'Portfolio' }}
@@ -104,21 +106,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '20'
-
       - name: Install dependencies
-        run: npm install --no-audit --no-fund --prefer-offline=false
-
-      - name: Fix rolldown native bindings
-        run: |
-          npm install --no-save --force rolldown-vite
-          npm install --no-save @rolldown/binding-linux-x64-gnu || echo "Binding already installed"
-
-      - name: Install Playwright browser
-        run: npx playwright install --with-deps chromium
+        run: npm ci
 
       - name: Run visual regression tests
         run: npm run test:visual
