@@ -200,8 +200,11 @@ git checkout master
 git pull
 npm run lint:ci
 npm run test:coverage
-npm run test:e2e
+npm run test:a11y:unit
+npm run test:e2e -- --project=chromium
 ```
+
+If you want cross-browser confidence beyond CI, also run `npm run test:e2e` before merging.
 
 After those checks pass, merge the open release PR from GitHub.
 

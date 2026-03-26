@@ -22,6 +22,7 @@ This portfolio targets WCAG 2.2 AA across every supported theme and both explici
 
 ## Manual Smoke Pass
 
+- Follow the full checklist in [`docs/ACCESSIBILITY_MANUAL_TEST.md`](./ACCESSIBILITY_MANUAL_TEST.md) before sign-off on major UI or theme changes.
 - VoiceOver + Safari: verify skip link, mobile menu, theme switcher, contact form errors, and CLI command input.
 - Keyboard only: tab through the shell, open/close the mobile menu, open/close the theme switcher, switch skills tabs, submit an invalid contact form, and run a CLI command.
 - Theme matrix: spot-check `engineer`, `cosmic`, `cli`, and `minimal` in both `light` and `dark` mode.
