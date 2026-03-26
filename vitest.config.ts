@@ -32,7 +32,7 @@ const packageJson = JSON.parse(
   fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8')
 ) as { version: string };
 
-export default defineConfig(({ mode }) => {
+export function createVitestConfig(mode = 'test') {
   const testMode = mode || 'test';
   const loadedEnv = loadEnv(testMode, process.cwd(), '');
 
@@ -117,4 +117,6 @@ export default defineConfig(({ mode }) => {
       },
     },
   };
-});
+}
+
+export default defineConfig(({ mode }) => createVitestConfig(mode));
