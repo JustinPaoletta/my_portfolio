@@ -39,10 +39,10 @@ jobs:
       VITE_GITHUB_API_ENABLED: 'false'
 
     steps:
-      - name: Require release bot token
+      - name: Require GitHub App config
         run: |
-          if [ -z "${{ secrets.CHANGESETS_GITHUB_TOKEN }}" ]; then
-            echo "::error title=Missing CHANGESETS_GITHUB_TOKEN::Set the repository secret CHANGESETS_GITHUB_TOKEN to a PAT or GitHub App token that can open pull requests and trigger workflows."
+          if [ -z "${{ vars.CHANGESETS_APP_ID }}" ] || [ -z "${{ secrets.CHANGESETS_APP_PRIVATE_KEY }}" ]; then
+            echo "::error title=Missing GitHub App config::Set CHANGESETS_APP_ID and CHANGESETS_APP_PRIVATE_KEY before running the release workflow."
             exit 1
           fi
 
@@ -51,6 +51,18 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+
+      - name: Create release bot token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.CHANGESETS_APP_ID }}
+          private-key: ${{ secrets.CHANGESETS_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: |
+            my_portfolio
+          permission-contents: write
+          permission-pull-requests: write
 
       - name: Setup Node.js
         uses: actions/setup-node@v6
@@ -68,20 +80,34 @@ jobs:
           title: 'chore(release): version packages'
           commit: 'chore(release): version packages'
         env:
-          GITHUB_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Detect release PR merge
+        id: release-merge
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          release_pr_count="$(
+            gh api "/repos/${GITHUB_REPOSITORY}/commits/${GITHUB_SHA}/pulls" \
+              --jq '[.[] | select(.title == "chore(release): version packages")] | length'
+          )"
+
+          if [ "${release_pr_count}" -gt 0 ]; then
+            echo "merged=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "merged=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Determine current version
         id: version
-        if: steps.changesets.outputs.hasChangesets == 'false'
         run: |
           version="$(node -p 'require("./package.json").version')"
           echo "version=${version}" >> "$GITHUB_OUTPUT"
 
       - name: Skip if GitHub release already exists
         id: release-check
-        if: steps.changesets.outputs.hasChangesets == 'false'
         env:
-          GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           if gh release view "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
             echo "exists=true" >> "$GITHUB_OUTPUT"
@@ -90,9 +116,9 @@ jobs:
           fi
 
       - name: Create GitHub release
-        if: steps.changesets.outputs.hasChangesets == 'false' && steps.release-check.outputs.exists == 'false'
+        if: ${{ steps.release-check.outputs.exists == 'false' && (steps.changesets.outputs.hasChangesets == 'false' || steps.release-merge.outputs.merged == 'true') }}
         env:
-          GH_TOKEN: ${{ secrets.CHANGESETS_GITHUB_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           gh release create "${{ steps.version.outputs.version }}" \
             --target "${GITHUB_SHA}" \

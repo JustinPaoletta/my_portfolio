@@ -151,6 +151,8 @@ Choose:
 - `minor` for backward-compatible features
 - `major` for breaking changes
 
+If the PR should satisfy the repo policy without publishing a new application version, commit an empty changeset instead. That is appropriate for workflow, docs, CI, and other maintenance-only changes.
+
 The PR check in `.github/workflows/changeset-required.yml` enforces this for normal PRs. The bot-generated release PR is exempt.
 
 To preview the local versioning result without opening a release PR, run:
@@ -165,21 +167,27 @@ That updates `package.json`, `package-lock.json`, and `CHANGELOG.md` based on pe
 
 Releases now use the standard Changesets release PR flow on `master`.
 
-Before relying on the automation, configure the repository secret `CHANGESETS_GITHUB_TOKEN` with a token that can:
+Before relying on the automation, configure the repository variable `CHANGESETS_APP_ID` and repository secret `CHANGESETS_APP_PRIVATE_KEY` for the dedicated release GitHub App. The workflow mints a short-lived installation token at runtime, and that token must be able to:
 
 - push branches and open pull requests in this repository
 - trigger `pull_request` workflows for bot-created release PRs
 - create GitHub Releases
 
-For this repository, a classic or fine-grained PAT on a maintainer account is the simplest option. The default `GITHUB_TOKEN` is not enough because PRs created by that token do not trigger the required `pull_request` checks on the release PR.
+For this repository, the app should be installed only on `JustinPaoletta/my_portfolio` with `Contents: Read and write` and `Pull requests: Read and write`. The default `GITHUB_TOKEN` is not enough because PRs created by that token do not trigger the required `pull_request` checks on the release PR.
 
 ### Normal release flow
 
 1. Open a feature PR with a `.changeset/*.md` file.
 2. Merge the PR into `master`.
-3. `.github/workflows/release.yml` uses `CHANGESETS_GITHUB_TOKEN` to open or update the release PR titled `chore(release): version packages`.
+3. `.github/workflows/release.yml` mints a short-lived token with `actions/create-github-app-token@v3` and uses it to open or update the release PR titled `chore(release): version packages`.
 4. Review that release PR and merge it manually.
-5. The same workflow creates the bare semver tag and the GitHub Release with generated notes if that version does not already exist.
+5. The same workflow creates the bare semver tag and the GitHub Release with generated notes from the merge commit of that release PR if that version does not already exist.
+
+### What does not create a release PR
+
+- PRs that contain only empty changesets do not open or update the release PR.
+- Merging a workflow-only, docs-only, or maintenance-only PR with an empty changeset should not publish a new version.
+- If a release is ever missed because the post-merge release job failed, recover that version on the original release PR merge commit instead of waiting for a later unrelated PR.
 
 Tags stay in bare semver format such as `1.1.0` and `1.1.1`.
 
