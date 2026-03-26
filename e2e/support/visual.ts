@@ -100,11 +100,39 @@ export async function waitForSectionToSettle(
   locator: Locator
 ): Promise<void> {
   await enableSectionCaptureMode(page);
+  await revealSectionIfDeferred(page, locator);
   await locator.scrollIntoViewIfNeeded();
   await page.waitForLoadState('networkidle');
   await waitForImages(locator);
   await resetTransientInteractionState(page);
   await page.waitForTimeout(500);
+}
+
+async function revealSectionIfDeferred(
+  page: Page,
+  locator: Locator
+): Promise<void> {
+  const alreadyExists = (await locator.count()) > 0;
+  if (alreadyExists) {
+    return;
+  }
+
+  await expect
+    .poll(
+      async () => {
+        await page.evaluate(() =>
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'auto',
+          })
+        );
+        return locator.count();
+      },
+      { timeout: 15_000, intervals: [250, 500, 1_000] }
+    )
+    .toBeGreaterThan(0);
+
+  await expect(locator).toBeVisible({ timeout: 10_000 });
 }
 
 export async function primeFullPage(page: Page): Promise<void> {
