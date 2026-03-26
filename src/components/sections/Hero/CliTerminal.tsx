@@ -5,6 +5,7 @@ import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { useTheme } from '@/hooks/useTheme';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './CliTerminal.css';
 
 type LineKind = 'system' | 'output' | 'input' | 'hint' | 'error' | 'success';
@@ -1149,6 +1150,14 @@ function CliTerminal(): React.ReactElement {
 
   /* Boot sequence: typewriter "JP-CLI Initialized", then clear and show main menu */
   useEffect(() => {
+    if (isVisualTestMode()) {
+      lineIdRef.current = 1;
+      const menuLines = createMainMenuLines(lineIdRef.current);
+      lineIdRef.current += menuLines.length;
+      setLines(menuLines);
+      return;
+    }
+
     const charDelayMs = 50;
     const pauseAfterBootMs = 500;
     const timeouts: ReturnType<typeof setTimeout>[] = [];

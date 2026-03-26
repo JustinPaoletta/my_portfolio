@@ -1,6 +1,15 @@
 import { expect, test } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 
+async function expectHeadingInViewport(
+  page: import('@playwright/test').Page,
+  name: RegExp
+): Promise<void> {
+  const heading = page.getByRole('heading', { name });
+  await heading.scrollIntoViewIfNeeded();
+  await expect(heading).toBeVisible();
+}
+
 test('renders core portfolio sections in default theme', async ({ page }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
@@ -13,21 +22,11 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
     page.getByRole('heading', { name: /Justin Paoletta/i })
   ).toBeVisible();
   await expect(page.getByRole('heading', { name: /My Career/i })).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: /My Projects/i })
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: /Experience & Education/i })
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: /LinkedIn Articles/i })
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: /GitHub Activity/i })
-  ).toBeVisible();
-  await expect(
-    page.getByRole('heading', { name: /Get In Touch/i })
-  ).toBeVisible();
+  await expectHeadingInViewport(page, /My Projects/i);
+  await expectHeadingInViewport(page, /Experience & Education/i);
+  await expectHeadingInViewport(page, /LinkedIn Articles/i);
+  await expectHeadingInViewport(page, /GitHub Activity/i);
+  await expectHeadingInViewport(page, /Get In Touch/i);
   await expect(page.getByRole('contentinfo')).toBeVisible();
 });
 

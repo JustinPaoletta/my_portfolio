@@ -1,0 +1,59 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  viewBox="0 0 800 600"
+  role="img"
+  aria-labelledby="title desc"
+>
+  <title id="title">SideQuest Pittsburgh project artwork</title>
+  <desc id="desc">
+    Stylized skyline and location pin artwork for the SideQuest Pittsburgh
+    project.
+  </desc>
+  <defs>
+    <linearGradient id="sky" x1="0%" x2="100%" y1="0%" y2="100%">
+      <stop offset="0%" stop-color="#0b1020" />
+      <stop offset="55%" stop-color="#203a63" />
+      <stop offset="100%" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="river" x1="0%" x2="100%" y1="0%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.85" />
+      <stop offset="100%" stop-color="#facc15" stop-opacity="0.8" />
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#sky)" rx="32" />
+  <circle cx="110" cy="108" r="54" fill="#f8fafc" fill-opacity="0.12" />
+  <circle cx="110" cy="108" r="24" fill="#f8fafc" fill-opacity="0.9" />
+  <path
+    d="M0 420 C120 365 245 370 365 420 S620 490 800 430 L800 600 L0 600 Z"
+    fill="url(#river)"
+  />
+  <path
+    d="M135 465 L190 300 L228 300 L182 465 Z"
+    fill="#f8fafc"
+    fill-opacity="0.18"
+  />
+  <path
+    d="M220 465 L275 245 L322 245 L285 465 Z"
+    fill="#f8fafc"
+    fill-opacity="0.22"
+  />
+  <rect x="316" y="210" width="66" height="255" fill="#f8fafc" fill-opacity="0.18" />
+  <rect x="390" y="255" width="46" height="210" fill="#f8fafc" fill-opacity="0.2" />
+  <rect x="444" y="180" width="74" height="285" fill="#f8fafc" fill-opacity="0.16" />
+  <rect x="530" y="270" width="50" height="195" fill="#f8fafc" fill-opacity="0.2" />
+  <rect x="588" y="225" width="38" height="240" fill="#f8fafc" fill-opacity="0.18" />
+  <rect x="636" y="288" width="36" height="177" fill="#f8fafc" fill-opacity="0.16" />
+  <path
+    d="M582 122 C582 88 555 62 521 62 C487 62 460 88 460 122 C460 170 521 246 521 246 C521 246 582 170 582 122 Z"
+    fill="#fb7185"
+  />
+  <circle cx="521" cy="122" r="23" fill="#fff7ed" />
+  <path
+    d="M113 515 C176 496 231 493 279 506 C338 522 404 558 502 558 C577 558 651 533 714 512"
+    fill="none"
+    stroke="#fef3c7"
+    stroke-linecap="round"
+    stroke-opacity="0.75"
+    stroke-width="10"
+  />
+</svg>

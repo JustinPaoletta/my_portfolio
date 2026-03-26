@@ -13,6 +13,7 @@ import {
   defaultViewport,
 } from '@/utils/animations';
 import { env } from '@/config/env';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './Projects.css';
 
 /** Project lifecycle stages for status badge display */
@@ -114,8 +115,7 @@ const projects: Project[] = [
     title: 'SideQuest: Pittsburgh',
     description:
       "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
-    image:
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    image: '/images/projects/sidequest-pittsburgh.svg',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
     featured: false,
@@ -135,7 +135,9 @@ const projects: Project[] = [
 
 function Projects(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
 
   const featuredProjects = projects.filter((p) => p.featured);
   const otherProjects = projects.filter((p) => !p.featured);

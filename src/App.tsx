@@ -10,6 +10,7 @@ import PWAUpdatePrompt from '@/components/pwa-update-prompt';
 import Hero from '@/components/sections/Hero';
 import { ThemeProvider, useTheme } from '@/hooks/useTheme';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { isVisualTestMode } from '@/utils/visualTest';
 
 const Navigation = lazy(() => import('@/components/Navigation'));
 const Footer = lazy(() => import('@/components/Footer'));
@@ -18,6 +19,7 @@ const NonCliSections = lazy(() => import('@/components/AppNonCliSections'));
 function AppLayout(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
+  const isVisualTest = isVisualTestMode();
   const handleSkipToMain = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
       event.preventDefault();
@@ -27,8 +29,8 @@ function AppLayout(): React.ReactElement {
         return;
       }
 
-      main.focus();
-      main.scrollIntoView();
+      main.scrollIntoView({ behavior: 'auto', block: 'start' });
+      main.focus({ preventScroll: true });
       window.history.replaceState(null, '', '#main');
     },
     []
@@ -52,7 +54,7 @@ function AppLayout(): React.ReactElement {
       )}
 
       {/* Theme switcher - always floating bottom-right */}
-      <ThemeSwitcher placement="floating" />
+      {!isVisualTest && <ThemeSwitcher placement="floating" />}
 
       {/* Main Content */}
       <main

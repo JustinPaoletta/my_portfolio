@@ -8,6 +8,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useScroll, useMotionValueEvent } from 'framer-motion';
 import JPLogo from '@/components/Brand/JPLogo';
 import { useTheme } from '@/hooks/useTheme';
+import { isVisualTestMode } from '@/utils/visualTest';
 import {
   getFocusableElements,
   temporarilyInertElements,
@@ -40,18 +41,24 @@ function Navigation(): React.ReactElement {
   const shouldRestoreMobileMenuFocus = useRef(true);
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
+  const isVisualTest = isVisualTestMode();
 
   // Use Framer Motion's scroll hook
   const { scrollY } = useScroll();
 
   // Listen to scroll changes efficiently
   useMotionValueEvent(scrollY, 'change', (latest) => {
+    if (isVisualTest) {
+      setIsScrolled(false);
+      return;
+    }
+
     setIsScrolled(latest > 0);
   });
 
   // Track active section based on scroll position
   useEffect(() => {
-    if (isCliTheme) {
+    if (isCliTheme || isVisualTest) {
       return;
     }
 
@@ -80,7 +87,7 @@ function Navigation(): React.ReactElement {
         if (section) observer.unobserve(section);
       });
     };
-  }, [isCliTheme]);
+  }, [isCliTheme, isVisualTest]);
 
   useEffect(() => {
     if (!isCliTheme || !isMobileMenuOpen) {
@@ -150,9 +157,13 @@ function Navigation(): React.ReactElement {
     }
 
     const mobileMenuButton = mobileMenuButtonRef.current;
+    const mobileMenuButtonTabIndex =
+      mobileMenuButton?.getAttribute('tabindex') ?? null;
     shouldRestoreMobileMenuFocus.current = true;
+    mobileMenuButton?.setAttribute('tabindex', '-1');
 
     const restoreInertState = temporarilyInertElements([
+      mobileMenuButton,
       document.querySelector<HTMLElement>('.skip-link'),
       document.getElementById('main'),
       document.querySelector<HTMLElement>('.theme-switcher'),
@@ -182,6 +193,13 @@ function Navigation(): React.ReactElement {
       document.removeEventListener('keydown', handleKeyDown);
       document.body.style.overflow = '';
       restoreInertState();
+      if (mobileMenuButton) {
+        if (mobileMenuButtonTabIndex === null) {
+          mobileMenuButton.removeAttribute('tabindex');
+        } else {
+          mobileMenuButton.setAttribute('tabindex', mobileMenuButtonTabIndex);
+        }
+      }
 
       if (shouldRestoreMobileMenuFocus.current) {
         mobileMenuButton?.focus();

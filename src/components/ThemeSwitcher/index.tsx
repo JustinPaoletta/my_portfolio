@@ -108,7 +108,9 @@ export default function ThemeSwitcher({
     }
 
     const toggleButton = toggleRef.current;
+    const toggleButtonTabIndex = toggleButton?.getAttribute('tabindex') ?? null;
     shouldRestoreFocus.current = true;
+    toggleButton?.setAttribute('tabindex', '-1');
 
     const restoreInertState = temporarilyInertElements([
       document.querySelector<HTMLElement>('.skip-link'),
@@ -147,6 +149,13 @@ export default function ThemeSwitcher({
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
       restoreInertState();
+      if (toggleButton) {
+        if (toggleButtonTabIndex === null) {
+          toggleButton.removeAttribute('tabindex');
+        } else {
+          toggleButton.setAttribute('tabindex', toggleButtonTabIndex);
+        }
+      }
 
       if (shouldRestoreFocus.current) {
         toggleButton?.focus();

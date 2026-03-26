@@ -21,6 +21,7 @@ import {
   sectionHeaderVariants,
   defaultViewport,
 } from '@/utils/animations';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './Contact.css';
 
 interface FormState {
@@ -33,7 +34,9 @@ type ContactFieldElement = HTMLInputElement | HTMLTextAreaElement;
 
 function Contact(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
   const [formData, setFormData] = useState<FormState>({
     name: '',
     email: '',

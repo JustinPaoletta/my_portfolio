@@ -14,6 +14,7 @@ import {
   sectionHeaderVariants,
   defaultViewport,
 } from '@/utils/animations';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './Experience.css';
 
 interface ExperienceItem {
@@ -135,7 +136,9 @@ const experiences: ExperienceItem[] = [
 
 function Experience(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
 
   const workExperiences = experiences.filter((e) => e.type === 'work');
   const education = experiences.filter((e) => e.type === 'education');

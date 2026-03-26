@@ -15,13 +15,16 @@ import {
   sectionHeaderVariants,
   defaultViewport,
 } from '@/utils/animations';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './About.css';
 
 function About(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const storyRef = useRef<HTMLDivElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
   const breakpoint = useBreakpoint();
   const isSmallHighlights = breakpoint === 'xs' || breakpoint === 'sm';
 

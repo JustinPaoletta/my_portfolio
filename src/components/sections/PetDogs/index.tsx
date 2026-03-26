@@ -8,6 +8,7 @@ import { Bone, Hand, PawPrint } from 'lucide-react';
 import { motion, useInView } from 'framer-motion';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { defaultViewport } from '@/utils/animations';
+import { isVisualTestMode } from '@/utils/visualTest';
 import './PetDogs.css';
 
 interface DogStats {
@@ -45,7 +46,9 @@ const dogMetadata: Record<string, Omit<Dog, 'name' | 'stats'>> = {
 
 function PetDogs(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isInView = useInView(sectionRef, defaultViewport);
+  const isVisualTest = isVisualTestMode();
+  const sectionInView = useInView(sectionRef, defaultViewport);
+  const isInView = isVisualTest || sectionInView;
   const [showDogs, setShowDogs] = useState(false);
 
   const [dogsData, updateStats] = usePetDogs(initialDogsData);

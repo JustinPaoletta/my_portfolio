@@ -37,6 +37,10 @@ test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
   const menuButton = page.getByRole('button', { name: /open menu/i });
   await menuButton.click();
 
+  await expect(page.locator('#mobile-menu')).toHaveAttribute(
+    'aria-hidden',
+    'false'
+  );
   await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'About' })).toBeFocused();
 
@@ -71,6 +75,7 @@ test('@a11y contact form surfaces field-level errors to assistive tech', async (
 }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
+  await page.locator('section#contact').scrollIntoViewIfNeeded();
 
   await page.getByLabel('Email Address').fill('bad-email');
   await page.getByLabel('Message').fill('short');
