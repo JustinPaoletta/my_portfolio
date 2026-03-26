@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.5
+
+### Patch Changes
+
+- 80496f4: Add deterministic Playwright visual regression coverage and contributor workflow documentation.
+
 ## 1.1.4
 
 ### Patch Changes
