@@ -60,7 +60,7 @@ Current coverage includes:
 
 - desktop hero viewports for all four themes in light and dark mode
 - minimal light mobile home and open mobile navigation
-- a minimal light full-page smoke capture
+- a minimal light tall-viewport smoke capture
 - section-level captures for Projects, GitHub, Contact, and expanded Pet Dogs
 
 The repo currently keeps both `*-darwin.png` and `*-linux.png` snapshots. Treat Linux as the review baseline because that is what CI executes.
@@ -85,7 +85,7 @@ Preferred patterns:
 
 - use `gotoVisualState()` to set viewport, theme, mode, mocks, frozen time, and visual-test mode
 - use locator screenshots for stable sections or components
-- use full-page screenshots sparingly and mask genuinely volatile regions
+- prefer tall-viewport or section-level captures over stitched full-page screenshots unless the full-page path is proven stable in Linux
 - keep remote images and third-party avatar URLs out of visual assertions; use committed local fixtures instead
 - keep visual coverage Chromium-only unless there is a deliberate reason to manage a second browser baseline set
 

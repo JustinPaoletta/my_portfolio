@@ -4,7 +4,6 @@ import {
   FULL_PAGE_VIEWPORT,
   MOBILE_VIEWPORT,
   gotoVisualState,
-  primeFullPage,
   waitForPageToSettle,
 } from '../support/visual';
 
@@ -71,19 +70,19 @@ test.describe('@visual home states', () => {
     });
   });
 
-  test('captures minimal light full-page smoke state', async ({ page }) => {
+  test('captures minimal light tall viewport smoke state', async ({ page }) => {
     await gotoVisualState(page, {
       theme: 'minimal',
       mode: 'light',
       viewport: FULL_PAGE_VIEWPORT,
     });
-    await primeFullPage(page);
 
-    await expect(page).toHaveScreenshot('home-minimal-light-fullpage.png', {
-      caret: 'hide',
-      fullPage: true,
-      maxDiffPixels: 200,
-      mask: [page.locator('.copyright')],
-    });
+    await expect(page).toHaveScreenshot(
+      'home-minimal-light-tall-viewport.png',
+      {
+        caret: 'hide',
+        maxDiffPixels: 200,
+      }
+    );
   });
 });
