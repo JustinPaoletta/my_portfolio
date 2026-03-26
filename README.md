@@ -76,6 +76,9 @@ A React 19 portfolio site with multiple visual themes, homepage prerendering, st
 - `npm run test:ui` - open the Vitest UI
 - `npm run test:coverage` - run Vitest once with coverage output
 - `npm run test:coverage:ui` - open the Vitest UI with coverage enabled
+- `npm run test:a11y` - run the accessibility unit and Chromium E2E checks together
+- `npm run test:a11y:unit` - run axe-backed Vitest accessibility coverage for the app shell and custom UI
+- `npm run test:a11y:e2e` - run the tagged accessibility Playwright flows in Chromium
 - `npm run test:e2e` - run Playwright E2E tests locally
 - `npm run test:e2e:debug` - run Playwright in debug mode
 - `npm run test:e2e:ui` - open the Playwright UI runner
@@ -119,10 +122,12 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - `npm run build` enforces bundle-size limits from [`vite.config.ts`](vite.config.ts) and rewrites the production homepage with prerendered HTML
 - Vitest coverage thresholds are `90%` for lines, functions, branches, and statements
 - Playwright can target a custom preview URL with `PLAYWRIGHT_BASE_URL`
-- CI runs Chromium-only E2E tests, Lighthouse audits, and bundle-size checks
+- CI runs accessibility unit tests, Chromium-only E2E tests, Lighthouse audits, and bundle-size checks
 
 ## Documentation
 
+- [Accessibility contract](docs/ACCESSIBILITY.md)
+- [Accessibility manual testing](docs/ACCESSIBILITY_MANUAL_TEST.md)
 - [Environment variables](docs/ENV.md)
 - [Vercel deployment](docs/VERCEL_DEPLOYMENT.md)
 - [SEO architecture](docs/SEO.md)
