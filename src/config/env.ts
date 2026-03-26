@@ -5,21 +5,32 @@
 
 import * as v from 'valibot';
 
+const publicEnvDefaults = {
+  appDescription:
+    'Portfolio of Justin Paoletta, a software engineer building accessible, performant web applications with React, TypeScript, Angular, and modern frontend tooling.',
+  appTitle: 'JP Engineering',
+  apiUrl: 'https://jpengineering.dev/api',
+  email: 'justinpaoletta@gmail.com',
+  githubUrl: 'https://github.com/JustinPaoletta',
+  githubUsername: 'JustinPaoletta',
+  linkedinUrl: 'https://www.linkedin.com/in/justin-paoletta/',
+} as const;
+
 const envSchema = v.object({
   VITE_APP_TITLE: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.appTitle),
     v.minLength(1, 'App title is required and cannot be empty'),
     v.maxLength(100, 'App title must be less than 100 characters')
   ),
 
   VITE_APP_DESCRIPTION: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.appDescription),
     v.minLength(1, 'App description is required and cannot be empty'),
     v.maxLength(500, 'App description must be less than 500 characters')
   ),
 
   VITE_API_URL: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.apiUrl),
     v.url('API URL must be a valid URL (e.g., https://api.example.com)'),
     v.check(
       (url: string) => url.startsWith('http://') || url.startsWith('https://'),
@@ -55,57 +66,78 @@ const envSchema = v.object({
     v.boolean()
   ),
 
-  VITE_UMAMI_WEBSITE_ID: v.union([
-    v.pipe(v.string(), v.uuid('Umami website ID must be a valid UUID')),
-    v.literal(''),
-  ]),
+  VITE_UMAMI_WEBSITE_ID: v.optional(
+    v.union([
+      v.pipe(v.string(), v.uuid('Umami website ID must be a valid UUID')),
+      v.literal(''),
+    ]),
+    ''
+  ),
 
   VITE_UMAMI_SRC: v.pipe(
     v.fallback(v.string(), 'https://cloud.umami.is/script.js'),
     v.url('Umami script source must be a valid URL')
   ),
 
-  VITE_NEWRELIC_ACCOUNT_ID: v.union([
-    v.pipe(
-      v.string(),
-      v.regex(/^\d+$/, 'New Relic Account ID must be a number')
-    ),
-    v.literal(''),
-  ]),
-
-  VITE_NEWRELIC_TRUST_KEY: v.union([
-    v.pipe(
-      v.string(),
-      v.regex(/^\d+$/, 'New Relic Trust Key must be a number')
-    ),
-    v.literal(''),
-  ]),
-
-  VITE_NEWRELIC_AGENT_ID: v.union([
-    v.pipe(v.string(), v.regex(/^\d+$/, 'New Relic Agent ID must be a number')),
-    v.literal(''),
-  ]),
-
-  VITE_NEWRELIC_LICENSE_KEY: v.union([
-    v.pipe(
-      v.string(),
-      v.regex(
-        /^NRJS-[A-Za-z0-9]+$/,
-        'New Relic License Key must start with "NRJS-" followed by alphanumeric characters (e.g., NRJS-abc123xyz)'
+  VITE_NEWRELIC_ACCOUNT_ID: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.regex(/^\d+$/, 'New Relic Account ID must be a number')
       ),
-      v.minLength(10, 'New Relic License Key appears too short'),
-      v.maxLength(50, 'New Relic License Key appears too long')
-    ),
-    v.literal(''),
-  ]),
+      v.literal(''),
+    ]),
+    ''
+  ),
 
-  VITE_NEWRELIC_APPLICATION_ID: v.union([
-    v.pipe(
-      v.string(),
-      v.regex(/^\d+$/, 'New Relic Application ID must be a number')
-    ),
-    v.literal(''),
-  ]),
+  VITE_NEWRELIC_TRUST_KEY: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.regex(/^\d+$/, 'New Relic Trust Key must be a number')
+      ),
+      v.literal(''),
+    ]),
+    ''
+  ),
+
+  VITE_NEWRELIC_AGENT_ID: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.regex(/^\d+$/, 'New Relic Agent ID must be a number')
+      ),
+      v.literal(''),
+    ]),
+    ''
+  ),
+
+  VITE_NEWRELIC_LICENSE_KEY: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.regex(
+          /^NRJS-[A-Za-z0-9]+$/,
+          'New Relic License Key must start with "NRJS-" followed by alphanumeric characters (e.g., NRJS-abc123xyz)'
+        ),
+        v.minLength(10, 'New Relic License Key appears too short'),
+        v.maxLength(50, 'New Relic License Key appears too long')
+      ),
+      v.literal(''),
+    ]),
+    ''
+  ),
+
+  VITE_NEWRELIC_APPLICATION_ID: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.regex(/^\d+$/, 'New Relic Application ID must be a number')
+      ),
+      v.literal(''),
+    ]),
+    ''
+  ),
 
   VITE_NEWRELIC_AJAX_DENY_LIST: v.pipe(
     v.fallback(v.optional(v.string()), ''),
@@ -115,7 +147,7 @@ const envSchema = v.object({
   ),
 
   VITE_GITHUB_URL: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.githubUrl),
     v.url('GitHub URL must be a valid URL'),
     v.check(
       (url: string) => url.includes('github.com'),
@@ -124,7 +156,7 @@ const envSchema = v.object({
   ),
 
   VITE_LINKEDIN_URL: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.linkedinUrl),
     v.url('LinkedIn URL must be a valid URL'),
     v.check(
       (url: string) => url.includes('linkedin.com'),
@@ -133,24 +165,27 @@ const envSchema = v.object({
   ),
 
   VITE_EMAIL: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.email),
     v.email(
       'Email must be a valid email address (e.g., your.email@example.com)'
     )
   ),
 
-  VITE_SITE_URL: v.union([
-    v.pipe(
-      v.string(),
-      v.url('Site URL must be a valid URL'),
-      v.check(
-        (url: string) =>
-          url.startsWith('http://') || url.startsWith('https://'),
-        'Site URL must start with http:// or https://'
-      )
-    ),
-    v.literal(''),
-  ]),
+  VITE_SITE_URL: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.url('Site URL must be a valid URL'),
+        v.check(
+          (url: string) =>
+            url.startsWith('http://') || url.startsWith('https://'),
+          'Site URL must start with http:// or https://'
+        )
+      ),
+      v.literal(''),
+    ]),
+    ''
+  ),
 
   VITE_GOOGLE_ANALYTICS_ID: v.optional(
     v.pipe(
@@ -162,16 +197,19 @@ const envSchema = v.object({
     )
   ),
 
-  VITE_MAPBOX_TOKEN: v.union([
-    v.pipe(
-      v.string(),
-      v.minLength(1, 'Mapbox token cannot be empty if provided')
-    ),
-    v.literal(''),
-  ]),
+  VITE_MAPBOX_TOKEN: v.optional(
+    v.union([
+      v.pipe(
+        v.string(),
+        v.minLength(1, 'Mapbox token cannot be empty if provided')
+      ),
+      v.literal(''),
+    ]),
+    ''
+  ),
 
   VITE_GITHUB_USERNAME: v.pipe(
-    v.string(),
+    v.optional(v.string(), publicEnvDefaults.githubUsername),
     v.minLength(1, 'GitHub username is required'),
     v.regex(
       /^[a-zA-Z0-9](?:[a-zA-Z0-9]|-(?=[a-zA-Z0-9])){0,38}$/,

@@ -85,7 +85,9 @@ describe('Contact section', () => {
       })
     );
 
-    expect(screen.getByText(/Message sent successfully!/i)).toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      /Message sent successfully!/i
+    );
     expect(screen.getByLabelText('Your Name')).toHaveValue('');
     expect(screen.getByLabelText('Email Address')).toHaveValue('');
     expect(screen.getByLabelText('Message')).toHaveValue('');
@@ -132,9 +134,7 @@ describe('Contact section', () => {
       await Promise.resolve();
     });
 
-    expect(
-      screen.getByText(/Failed to send message. Please try again/i)
-    ).toBeInTheDocument();
+    expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(errorSpy).toHaveBeenCalled();
 
     act(() => {
@@ -183,5 +183,36 @@ describe('Contact section', () => {
       screen.getByRole('button', { name: /send message/i })
     ).not.toBeDisabled();
     vi.useRealTimers();
+  });
+
+  it('shows shared validation errors and focuses the first invalid field', async () => {
+    render(<Contact />);
+
+    const submitButton = screen.getByRole('button', { name: /send message/i });
+    const form = submitButton.closest('form');
+    if (!form) throw new Error('missing contact form');
+
+    fireEvent.change(screen.getByLabelText('Email Address'), {
+      target: { value: 'bad-email', name: 'email' },
+    });
+    fireEvent.change(screen.getByLabelText('Message'), {
+      target: { value: 'short', name: 'message' },
+    });
+    fireEvent.submit(form);
+
+    expect(
+      screen.getByText(/Enter a name with at least 2 characters./i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Enter a valid email address./i)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Enter a message with at least 10 characters./i)
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText('Your Name')).toHaveFocus();
+    expect(screen.getByLabelText('Your Name')).toHaveAttribute(
+      'aria-invalid',
+      'true'
+    );
   });
 });

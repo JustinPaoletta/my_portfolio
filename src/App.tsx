@@ -3,7 +3,7 @@
  * Portfolio with parallax scrolling and animated sections
  */
 
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useCallback } from 'react';
 import '@/App.css';
 import SEO from '@/components/SEO';
 import PWAUpdatePrompt from '@/components/pwa-update-prompt';
@@ -18,6 +18,21 @@ const NonCliSections = lazy(() => import('@/components/AppNonCliSections'));
 function AppLayout(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
+  const handleSkipToMain = useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      event.preventDefault();
+
+      const main = document.getElementById('main');
+      if (!(main instanceof HTMLElement)) {
+        return;
+      }
+
+      main.focus();
+      main.scrollIntoView();
+      window.history.replaceState(null, '', '#main');
+    },
+    []
+  );
 
   return (
     <>
@@ -25,7 +40,7 @@ function AppLayout(): React.ReactElement {
       <PWAUpdatePrompt />
 
       {/* Skip link for keyboard users */}
-      <a href="#main" className="skip-link">
+      <a href="#main" className="skip-link" onClick={handleSkipToMain}>
         Skip to main content
       </a>
 
@@ -42,7 +57,7 @@ function AppLayout(): React.ReactElement {
       {/* Main Content */}
       <main
         id="main"
-        role="main"
+        tabIndex={-1}
         className={
           isCliTheme ? 'main-content main-content--cli' : 'main-content'
         }
