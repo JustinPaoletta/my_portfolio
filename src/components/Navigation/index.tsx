@@ -6,10 +6,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import JPLogo from '@/components/Brand/JPLogo';
-import {
-  PORTFOLIO_REVEAL_TARGET_EVENT,
-  type PortfolioRevealTargetDetail,
-} from '@/constants/deferred-navigation';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
 import {
@@ -17,6 +13,11 @@ import {
   temporarilyInertElements,
   trapFocusWithin,
 } from '@/utils/accessibility';
+import {
+  revealAndNavigate,
+  scrollToElement,
+  focusSection,
+} from '@/utils/deferredNavigation';
 import './Navigation.css';
 
 interface NavItem {
@@ -81,9 +82,10 @@ function Navigation(): React.ReactElement {
       return;
     }
 
-    const sections = navItems.map((item) => document.getElementById(item.id));
+    const sectionIds = new Set(navItems.map((item) => item.id));
+    const observedIds = new Set<string>();
 
-    const observer = new IntersectionObserver(
+    const intersectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -97,14 +99,35 @@ function Navigation(): React.ReactElement {
       }
     );
 
-    sections.forEach((section) => {
-      if (section) observer.observe(section);
+    const observeNewSections = (): void => {
+      for (const id of sectionIds) {
+        if (observedIds.has(id)) {
+          continue;
+        }
+
+        const element = document.getElementById(id);
+        if (element) {
+          intersectionObserver.observe(element);
+          observedIds.add(id);
+        }
+      }
+    };
+
+    observeNewSections();
+
+    const mainElement = document.getElementById('main') ?? document.body;
+    const mutationObserver = new MutationObserver(() => {
+      observeNewSections();
+    });
+
+    mutationObserver.observe(mainElement, {
+      childList: true,
+      subtree: true,
     });
 
     return () => {
-      sections.forEach((section) => {
-        if (section) observer.unobserve(section);
-      });
+      mutationObserver.disconnect();
+      intersectionObserver.disconnect();
     };
   }, [isCliTheme, isVisualTest]);
 
@@ -127,166 +150,23 @@ function Navigation(): React.ReactElement {
     setIsMobileMenuOpen(false);
   }, []);
 
-  const focusSectionTarget = useCallback((targetId: string): void => {
-    const element = document.getElementById(targetId);
-
-    if (!(element instanceof HTMLElement)) {
-      return;
-    }
-
-    if (!element.hasAttribute('tabindex')) {
-      element.setAttribute('tabindex', '-1');
-    }
-
-    window.requestAnimationFrame(() => {
-      element.focus({ preventScroll: true });
-    });
-  }, []);
-
-  const scrollToTarget = useCallback(
-    (element: HTMLElement, behavior: ScrollBehavior = 'smooth'): void => {
-      const offsetTop =
-        element.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({
-        top: offsetTop,
-        behavior,
-      });
-    },
-    []
-  );
-
-  const revealDeferredTarget = useCallback(
-    (targetId: string): void => {
-      const navigateToMountedTarget = (
-        mountedTarget: HTMLElement,
-        behavior: ScrollBehavior = 'smooth'
-      ): void => {
-        scrollToTarget(mountedTarget, behavior);
-        window.history.replaceState(null, '', `#${targetId}`);
-        focusSectionTarget(targetId);
-      };
-
-      const existingTarget = document.getElementById(targetId);
-      if (existingTarget instanceof HTMLElement) {
-        navigateToMountedTarget(existingTarget);
-        return;
-      }
-
-      window.dispatchEvent(
-        new CustomEvent<PortfolioRevealTargetDetail>(
-          PORTFOLIO_REVEAL_TARGET_EVENT,
-          {
-            detail: { targetId },
-          }
-        )
-      );
-
-      const observerRoot = document.getElementById('main') ?? document.body;
-      let timerId = 0;
-      let attemptsLeft = 20;
-
-      const cleanup = (): void => {
-        mutationObserver.disconnect();
-        window.clearTimeout(timerId);
-      };
-
-      const ensureTargetInView = (
-        mountedTarget: HTMLElement,
-        remainingAttempts = 6
-      ): void => {
-        scrollToTarget(mountedTarget, 'auto');
-
-        if (remainingAttempts <= 1) {
-          window.requestAnimationFrame(() => {
-            navigateToMountedTarget(mountedTarget);
-          });
-          return;
-        }
-
-        window.requestAnimationFrame(() => {
-          const rect = mountedTarget.getBoundingClientRect();
-          const isInViewport =
-            rect.top <= window.innerHeight - 80 && rect.bottom >= 80;
-
-          if (isInViewport) {
-            navigateToMountedTarget(mountedTarget);
-            return;
-          }
-
-          ensureTargetInView(mountedTarget, remainingAttempts - 1);
-        });
-      };
-
-      const finishWhenMounted = (): boolean => {
-        const mountedTarget = document.getElementById(targetId);
-        if (!(mountedTarget instanceof HTMLElement)) {
-          return false;
-        }
-
-        cleanup();
-        timerId = window.setTimeout(() => {
-          ensureTargetInView(mountedTarget);
-        }, 80);
-        return true;
-      };
-
-      const waitForTarget = (): void => {
-        if (finishWhenMounted()) {
-          return;
-        }
-
-        if (attemptsLeft <= 0) {
-          cleanup();
-          return;
-        }
-
-        attemptsLeft -= 1;
-        timerId = window.setTimeout(() => {
-          waitForTarget();
-        }, 120);
-      };
-
-      const mutationObserver = new MutationObserver(() => {
-        if (finishWhenMounted()) {
-          return;
-        }
-
-        window.clearTimeout(timerId);
-        timerId = window.setTimeout(() => {
-          waitForTarget();
-        }, 120);
-      });
-
-      mutationObserver.observe(observerRoot, {
-        childList: true,
-        subtree: true,
-      });
-
-      waitForTarget();
-    },
-    [focusSectionTarget, scrollToTarget]
-  );
-
   const handleNavClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
       event.preventDefault();
       const targetId = href.replace('#', '');
-      const navigateToTarget = (): void => {
-        const element = document.getElementById(targetId);
+      const element = document.getElementById(targetId);
 
-        if (element instanceof HTMLElement) {
-          scrollToTarget(element);
-          window.history.replaceState(null, '', href);
-          focusSectionTarget(targetId);
-        } else {
-          revealDeferredTarget(targetId);
-        }
-      };
+      if (element instanceof HTMLElement) {
+        scrollToElement(element);
+        window.history.replaceState(null, '', href);
+        focusSection(targetId);
+      } else {
+        revealAndNavigate(targetId);
+      }
 
-      navigateToTarget();
       closeMobileMenu(false);
     },
-    [closeMobileMenu, focusSectionTarget, revealDeferredTarget, scrollToTarget]
+    [closeMobileMenu]
   );
 
   useEffect(() => {

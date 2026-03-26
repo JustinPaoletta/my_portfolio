@@ -16,6 +16,7 @@ import {
 import useIdleActivation from '@/hooks/useIdleActivation';
 import { ThemeProvider, useTheme } from '@/hooks/useTheme';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
+import { revealAndNavigate } from '@/utils/deferredNavigation';
 import { isVisualTestMode } from '@/utils/visualTest';
 
 const Navigation = lazy(() => import('@/components/Navigation'));
@@ -97,6 +98,28 @@ function AppLayout(): React.ReactElement {
       );
     };
   }, []);
+
+  useEffect(() => {
+    if (isCliTheme) {
+      return;
+    }
+
+    const sectionIds: Set<string> = new Set(SECTION_MANIFEST.map((s) => s.id));
+
+    const handleHash = (): void => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && sectionIds.has(hash)) {
+        revealAndNavigate(hash);
+      }
+    };
+
+    handleHash();
+
+    window.addEventListener('hashchange', handleHash);
+    return () => {
+      window.removeEventListener('hashchange', handleHash);
+    };
+  }, [isCliTheme]);
 
   return (
     <>
