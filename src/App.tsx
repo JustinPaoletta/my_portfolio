@@ -31,10 +31,20 @@ function AppLayout(): React.ReactElement {
     enabled: !isCliTheme,
   });
   const shouldMountPwaPrompt = useIdleActivation();
+  const [revealedDeferredSectionIds, setRevealedDeferredSectionIds] = useState<
+    string[]
+  >([]);
   const [forcedDeferredSectionIds, setForcedDeferredSectionIds] = useState<
     string[]
   >([]);
+  const revealedDeferredSectionIdSet = new Set(revealedDeferredSectionIds);
   const forcedDeferredSectionIdSet = new Set(forcedDeferredSectionIds);
+
+  const handleDeferredSectionReveal = (sectionId: string): void => {
+    setRevealedDeferredSectionIds((currentIds) =>
+      currentIds.includes(sectionId) ? currentIds : [...currentIds, sectionId]
+    );
+  };
 
   const handleSkipToMain = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -145,7 +155,17 @@ function AppLayout(): React.ReactElement {
         <Hero />
         {!isCliTheme &&
           shouldMountFeaturedSections &&
-          SECTION_MANIFEST.map((section) => {
+          SECTION_MANIFEST.map((section, index) => {
+            const canRenderDeferredBoundary = SECTION_MANIFEST.slice(
+              0,
+              index
+            ).every(
+              (previousSection) =>
+                previousSection.activation === 'idle' ||
+                revealedDeferredSectionIdSet.has(previousSection.id) ||
+                forcedDeferredSectionIdSet.has(previousSection.id)
+            );
+
             const content = (
               <Suspense fallback={null}>
                 <section.Component />
@@ -156,11 +176,18 @@ function AppLayout(): React.ReactElement {
               return <div key={section.id}>{content}</div>;
             }
 
+            if (!canRenderDeferredBoundary) {
+              return null;
+            }
+
             return (
               <DeferredSection
                 key={section.id}
                 forceVisible={forcedDeferredSectionIdSet.has(section.id)}
                 rootMargin={section.rootMargin}
+                onReveal={() => {
+                  handleDeferredSectionReveal(section.id);
+                }}
               >
                 {content}
               </DeferredSection>
