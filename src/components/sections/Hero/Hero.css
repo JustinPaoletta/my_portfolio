@@ -41,11 +41,11 @@
   align-items: center;
   text-align: center;
   max-width: 800px;
-  transform: translate3d(0, var(--hero-parallax-y, 0), 0);
-  opacity: var(--hero-parallax-opacity, 1);
 }
 
 .hero-content[data-parallax-enabled='true'] {
+  transform: translate3d(0, var(--hero-parallax-y, 0), 0);
+  opacity: var(--hero-parallax-opacity, 1);
   will-change: transform, opacity;
 }
 
@@ -120,7 +120,7 @@
 
 .hero-tagline {
   max-width: 600px;
-  margin: 0.5rem 0 2.5rem;
+  margin: 0.5rem auto 2.5rem;
   font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   color: var(--text-muted);
   opacity: 1;
