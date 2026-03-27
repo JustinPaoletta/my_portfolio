@@ -3,6 +3,14 @@ import { defineConfig, devices } from '@playwright/test';
 const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4173';
 const reuseExistingServer =
   !process.env.CI && process.env.PLAYWRIGHT_REUSE_SERVER === 'true';
+const isExternalBaseUrl = (() => {
+  try {
+    const parsedUrl = new URL(baseURL);
+    return !['localhost', '127.0.0.1'].includes(parsedUrl.hostname);
+  } catch {
+    return false;
+  }
+})();
 
 export default defineConfig({
   testDir: './e2e',
@@ -34,17 +42,17 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      grepInvert: /@visual/,
+      grepInvert: /@visual|@mobile/,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
-      grepInvert: /@visual/,
+      grepInvert: /@visual|@mobile/,
       use: { ...devices['Desktop Firefox'] },
     },
     {
       name: 'webkit',
-      grepInvert: /@visual/,
+      grepInvert: /@visual|@mobile/,
       use: { ...devices['Desktop Safari'] },
     },
     {
@@ -52,12 +60,19 @@ export default defineConfig({
       grep: /@visual/,
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'mobile-chromium',
+      grep: /@mobile/,
+      use: { ...devices['Pixel 7'] },
+    },
   ],
-  webServer: {
-    command: 'npm run start:prod',
-    url: baseURL,
-    reuseExistingServer,
-    timeout: 120_000,
-    stdout: process.env.CI ? 'ignore' : 'pipe',
-  },
+  webServer: isExternalBaseUrl
+    ? undefined
+    : {
+        command: 'npm run start:prod',
+        url: baseURL,
+        reuseExistingServer,
+        timeout: 120_000,
+        stdout: process.env.CI ? 'ignore' : 'pipe',
+      },
 });
