@@ -13,55 +13,11 @@ import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
 import CliTerminal from './CliTerminal';
 import './Hero.css';
-import cliHeroCssUrl from './Hero.cli.css?url';
-import cosmicHeroCssUrl from './Hero.cosmic.css?url';
-import engineerHeroCssUrl from './Hero.engineer.css?url';
-
-const themeStyleUrls: Record<string, string> = {
-  cli: cliHeroCssUrl,
-  cosmic: cosmicHeroCssUrl,
-  engineer: engineerHeroCssUrl,
+const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
+  cli: () => import('./Hero.cli.css'),
+  cosmic: () => import('./Hero.cosmic.css'),
+  engineer: () => import('./Hero.engineer.css'),
 };
-
-const loadedThemeStyles = new Set<string>();
-
-function ensureThemeStylesheet(themeName: string): void {
-  if (typeof document === 'undefined') {
-    return;
-  }
-
-  const href = themeStyleUrls[themeName];
-  if (!href) {
-    return;
-  }
-
-  const existingLink = document.head.querySelector<HTMLLinkElement>(
-    `link[data-hero-theme-style="${themeName}"]`
-  );
-
-  if (existingLink) {
-    loadedThemeStyles.add(themeName);
-    return;
-  }
-
-  if (loadedThemeStyles.has(themeName)) {
-    return;
-  }
-
-  const stylesheet = document.createElement('link');
-  stylesheet.rel = 'stylesheet';
-  stylesheet.href = href;
-  stylesheet.dataset.heroThemeStyle = themeName;
-  document.head.appendChild(stylesheet);
-  loadedThemeStyles.add(themeName);
-}
-
-if (typeof document !== 'undefined') {
-  const initialTheme = document.documentElement.getAttribute('data-theme');
-  if (initialTheme) {
-    ensureThemeStylesheet(initialTheme);
-  }
-}
 
 const tracePaths = [
   { id: 'trace-top-2', d: 'M687.5 300 L687.5 250 L660.5 170 L660.5 110' },
@@ -654,6 +610,7 @@ function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
   const electronSvgRef = useRef<SVGSVGElement>(null);
+  const loadedThemeStyles = useRef(new Set<string>());
   const { themeName } = useTheme();
   const isVisualTest = isVisualTestMode();
   const isCosmicTheme = themeName === 'cosmic';
@@ -676,7 +633,13 @@ function Hero(): React.ReactElement {
   });
 
   useEffect(() => {
-    ensureThemeStylesheet(themeName);
+    const loadThemeStyles = themeStyleLoaders[themeName];
+    if (!loadThemeStyles || loadedThemeStyles.current.has(themeName)) {
+      return;
+    }
+
+    void loadThemeStyles();
+    loadedThemeStyles.current.add(themeName);
   }, [themeName]);
 
   useEffect(() => {

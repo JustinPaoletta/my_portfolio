@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
 interface DeferredSectionProps {
@@ -17,22 +17,82 @@ export default function DeferredSection({
   rootMargin = '400px 0px',
 }: DeferredSectionProps): React.ReactElement | null {
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const [isManuallyVisible, setIsManuallyVisible] = useState(false);
   const isVisible = useIntersectionObserver(sentinelRef, {
     rootMargin,
     triggerOnce: true,
   });
+  const shouldReveal = forceVisible || isVisible || isManuallyVisible;
 
   useEffect(() => {
-    if (isVisible || forceVisible) {
+    if (!enabled || shouldReveal) {
+      return;
+    }
+
+    const parseLeadMargin = (marginValue: string): number => {
+      const firstToken = marginValue.trim().split(/\s+/)[0] ?? '0px';
+      if (firstToken.endsWith('px')) {
+        const parsed = Number.parseFloat(firstToken);
+        return Number.isFinite(parsed) ? parsed : 0;
+      }
+      return 0;
+    };
+
+    const leadMargin = parseLeadMargin(rootMargin);
+    let rafId: number | undefined;
+
+    const checkVisibility = (): void => {
+      const sentinel = sentinelRef.current;
+      if (!sentinel) {
+        return;
+      }
+
+      const viewportHeight = window.innerHeight;
+      const rect = sentinel.getBoundingClientRect();
+      const intersectsVerticalRange =
+        rect.top <= viewportHeight + leadMargin && rect.bottom >= -leadMargin;
+
+      if (intersectsVerticalRange) {
+        setIsManuallyVisible(true);
+      }
+    };
+
+    const scheduleCheck = (): void => {
+      if (rafId !== undefined) {
+        return;
+      }
+      rafId = window.requestAnimationFrame(() => {
+        rafId = undefined;
+        checkVisibility();
+      });
+    };
+
+    scheduleCheck();
+    window.addEventListener('scroll', scheduleCheck, { passive: true });
+    window.addEventListener('resize', scheduleCheck);
+    window.addEventListener('orientationchange', scheduleCheck);
+
+    return () => {
+      window.removeEventListener('scroll', scheduleCheck);
+      window.removeEventListener('resize', scheduleCheck);
+      window.removeEventListener('orientationchange', scheduleCheck);
+      if (rafId !== undefined) {
+        window.cancelAnimationFrame(rafId);
+      }
+    };
+  }, [enabled, rootMargin, shouldReveal]);
+
+  useEffect(() => {
+    if (shouldReveal) {
       onReveal?.();
     }
-  }, [forceVisible, isVisible, onReveal]);
+  }, [onReveal, shouldReveal]);
 
   if (!enabled) {
     return null;
   }
 
-  if (forceVisible || isVisible) {
+  if (shouldReveal) {
     return <>{children}</>;
   }
 
@@ -40,7 +100,7 @@ export default function DeferredSection({
     <div
       ref={sentinelRef}
       aria-hidden="true"
-      style={{ width: '100%', height: '1px' }}
+      style={{ width: '100%', height: '24px' }}
     />
   );
 }
