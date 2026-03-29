@@ -28,7 +28,10 @@ async function revealDeferredSection(
     .poll(
       async () => {
         await page.evaluate(() =>
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'auto' })
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'instant',
+          })
         );
 
         return page.evaluate(
@@ -82,12 +85,17 @@ async function expectAllSectionsVisibleAfterFullScroll(
     }
   };
 
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+  // Disable CSS smooth scrolling so programmatic scrollBy jumps instantly.
+  await page.evaluate(() => {
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  });
   await expectSectionInViewport(page, 'hero');
   await captureVisibleSections();
 
-  // Scroll in small touch-like increments so deferred boundaries can reveal in order.
-  for (let step = 0; step < 160; step += 1) {
+  let consecutiveBottomHits = 0;
+
+  for (let step = 0; step < 200; step += 1) {
     const reachedBottom = await page.evaluate(() => {
       const delta = Math.max(80, Math.floor(window.innerHeight * 0.28));
       window.scrollBy(0, delta);
@@ -98,11 +106,18 @@ async function expectAllSectionsVisibleAfterFullScroll(
       return scrollElement.scrollTop >= maxScrollTop - 2;
     });
 
-    await page.waitForTimeout(90);
+    await page.waitForTimeout(60);
     await captureVisibleSections();
 
     if (reachedBottom) {
-      break;
+      consecutiveBottomHits += 1;
+      // Stay at the bottom for several ticks so deferred sections that just
+      // mounted have time to resolve their lazy imports and render.
+      if (consecutiveBottomHits >= 6) {
+        break;
+      }
+    } else {
+      consecutiveBottomHits = 0;
     }
   }
 

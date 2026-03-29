@@ -9,7 +9,10 @@ async function revealDeferredSection(
     .poll(
       async () => {
         await page.evaluate(() =>
-          window.scrollTo({ top: document.body.scrollHeight, behavior: 'auto' })
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'instant',
+          })
         );
 
         return page.evaluate(

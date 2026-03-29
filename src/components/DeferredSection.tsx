@@ -52,7 +52,17 @@ export default function DeferredSection({
       const intersectsVerticalRange =
         rect.top <= viewportHeight + leadMargin && rect.bottom >= -leadMargin;
 
-      if (intersectsVerticalRange) {
+      // When the user has scrolled past the fold and the sentinel is near the
+      // current document bottom, treat it as visible. This prevents the
+      // deferred cascade from stalling in landscape (short viewport) where a
+      // newly-rendered section can push the next sentinel beyond rootMargin.
+      const scrollEl = document.scrollingElement ?? document.documentElement;
+      const scrolledPastFold = scrollEl.scrollTop > viewportHeight * 0.5;
+      const distFromBottom =
+        scrollEl.scrollHeight - (scrollEl.scrollTop + viewportHeight);
+      const nearPageEnd = scrolledPastFold && distFromBottom < viewportHeight;
+
+      if (intersectsVerticalRange || nearPageEnd) {
         setIsManuallyVisible(true);
       }
     };
