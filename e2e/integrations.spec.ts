@@ -1,5 +1,36 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
+
+async function revealDeferredSection(
+  page: Page,
+  sectionId: string
+): Promise<ReturnType<Page['locator']>> {
+  await expect
+    .poll(
+      async () => {
+        await page.evaluate(() =>
+          window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: 'instant',
+          })
+        );
+
+        return page.evaluate(
+          (targetId) => Boolean(document.getElementById(targetId)),
+          sectionId
+        );
+      },
+      {
+        timeout: 15_000,
+        intervals: [250, 500, 1_000],
+      }
+    )
+    .toBe(true);
+
+  const section = page.locator(`section#${sectionId}`);
+  await expect(section).toBeVisible({ timeout: 10_000 });
+  return section;
+}
 
 test('GitHub section renders live stats from API responses', async ({
   page,
@@ -7,8 +38,7 @@ test('GitHub section renders live stats from API responses', async ({
   await mockPortfolioApis(page);
   await page.goto('/');
 
-  const githubSection = page.locator('section#github');
-  await githubSection.scrollIntoViewIfNeeded();
+  const githubSection = await revealDeferredSection(page, 'github');
 
   await expect(
     githubSection.getByRole('heading', { name: /GitHub Activity/i })
@@ -31,12 +61,51 @@ test('GitHub section shows resilient error state when API calls fail', async ({
   });
   await page.goto('/');
 
-  const githubSection = page.locator('section#github');
-  await githubSection.scrollIntoViewIfNeeded();
+  const githubSection = await revealDeferredSection(page, 'github');
 
   await expect(
     githubSection.getByRole('alert').getByText(/Unable to load GitHub data/i)
   ).toBeVisible();
+});
+
+test('deferred GitHub and pet dogs requests wait until their sections mount', async ({
+  page,
+}) => {
+  let githubProxyRequests = 0;
+  let petDogsGetRequests = 0;
+
+  page.on('request', (request) => {
+    const url = request.url();
+
+    if (url.includes('/api/github?')) {
+      githubProxyRequests += 1;
+    }
+
+    if (url.includes('/api/pet-dogs') && request.method() === 'GET') {
+      petDogsGetRequests += 1;
+    }
+  });
+
+  await mockPortfolioApis(page);
+  await page.goto('/');
+  await page.waitForLoadState('networkidle');
+
+  expect(githubProxyRequests).toBe(0);
+  const initialPetDogsGetRequests = petDogsGetRequests;
+
+  await page
+    .getByRole('navigation', { name: /main navigation/i })
+    .getByRole('link', { name: 'GitHub', exact: true })
+    .click();
+  await expect(page.locator('section#github')).toBeVisible({ timeout: 10_000 });
+  await expect.poll(() => githubProxyRequests).toBeGreaterThan(0);
+  await expect(page.locator('section#pet-dogs')).toHaveCount(0);
+  expect(petDogsGetRequests).toBe(initialPetDogsGetRequests);
+
+  await revealDeferredSection(page, 'pet-dogs');
+  await expect
+    .poll(() => petDogsGetRequests)
+    .toBeGreaterThan(initialPetDogsGetRequests);
 });
 
 test('contact form submits successfully and clears form state', async ({
@@ -55,8 +124,7 @@ test('contact form submits successfully and clears form state', async ({
   });
   await page.goto('/');
 
-  const contactSection = page.locator('section#contact');
-  await contactSection.scrollIntoViewIfNeeded();
+  const contactSection = await revealDeferredSection(page, 'contact');
 
   await page.getByLabel('Your Name').fill('Jane Doe');
   await page.getByLabel('Email Address').fill('jane@example.com');
@@ -85,8 +153,7 @@ test('contact form shows error feedback when API submission fails', async ({
   await mockPortfolioApis(page, { contactError: true });
   await page.goto('/');
 
-  const contactSection = page.locator('section#contact');
-  await contactSection.scrollIntoViewIfNeeded();
+  const contactSection = await revealDeferredSection(page, 'contact');
 
   await page.getByLabel('Your Name').fill('John Smith');
   await page.getByLabel('Email Address').fill('john@example.com');
@@ -122,8 +189,7 @@ test('pet dogs section syncs API data and tracks interactions', async ({
   });
   await page.goto('/');
 
-  const dogsSection = page.locator('section#pet-dogs');
-  await dogsSection.scrollIntoViewIfNeeded();
+  await revealDeferredSection(page, 'pet-dogs');
   await page.getByRole('button', { name: /show dogs/i }).click();
 
   const treatButton = page.getByRole('button', {

@@ -246,18 +246,37 @@ describe('App', () => {
     expect(await screen.findByRole('contentinfo')).toBeInTheDocument(); // footer
   });
 
-  it('has no footer in CLI view', async () => {
-    const user = userEvent.setup();
+  it('does not mount deferred data sections or fetch them before intersection', async () => {
     await act(async () => {
       render(<App />);
     });
 
-    const themeToggle = screen.getByRole('button', {
-      name: /toggle theme switcher/i,
-    });
-    await user.click(themeToggle);
+    await screen.findByRole('heading', { name: /My Projects/i });
 
-    fireEvent.click(screen.getByText('CLI'));
+    expect(document.getElementById('github')).not.toBeInTheDocument();
+    expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
+
+    const fetchCalls = vi
+      .mocked(fetch)
+      .mock.calls.map(([input]) =>
+        typeof input === 'string'
+          ? input
+          : input instanceof URL
+            ? input.toString()
+            : input.url
+      );
+
+    expect(fetchCalls.some((url) => url.includes('/api/github'))).toBe(false);
+    expect(fetchCalls.some((url) => url.includes('/api/pet-dogs'))).toBe(false);
+  });
+
+  it('has no footer in CLI view', async () => {
+    localStorage.setItem('portfolio-theme', 'cli');
+    await act(async () => {
+      render(<App />);
+    });
+
+    await screen.findByLabelText(/terminal command input/i);
 
     await waitFor(() => {
       expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
@@ -266,45 +285,29 @@ describe('App', () => {
 
   it('CLI Enter submits typed command', async () => {
     const user = userEvent.setup();
+    localStorage.setItem('portfolio-theme', 'cli');
 
     await act(async () => {
       render(<App />);
     });
-
-    const themeToggle = screen.getByRole('button', {
-      name: /toggle theme switcher/i,
-    });
-    await user.click(themeToggle);
-
-    fireEvent.click(screen.getByText('CLI'));
 
     const input = await screen.findByLabelText(/terminal command input/i);
     await user.click(input);
     await user.type(input, '9{Enter}');
 
-    await screen.findByText(/\[HELP\]/);
+    await screen.findByText(/\[HELP\]/, undefined, { timeout: 3000 });
     expect(input).toHaveValue('');
   });
 
   it('CLI input exposes the keyboard shortcuts hint', async () => {
+    localStorage.setItem('portfolio-theme', 'cli');
+
     await act(async () => {
       render(<App />);
     });
 
-    const themeToggle = screen.getByRole('button', {
-      name: /toggle theme switcher/i,
-    });
-    fireEvent.click(themeToggle);
-
-    fireEvent.click(screen.getByText('CLI'));
-
     const input = await screen.findByLabelText(/terminal command input/i);
-    const shortcutsHint = screen.getByText(/Keys: ↑ ↓ ← → move/i);
-
-    expect(input).toHaveAttribute(
-      'aria-describedby',
-      shortcutsHint.getAttribute('id')
-    );
+    expect(input).toHaveAttribute('aria-describedby', 'cli-keyboard-shortcuts');
   });
 
   it('Cosmic startup attempts autoplay from persisted theme', async () => {

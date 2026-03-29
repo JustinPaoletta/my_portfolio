@@ -8,6 +8,7 @@ import { browserslistToTargets } from 'lightningcss';
 import { sitemapPlugin } from './plugins/vite-plugin-sitemap';
 import { inlineCssPlugin } from './plugins/vite-plugin-inline-css';
 import { pwaConfig } from './src/pwa-config';
+import { createAppConfig } from './src/config/app-config';
 
 const cssTargets = browserslistToTargets(browserslist());
 const packageJson = JSON.parse(
@@ -71,10 +72,16 @@ function excludeApiDirectory(): Plugin {
 }
 
 const BUNDLE_SIZE_LIMITS = {
-  appChunk: 155,
-  vendorChunk: 400,
-  totalSize: 750,
+  appChunk: 125,
+  vendorChunk: 190,
+  totalSize: 640,
   cssFile: 85,
+};
+
+const INITIAL_ROUTE_LIMITS = {
+  js: 355,
+  css: 55,
+  total: 380,
 };
 
 function bundleSizeLimit(): Plugin {
@@ -126,6 +133,58 @@ function bundleSizeLimit(): Plugin {
         }
       }
 
+      const indexHtmlPath = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexHtmlPath)) {
+        const indexHtml = fs.readFileSync(indexHtmlPath, 'utf8');
+        const initialAssetMatches =
+          indexHtml.match(/\/assets\/[^"' )]+/g) ?? [];
+        const initialAssetPaths = [...new Set(initialAssetMatches)].map(
+          (assetPath) => path.join(distPath, assetPath.replace(/^\//, ''))
+        );
+        let initialJsSize = 0;
+        let initialCssSize = 0;
+
+        for (const assetPath of initialAssetPaths) {
+          if (!fs.existsSync(assetPath)) {
+            continue;
+          }
+
+          const sizeKB = fs.statSync(assetPath).size / 1024;
+          if (assetPath.endsWith('.js')) {
+            initialJsSize += sizeKB;
+          } else if (assetPath.endsWith('.css')) {
+            initialCssSize += sizeKB;
+          }
+        }
+
+        const initialTotalSize = initialJsSize + initialCssSize;
+        console.log(
+          `📥 Initial route JS: ${initialJsSize.toFixed(2)} KB (limit: ${INITIAL_ROUTE_LIMITS.js} KB)`
+        );
+        console.log(
+          `🎨 Initial route CSS: ${initialCssSize.toFixed(2)} KB (limit: ${INITIAL_ROUTE_LIMITS.css} KB)`
+        );
+        console.log(
+          `🚀 Initial route total: ${initialTotalSize.toFixed(2)} KB (limit: ${INITIAL_ROUTE_LIMITS.total} KB)`
+        );
+
+        if (initialJsSize > INITIAL_ROUTE_LIMITS.js) {
+          errors.push(
+            `❌ Initial route JS ${initialJsSize.toFixed(2)} KB exceeds ${INITIAL_ROUTE_LIMITS.js} KB`
+          );
+        }
+        if (initialCssSize > INITIAL_ROUTE_LIMITS.css) {
+          errors.push(
+            `❌ Initial route CSS ${initialCssSize.toFixed(2)} KB exceeds ${INITIAL_ROUTE_LIMITS.css} KB`
+          );
+        }
+        if (initialTotalSize > INITIAL_ROUTE_LIMITS.total) {
+          errors.push(
+            `❌ Initial route total ${initialTotalSize.toFixed(2)} KB exceeds ${INITIAL_ROUTE_LIMITS.total} KB`
+          );
+        }
+      }
+
       console.log(
         `\n📦 Total bundle size: ${totalSize.toFixed(2)} KB (limit: ${BUNDLE_SIZE_LIMITS.totalSize} KB)`
       );
@@ -154,6 +213,13 @@ export default defineConfig(({ mode }) => {
   const analyticsEnabled = toBoolean(env.VITE_ENABLE_ANALYTICS);
   const errorMonitoringEnabled = toBoolean(env.VITE_ENABLE_ERROR_MONITORING);
   const debugEnabled = toBoolean(env.VITE_ENABLE_DEBUG);
+  const appConfig = createAppConfig(env, {
+    mode,
+    version: packageJson.version,
+    analyticsEnabled,
+    debugEnabled,
+    errorMonitoringEnabled,
+  });
 
   return {
     base: '/',
@@ -167,6 +233,7 @@ export default defineConfig(({ mode }) => {
     ],
     define: {
       __APP_VERSION__: JSON.stringify(packageJson.version),
+      __APP_CONFIG__: JSON.stringify(appConfig),
       __ENABLE_ANALYTICS__: JSON.stringify(analyticsEnabled),
       __ENABLE_ERROR_MONITORING__: JSON.stringify(errorMonitoringEnabled),
       __ENABLE_DEBUG_TOOLS__: JSON.stringify(debugEnabled),
@@ -197,6 +264,10 @@ export default defineConfig(({ mode }) => {
       cssMinify: 'lightningcss',
       cssCodeSplit: true,
       assetsInlineLimit: 4096,
+      modulePreload: {
+        resolveDependencies: (_filename, deps) =>
+          deps.filter((dep) => !dep.includes('vendor-newrelic')),
+      },
       rollupOptions: {
         output: {
           manualChunks(id) {

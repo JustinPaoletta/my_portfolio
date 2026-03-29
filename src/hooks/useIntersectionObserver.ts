@@ -1,6 +1,8 @@
 /**
  * useIntersectionObserver Hook
- * Detects when an element enters the viewport for scroll animations
+ * Detects when an element enters the viewport for scroll animations.
+ * Reconnects the observer after viewport resize / orientation change to
+ * work around mobile browsers that don't reliably re-evaluate entries.
  */
 
 import { useState, useEffect, type RefObject } from 'react';
@@ -26,30 +28,52 @@ export function useIntersectionObserver(
     const element = ref.current;
     if (!element) return;
 
-    // If already visible and triggerOnce, skip observer
     if (isVisible && triggerOnce) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          if (triggerOnce) {
-            observer.disconnect();
-          }
-        } else if (!triggerOnce) {
-          setIsVisible(false);
-        }
-      },
-      {
-        threshold,
-        rootMargin,
-      }
-    );
+    const observerOptions: IntersectionObserverInit = { threshold, rootMargin };
 
-    observer.observe(element);
+    const handleIntersection: IntersectionObserverCallback = ([entry]) => {
+      if (entry.isIntersecting) {
+        setIsVisible(true);
+        if (triggerOnce) {
+          activeObserver.disconnect();
+        }
+      } else if (!triggerOnce) {
+        setIsVisible(false);
+      }
+    };
+
+    let activeObserver = new IntersectionObserver(
+      handleIntersection,
+      observerOptions
+    );
+    activeObserver.observe(element);
+
+    let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const handleResize = (): void => {
+      if (resizeTimer !== undefined) {
+        clearTimeout(resizeTimer);
+      }
+      resizeTimer = setTimeout(() => {
+        resizeTimer = undefined;
+        activeObserver.disconnect();
+        activeObserver = new IntersectionObserver(
+          handleIntersection,
+          observerOptions
+        );
+        activeObserver.observe(element);
+      }, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
-      observer.disconnect();
+      activeObserver.disconnect();
+      window.removeEventListener('resize', handleResize);
+      if (resizeTimer !== undefined) {
+        clearTimeout(resizeTimer);
+      }
     };
   }, [ref, threshold, rootMargin, triggerOnce, isVisible]);
 

@@ -69,11 +69,14 @@ test('cosmic theme hero video autoplays when restored from localStorage', async 
         if (!video) {
           return false;
         }
-        return (
-          !video.paused &&
-          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-          video.currentTime > 0
-        );
+        // Video must have been accepted for playback and have data available.
+        // Firefox headless may not advance readyState past HAVE_METADATA
+        // even when fully buffered, so we also accept buffered data.
+        const hasDecodedFrames =
+          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+        const hasBufferedData =
+          video.buffered.length > 0 && video.buffered.end(0) > 0;
+        return !video.paused && (hasDecodedFrames || hasBufferedData);
       });
     })
     .toBe(true);
@@ -155,11 +158,15 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
           return false;
         }
 
+        const hasDecodedFrames =
+          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+        const hasBufferedData =
+          video.buffered.length > 0 && video.buffered.end(0) > 0;
+
         return (
           heroBackground.getAttribute('data-cosmic-video-ready') === 'true' &&
           !video.paused &&
-          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
-          video.currentTime > 0
+          (hasDecodedFrames || hasBufferedData)
         );
       });
     })

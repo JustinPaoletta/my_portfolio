@@ -1,5 +1,5 @@
 import { act, render, screen, waitFor } from '@/test/test-utils';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Hero from '.';
 
 type ThemeName = 'minimal' | 'engineer' | 'cosmic' | 'cli';
@@ -7,6 +7,7 @@ type ThemeName = 'minimal' | 'engineer' | 'cosmic' | 'cli';
 let themeName: ThemeName = 'minimal';
 let heroInView = true;
 let prefersReducedMotion = false;
+const defaultUserAgent = navigator.userAgent;
 
 vi.mock('@/hooks/useTheme', () => ({
   useTheme: () => ({ themeName }),
@@ -23,23 +24,8 @@ vi.mock('./CliTerminal', () => ({
 }));
 
 vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionDiv = React.forwardRef<
-    HTMLDivElement,
-    React.HTMLAttributes<HTMLDivElement>
-  >(({ children, ...props }, ref) =>
-    React.createElement('div', { ref, ...props }, children)
-  );
-
   return {
-    motion: {
-      div: motionDiv,
-    },
     useReducedMotion: () => prefersReducedMotion,
-    useScroll: () => ({ scrollYProgress: 0 }),
-    useSpring: (value: unknown) => value,
-    useTransform: (_source: unknown, _input: unknown, output: unknown) =>
-      Array.isArray(output) ? output[0] : 0,
   };
 });
 
@@ -214,6 +200,56 @@ describe('Hero section', () => {
     });
   });
 
+  afterEach(() => {
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: defaultUserAgent,
+    });
+    vi.useRealTimers();
+    vi.unstubAllGlobals();
+  });
+
+  it('renders static hero content before deferred enhancement is activated', async () => {
+    installEngineerMatchMediaMock();
+    themeName = 'minimal';
+
+    const idleCallbacks: IdleRequestCallback[] = [];
+
+    vi.useFakeTimers();
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: 'Mozilla/5.0 Chrome/122.0.0.0 Safari/537.36',
+    });
+    vi.stubGlobal('requestIdleCallback', (callback: IdleRequestCallback) => {
+      idleCallbacks.push(callback);
+      return idleCallbacks.length;
+    });
+
+    const view = render(<Hero />);
+    const heroContent = view.container.querySelector('.hero-content');
+    expect(heroContent).toHaveAttribute('data-parallax-enabled', 'false');
+    expect(screen.getByText("Hello, I'm")).toBeInTheDocument();
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      'Justin Paoletta'
+    );
+
+    act(() => {
+      vi.advanceTimersByTime(40);
+    });
+
+    expect(idleCallbacks).toHaveLength(1);
+
+    act(() => {
+      idleCallbacks[0]({
+        didTimeout: false,
+        timeRemaining: () => 50,
+      } as IdleDeadline);
+      vi.advanceTimersByTime(200);
+    });
+
+    expect(heroContent).toHaveAttribute('data-parallax-enabled', 'true');
+  });
+
   it('renders non-CLI copy for minimal theme and CLI terminal for CLI theme', async () => {
     themeName = 'minimal';
     const minimal = render(<Hero />);
@@ -252,7 +288,9 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(view.container.querySelector('.hero-circuit')).toBeInTheDocument();
     });
-    expect(pauseSpy).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(pauseSpy).toHaveBeenCalled();
+    });
     expect(view.container.querySelector('animateMotion')).toHaveAttribute(
       'dur',
       '5.8s'
@@ -395,7 +433,7 @@ describe('Hero section', () => {
     expect(playSpy.mock.calls.length).toBe(callsAfterFirstInteraction);
   });
 
-  it('loads the cosmic video even when save-data is enabled', async () => {
+  it('loads the cosmic video after idle even when save-data is enabled', async () => {
     installEngineerMatchMediaMock();
     Object.defineProperty(navigator, 'connection', {
       configurable: true,
@@ -409,8 +447,12 @@ describe('Hero section', () => {
     themeName = 'cosmic';
 
     const view = render(<Hero />);
+    await waitFor(() => {
+      expect(
+        view.container.querySelector('.hero-cosmic-video')
+      ).toBeInTheDocument();
+    });
     const video = view.container.querySelector('.hero-cosmic-video');
-    expect(video).toBeInTheDocument();
     expect(video).toHaveAttribute('preload', 'auto');
 
     await waitFor(() => {

@@ -1,21 +1,12 @@
 import { useRef } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { Reveal, useRevealInView } from '@/components/Reveal';
 import { env } from '@/config/env';
 import { LINKEDIN_ARTICLES } from '@/content/site';
-import {
-  fadeUpVariants,
-  staggerContainerVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
-import { isVisualTestMode } from '@/utils/visualTest';
 import './Articles.css';
 
 export default function Articles(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisualTest = isVisualTestMode();
-  const sectionInView = useInView(sectionRef, defaultViewport);
-  const isInView = isVisualTest || sectionInView;
+  const isVisible = useRevealInView(sectionRef);
 
   return (
     <section
@@ -25,42 +16,48 @@ export default function Articles(): React.ReactElement {
       aria-labelledby="articles-heading"
     >
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             Writing
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="articles-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             LinkedIn Articles
-          </motion.h2>
-          <motion.p
+          </Reveal>
+          <Reveal
+            as="p"
             className="section-subtitle articles-subtitle"
-            variants={fadeUpVariants}
+            delay={200}
+            visible={isVisible}
           >
             Long-form notes on AI-assisted development, engineering rigor, and
             the trade-offs behind building software that lasts.
-          </motion.p>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
-        <motion.div
-          className="articles-grid"
-          variants={staggerContainerVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
-        >
-          {LINKEDIN_ARTICLES.map((article) => (
-            <motion.article
+        <div className="articles-grid">
+          {LINKEDIN_ARTICLES.map((article, index) => (
+            <Reveal
+              as="article"
               key={article.id}
               className="article-card"
-              variants={fadeUpVariants}
+              delay={140 + index * 90}
+              visible={isVisible}
             >
               {article.image && (
                 <a
@@ -75,6 +72,7 @@ export default function Articles(): React.ReactElement {
                     alt={article.imageAlt ?? `${article.title} article cover`}
                     className="article-card__image"
                     loading="lazy"
+                    decoding="async"
                     width={600}
                     height={337}
                   />
@@ -141,21 +139,21 @@ export default function Articles(): React.ReactElement {
                   </svg>
                 </a>
               </div>
-            </motion.article>
+            </Reveal>
           ))}
-        </motion.div>
+        </div>
 
-        <motion.a
+        <Reveal
+          as="a"
           href={env.social.linkedin}
           target="_blank"
           rel="noopener noreferrer"
           className="articles-profile-link"
-          variants={fadeUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          delay={280}
+          visible={isVisible}
         >
           View more on LinkedIn
-        </motion.a>
+        </Reveal>
       </div>
     </section>
   );

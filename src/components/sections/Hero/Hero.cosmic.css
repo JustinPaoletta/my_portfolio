@@ -49,14 +49,13 @@
 }
 
 :root[data-theme='cosmic'] .hero-title-list {
-  margin: 0 0 0 1.4rem;
-  padding-left: 1.15rem;
+  margin: 0;
+  padding-left: 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 0.62rem;
-  list-style: disc;
-  list-style-position: outside;
+  list-style: none;
 }
 
 :root[data-theme='cosmic'] .hero-title-list-item {
@@ -138,8 +137,8 @@
   }
 
   :root[data-theme='cosmic'] .hero-title-list {
-    margin-left: 1.4rem;
-    padding-left: 1.15rem;
+    margin-left: 0;
+    padding-left: 0;
     gap: 0.55rem;
   }
 }
@@ -156,8 +155,8 @@
   }
 
   :root[data-theme='cosmic'] .hero-title-list {
-    margin-left: 0.92rem;
-    padding-left: 0.96rem;
+    margin-left: 0;
+    padding-left: 0;
     gap: 0.48rem;
   }
 
@@ -195,8 +194,8 @@
   }
 
   :root[data-theme='cosmic'] .hero-title-list {
-    margin-left: 0.75rem;
-    padding-left: 0.82rem;
+    margin-left: 0;
+    padding-left: 0;
     gap: 0.36rem;
   }
 
@@ -231,8 +230,8 @@
   }
 
   :root[data-theme='cosmic'] .hero-title-list {
-    margin-left: 1.28rem;
-    padding-left: 1.08rem;
+    margin-left: 0;
+    padding-left: 0;
     gap: 0.58rem;
   }
 
@@ -526,7 +525,7 @@
 
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-name {
   font-family: 'Inter', var(--font-sans);
-  font-size: calc(clamp(2.95rem, 8.9vw, 5.8rem) + 2px);
+  font-size: clamp(2.5rem, 8vw, 5rem);
   font-weight: 800;
   font-style: italic;
   letter-spacing: -0.045em;
@@ -550,7 +549,7 @@
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-greeting {
   font-family: 'Space Grotesk', var(--font-sans);
   color: var(--cosmic-light-text-fill);
-  font-size: calc(1.22rem + 2px);
+  font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.12em;
   text-shadow:
@@ -579,10 +578,10 @@
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-title-list-item {
   font-family: 'Space Grotesk', var(--font-sans);
   color: var(--cosmic-light-text-fill);
-  font-size: calc(clamp(1.24rem, 3.25vw, 1.74rem) + 2px);
+  font-size: clamp(1.08rem, 2.8vw, 1.42rem);
   font-weight: 700;
   letter-spacing: -0.01em;
-  line-height: 1.24;
+  line-height: 1.38;
   text-shadow:
     1px 0 0 var(--cosmic-light-text-stroke),
     -1px 0 0 var(--cosmic-light-text-stroke),
@@ -626,11 +625,10 @@
 :root[data-theme='cosmic'][data-color-mode='light'] .hero-tagline p {
   font-family: 'Space Grotesk', var(--font-sans);
   color: var(--cosmic-light-text-fill);
-  font-size: calc(clamp(1.14rem, 2.35vw, 1.34rem) + 2px);
+  font-size: clamp(1rem, 2vw, 1.125rem);
   font-weight: 700;
   letter-spacing: -0.01em;
-  line-height: 1.46;
-  max-width: 28ch;
+  line-height: 1.7;
   text-shadow:
     1px 0 0 var(--cosmic-light-text-stroke),
     -1px 0 0 var(--cosmic-light-text-stroke),
@@ -645,7 +643,7 @@
 :root[data-theme='cosmic'][data-color-mode='light'] .cta-primary,
 :root[data-theme='cosmic'][data-color-mode='light'] .cta-secondary {
   font-family: 'Space Grotesk', var(--font-sans);
-  font-size: calc(1rem + 2px);
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -674,19 +672,20 @@
   color: #f5ecff;
 }
 
-@media (max-width: 768px) {
-  :root[data-theme='cosmic'][data-color-mode='light'] .hero-name {
-    font-size: calc(clamp(2.75rem, 11vw, 4.35rem) + 2px);
-  }
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-subtext-layout {
+  width: auto;
+  margin: 0 auto 0.8rem;
+}
 
-  :root[data-theme='cosmic'][data-color-mode='light'] .hero-title-list-item {
-    font-size: calc(clamp(1.18rem, 4.8vw, 1.44rem) + 2px);
-  }
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-subtext-copy {
+  display: block;
+}
 
-  :root[data-theme='cosmic'][data-color-mode='light'] .hero-tagline p {
-    font-size: calc(clamp(1.06rem, 4.2vw, 1.18rem) + 2px);
-    max-width: 26ch;
-  }
+:root[data-theme='cosmic'][data-color-mode='light']
+  .hero-subtext-copy
+  .hero-tagline {
+  margin: 0;
+  text-align: left;
 }
 
 :root[data-theme='cosmic'] {
@@ -887,4 +886,54 @@
 
 :root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::after {
   content: none;
+}
+
+/* Dark cosmic spacing parity with the lighter cosmic rhythm */
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-subtext-layout {
+  margin-bottom: 1rem;
+  gap: clamp(0.6rem, 1.8vw, 1.2rem);
+}
+
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-title-list {
+  gap: 0.78rem;
+}
+
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-title-list-item {
+  line-height: 1.45;
+}
+
+@media (max-width: 980px) {
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-subtext-layout {
+    margin-bottom: 0.86rem;
+    gap: clamp(0.35rem, 1.2vw, 0.72rem);
+  }
+
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-title-list {
+    gap: 0.64rem;
+  }
+}
+
+@media (max-width: 768px) {
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-subtext-layout {
+    margin-bottom: 0.72rem;
+    gap: clamp(0.3rem, 1.15vw, 0.52rem);
+  }
+
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-title-list {
+    gap: 0.56rem;
+  }
+
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-title-list-item {
+    line-height: 1.4;
+  }
+}
+
+@media (max-width: 480px) {
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-subtext-layout {
+    margin-bottom: 0.54rem;
+  }
+
+  :root[data-theme='cosmic'][data-color-mode='dark'] .hero-title-list {
+    gap: 0.44rem;
+  }
 }

@@ -1,20 +1,11 @@
 /**
  * Skills Section
  * Technologies and tools showcase with category tabs
- * Uses Framer Motion for smooth scroll animations
  */
 
 import { useRef, useState } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { Reveal, useRevealInView } from '@/components/Reveal';
 import { useTheme } from '@/hooks/useTheme';
-import {
-  fadeUpVariants,
-  staggerContainerVariants,
-  fastStaggerContainerVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
-import { isVisualTestMode } from '@/utils/visualTest';
 import './Skills.css';
 
 interface SkillCategory {
@@ -253,9 +244,7 @@ const additionalSkills = [
 
 function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisualTest = isVisualTestMode();
-  const sectionInView = useInView(sectionRef, defaultViewport);
-  const isInView = isVisualTest || sectionInView;
+  const isVisible = useRevealInView(sectionRef);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const [activeTab, setActiveTab] = useState(0);
   const { resolvedMode } = useTheme();
@@ -277,29 +266,36 @@ function Skills(): React.ReactElement {
       aria-labelledby="skills-heading"
     >
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             Expertise
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="skills-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             Skills & Technologies
-          </motion.h2>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
-        <motion.div
+        <Reveal
+          as="div"
           className="skills-tabs-container"
-          variants={fadeUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          delay={140}
+          visible={isVisible}
         >
           <div
             className="tabs-list"
@@ -349,93 +345,94 @@ function Skills(): React.ReactElement {
             ))}
           </div>
 
-          {skillCategories.map((category, categoryIndex) => (
-            <div
-              key={category.name}
-              id={`tabpanel-${categoryIndex}`}
-              role="tabpanel"
-              aria-labelledby={`tab-${categoryIndex}`}
-              hidden={activeTab !== categoryIndex}
-              className={`tab-panel ${activeTab === categoryIndex ? 'active' : ''}`}
-            >
-              <motion.div
-                className="skills-grid"
-                variants={staggerContainerVariants}
-                initial="hidden"
-                animate={activeTab === categoryIndex ? 'visible' : 'hidden'}
-              >
-                {category.skills.map((skill) => (
-                  <motion.a
-                    key={skill.name}
-                    className={`skill-item ${skill.url ? 'skill-link' : ''}`}
-                    data-skill={skill.name.toLowerCase().replace(/\s+/g, '-')}
-                    variants={fadeUpVariants}
-                    href={skill.url}
-                    target={skill.url ? '_blank' : undefined}
-                    rel={skill.url ? 'noopener noreferrer' : undefined}
-                    aria-label={
-                      skill.url ? `${skill.name} official website` : undefined
-                    }
-                  >
-                    <div className="skill-item-icon">
-                      <img
-                        src={
-                          skill.name === 'AWS' && isDarkMode
-                            ? '/icons/aws-dark.svg'
-                            : skill.icon
-                        }
-                        alt={`${skill.name} icon`}
-                        width="48"
-                        height="48"
-                        loading="lazy"
-                      />
-                    </div>
-                    <span className="skill-item-name">{skill.name}</span>
-                  </motion.a>
-                ))}
-              </motion.div>
-            </div>
-          ))}
-        </motion.div>
+          {skillCategories.map((category, categoryIndex) => {
+            const isActivePanel = activeTab === categoryIndex;
+            const panelVisible = isVisible && isActivePanel;
 
-        <motion.div
+            return (
+              <div
+                key={category.name}
+                id={`tabpanel-${categoryIndex}`}
+                role="tabpanel"
+                aria-labelledby={`tab-${categoryIndex}`}
+                hidden={!isActivePanel}
+                className={`tab-panel ${isActivePanel ? 'active' : ''}`}
+              >
+                <div className="skills-grid">
+                  {category.skills.map((skill, skillIndex) => (
+                    <Reveal
+                      as="a"
+                      key={skill.name}
+                      className={`skill-item ${skill.url ? 'skill-link' : ''}`}
+                      data-skill={skill.name.toLowerCase().replace(/\s+/g, '-')}
+                      href={skill.url}
+                      target={skill.url ? '_blank' : undefined}
+                      rel={skill.url ? 'noopener noreferrer' : undefined}
+                      aria-label={
+                        skill.url ? `${skill.name} official website` : undefined
+                      }
+                      delay={80 + skillIndex * 40}
+                      visible={panelVisible}
+                    >
+                      <div className="skill-item-icon">
+                        <img
+                          src={
+                            skill.name === 'AWS' && isDarkMode
+                              ? '/icons/aws-dark.svg'
+                              : skill.icon
+                          }
+                          alt={`${skill.name} icon`}
+                          width="48"
+                          height="48"
+                          loading="lazy"
+                        />
+                      </div>
+                      <span className="skill-item-name">{skill.name}</span>
+                    </Reveal>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </Reveal>
+
+        <Reveal
+          as="div"
           className="additional-skills"
-          variants={fadeUpVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          delay={220}
+          visible={isVisible}
         >
           <h3 className="additional-title">Also Experienced With</h3>
-          <motion.div
-            className="skill-tags"
-            variants={fastStaggerContainerVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
-          >
-            {additionalSkills.map((skill) =>
+          <div className="skill-tags">
+            {additionalSkills.map((skill, index) =>
               skill.url ? (
-                <motion.a
+                <Reveal
+                  as="a"
                   key={skill.name}
                   className="skill-tag skill-link"
-                  variants={fadeUpVariants}
                   href={skill.url}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={`${skill.name} official website`}
+                  delay={120 + index * 30}
+                  visible={isVisible}
                 >
                   <span className="skill-tag-label">{skill.name}</span>
-                </motion.a>
+                </Reveal>
               ) : (
-                <motion.span
+                <Reveal
+                  as="span"
                   key={skill.name}
                   className="skill-tag"
-                  variants={fadeUpVariants}
+                  delay={120 + index * 30}
+                  visible={isVisible}
                 >
                   <span className="skill-tag-label">{skill.name}</span>
-                </motion.span>
+                </Reveal>
               )
             )}
-          </motion.div>
-        </motion.div>
+          </div>
+        </Reveal>
       </div>
     </section>
   );

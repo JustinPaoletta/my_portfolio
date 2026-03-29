@@ -81,6 +81,8 @@ const MAIN_MENU = [
   { number: 0, label: 'Clear', command: 'clear' },
 ] as const;
 
+const BOOT_MESSAGE = 'JP-CLI Initialized';
+
 const ABOUT_SUMMARY = [
   'Frontend platform engineer focused on modernizing large AngularJS applications without risky all-at-once rewrites.',
   'At accesso, build Angular, React, and Tailwind micro-frontends inside a legacy AngularJS host serving hundreds of venues worldwide.',
@@ -279,8 +281,6 @@ const INITIAL_DOGS_DATA: DogData[] = DOGS.map((dog) => ({
 
 const RESUME_PATH = '/resume/Justin-Paoletta_Software-Engineer.pdf';
 
-const BOOT_MESSAGE = 'JP-CLI Initialized';
-
 const MAIN_MENU_LINES: InitialLine[] = [
   { kind: 'hint', text: 'Use panel options or type a number/command.' },
 ];
@@ -292,6 +292,8 @@ function createMainMenuLines(lineIdStart: number): TerminalLine[] {
     id: lineIdStart + index + 1,
   }));
 }
+
+const INITIAL_MENU_LINES = createMainMenuLines(0);
 
 function chunk(items: string[], size: number): string[] {
   const groups: string[] = [];
@@ -315,8 +317,8 @@ function CliTerminal(): React.ReactElement {
   const [inputValue, setInputValue] = useState('');
   const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
   const [isDetailView, setIsDetailView] = useState(false);
-  const [lines, setLines] = useState<TerminalLine[]>([]);
-  const lineIdRef = useRef(0);
+  const [lines, setLines] = useState<TerminalLine[]>(INITIAL_MENU_LINES);
+  const lineIdRef = useRef(INITIAL_MENU_LINES.length);
   const historyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -448,7 +450,8 @@ function CliTerminal(): React.ReactElement {
     setContext('main');
     setIsDetailView(false);
     setSelectedOptionIndex(0);
-    setLines([]);
+    lineIdRef.current = INITIAL_MENU_LINES.length;
+    setLines(INITIAL_MENU_LINES);
   };
 
   const showAbout = (): void => {

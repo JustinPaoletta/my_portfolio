@@ -607,6 +607,31 @@ refactor(hooks): extract PWA logic into usePWA hook
 - `docs/LIGHTHOUSE_CI.md` - Lighthouse CI documentation
 - See `/docs` folder for full list
 
+## Visual Regression Snapshots
+
+### When to Regenerate Snapshots
+Visual regression snapshots (`e2e/visual/**/*-snapshots/`) must be regenerated whenever changes affect rendered output. This includes:
+- **CSS/styling changes**: Any modifications to `.css` files, Tailwind classes, or inline styles
+- **Layout changes**: Modifications to `DeferredSection.tsx`, section ordering, spacing, or sentinel sizing
+- **Component markup changes**: Adding/removing elements, changing text content, or altering HTML structure
+- **Font or icon changes**: Updating fonts, SVG icons (`JPLogo.tsx`, `icons/index.tsx`), or image assets
+- **Theme changes**: Modifications to theme-specific CSS (e.g., `Hero.cosmic.css`, `Hero.css`)
+
+### How to Regenerate
+1. **Locally via Docker** (recommended for development):
+   ```bash
+   bash scripts/run-visual-linux.sh --update-snapshots=all
+   ```
+2. **Via CI workflow** (when local Docker can't match CI rendering):
+   - Go to Actions → "Update Visual Snapshots" → Run workflow
+   - Optionally filter to specific test files
+
+### Important Notes
+- Snapshots are platform-specific (Linux baselines for CI). Always regenerate using the Docker script or CI workflow, never from macOS directly.
+- The `maxDiffPixelRatio: 0.01` tolerance in `playwright.config.ts` handles minor sub-pixel rendering differences between local Docker and CI GitHub Actions runners.
+- After regenerating, visually inspect the diff before committing to confirm changes are intentional.
+- If visual tests fail in CI but pass locally, the CI "Update Visual Snapshots" workflow can regenerate directly in the CI environment.
+
 ## Summary Checklist
 
 Before suggesting any code changes, verify:
@@ -625,3 +650,4 @@ Before suggesting any code changes, verify:
 - ✅ Focus states are visible
 - ✅ Images have proper alt text and dimensions
 - ✅ Tests cover accessibility and semantic structure
+- ✅ Visual snapshots regenerated if CSS, layout, or markup changed

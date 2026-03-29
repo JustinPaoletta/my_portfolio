@@ -10,13 +10,31 @@ async function expectNoAxeViolations(page: Page) {
   ).toEqual([]);
 }
 
+async function pressKeyboardTab(
+  page: Page,
+  browserName: string,
+  options?: { shift?: boolean }
+) {
+  const modifiers = [];
+  if (options?.shift) {
+    modifiers.push('Shift');
+  }
+  if (browserName === 'webkit') {
+    modifiers.push('Alt');
+  }
+
+  const key = modifiers.length > 0 ? `${modifiers.join('+')}+Tab` : 'Tab';
+  await page.keyboard.press(key);
+}
+
 test('@a11y default shell supports skip link focus and has no axe violations', async ({
   page,
+  browserName,
 }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
 
-  await page.keyboard.press('Tab');
+  await pressKeyboardTab(page, browserName);
   await expect(
     page.getByRole('link', { name: /skip to main content/i })
   ).toBeFocused();
@@ -29,6 +47,7 @@ test('@a11y default shell supports skip link focus and has no axe violations', a
 
 test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
   page,
+  browserName,
 }) => {
   await mockPortfolioApis(page);
   await page.setViewportSize({ width: 390, height: 844 });
@@ -44,7 +63,7 @@ test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
   await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
   await expect(page.getByRole('link', { name: 'About' })).toBeFocused();
 
-  await page.keyboard.press('Tab');
+  await pressKeyboardTab(page, browserName);
   await expect(page.getByRole('link', { name: 'Projects' })).toBeFocused();
 
   await page.keyboard.press('Escape');
@@ -75,7 +94,10 @@ test('@a11y contact form surfaces field-level errors to assistive tech', async (
 }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
-  await page.locator('section#contact').scrollIntoViewIfNeeded();
+  await page.getByRole('link', { name: 'Contact' }).click();
+  await expect(page.locator('section#contact')).toBeVisible({
+    timeout: 10_000,
+  });
 
   await page.getByLabel('Email Address').fill('bad-email');
   await page.getByLabel('Message').fill('short');

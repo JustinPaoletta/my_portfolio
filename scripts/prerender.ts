@@ -160,11 +160,59 @@ async function prerenderHomepage(): Promise<boolean> {
       await page.goto(server.url, { waitUntil: 'load' });
       await page.waitForSelector('main#main');
       await page.waitForSelector('h1');
+      await page.waitForTimeout(1800);
+      const didRevealContact = await page.evaluate(async () => {
+        for (let step = 0; step < 18; step += 1) {
+          if (document.getElementById('contact')) {
+            return true;
+          }
+
+          const maxScroll = Math.max(
+            document.documentElement.scrollHeight,
+            document.body.scrollHeight
+          );
+          const nextTop = Math.min(
+            window.scrollY + Math.max(window.innerHeight * 0.85, 480),
+            maxScroll
+          );
+
+          window.scrollTo({ top: nextTop, behavior: 'auto' });
+          await new Promise((resolve) => window.setTimeout(resolve, 220));
+        }
+
+        return Boolean(document.getElementById('contact'));
+      });
+
+      if (!didRevealContact) {
+        throw new Error('Timed out revealing deferred contact section');
+      }
+
       await page.waitForSelector('section#contact');
       await page.waitForTimeout(1500);
-      await page.evaluate(() =>
-        window.scrollTo({ top: 0, behavior: 'instant' })
-      );
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'auto' }));
+      await page.waitForTimeout(180);
+      await page.evaluate(async () => {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+
+        await new Promise<void>((resolve) => {
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => resolve());
+          });
+        });
+
+        const navigation = document.querySelector('.navigation');
+        navigation?.classList.remove('scrolled');
+
+        const heroContent =
+          document.querySelector<HTMLElement>('.hero-content');
+        if (heroContent) {
+          heroContent.dataset.parallaxEnabled = 'false';
+          heroContent.style.removeProperty('--hero-parallax-y');
+          heroContent.style.removeProperty('--hero-parallax-opacity');
+        }
+      });
 
       const prerenderedHtml = await page.evaluate(() => {
         return `<!doctype html>\n${document.documentElement.outerHTML}`;

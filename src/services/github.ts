@@ -12,7 +12,6 @@ import type {
 } from '@/types/github';
 
 const GITHUB_API_BASE = 'https://api.github.com';
-const username = env.github.username;
 
 /** Response type from our serverless API */
 interface GitHubApiResponse {
@@ -24,12 +23,15 @@ interface GitHubApiResponse {
  * Fetch GitHub user profile
  */
 export async function fetchGitHubUser(): Promise<GitHubUser> {
-  const response = await fetch(`${GITHUB_API_BASE}/users/${username}`, {
-    headers: {
-      Accept: 'application/vnd.github+json',
-      'X-GitHub-Api-Version': '2022-11-28',
-    },
-  });
+  const response = await fetch(
+    `${GITHUB_API_BASE}/users/${env.github.username}`,
+    {
+      headers: {
+        Accept: 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error(
@@ -45,7 +47,7 @@ export async function fetchGitHubUser(): Promise<GitHubUser> {
  */
 export async function fetchGitHubRepos(): Promise<GitHubRepo[]> {
   const response = await fetch(
-    `${GITHUB_API_BASE}/users/${username}/repos?sort=stars&per_page=100`,
+    `${GITHUB_API_BASE}/users/${env.github.username}/repos?sort=stars&per_page=100`,
     {
       headers: {
         Accept: 'application/vnd.github+json',
@@ -85,7 +87,7 @@ export async function fetchGitHubGraphQLData(): Promise<GitHubApiResponse> {
     );
   }
 
-  const response = await fetch(`/api/github?username=${username}`);
+  const response = await fetch(`/api/github?username=${env.github.username}`);
 
   if (!response.ok) {
     const errorData = (await response.json().catch(() => ({}))) as {

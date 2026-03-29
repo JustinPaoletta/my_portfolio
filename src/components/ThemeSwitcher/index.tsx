@@ -4,9 +4,14 @@
  */
 
 import React, { useState, useCallback, useEffect, useId, useRef } from 'react';
-import { Monitor, Moon, Palette, Sun } from 'lucide-react';
-import { useTheme } from '@/hooks/useTheme';
+import {
+  MonitorIcon,
+  MoonIcon,
+  PaletteIcon,
+  SunIcon,
+} from '@/components/icons';
 import type { ColorMode } from '@/config/themes';
+import { useTheme } from '@/hooks/useTheme';
 import {
   getFocusableElements,
   temporarilyInertElements,
@@ -15,9 +20,9 @@ import {
 import './ThemeSwitcher.css';
 
 const modeIcons: Record<ColorMode, React.ReactElement> = {
-  light: <Sun size={20} aria-hidden />,
-  dark: <Moon size={20} aria-hidden />,
-  system: <Monitor size={20} aria-hidden />,
+  light: <SunIcon size={20} aria-hidden />,
+  dark: <MoonIcon size={20} aria-hidden />,
+  system: <MonitorIcon size={20} aria-hidden />,
 };
 
 const modeLabels: Record<ColorMode, string> = {
@@ -75,7 +80,6 @@ export default function ThemeSwitcher({
     [setColorMode]
   );
 
-  // Remove pulse-on-load class after animation completes
   useEffect(() => {
     if (!pulseOnLoad || placement !== 'floating') return;
     const toggle = toggleRef.current;
@@ -89,7 +93,6 @@ export default function ThemeSwitcher({
     return () => toggle.removeEventListener('animationend', handleAnimationEnd);
   }, [pulseOnLoad, placement]);
 
-  // Close the menu when the user scrolls
   useEffect(() => {
     if (!isOpen) return;
     const handleScroll = (): void => closeMenu(false);
@@ -178,7 +181,7 @@ export default function ThemeSwitcher({
         type="button"
       >
         <span className="theme-icon" aria-hidden="true">
-          <Palette size={20} />
+          <PaletteIcon size={20} />
         </span>
         <span className="theme-label">Theme</span>
       </button>
@@ -237,7 +240,6 @@ export default function ThemeSwitcher({
               </div>
             </fieldset>
 
-            {/* Theme Section */}
             <fieldset className="theme-section">
               <legend className="theme-section-label">Theme</legend>
               <div className="theme-options">

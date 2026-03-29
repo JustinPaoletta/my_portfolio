@@ -19,12 +19,13 @@ describe('pwaConfig', () => {
     );
   });
 
-  it('includes the resume PDF in the service worker asset list', () => {
-    expect(pwaConfig.includeAssets).toContain(
+  it('keeps large media and documents out of precache', () => {
+    expect(pwaConfig.includeAssets).not.toContain(
       'resume/Justin-Paoletta_Software-Engineer.pdf'
     );
+    expect(pwaConfig.includeAssets).not.toContain('video/cosmos.mp4');
     expect(pwaConfig.workbox?.globPatterns).toContain(
-      '**/*.{js,css,html,ico,pdf,png,svg,webp,woff,woff2}'
+      '**/*.{js,css,html,ico,png,svg,woff2}'
     );
   });
 });

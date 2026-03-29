@@ -159,27 +159,56 @@
             );
           }
 
-          var preloadAsset = function (as, href, fetchpriority, type) {
+          var preloadAsset = function (as, href, options) {
+            if (
+              document.head.querySelector(
+                'link[rel="preload"][href="' + href + '"]'
+              )
+            ) {
+              return;
+            }
+
             var link = document.createElement('link');
             link.rel = 'preload';
             link.as = as;
             link.href = href;
-            if (type) {
-              link.type = type;
+            if (options && options.type) {
+              link.type = options.type;
             }
-            if (fetchpriority) {
-              link.setAttribute('fetchpriority', fetchpriority);
+            if (options && options.fetchpriority) {
+              link.setAttribute('fetchpriority', options.fetchpriority);
+            }
+            if (options && options.crossorigin) {
+              link.setAttribute('crossorigin', options.crossorigin);
             }
             document.head.appendChild(link);
           };
+
+          var fontPreloadsByTheme = {
+            engineer: ['/fonts/inter-latin.woff2'],
+            minimal: ['/fonts/inter-latin.woff2'],
+            cosmic: [
+              '/fonts/inter-latin.woff2',
+              '/fonts/space-grotesk-latin.woff2',
+            ],
+            cli: ['/fonts/vt323-latin.woff2', '/fonts/orbitron-latin.woff2'],
+          };
+
+          (fontPreloadsByTheme[resolvedTheme] || []).forEach(function (href) {
+            preloadAsset('font', href, {
+              type: 'font/woff2',
+              crossorigin: 'anonymous',
+            });
+          });
 
           if (resolvedTheme === 'cosmic') {
             preloadAsset(
               'image',
               '/images/hero/cosmic/cosmos-first-frame.webp',
-              'high'
+              {
+                fetchpriority: 'high',
+              }
             );
-            preloadAsset('video', '/video/cosmos.mp4', 'high', 'video/mp4');
           }
         } catch (e) {}
       })();
@@ -191,11 +220,6 @@
       These tags are defined here in index.html because social media crawlers
       (Facebook, Twitter/X, LinkedIn, etc.) do NOT execute JavaScript.
       They only read the raw HTML served by the server.
-
-      The SEO component (src/components/SEO.tsx) also defines these tags for:
-      - Google (which does execute JavaScript)
-      - Dynamic page updates during client-side navigation
-      - Future SSR/SSG compatibility
 
       If you update these values, also update src/content/site.ts and src/config/seo.ts
     -->

@@ -1,11 +1,10 @@
 /**
  * Navigation Component
  * Responsive navigation with smooth scrolling
- * Uses Framer Motion for scroll detection
+ * Uses passive scroll handling for sticky state
  */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { useScroll, useMotionValueEvent } from 'framer-motion';
 import JPLogo from '@/components/Brand/JPLogo';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
@@ -14,6 +13,11 @@ import {
   temporarilyInertElements,
   trapFocusWithin,
 } from '@/utils/accessibility';
+import {
+  revealAndNavigate,
+  scrollToElement,
+  focusSection,
+} from '@/utils/deferredNavigation';
 import './Navigation.css';
 
 interface NavItem {
@@ -25,9 +29,9 @@ interface NavItem {
 const navItems: NavItem[] = [
   { id: 'about', label: 'About', href: '#about' },
   { id: 'projects', label: 'Projects', href: '#projects' },
-  { id: 'skills', label: 'Skills', href: '#skills' },
-  { id: 'experience', label: 'Experience', href: '#experience' },
   { id: 'articles', label: 'Articles', href: '#articles' },
+  { id: 'experience', label: 'Experience', href: '#experience' },
+  { id: 'skills', label: 'Skills', href: '#skills' },
   { id: 'github', label: 'GitHub', href: '#github' },
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
@@ -43,28 +47,45 @@ function Navigation(): React.ReactElement {
   const isCliTheme = themeName === 'cli';
   const isVisualTest = isVisualTestMode();
 
-  // Use Framer Motion's scroll hook
-  const { scrollY } = useScroll();
-
-  // Listen to scroll changes efficiently
-  useMotionValueEvent(scrollY, 'change', (latest) => {
-    if (isVisualTest) {
-      setIsScrolled(false);
-      return;
-    }
-
-    setIsScrolled(latest > 0);
-  });
-
-  // Track active section based on scroll position
   useEffect(() => {
     if (isCliTheme || isVisualTest) {
       return;
     }
 
-    const sections = navItems.map((item) => document.getElementById(item.id));
+    let frameId = 0;
+    const syncScrollState = (): void => {
+      frameId = 0;
+      setIsScrolled(window.scrollY > 0);
+    };
 
-    const observer = new IntersectionObserver(
+    const handleScroll = (): void => {
+      if (frameId !== 0) {
+        return;
+      }
+
+      frameId = window.requestAnimationFrame(syncScrollState);
+    };
+
+    syncScrollState();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (frameId !== 0) {
+        window.cancelAnimationFrame(frameId);
+      }
+    };
+  }, [isCliTheme, isVisualTest]);
+
+  useEffect(() => {
+    if (isCliTheme || isVisualTest) {
+      return;
+    }
+
+    const sectionIds = new Set(navItems.map((item) => item.id));
+    const observedIds = new Set<string>();
+
+    const intersectionObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
@@ -78,14 +99,35 @@ function Navigation(): React.ReactElement {
       }
     );
 
-    sections.forEach((section) => {
-      if (section) observer.observe(section);
+    const observeNewSections = (): void => {
+      for (const id of sectionIds) {
+        if (observedIds.has(id)) {
+          continue;
+        }
+
+        const element = document.getElementById(id);
+        if (element) {
+          intersectionObserver.observe(element);
+          observedIds.add(id);
+        }
+      }
+    };
+
+    observeNewSections();
+
+    const mainElement = document.getElementById('main') ?? document.body;
+    const mutationObserver = new MutationObserver(() => {
+      observeNewSections();
+    });
+
+    mutationObserver.observe(mainElement, {
+      childList: true,
+      subtree: true,
     });
 
     return () => {
-      sections.forEach((section) => {
-        if (section) observer.unobserve(section);
-      });
+      mutationObserver.disconnect();
+      intersectionObserver.disconnect();
     };
   }, [isCliTheme, isVisualTest]);
 
@@ -108,42 +150,23 @@ function Navigation(): React.ReactElement {
     setIsMobileMenuOpen(false);
   }, []);
 
-  const focusSectionTarget = useCallback((targetId: string): void => {
-    const element = document.getElementById(targetId);
-
-    if (!(element instanceof HTMLElement)) {
-      return;
-    }
-
-    if (!element.hasAttribute('tabindex')) {
-      element.setAttribute('tabindex', '-1');
-    }
-
-    window.requestAnimationFrame(() => {
-      element.focus({ preventScroll: true });
-    });
-  }, []);
-
-  // Handle smooth scroll
   const handleNavClick = useCallback(
-    (e: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
-      e.preventDefault();
+    (event: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
+      event.preventDefault();
       const targetId = href.replace('#', '');
       const element = document.getElementById(targetId);
 
-      if (element) {
-        const offsetTop = element.offsetTop - 80;
-        window.scrollTo({
-          top: offsetTop,
-          behavior: 'smooth',
-        });
+      if (element instanceof HTMLElement) {
+        scrollToElement(element);
         window.history.replaceState(null, '', href);
-        focusSectionTarget(targetId);
+        focusSection(targetId);
+      } else {
+        revealAndNavigate(targetId);
       }
 
       closeMobileMenu(false);
     },
-    [closeMobileMenu, focusSectionTarget]
+    [closeMobileMenu]
   );
 
   useEffect(() => {
@@ -175,14 +198,14 @@ function Navigation(): React.ReactElement {
       (firstFocusable ?? dialog).focus();
     };
 
-    const handleKeyDown = (event: KeyboardEvent): void => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
+    const handleKeyDown = (keyboardEvent: KeyboardEvent): void => {
+      if (keyboardEvent.key === 'Escape') {
+        keyboardEvent.preventDefault();
         closeMobileMenu(true);
         return;
       }
 
-      trapFocusWithin(event, dialog);
+      trapFocusWithin(keyboardEvent, dialog);
     };
 
     document.body.style.overflow = 'hidden';
@@ -218,7 +241,6 @@ function Navigation(): React.ReactElement {
           <JPLogo className="logo-image" />
         </a>
 
-        {/* Desktop Navigation */}
         {!isCliTheme && (
           <ul className="nav-links">
             {navItems.map((item) => (
@@ -229,7 +251,7 @@ function Navigation(): React.ReactElement {
                   aria-current={
                     activeSection === item.id ? 'location' : undefined
                   }
-                  onClick={(e) => handleNavClick(e, item.href)}
+                  onClick={(event) => handleNavClick(event, item.href)}
                 >
                   {item.label}
                 </a>
@@ -238,7 +260,6 @@ function Navigation(): React.ReactElement {
           </ul>
         )}
 
-        {/* Mobile Menu Button */}
         {!isCliTheme && (
           <button
             ref={mobileMenuButtonRef}
@@ -264,7 +285,6 @@ function Navigation(): React.ReactElement {
         )}
       </div>
 
-      {/* Mobile Menu */}
       {!isCliTheme && (
         <div
           id="mobile-menu"
@@ -298,7 +318,7 @@ function Navigation(): React.ReactElement {
                     <a
                       href={item.href}
                       className={`mobile-nav-link ${activeSection === item.id ? 'active' : ''}`}
-                      onClick={(e) => handleNavClick(e, item.href)}
+                      onClick={(event) => handleNavClick(event, item.href)}
                       aria-current={
                         activeSection === item.id ? 'location' : undefined
                       }

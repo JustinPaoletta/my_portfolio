@@ -196,19 +196,19 @@ module.exports = {
       assertMatrix: [
         {
           matchingUrlPattern: '.*[?&]theme=engineer(?:&|$).*',
-          assertions: createAssertions(500000),
+          assertions: createAssertions(450000),
         },
         {
           matchingUrlPattern: '.*[?&]theme=cosmic(?:&|$).*',
-          assertions: createAssertions(1300000),
+          assertions: createAssertions(600000),
         },
         {
           matchingUrlPattern: '.*[?&]theme=cli(?:&|$).*',
-          assertions: createAssertions(500000),
+          assertions: createAssertions(390000),
         },
         {
           matchingUrlPattern: '.*[?&]theme=minimal(?:&|$).*',
-          assertions: createAssertions(500000),
+          assertions: createAssertions(450000),
         },
       ],
     },

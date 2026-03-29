@@ -1,11 +1,10 @@
 /**
  * Contact Section
  * Contact form and social links
- * Uses Framer Motion for smooth scroll animations
  */
 
 import { useCallback, useRef, useState, type FormEvent } from 'react';
-import { motion, useInView } from 'framer-motion';
+import { Reveal, useRevealInView } from '@/components/Reveal';
 import { env } from '@/config/env';
 import {
   CONTACT_FIELD_ORDER,
@@ -13,15 +12,6 @@ import {
   type ContactFieldErrors,
   validateContactFormData,
 } from '@/shared/contact';
-import {
-  fadeUpVariants,
-  fadeLeftVariants,
-  fadeRightVariants,
-  staggerContainerVariants,
-  sectionHeaderVariants,
-  defaultViewport,
-} from '@/utils/animations';
-import { isVisualTestMode } from '@/utils/visualTest';
 import './Contact.css';
 
 interface FormState {
@@ -34,9 +24,7 @@ type ContactFieldElement = HTMLInputElement | HTMLTextAreaElement;
 
 function Contact(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
-  const isVisualTest = isVisualTestMode();
-  const sectionInView = useInView(sectionRef, defaultViewport);
-  const isInView = isVisualTest || sectionInView;
+  const isVisible = useRevealInView(sectionRef);
   const [formData, setFormData] = useState<FormState>({
     name: '',
     email: '',
@@ -77,6 +65,7 @@ function Contact(): React.ReactElement {
 
     setEnvelopeFlying(true);
     await new Promise<void>((resolve) => setTimeout(resolve, 500));
+
     setEnvelopeFlying(false);
     setIsSubmitting(true);
 
@@ -150,31 +139,39 @@ function Contact(): React.ReactElement {
       </div>
 
       <div className="section-container">
-        <motion.header
+        <Reveal
+          as="header"
           className="section-header"
-          variants={sectionHeaderVariants}
-          initial="hidden"
-          animate={isInView ? 'visible' : 'hidden'}
+          effect="fade-only"
+          visible={isVisible}
         >
-          <motion.span className="section-label" variants={fadeUpVariants}>
+          <Reveal
+            as="span"
+            className="section-label"
+            delay={40}
+            visible={isVisible}
+          >
             Contact
-          </motion.span>
-          <motion.h2
+          </Reveal>
+          <Reveal
+            as="h2"
             id="contact-heading"
             className="section-title"
-            variants={fadeUpVariants}
+            delay={120}
+            visible={isVisible}
           >
             Get In Touch
-          </motion.h2>
-        </motion.header>
+          </Reveal>
+        </Reveal>
 
         <div className="contact-content">
           {/* Contact Info */}
-          <motion.div
+          <Reveal
+            as="div"
             className="contact-info"
-            variants={fadeLeftVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-left"
+            delay={120}
+            visible={isVisible}
           >
             <p className="contact-intro">
               I&apos;m always open to discussing new projects, creative ideas,
@@ -182,16 +179,13 @@ function Contact(): React.ReactElement {
               through any of these channels.
             </p>
 
-            <motion.div
-              className="contact-methods"
-              variants={staggerContainerVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
-            >
-              <motion.a
+            <div className="contact-methods">
+              <Reveal
+                as="a"
                 href={`mailto:${env.social.email}`}
                 className="contact-method"
-                variants={fadeUpVariants}
+                delay={180}
+                visible={isVisible}
               >
                 <div className="method-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -202,14 +196,16 @@ function Contact(): React.ReactElement {
                   <span className="method-label">Email</span>
                   <span className="method-value">{env.social.email}</span>
                 </div>
-              </motion.a>
+              </Reveal>
 
-              <motion.a
+              <Reveal
+                as="a"
                 href={env.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-method"
-                variants={fadeUpVariants}
+                delay={260}
+                visible={isVisible}
               >
                 <div className="method-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -220,14 +216,16 @@ function Contact(): React.ReactElement {
                   <span className="method-label">LinkedIn</span>
                   <span className="method-value">Let&apos;s connect</span>
                 </div>
-              </motion.a>
+              </Reveal>
 
-              <motion.a
+              <Reveal
+                as="a"
                 href={env.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="contact-method"
-                variants={fadeUpVariants}
+                delay={340}
+                visible={isVisible}
               >
                 <div className="method-icon">
                   <svg viewBox="0 0 24 24" fill="currentColor">
@@ -238,14 +236,14 @@ function Contact(): React.ReactElement {
                   <span className="method-label">GitHub</span>
                   <span className="method-value">Check out my code</span>
                 </div>
-              </motion.a>
-            </motion.div>
+              </Reveal>
+            </div>
 
-            <motion.div
+            <Reveal
+              as="div"
               className="availability"
-              variants={fadeUpVariants}
-              initial="hidden"
-              animate={isInView ? 'visible' : 'hidden'}
+              delay={420}
+              visible={isVisible}
             >
               <div className="availability-indicator" aria-hidden="true">
                 <span className="indicator-dot" />
@@ -253,17 +251,18 @@ function Contact(): React.ReactElement {
               <span className="availability-text">
                 Currently entertaining freelance & full-time opportunities
               </span>
-            </motion.div>
-          </motion.div>
+            </Reveal>
+          </Reveal>
 
           {/* Contact Form */}
-          <motion.form
+          <Reveal
+            as="form"
             className="contact-form"
             onSubmit={handleSubmit}
             noValidate
-            variants={fadeRightVariants}
-            initial="hidden"
-            animate={isInView ? 'visible' : 'hidden'}
+            effect="fade-right"
+            delay={180}
+            visible={isVisible}
           >
             <div className="form-group">
               <label htmlFor="name" className="form-label">
@@ -426,7 +425,7 @@ function Contact(): React.ReactElement {
                 Failed to send message. Please try again or email me directly.
               </div>
             )}
-          </motion.form>
+          </Reveal>
         </div>
       </div>
     </section>
