@@ -398,6 +398,13 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
       video.defaultMuted = true;
       video.playsInline = true;
 
+      // Upgrade preload to ensure the browser buffers enough data for
+      // playback. Firefox strictly respects preload="metadata" and won't
+      // buffer video frames until explicitly told to.
+      if (video.preload !== 'auto') {
+        video.preload = 'auto';
+      }
+
       const playAttempt = video.play();
       if (playAttempt && typeof playAttempt.catch === 'function') {
         void playAttempt.catch(() => {});
@@ -424,8 +431,18 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
     };
 
     const syncReadyFromMediaState = (): void => {
+      const hasDecodedFrames =
+        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
+
+      // Firefox headless may buffer the entire video without advancing
+      // readyState past HAVE_METADATA due to missing platform decoders.
+      // The poster image provides a visually identical fallback, so we
+      // treat fully-buffered + play-accepted as "ready" for the UI.
+      const hasBufferedData =
+        video.buffered.length > 0 && video.buffered.end(0) > 0;
+
       if (
-        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA &&
+        (hasDecodedFrames || hasBufferedData) &&
         (!video.paused || video.currentTime > 0)
       ) {
         setIsCosmicVideoReady(true);

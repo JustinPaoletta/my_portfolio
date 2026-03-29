@@ -340,7 +340,7 @@ describe('App', () => {
       'poster',
       '/images/hero/cosmic/cosmos-first-frame.webp'
     );
-    expect(cosmicVideo).toHaveAttribute('preload', 'metadata');
+    expect(cosmicVideo).toHaveAttribute('preload', 'auto');
     const cosmicVideoSource = cosmicVideo?.querySelector('source');
     expect(cosmicVideoSource).toHaveAttribute('src', '/video/cosmos.mp4');
     if (!cosmicVideo) {

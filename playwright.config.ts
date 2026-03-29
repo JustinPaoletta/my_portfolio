@@ -48,7 +48,15 @@ export default defineConfig({
     {
       name: 'firefox',
       grepInvert: /@visual|@mobile/,
-      use: { ...devices['Desktop Firefox'] },
+      use: {
+        ...devices['Desktop Firefox'],
+        launchOptions: {
+          firefoxUserPrefs: {
+            'media.autoplay.default': 0,
+            'media.autoplay.blocking_policy': 0,
+          },
+        },
+      },
     },
     {
       name: 'webkit',

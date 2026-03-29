@@ -374,7 +374,7 @@ describe('Hero section', () => {
       'poster',
       '/images/hero/cosmic/cosmos-first-frame.webp'
     );
-    expect(video).toHaveAttribute('preload', 'metadata');
+    expect(video).toHaveAttribute('preload', 'auto');
     const source = video.querySelector('source');
     expect(source).toHaveAttribute('src', '/video/cosmos.mp4');
 
@@ -453,7 +453,7 @@ describe('Hero section', () => {
       ).toBeInTheDocument();
     });
     const video = view.container.querySelector('.hero-cosmic-video');
-    expect(video).toHaveAttribute('preload', 'metadata');
+    expect(video).toHaveAttribute('preload', 'auto');
 
     await waitFor(() => {
       expect(playSpy).toHaveBeenCalled();
