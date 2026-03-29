@@ -23,12 +23,11 @@ const testEnvDefaults: Record<string, string> = {
   VITE_NEWRELIC_APPLICATION_ID: '',
   VITE_NEWRELIC_AJAX_DENY_LIST: '',
   VITE_GITHUB_URL: 'https://github.com/JustinPaoletta/',
-  VITE_GITHUB_USERNAME: 'JustinPaoletta',
+  VITE_GITHUB_USERNAME: 'test-user',
   VITE_LINKEDIN_URL: 'https://www.linkedin.com/in/justin-paoletta/',
   VITE_EMAIL: 'test@example.com',
   VITE_SITE_URL: 'https://test.example.com',
   VITE_MAPBOX_TOKEN: '',
-  VITE_GITHUB_USERNAME: 'test-user',
   VITE_GITHUB_API_ENABLED: 'false',
 };
 const packageJson = JSON.parse(
