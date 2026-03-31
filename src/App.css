@@ -101,8 +101,8 @@ h6 {
   position: fixed;
   top: 0;
   left: 0;
-  background-color: var(--color-primary);
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #08131b;
   padding: 12px 24px;
   text-decoration: none;
   z-index: 9999;
@@ -112,10 +112,11 @@ h6 {
   font-family: var(--font-sans);
   transform: translateY(-140%);
   transition: transform 0.2s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
 
   &:focus {
     transform: translateY(0);
-    outline: 3px solid #ffffff;
+    outline: 3px solid var(--color-primary-dark);
     outline-offset: 2px;
   }
 }
