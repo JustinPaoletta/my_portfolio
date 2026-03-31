@@ -270,6 +270,27 @@ describe('App', () => {
     expect(fetchCalls.some((url) => url.includes('/api/pet-dogs'))).toBe(false);
   });
 
+  it('renders all deferred sentinels immediately so short viewports cannot stall the cascade', async () => {
+    await act(async () => {
+      render(<App />);
+    });
+
+    await screen.findByRole('heading', { name: /My Projects/i });
+
+    await waitFor(() => {
+      expect(
+        document.querySelectorAll('[data-deferred-sentinel="true"]')
+      ).toHaveLength(6);
+    });
+
+    expect(document.getElementById('articles')).not.toBeInTheDocument();
+    expect(document.getElementById('experience')).not.toBeInTheDocument();
+    expect(document.getElementById('skills')).not.toBeInTheDocument();
+    expect(document.getElementById('github')).not.toBeInTheDocument();
+    expect(document.getElementById('contact')).not.toBeInTheDocument();
+    expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
+  });
+
   it('has no footer in CLI view', async () => {
     localStorage.setItem('portfolio-theme', 'cli');
     await act(async () => {
