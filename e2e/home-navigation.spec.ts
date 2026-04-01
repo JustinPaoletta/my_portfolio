@@ -179,6 +179,37 @@ test('desktop navigation scrolls to Contact section', async ({ page }) => {
     .toBeGreaterThan(300);
 });
 
+test('short desktop viewport still reveals every deferred section while scrolling', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.setViewportSize({ width: 1280, height: 420 });
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: /Justin Paoletta/i })
+  ).toBeVisible();
+
+  await expectAllSectionsVisibleAfterFullScroll(page);
+});
+
+test('short desktop deep link to contact still mounts deferred sections and lands on target', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.setViewportSize({ width: 1280, height: 420 });
+  await page.goto('/#contact');
+
+  await expectSectionInViewport(page, 'contact');
+  await expect(page.locator('section#contact')).toBeFocused();
+  await expect
+    .poll(async () => page.evaluate(() => window.location.hash))
+    .toBe('#contact');
+  await expect
+    .poll(async () => page.evaluate(() => window.scrollY))
+    .toBeGreaterThan(300);
+});
+
 test('mobile navigation opens, navigates, and closes', async ({ page }) => {
   await mockPortfolioApis(page);
   await page.setViewportSize({ width: 390, height: 844 });
