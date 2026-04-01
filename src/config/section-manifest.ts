@@ -1,8 +1,8 @@
 import { lazy, type LazyExoticComponent } from 'react';
 
-export type SectionActivationMode = 'idle' | 'deferred';
+type SectionActivationMode = 'idle' | 'deferred';
 
-export interface SectionManifestItem {
+interface SectionManifestItem {
   id:
     | 'about'
     | 'projects'

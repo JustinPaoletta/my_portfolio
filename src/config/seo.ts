@@ -5,7 +5,7 @@
 
 import { SEO_DESCRIPTION } from '@/content/site';
 
-export interface SEOConfig {
+interface SEOConfig {
   title: string;
   description: string;
   keywords?: string[];
@@ -19,17 +19,15 @@ export interface SEOConfig {
 
 export const SITE_NAME = 'JP Engineering';
 export const SITE_ALTERNATE_NAME = 'JPEngineering';
-export const SITE_AUTHOR = 'Justin Paoletta';
+const SITE_AUTHOR = 'Justin Paoletta';
 export const SITE_PERSON_NAME = SITE_AUTHOR;
 export const SITE_ORIGIN = 'https://jpengineering.dev';
 export const SITE_URL = `${SITE_ORIGIN}/`;
-export const SITE_LOCALE = 'en_US';
-export const DEFAULT_OG_IMAGE = '/og/og-image.png';
+const SITE_LOCALE = 'en_US';
+const DEFAULT_OG_IMAGE = '/og/og-image.png';
 export const DEFAULT_HOME_TITLE = `${SITE_PERSON_NAME} | Software Engineer | ${SITE_NAME}`;
-export const DEFAULT_OG_IMAGE_ALT = `${SITE_PERSON_NAME} software engineering portfolio preview`;
 export const DEFAULT_ROBOTS_CONTENT =
   'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
-export const DEFAULT_LANGUAGE = 'en-US';
 
 /**
  * Default SEO configuration
@@ -94,8 +92,6 @@ export const getFullUrl = (path: string = ''): string => {
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
   return `${defaultSEO.siteUrl}${normalizedPath}`;
 };
-
-export const getDefaultCanonicalUrl = (): string => SITE_URL;
 
 export const getRobotsContent = (noindex = false, nofollow = false): string => {
   const directives = [

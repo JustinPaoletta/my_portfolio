@@ -1,4 +1,4 @@
-export interface AppConfig {
+interface AppConfig {
   app: {
     title: string;
     description: string;

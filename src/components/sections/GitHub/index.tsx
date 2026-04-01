@@ -1,6 +1,6 @@
 /**
  * GitHub Section
- * Displays contribution graph and pinned repositories
+ * Displays GitHub profile stats and contribution activity
  */
 
 import { useRef } from 'react';

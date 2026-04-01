@@ -28,7 +28,7 @@ const hasOwnTheme = (value: string): value is ThemeName =>
   Object.prototype.hasOwnProperty.call(themes, value);
 let faviconTemplatePromise: Promise<string | null> | null = null;
 
-export function normalizeThemeName(value: string | null): ThemeName | null {
+function normalizeThemeName(value: string | null): ThemeName | null {
   if (!value) {
     return null;
   }
@@ -76,7 +76,7 @@ export function hexToRgb(
     : null;
 }
 
-export function rgbToHex(rgb: { r: number; g: number; b: number }): string {
+function rgbToHex(rgb: { r: number; g: number; b: number }): string {
   const toHex = (value: number): string =>
     Math.max(0, Math.min(255, Math.round(value)))
       .toString(16)
@@ -165,7 +165,7 @@ export function pickOnColor(background: string, minRatio = 4.5): string {
   return white >= black ? '#ffffff' : '#000000';
 }
 
-export function setThemeMetaColor(color: string): void {
+function setThemeMetaColor(color: string): void {
   const themeColorMeta = document.querySelector<HTMLMetaElement>(
     'meta[name="theme-color"]'
   );
@@ -182,7 +182,7 @@ export function setThemeMetaColor(color: string): void {
   }
 }
 
-export function setSvgFaviconHref(href: string): void {
+function setSvgFaviconHref(href: string): void {
   const iconLinks = document.querySelectorAll<HTMLLinkElement>(
     'link[rel="icon"][type="image/svg+xml"], link[rel="shortcut icon"][type="image/svg+xml"]'
   );
@@ -194,7 +194,7 @@ export function setSvgFaviconHref(href: string): void {
   });
 }
 
-export function getFaviconTemplate(): Promise<string | null> {
+function getFaviconTemplate(): Promise<string | null> {
   if (!faviconTemplatePromise) {
     faviconTemplatePromise = fetch(FAVICON_TEMPLATE_PATH)
       .then((response) => (response.ok ? response.text() : null))
@@ -204,7 +204,7 @@ export function getFaviconTemplate(): Promise<string | null> {
   return faviconTemplatePromise;
 }
 
-export async function updateFavicon(
+async function updateFavicon(
   theme: Theme,
   resolvedMode: 'dark' | 'light'
 ): Promise<void> {

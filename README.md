@@ -99,7 +99,7 @@ Every normal PR into `master` should include a changeset file. PRs with a real `
 
 ## Environment Overview
 
-Client-side configuration lives in `VITE_*` variables and is validated in [`src/config/env.ts`](src/config/env.ts).
+Client-side configuration lives in `VITE_*` variables, is normalized in [`src/config/app-config.ts`](src/config/app-config.ts) during the Vite build, and is exposed to the app through [`src/config/env.ts`](src/config/env.ts).
 
 Server-only Vercel functions use unprefixed environment variables:
 
@@ -114,10 +114,10 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - React 19
 - TypeScript 5.9
 - rolldown-backed Vite
-- Valibot for runtime env validation
+- build-time app config normalization via `src/config/app-config.ts`
+- static metadata in `index.html` with shared SEO helpers in `src/config/seo.ts`
 - Vitest, Testing Library, and Playwright
 - `vite-plugin-pwa` and Workbox
-- `react-helmet-async` for runtime metadata
 - Umami, New Relic Browser Agent, and Upstash Redis
 
 ## Quality Gates
@@ -143,7 +143,6 @@ See [docs/ENV.md](docs/ENV.md) for the full matrix.
 - [Development workflow](docs/DEVELOPMENT_WORKFLOW.md)
 - [Dependabot](docs/DEPENDABOT.md)
 - [JP_CLI theme](docs/JP_CLI.md)
-- [Workspace & debugging](docs/WORKSPACE_DEBUGGING.md)
 - [Pet Dogs API](docs/PET_DOGS_API.md)
 
 ## License

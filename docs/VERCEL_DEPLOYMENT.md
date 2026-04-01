@@ -4,12 +4,13 @@ This repo is already configured for Vercel. The source of truth is `vercel.json`
 
 ## Current Vercel Configuration
 
-- Build command: `npx playwright install chromium && npm run build`
-- Output directory: `dist`
-- SPA rewrites plus explicit manifest handling
-- CSP, caching, and security headers defined in `vercel.json`
+- Build command: `npm run build`
+- Build output lands in `dist/`
+- Root `api/*.ts` files are Vercel Functions
+- Asset rewrites and explicit manifest handling live in `vercel.json`
+- CSP, caching, and security headers are defined in `vercel.json`
 
-The Playwright install step is required because `npm run build` prerenders the homepage with Chromium.
+`npm run build` includes the prerender step from `scripts/prerender.ts`. That script attempts to launch Chromium and will keep the Vite-generated `dist/index.html` if the browser cannot start because of missing system dependencies. Set `SKIP_PLAYWRIGHT_PRERENDER=1` if you want to skip prerendering intentionally.
 
 ## Required Environment Variables
 
@@ -24,10 +25,10 @@ At minimum, set:
 - `VITE_LINKEDIN_URL`
 - `VITE_EMAIL`
 - `VITE_GITHUB_USERNAME`
-- `VITE_SITE_URL`
 
 Optional client-side integrations:
 
+- `VITE_SITE_URL`
 - `VITE_ENABLE_ANALYTICS`
 - `VITE_UMAMI_WEBSITE_ID`
 - `VITE_ENABLE_ERROR_MONITORING`
@@ -84,7 +85,7 @@ If the production origin changes:
 
 1. update `VITE_SITE_URL`
 2. redeploy so `sitemap.xml` and `robots.txt` are regenerated
-3. update the hard-coded canonical SEO values in:
+3. update the hard-coded SEO origin values in:
    - `index.html`
    - `src/config/seo.ts`
 
