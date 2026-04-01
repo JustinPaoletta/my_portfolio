@@ -5,7 +5,7 @@
 
 import { useState, useEffect } from 'react';
 
-export type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 interface BreakpointConfig {
   breakpoint: Breakpoint;

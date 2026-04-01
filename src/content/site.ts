@@ -4,7 +4,7 @@ export const HERO_TAGLINE =
 export const SEO_DESCRIPTION =
   'Justin Paoletta is a software engineer focused on frontend platform architecture, AngularJS modernization, micro-frontends, and CI/CD automation.';
 
-export interface LinkedInArticle {
+interface LinkedInArticle {
   id: string;
   title: string;
   summary: string;

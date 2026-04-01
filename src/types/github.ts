@@ -62,10 +62,6 @@ export interface ContributionCalendar {
   weeks: ContributionWeek[];
 }
 
-export interface GitHubContributions {
-  contributionCalendar: ContributionCalendar;
-}
-
 export interface PinnedRepository {
   name: string;
   description: string | null;
@@ -76,17 +72,6 @@ export interface PinnedRepository {
   } | null;
   stargazerCount: number;
   forkCount: number;
-}
-
-export interface GitHubGraphQLResponse {
-  data: {
-    user: {
-      pinnedItems: {
-        nodes: PinnedRepository[];
-      };
-      contributionsCollection: GitHubContributions;
-    };
-  };
 }
 
 export interface GitHubStats {

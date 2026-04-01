@@ -5,7 +5,7 @@ interface UseIdleActivationOptions {
   timeout?: number;
 }
 
-export function useIdleActivation(
+export default function useIdleActivation(
   options: UseIdleActivationOptions = {}
 ): boolean {
   const { enabled = true, timeout = 1500 } = options;
@@ -75,5 +75,3 @@ export function useIdleActivation(
 
   return isActive;
 }
-
-export default useIdleActivation;

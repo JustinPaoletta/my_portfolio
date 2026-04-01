@@ -1,8 +1,8 @@
 import { expect, type Locator, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './mocks';
 
-export type VisualTheme = 'minimal' | 'engineer' | 'cosmic' | 'cli';
-export type VisualMode = 'light' | 'dark';
+type VisualTheme = 'minimal' | 'engineer' | 'cosmic' | 'cli';
+type VisualMode = 'light' | 'dark';
 
 export const DESKTOP_HERO_VIEWPORT = { width: 1440, height: 1100 } as const;
 export const DESKTOP_SECTION_VIEWPORT = { width: 1440, height: 1600 } as const;
@@ -10,17 +10,6 @@ export const MOBILE_VIEWPORT = { width: 390, height: 844 } as const;
 export const FULL_PAGE_VIEWPORT = { width: 1440, height: 2600 } as const;
 
 const FIXED_TIME_ISO = '2026-03-01T12:00:00.000Z';
-const FULL_PAGE_SECTION_ORDER = [
-  '#about',
-  '#projects',
-  '#skills',
-  '#experience',
-  '#articles',
-  '#github',
-  '#contact',
-  '#pet-dogs',
-] as const;
-
 export async function gotoVisualState(
   page: Page,
   options: {
@@ -133,17 +122,6 @@ async function revealSectionIfDeferred(
     .toBeGreaterThan(0);
 
   await expect(locator).toBeVisible({ timeout: 10_000 });
-}
-
-export async function primeFullPage(page: Page): Promise<void> {
-  for (const selector of FULL_PAGE_SECTION_ORDER) {
-    await page.locator(selector).scrollIntoViewIfNeeded();
-    await page.waitForTimeout(50);
-  }
-
-  await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'auto' }));
-  await page.waitForFunction(() => Math.round(window.scrollY) === 0);
-  await waitForPageToSettle(page);
 }
 
 async function enableSectionCaptureMode(page: Page): Promise<void> {

@@ -13,13 +13,14 @@ Both are loaded lazily and both can be disabled completely through environment c
 
 - `src/main.tsx`
 - `src/utils/analytics.ts`
-- `src/hooks/useAnalytics.ts`
+- `src/utils/userAgent.ts`
 
 ### New Relic
 
 - `src/main.tsx`
 - `src/utils/newrelic.ts`
 - `src/components/ErrorBoundary.tsx`
+- `src/utils/userAgent.ts`
 
 ## Umami Analytics
 
@@ -28,7 +29,7 @@ Both are loaded lazily and both can be disabled completely through environment c
 Umami initializes only when all of these are true:
 
 - `__ENABLE_ANALYTICS__` is enabled at build time
-- `VITE_ENABLE_ANALYTICS=true`
+- `env.features.analytics` is `true` after config normalization
 - `VITE_UMAMI_WEBSITE_ID` is present
 - the visitor is not detected as an automated client
 - the app is not running in the test environment
@@ -43,19 +44,7 @@ VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 
 If you do not have a valid Umami site ID yet, keep `VITE_ENABLE_ANALYTICS=false`.
 
-### Event Helpers
-
-The analytics utility currently exposes:
-
-- `trackProjectClick`
-- `trackResumeDownload`
-- `trackContact`
-- `trackSocialClick`
-- `trackNavigation`
-- `trackExternalLink`
-- `trackSearch`
-- `trackError`
-- `trackCustomEvent` via `useAnalytics()`
+The app currently relies on Umami auto-tracking after the script loads. There is no app-specific analytics hook or custom event wiring in the live UI today.
 
 ### Debug Logging
 
@@ -71,7 +60,7 @@ Umami logs appear only when:
 - uses `@newrelic/browser-agent` via the smaller `MicroAgent` loader
 - lazy-loads after the page becomes interactive
 - reports React render errors through `ErrorBoundary`
-- exposes helpers for manual error reporting, custom actions, timings, and attributes
+- keeps manual helper exports available in `src/utils/newrelic.ts` if future features need them
 
 ### Initialization Rules
 

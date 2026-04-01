@@ -197,7 +197,7 @@ function updateRobotsTxt(baseUrl: string, outputDir: string): void {
   console.log(`   Sitemap URL: ${sitemapUrl}`);
 }
 
-export function generateSitemap(outputDir?: string): void {
+function generateSitemap(outputDir?: string): void {
   const baseUrl = getBaseUrl();
   const output = outputDir || path.resolve(process.cwd(), 'dist');
   const outputPath = path.join(output, 'sitemap.xml');

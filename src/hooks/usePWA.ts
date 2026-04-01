@@ -17,7 +17,7 @@ interface BeforeInstallPromptEvent extends Event {
 /**
  * Return type for usePWA hook
  */
-export interface UsePWAReturn {
+interface UsePWAReturn {
   needRefresh: boolean;
   offlineReady: boolean;
   canInstall: boolean;

@@ -2,7 +2,7 @@
 import { createElement, type CSSProperties, type ElementType } from 'react';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 
-export type RevealEffect =
+type RevealEffect =
   | 'fade-up'
   | 'fade-left'
   | 'fade-right'

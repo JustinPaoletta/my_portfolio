@@ -1,7 +1,7 @@
 const BOT_USER_AGENT_PATTERN =
   /bot|crawler|spider|googlebot|google-inspectiontool|bingbot|duckduckbot|slurp|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|slackbot|discordbot|headlesschrome|lighthouse|chrome-lighthouse/i;
 
-export function isLikelyBotUserAgent(userAgent?: string): boolean {
+function isLikelyBotUserAgent(userAgent?: string): boolean {
   if (!userAgent) {
     return false;
   }

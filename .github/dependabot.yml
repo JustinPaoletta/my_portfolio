@@ -16,6 +16,9 @@ updates:
         versions: ['>=10']
       - dependency-name: '@eslint/js'
         versions: ['>=10']
+      # typescript-eslint@8 still requires typescript < 6, so ignore TS 6 until the toolchain can move together.
+      - dependency-name: 'typescript'
+        versions: ['>=6']
       # @vitejs/plugin-react 6.x requires vite 8, but this repo is still on rolldown-vite 7.x.
       - dependency-name: '@vitejs/plugin-react'
         versions: ['>=6']

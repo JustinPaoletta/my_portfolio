@@ -274,19 +274,3 @@ export function withErrorReporting<T extends unknown[], R>(
     }
   };
 }
-
-/**
- * New Relic monitoring utilities
- */
-export const newrelic = {
-  initialize: initializeNewRelic,
-  reportError,
-  setGlobalAttributes,
-  setUser,
-  trackPageAction,
-  addTiming,
-  isReady: isNewRelicReady,
-  withErrorReporting,
-};
-
-export default newrelic;
