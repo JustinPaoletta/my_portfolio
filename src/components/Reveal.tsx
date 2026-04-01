@@ -26,8 +26,8 @@ interface RevealProps<T extends ElementType> {
 }
 
 const DEFAULT_REVEAL_OPTIONS: UseRevealOptions = {
-  rootMargin: '-100px 0px -50px 0px',
-  threshold: 0.1,
+  rootMargin: '-40px 0px -20px 0px',
+  threshold: 0.05,
   triggerOnce: true,
 };
 
