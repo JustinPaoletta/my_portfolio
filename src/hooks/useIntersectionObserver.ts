@@ -50,6 +50,16 @@ export function useIntersectionObserver(
     activeObserver.observe(element);
 
     let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    let orientationTimer: ReturnType<typeof setTimeout> | undefined;
+
+    const reconnectObserver = (): void => {
+      activeObserver.disconnect();
+      activeObserver = new IntersectionObserver(
+        handleIntersection,
+        observerOptions
+      );
+      activeObserver.observe(element);
+    };
 
     const handleResize = (): void => {
       if (resizeTimer !== undefined) {
@@ -57,22 +67,32 @@ export function useIntersectionObserver(
       }
       resizeTimer = setTimeout(() => {
         resizeTimer = undefined;
-        activeObserver.disconnect();
-        activeObserver = new IntersectionObserver(
-          handleIntersection,
-          observerOptions
-        );
-        activeObserver.observe(element);
+        reconnectObserver();
       }, 150);
     };
 
+    const handleOrientationChange = (): void => {
+      if (orientationTimer !== undefined) {
+        clearTimeout(orientationTimer);
+      }
+      orientationTimer = setTimeout(() => {
+        orientationTimer = undefined;
+        reconnectObserver();
+      }, 300);
+    };
+
     window.addEventListener('resize', handleResize);
+    window.addEventListener('orientationchange', handleOrientationChange);
 
     return () => {
       activeObserver.disconnect();
       window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleOrientationChange);
       if (resizeTimer !== undefined) {
         clearTimeout(resizeTimer);
+      }
+      if (orientationTimer !== undefined) {
+        clearTimeout(orientationTimer);
       }
     };
   }, [ref, threshold, rootMargin, triggerOnce, isVisible]);
