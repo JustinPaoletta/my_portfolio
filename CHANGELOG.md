@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.8
+
+### Patch Changes
+
+- 5c246a0: chore(deps-dev): bump the testing group with 3 updates
+- cd89220: chore(deps-dev): bump @vercel/node from 5.6.18 to 5.6.22
+- ea9f2d5: Document the build-time app config pipeline and remove unused GitHub, analytics, and animation helpers.
+
 ## 1.1.7
 
 ### Patch Changes
