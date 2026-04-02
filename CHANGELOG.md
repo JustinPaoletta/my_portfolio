@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.9
+
+### Patch Changes
+
+- d0d4b1a: Remove framer-motion and small performance improvements
+
 ## 1.1.8
 
 ### Patch Changes
