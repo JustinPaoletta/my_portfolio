@@ -23,17 +23,16 @@ vi.mock('./CliTerminal', () => ({
   default: () => <div data-testid="cli-terminal">CLI TERMINAL</div>,
 }));
 
-vi.mock('framer-motion', async () => {
-  return {
-    useReducedMotion: () => prefersReducedMotion,
-  };
-});
+vi.mock('@/hooks/useReducedMotion', () => ({
+  useReducedMotion: () => prefersReducedMotion,
+}));
 
 function installEngineerMatchMediaMock(
-  initial: { compact?: boolean; reduced?: boolean } = {}
+  initial: { compact?: boolean; reduced?: boolean; standalone?: boolean } = {}
 ): {
   setCompact: (value: boolean) => void;
   setReduced: (value: boolean) => void;
+  setStandalone: (value: boolean) => void;
 } {
   type ChangeListener = (event: MediaQueryListEvent) => void;
   const toChangeListener = (
@@ -50,8 +49,10 @@ function installEngineerMatchMediaMock(
 
   let compact = Boolean(initial.compact);
   let reduced = Boolean(initial.reduced);
+  let standalone = Boolean(initial.standalone);
   const compactListeners = new Set<ChangeListener>();
   const reducedListeners = new Set<ChangeListener>();
+  const standaloneListeners = new Set<ChangeListener>();
 
   const compactMql: MediaQueryList = {
     get matches() {
@@ -127,12 +128,63 @@ function installEngineerMatchMediaMock(
     dispatchEvent: () => true,
   };
 
+  const standaloneMql: MediaQueryList = {
+    get matches() {
+      return standalone;
+    },
+    media: '(display-mode: standalone)',
+    onchange: null,
+    addListener: (listener) => {
+      if (listener) {
+        standaloneListeners.add(listener as ChangeListener);
+      }
+    },
+    removeListener: (listener) => {
+      if (listener) {
+        standaloneListeners.delete(listener as ChangeListener);
+      }
+    },
+    addEventListener: (
+      _event: string,
+      listener: EventListenerOrEventListenerObject | null
+    ) => {
+      const changeListener = toChangeListener(listener);
+      if (changeListener) {
+        standaloneListeners.add(changeListener);
+      }
+    },
+    removeEventListener: (
+      _event: string,
+      listener: EventListenerOrEventListenerObject | null
+    ) => {
+      const changeListener = toChangeListener(listener);
+      if (changeListener) {
+        standaloneListeners.delete(changeListener);
+      }
+    },
+    dispatchEvent: () => true,
+  };
+
   window.matchMedia = vi.fn((query: string) => {
     if (query === '(max-width: 768px)') {
       return compactMql;
     }
     if (query === '(prefers-reduced-motion: reduce)') {
       return reducedMql;
+    }
+    if (query === '(display-mode: standalone)') {
+      return standaloneMql;
+    }
+    if (
+      query === '(display-mode: fullscreen)' ||
+      query === '(display-mode: minimal-ui)' ||
+      query === '(display-mode: window-controls-overlay)'
+    ) {
+      return {
+        ...standaloneMql,
+        matches: false,
+        media: query,
+      } as MediaQueryList;
     }
 
     return {
@@ -169,6 +221,14 @@ function installEngineerMatchMediaMock(
         media: '(prefers-reduced-motion: reduce)',
       } as MediaQueryListEvent;
       reducedListeners.forEach((listener) => listener(event));
+    },
+    setStandalone: (value: boolean) => {
+      standalone = value;
+      const event = {
+        matches: value,
+        media: '(display-mode: standalone)',
+      } as MediaQueryListEvent;
+      standaloneListeners.forEach((listener) => listener(event));
     },
   };
 }
@@ -370,11 +430,10 @@ describe('Hero section', () => {
     });
     const video = view.container.querySelector('video');
     if (!video) throw new Error('expected cosmic video');
-    expect(video).toHaveAttribute(
-      'poster',
-      '/images/hero/cosmic/cosmos-first-frame.webp'
-    );
+    expect(video).not.toHaveAttribute('poster');
+    expect(video).not.toHaveAttribute('autoplay');
     expect(video).toHaveAttribute('preload', 'auto');
+    expect(video).toHaveAttribute('webkit-playsinline', '');
     const source = video.querySelector('source');
     expect(source).toHaveAttribute('src', '/video/cosmos.mp4');
 
@@ -408,29 +467,62 @@ describe('Hero section', () => {
       );
     });
 
+    act(() => {
+      video.dispatchEvent(new Event('pause'));
+    });
+    expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+      'data-cosmic-video-ready',
+      'false'
+    );
+    expect(playSpy.mock.calls.length).toBeGreaterThan(callsAfterLoadedMetadata);
+
     Object.defineProperty(document, 'visibilityState', {
       configurable: true,
-      value: 'visible',
+      value: 'hidden',
     });
-    const callsBeforeVisibilityEvent = playSpy.mock.calls.length;
     act(() => {
       document.dispatchEvent(new Event('visibilitychange'));
     });
-    expect(playSpy.mock.calls.length).toBeGreaterThan(
-      callsBeforeVisibilityEvent
+    expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+      'data-cosmic-video-ready',
+      'false'
     );
 
-    const callsBeforeInteraction = playSpy.mock.calls.length;
     act(() => {
       window.dispatchEvent(new Event('pointerdown'));
     });
-    const callsAfterFirstInteraction = playSpy.mock.calls.length;
-    expect(callsAfterFirstInteraction).toBeGreaterThan(callsBeforeInteraction);
 
+    const callsAfterFirstInteraction = playSpy.mock.calls.length;
     act(() => {
       window.dispatchEvent(new Event('pointerdown'));
     });
     expect(playSpy.mock.calls.length).toBe(callsAfterFirstInteraction);
+  });
+
+  it('mounts the cosmic video without the idle delay in standalone mode', async () => {
+    installEngineerMatchMediaMock({ standalone: true });
+    themeName = 'cosmic';
+    vi.useFakeTimers();
+
+    const requestIdleCallbackSpy = vi.fn();
+    vi.stubGlobal('requestIdleCallback', requestIdleCallbackSpy);
+    vi.stubGlobal('cancelIdleCallback', vi.fn());
+
+    const playSpy = vi
+      .spyOn(HTMLMediaElement.prototype, 'play')
+      .mockResolvedValue(undefined);
+
+    const view = render(<Hero />);
+
+    act(() => {
+      vi.advanceTimersByTime(140);
+    });
+
+    expect(requestIdleCallbackSpy).not.toHaveBeenCalled();
+    expect(
+      view.container.querySelector('.hero-cosmic-video')
+    ).toBeInTheDocument();
+    expect(playSpy).toHaveBeenCalled();
   });
 
   it('loads the cosmic video after idle even when save-data is enabled', async () => {

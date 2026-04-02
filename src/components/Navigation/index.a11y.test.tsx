@@ -9,11 +9,6 @@ vi.mock('@/hooks/useTheme', () => ({
   useTheme: () => ({ themeName }),
 }));
 
-vi.mock('framer-motion', () => ({
-  useScroll: () => ({ scrollY: {} }),
-  useMotionValueEvent: vi.fn(),
-}));
-
 class MockIntersectionObserver implements IntersectionObserver {
   readonly root: Element | Document | null = null;
   readonly rootMargin = '';

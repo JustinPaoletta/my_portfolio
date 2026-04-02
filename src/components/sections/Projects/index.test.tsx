@@ -1,33 +1,9 @@
 import { render, screen } from '@/test/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import Projects from '.';
-
-let isInView = true;
-
-vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
-  return {
-    motion: {
-      header: motionFactory('header'),
-      span: motionFactory('span'),
-      h2: motionFactory('h2'),
-      h3: motionFactory('h3'),
-      div: motionFactory('div'),
-      article: motionFactory('article'),
-    },
-    useInView: () => isInView,
-  };
-});
 
 describe('Projects section', () => {
   it('renders featured and other projects with status/private branches', () => {
-    isInView = true;
     render(<Projects />);
 
     expect(
@@ -55,8 +31,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
   });
 
-  it('still renders content when section is out of view (hidden animation state)', () => {
-    isInView = false;
+  it('renders project content consistently', () => {
     render(<Projects />);
 
     expect(
