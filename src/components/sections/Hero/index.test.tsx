@@ -430,8 +430,11 @@ describe('Hero section', () => {
     });
     const video = view.container.querySelector('video');
     if (!video) throw new Error('expected cosmic video');
-    expect(video).not.toHaveAttribute('poster');
-    expect(video).not.toHaveAttribute('autoplay');
+    expect(video).toHaveAttribute(
+      'poster',
+      '/images/hero/cosmic/cosmos-first-frame.webp'
+    );
+    expect(video).toHaveAttribute('autoplay');
     expect(video).toHaveAttribute('preload', 'auto');
     expect(video).toHaveAttribute('webkit-playsinline', '');
     const source = video.querySelector('source');

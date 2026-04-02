@@ -357,8 +357,11 @@ describe('App', () => {
       expect(document.querySelector('.hero-cosmic-video')).toBeInTheDocument();
     });
     const cosmicVideo = document.querySelector('.hero-cosmic-video');
-    expect(cosmicVideo).not.toHaveAttribute('poster');
-    expect(cosmicVideo).not.toHaveAttribute('autoplay');
+    expect(cosmicVideo).toHaveAttribute(
+      'poster',
+      '/images/hero/cosmic/cosmos-first-frame.webp'
+    );
+    expect(cosmicVideo).toHaveAttribute('autoplay');
     expect(cosmicVideo).toHaveAttribute('preload', 'auto');
     expect(cosmicVideo).toHaveAttribute('webkit-playsinline', '');
     const cosmicVideoSource = cosmicVideo?.querySelector('source');
