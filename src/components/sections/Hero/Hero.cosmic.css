@@ -8,6 +8,7 @@
   object-fit: cover;
   pointer-events: none;
   opacity: 0;
+  visibility: hidden;
   transition: opacity 180ms ease;
 }
 
@@ -27,6 +28,7 @@
   .hero-background[data-cosmic-video-ready='true']
   .hero-cosmic-video {
   opacity: 1;
+  visibility: visible;
 }
 
 :root[data-theme='cosmic']
@@ -491,6 +493,7 @@
   .hero-cosmic-video {
   filter: saturate(1.26) brightness(0.81) contrast(1.26);
   opacity: 0.47;
+  visibility: visible;
 }
 
 :root[data-theme='cosmic'] .hero-name-text {

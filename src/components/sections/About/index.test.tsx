@@ -9,28 +9,6 @@ vi.mock('@/hooks/useBreakpoint', () => ({
   useBreakpoint: () => breakpoint,
 }));
 
-vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
-  return {
-    motion: {
-      section: motionFactory('section'),
-      header: motionFactory('header'),
-      span: motionFactory('span'),
-      h2: motionFactory('h2'),
-      div: motionFactory('div'),
-      article: motionFactory('article'),
-      a: motionFactory('a'),
-    },
-    useInView: () => true,
-  };
-});
-
 describe('About section', () => {
   it('computes expanded content/story heights and resets styles on unmount', () => {
     breakpoint = 'md';

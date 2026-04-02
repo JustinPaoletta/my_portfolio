@@ -1,29 +1,7 @@
 import { act, fireEvent, render, screen } from '@/test/test-utils';
 import { axe } from 'jest-axe';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import Contact from '.';
-
-vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
-  return {
-    motion: {
-      section: motionFactory('section'),
-      header: motionFactory('header'),
-      span: motionFactory('span'),
-      h2: motionFactory('h2'),
-      div: motionFactory('div'),
-      a: motionFactory('a'),
-      form: motionFactory('form'),
-    },
-    useInView: () => true,
-  };
-});
 
 describe('Contact accessibility', () => {
   it('has no violations for the default form state', async () => {

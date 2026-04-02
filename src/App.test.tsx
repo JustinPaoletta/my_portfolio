@@ -361,7 +361,9 @@ describe('App', () => {
       'poster',
       '/images/hero/cosmic/cosmos-first-frame.webp'
     );
+    expect(cosmicVideo).toHaveAttribute('autoplay');
     expect(cosmicVideo).toHaveAttribute('preload', 'auto');
+    expect(cosmicVideo).toHaveAttribute('webkit-playsinline', '');
     const cosmicVideoSource = cosmicVideo?.querySelector('source');
     expect(cosmicVideoSource).toHaveAttribute('src', '/video/cosmos.mp4');
     if (!cosmicVideo) {
