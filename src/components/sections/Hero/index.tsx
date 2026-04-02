@@ -674,10 +674,12 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
         <video
           ref={cosmicVideoRef}
           className="hero-cosmic-video"
+          autoPlay
           loop
           muted
           playsInline
           preload="auto"
+          poster="/images/hero/cosmic/cosmos-first-frame.webp"
           disablePictureInPicture
         >
           <source src="/video/cosmos.mp4" type="video/mp4" />
