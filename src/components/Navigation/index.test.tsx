@@ -39,10 +39,19 @@ class MockIntersectionObserver implements IntersectionObserver {
   }
 }
 
+function setViewportWidth(width: number): void {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  });
+}
+
 describe('Navigation', () => {
   beforeEach(() => {
     themeName = 'minimal';
     observers.length = 0;
+    setViewportWidth(1200);
     vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
     vi.spyOn(window, 'scrollTo').mockImplementation(((
       xOrOptions?: number | ScrollToOptions,
@@ -213,6 +222,8 @@ describe('Navigation', () => {
   });
 
   it('opens/closes mobile menu, traps focus, and restores the trigger focus', async () => {
+    setViewportWidth(900);
+
     const { container } = render(<Navigation />);
 
     const menuButton = container.querySelector('.mobile-menu-button');
@@ -259,6 +270,8 @@ describe('Navigation', () => {
   });
 
   it('auto-closes mobile menu after switching from non-CLI to CLI theme', () => {
+    setViewportWidth(900);
+
     const rafSpy = vi
       .spyOn(window, 'requestAnimationFrame')
       .mockImplementation((cb) => {

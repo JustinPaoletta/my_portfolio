@@ -24,9 +24,18 @@ class MockIntersectionObserver implements IntersectionObserver {
   }
 }
 
+function setViewportWidth(width: number): void {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  });
+}
+
 describe('Navigation accessibility', () => {
   beforeEach(() => {
     themeName = 'minimal';
+    setViewportWidth(1200);
     vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     document.body.innerHTML = '';
@@ -61,6 +70,8 @@ describe('Navigation accessibility', () => {
   });
 
   it('has no violations in the mobile menu dialog', async () => {
+    setViewportWidth(900);
+
     const { container } = render(<Navigation />);
 
     const menuButton = container.querySelector(
