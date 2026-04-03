@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.10
+
+### Patch Changes
+
+- 9f8a5dd: Hide the floating theme switcher while the mobile navigation menu is open so it cannot overlap or interfere with the menu.
+
 ## 1.1.9
 
 ### Patch Changes
