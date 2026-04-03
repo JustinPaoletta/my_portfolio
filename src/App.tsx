@@ -27,6 +27,7 @@ function AppLayout(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
   const isVisualTest = isVisualTestMode();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const shouldMountFeaturedSections = useIdleActivation({
     enabled: !isCliTheme,
   });
@@ -127,12 +128,17 @@ function AppLayout(): React.ReactElement {
       {/* Fixed Navigation */}
       {!isCliTheme && (
         <Suspense fallback={null}>
-          <Navigation />
+          <Navigation onMobileMenuOpenChange={setIsMobileMenuOpen} />
         </Suspense>
       )}
 
       {/* Theme switcher - always floating bottom-right */}
-      {!isVisualTest && <ThemeSwitcher placement="floating" />}
+      {!isVisualTest && (
+        <ThemeSwitcher
+          placement="floating"
+          isTemporarilyHidden={isMobileMenuOpen}
+        />
+      )}
 
       {/* Main Content */}
       <main

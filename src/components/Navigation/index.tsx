@@ -26,6 +26,18 @@ interface NavItem {
   href: string;
 }
 
+interface NavigationProps {
+  onMobileMenuOpenChange?: (isOpen: boolean) => void;
+}
+
+const MOBILE_MENU_BREAKPOINT = 980;
+
+function isMobileMenuViewport(): boolean {
+  return (
+    typeof window !== 'undefined' && window.innerWidth <= MOBILE_MENU_BREAKPOINT
+  );
+}
+
 const navItems: NavItem[] = [
   { id: 'about', label: 'About', href: '#about' },
   { id: 'projects', label: 'Projects', href: '#projects' },
@@ -36,9 +48,13 @@ const navItems: NavItem[] = [
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
 
-function Navigation(): React.ReactElement {
+function Navigation({
+  onMobileMenuOpenChange,
+}: NavigationProps = {}): React.ReactElement {
   const [activeSection, setActiveSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isMobileViewport, setIsMobileViewport] =
+    useState(isMobileMenuViewport);
   const [isScrolled, setIsScrolled] = useState(false);
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuDialogRef = useRef<HTMLDivElement>(null);
@@ -46,6 +62,32 @@ function Navigation(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
   const isVisualTest = isVisualTestMode();
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const handleResize = (): void => {
+      const nextIsMobileViewport = isMobileMenuViewport();
+
+      if (!nextIsMobileViewport) {
+        shouldRestoreMobileMenuFocus.current = false;
+        setIsMobileMenuOpen(false);
+      }
+
+      setIsMobileViewport((current) =>
+        current === nextIsMobileViewport ? current : nextIsMobileViewport
+      );
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   useEffect(() => {
     if (isCliTheme || isVisualTest) {
@@ -145,6 +187,16 @@ function Navigation(): React.ReactElement {
     };
   }, [isCliTheme, isMobileMenuOpen]);
 
+  useEffect(() => {
+    onMobileMenuOpenChange?.(isMobileViewport && isMobileMenuOpen);
+  }, [isMobileMenuOpen, isMobileViewport, onMobileMenuOpenChange]);
+
+  useEffect(() => {
+    return () => {
+      onMobileMenuOpenChange?.(false);
+    };
+  }, [onMobileMenuOpenChange]);
+
   const closeMobileMenu = useCallback((restoreFocus = true): void => {
     shouldRestoreMobileMenuFocus.current = restoreFocus;
     setIsMobileMenuOpen(false);
@@ -170,7 +222,7 @@ function Navigation(): React.ReactElement {
   );
 
   useEffect(() => {
-    if (isCliTheme || !isMobileMenuOpen) {
+    if (isCliTheme || !isMobileViewport || !isMobileMenuOpen) {
       return;
     }
 
@@ -228,7 +280,7 @@ function Navigation(): React.ReactElement {
         mobileMenuButton?.focus();
       }
     };
-  }, [closeMobileMenu, isCliTheme, isMobileMenuOpen]);
+  }, [closeMobileMenu, isCliTheme, isMobileMenuOpen, isMobileViewport]);
 
   return (
     <nav
