@@ -19,11 +19,11 @@ describe('pwaConfig', () => {
     );
   });
 
-  it('keeps large media and documents out of precache', () => {
+  it('keeps large documents out of precache while explicitly shipping the cosmic hero media', () => {
     expect(pwaConfig.includeAssets).not.toContain(
       'resume/Justin-Paoletta_Software-Engineer.pdf'
     );
-    expect(pwaConfig.includeAssets).not.toContain('video/cosmos.mp4');
+    expect(pwaConfig.includeAssets).toContain('video/cosmos.mp4');
     expect(pwaConfig.workbox?.globPatterns).toContain(
       '**/*.{js,css,html,ico,png,svg,woff2}'
     );

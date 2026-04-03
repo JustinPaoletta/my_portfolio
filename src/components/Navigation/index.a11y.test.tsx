@@ -9,11 +9,6 @@ vi.mock('@/hooks/useTheme', () => ({
   useTheme: () => ({ themeName }),
 }));
 
-vi.mock('framer-motion', () => ({
-  useScroll: () => ({ scrollY: {} }),
-  useMotionValueEvent: vi.fn(),
-}));
-
 class MockIntersectionObserver implements IntersectionObserver {
   readonly root: Element | Document | null = null;
   readonly rootMargin = '';
@@ -29,9 +24,18 @@ class MockIntersectionObserver implements IntersectionObserver {
   }
 }
 
+function setViewportWidth(width: number): void {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  });
+}
+
 describe('Navigation accessibility', () => {
   beforeEach(() => {
     themeName = 'minimal';
+    setViewportWidth(1200);
     vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     document.body.innerHTML = '';
@@ -66,6 +70,8 @@ describe('Navigation accessibility', () => {
   });
 
   it('has no violations in the mobile menu dialog', async () => {
+    setViewportWidth(900);
+
     const { container } = render(<Navigation />);
 
     const menuButton = container.querySelector(

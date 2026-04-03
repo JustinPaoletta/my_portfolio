@@ -2,7 +2,6 @@ import { fireEvent, render, screen } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import PetDogs from '.';
 
-let isInView = true;
 let dogsData = [
   { name: 'Nala', stats: { treats: 1, scritches: 2 } },
   { name: 'Rosie', stats: { treats: 3, scritches: 4 } },
@@ -14,25 +13,8 @@ vi.mock('@/hooks/usePetDogs', () => ({
   usePetDogs: () => [dogsData, updateStatsMock],
 }));
 
-vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
-  return {
-    motion: {
-      button: motionFactory('button'),
-    },
-    useInView: () => isInView,
-  };
-});
-
 describe('PetDogs section', () => {
   beforeEach(() => {
-    isInView = true;
     dogsData = [
       { name: 'Nala', stats: { treats: 1, scritches: 2 } },
       { name: 'Rosie', stats: { treats: 3, scritches: 4 } },
@@ -85,8 +67,7 @@ describe('PetDogs section', () => {
     expect(updateStatsMock).toHaveBeenCalledWith('Rosie', 'scritches');
   });
 
-  it('renders collapsed state while out of view', () => {
-    isInView = false;
+  it('renders collapsed state by default', () => {
     render(<PetDogs />);
     expect(screen.getByRole('button', { name: 'Show dogs' })).toHaveAttribute(
       'aria-expanded',

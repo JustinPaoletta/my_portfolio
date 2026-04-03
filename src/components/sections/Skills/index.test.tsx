@@ -10,27 +10,6 @@ vi.mock('@/hooks/useTheme', () => ({
   }),
 }));
 
-vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
-  return {
-    motion: {
-      section: motionFactory('section'),
-      header: motionFactory('header'),
-      span: motionFactory('span'),
-      h2: motionFactory('h2'),
-      div: motionFactory('div'),
-      a: motionFactory('a'),
-    },
-    useInView: () => true,
-  };
-});
-
 describe('Skills section', () => {
   it('renders category tabs and switches active tab by click', () => {
     resolvedMode = 'light';

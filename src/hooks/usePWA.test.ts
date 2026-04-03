@@ -12,7 +12,10 @@ vi.mock('./pwa-register-wrapper', () => ({
   useRegisterSW: useRegisterSWMock,
 }));
 
-import { useIsStandalone, usePWA } from './usePWA';
+type UsePWAModule = typeof import('./usePWA');
+
+let usePWA: UsePWAModule['usePWA'];
+let useIsStandalone: UsePWAModule['useIsStandalone'];
 
 function createPromptEvent(
   outcome: 'accepted' | 'dismissed' = 'accepted'
@@ -33,13 +36,15 @@ function createPromptEvent(
 }
 
 describe('usePWA', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
+    vi.resetModules();
     useRegisterSWMock.mockReturnValue({
       needRefresh: [false, setNeedRefreshStateMock],
       offlineReady: [false, setOfflineReadyStateMock],
       updateServiceWorker: updateServiceWorkerMock,
     });
+    ({ usePWA, useIsStandalone } = await import('./usePWA'));
   });
 
   it('mirrors SW registration state and exposes update handler', () => {
@@ -172,6 +177,11 @@ describe('usePWA', () => {
 });
 
 describe('useIsStandalone', () => {
+  beforeEach(async () => {
+    vi.resetModules();
+    ({ usePWA, useIsStandalone } = await import('./usePWA'));
+  });
+
   function mockMatchMedia(
     options: {
       standalone?: boolean;

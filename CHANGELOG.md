@@ -1,5 +1,25 @@
 # Changelog
 
+## 1.1.10
+
+### Patch Changes
+
+- 9f8a5dd: Hide the floating theme switcher while the mobile navigation menu is open so it cannot overlap or interfere with the menu.
+
+## 1.1.9
+
+### Patch Changes
+
+- d0d4b1a: Remove framer-motion and small performance improvements
+
+## 1.1.8
+
+### Patch Changes
+
+- 5c246a0: chore(deps-dev): bump the testing group with 3 updates
+- cd89220: chore(deps-dev): bump @vercel/node from 5.6.18 to 5.6.22
+- ea9f2d5: Document the build-time app config pipeline and remove unused GitHub, analytics, and animation helpers.
+
 ## 1.1.7
 
 ### Patch Changes

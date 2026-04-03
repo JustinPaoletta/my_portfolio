@@ -35,10 +35,12 @@ const colorModes: ColorMode[] = ['light', 'dark', 'system'];
 
 interface ThemeSwitcherProps {
   placement?: 'floating' | 'nav';
+  isTemporarilyHidden?: boolean;
 }
 
 export default function ThemeSwitcher({
   placement = 'floating',
+  isTemporarilyHidden = false,
 }: ThemeSwitcherProps): React.ReactElement {
   const { themeName, setTheme, themes, colorMode, setColorMode } = useTheme();
   const [isOpen, setIsOpen] = useState(false);
@@ -99,6 +101,20 @@ export default function ThemeSwitcher({
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [closeMenu, isOpen]);
+
+  useEffect(() => {
+    if (!isTemporarilyHidden || !isOpen) {
+      return;
+    }
+
+    const frameId = window.requestAnimationFrame(() => {
+      closeMenu(false);
+    });
+
+    return () => {
+      window.cancelAnimationFrame(frameId);
+    };
+  }, [closeMenu, isOpen, isTemporarilyHidden]);
 
   useEffect(() => {
     if (!isOpen) {
@@ -169,6 +185,8 @@ export default function ThemeSwitcher({
   return (
     <div
       className={`theme-switcher theme-switcher--${placement} ${isOpen ? 'open' : ''}`}
+      aria-hidden={isTemporarilyHidden}
+      hidden={isTemporarilyHidden}
     >
       <button
         ref={toggleRef}
@@ -178,6 +196,7 @@ export default function ThemeSwitcher({
         aria-expanded={isOpen}
         aria-haspopup="dialog"
         aria-controls={dialogId}
+        disabled={isTemporarilyHidden}
         type="button"
       >
         <span className="theme-icon" aria-hidden="true">

@@ -1,32 +1,9 @@
 import { render, screen } from '@/test/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import Experience from '.';
-
-let isInView = true;
-
-vi.mock('framer-motion', async () => {
-  const React = await import('react');
-  const motionFactory = (tag: keyof HTMLElementTagNameMap) =>
-    React.forwardRef<HTMLElement, React.HTMLAttributes<HTMLElement>>(
-      ({ children, ...props }, ref) =>
-        React.createElement(tag, { ref, ...props }, children)
-    );
-
-  return {
-    motion: {
-      header: motionFactory('header'),
-      span: motionFactory('span'),
-      h2: motionFactory('h2'),
-      div: motionFactory('div'),
-      article: motionFactory('article'),
-    },
-    useInView: () => isInView,
-  };
-});
 
 describe('Experience section', () => {
   it('renders work/education timelines and current-role indicators', () => {
-    isInView = true;
     render(<Experience />);
 
     expect(
@@ -54,8 +31,7 @@ describe('Experience section', () => {
     ).toHaveAttribute('download', 'Justin_Paoletta_Resume.pdf');
   });
 
-  it('renders timeline content when out of view (hidden animation branch)', () => {
-    isInView = false;
+  it('renders timeline content consistently', () => {
     render(<Experience />);
 
     expect(
