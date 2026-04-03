@@ -26,6 +26,10 @@ interface NavItem {
   href: string;
 }
 
+interface NavigationProps {
+  onMobileMenuOpenChange?: (isOpen: boolean) => void;
+}
+
 const navItems: NavItem[] = [
   { id: 'about', label: 'About', href: '#about' },
   { id: 'projects', label: 'Projects', href: '#projects' },
@@ -36,7 +40,9 @@ const navItems: NavItem[] = [
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
 
-function Navigation(): React.ReactElement {
+function Navigation({
+  onMobileMenuOpenChange,
+}: NavigationProps = {}): React.ReactElement {
   const [activeSection, setActiveSection] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -144,6 +150,16 @@ function Navigation(): React.ReactElement {
       window.cancelAnimationFrame(frameId);
     };
   }, [isCliTheme, isMobileMenuOpen]);
+
+  useEffect(() => {
+    onMobileMenuOpenChange?.(isMobileMenuOpen);
+  }, [isMobileMenuOpen, onMobileMenuOpenChange]);
+
+  useEffect(() => {
+    return () => {
+      onMobileMenuOpenChange?.(false);
+    };
+  }, [onMobileMenuOpenChange]);
 
   const closeMobileMenu = useCallback((restoreFocus = true): void => {
     shouldRestoreMobileMenuFocus.current = restoreFocus;

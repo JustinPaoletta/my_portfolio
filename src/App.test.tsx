@@ -246,6 +246,43 @@ describe('App', () => {
     expect(await screen.findByRole('contentinfo')).toBeInTheDocument(); // footer
   });
 
+  it('hides the floating theme switcher while the mobile menu is open and restores it after close', async () => {
+    await act(async () => {
+      render(<App />);
+    });
+
+    expect(
+      await screen.findByRole('button', { name: /toggle theme switcher/i })
+    ).toBeInTheDocument();
+
+    const mobileMenuButton = document.querySelector(
+      '.mobile-menu-button'
+    ) as HTMLButtonElement | null;
+    expect(mobileMenuButton).not.toBeNull();
+
+    fireEvent.click(mobileMenuButton!);
+
+    await waitFor(() => {
+      expect(document.querySelector('.theme-switcher')).toHaveAttribute(
+        'hidden'
+      );
+      expect(
+        screen.queryByRole('button', { name: /toggle theme switcher/i })
+      ).not.toBeInTheDocument();
+    });
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    await waitFor(() => {
+      expect(document.querySelector('.theme-switcher')).not.toHaveAttribute(
+        'hidden'
+      );
+      expect(
+        screen.getByRole('button', { name: /toggle theme switcher/i })
+      ).toBeInTheDocument();
+    });
+  });
+
   it('does not mount deferred data sections or fetch them before intersection', async () => {
     await act(async () => {
       render(<App />);
