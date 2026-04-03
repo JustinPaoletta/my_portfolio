@@ -1,14 +1,15 @@
 /**
  * Hero Section
  * Main introduction with name, title, and brief intro
- * Uses Framer Motion for reduced-motion checks and lightweight parallax enhancement
+ * Uses reduced-motion checks and lightweight parallax enhancement
  */
 
 import { useEffect, useRef, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
 import { env } from '@/config/env';
 import { HERO_TAGLINE } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
+import { useIsStandalone } from '@/hooks/usePWA';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
 import CliTerminal from './CliTerminal';
@@ -110,6 +111,11 @@ type TracePoint = {
   x: number;
   y: number;
 };
+
+const COSMIC_VIDEO_ACTIVATION_DELAY_MS = 1200;
+const COSMIC_VIDEO_STANDALONE_DELAY_MS = 120;
+const COSMIC_VIDEO_WATCHDOG_INTERVAL_MS = 2500;
+const COSMIC_VIDEO_MAX_RECOVERY_FAILURES = 3;
 
 type NavigatorConnectionLike = {
   saveData?: boolean;
@@ -312,6 +318,8 @@ function CosmicHeroBackground({
 
 function ActiveCosmicHeroBackground(): React.ReactElement {
   const cosmicVideoRef = useRef<HTMLVideoElement>(null);
+  const cosmicVideoReadyRef = useRef(false);
+  const isStandalone = useIsStandalone();
   const [shouldLoadVideo, setShouldLoadVideo] = useState(false);
   const [isCosmicVideoReady, setIsCosmicVideoReady] = useState(false);
 
@@ -328,7 +336,11 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
 
     const isTestEnvironment =
       typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
-    const activationDelay = isTestEnvironment ? 0 : 1200;
+    const activationDelay = isTestEnvironment
+      ? 0
+      : isStandalone
+        ? COSMIC_VIDEO_STANDALONE_DELAY_MS
+        : COSMIC_VIDEO_ACTIVATION_DELAY_MS;
 
     const activateVideo = (): void => {
       timeoutId = window.setTimeout(() => {
@@ -343,6 +355,7 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
         paintFrameTwo = window.requestAnimationFrame(() => {
           if (
             !isTestEnvironment &&
+            !isStandalone &&
             typeof window.requestIdleCallback === 'function'
           ) {
             idleHandle = window.requestIdleCallback(activateVideo, {
@@ -381,7 +394,7 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
         window.cancelAnimationFrame(paintFrameTwo);
       }
     };
-  }, [shouldLoadVideo]);
+  }, [isStandalone, shouldLoadVideo]);
 
   useEffect(() => {
     if (typeof document === 'undefined' || !shouldLoadVideo) {
@@ -393,10 +406,26 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
       return;
     }
 
-    const attemptPlay = (): void => {
+    const isTestEnvironment =
+      typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
+    let hasRetriedOnInteraction = false;
+    let delayedRetryTimer: ReturnType<typeof setTimeout> | undefined;
+    let isRecoveringPlayback = false;
+    let consecutiveRecoveryFailures = 0;
+    let disposed = false;
+
+    const hideVideo = (): void => {
+      cosmicVideoReadyRef.current = false;
+      setIsCosmicVideoReady(false);
+    };
+
+    const attemptPlay = async (forceLoad = false): Promise<boolean> => {
       video.muted = true;
       video.defaultMuted = true;
       video.playsInline = true;
+      video.setAttribute('playsinline', '');
+      video.setAttribute('webkit-playsinline', '');
+      video.setAttribute('disableremoteplayback', '');
 
       // Upgrade preload to ensure the browser buffers enough data for
       // playback. Firefox strictly respects preload="metadata" and won't
@@ -405,14 +434,30 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
         video.preload = 'auto';
       }
 
-      const playAttempt = video.play();
-      if (playAttempt && typeof playAttempt.catch === 'function') {
-        void playAttempt.catch(() => {});
+      if (
+        forceLoad &&
+        !isTestEnvironment &&
+        video.readyState <= HTMLMediaElement.HAVE_METADATA &&
+        video.networkState !== HTMLMediaElement.NETWORK_LOADING
+      ) {
+        video.load();
+      }
+
+      try {
+        const playAttempt = video.play();
+        if (playAttempt && typeof playAttempt.then === 'function') {
+          await playAttempt;
+        }
+        consecutiveRecoveryFailures = 0;
+        return true;
+      } catch {
+        consecutiveRecoveryFailures += 1;
+        return false;
       }
     };
 
     const canWarmVideoSource =
-      typeof navigator === 'undefined' || !/jsdom/i.test(navigator.userAgent);
+      typeof navigator === 'undefined' || !isTestEnvironment;
 
     if (
       canWarmVideoSource &&
@@ -421,22 +466,19 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
       video.load();
     }
 
-    let hasRetriedOnInteraction = false;
-    let delayedRetryTimer: ReturnType<typeof setTimeout> | undefined;
-
     const removeInteractionListeners = (): void => {
       window.removeEventListener('pointerdown', handleFirstInteraction);
       window.removeEventListener('touchstart', handleFirstInteraction);
       window.removeEventListener('keydown', handleFirstInteraction);
     };
 
-    const syncReadyFromMediaState = (): void => {
+    const syncReadyFromMediaState = (): boolean => {
       const hasDecodedFrames =
         video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
 
       // Firefox headless may buffer the entire video without advancing
       // readyState past HAVE_METADATA due to missing platform decoders.
-      // The poster image provides a visually identical fallback, so we
+      // The static still image provides a visually identical fallback, so we
       // treat fully-buffered + play-accepted as "ready" for the UI.
       const hasBufferedData =
         video.buffered.length > 0 && video.buffered.end(0) > 0;
@@ -445,11 +487,19 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
         (hasDecodedFrames || hasBufferedData) &&
         (!video.paused || video.currentTime > 0)
       ) {
+        cosmicVideoReadyRef.current = true;
         setIsCosmicVideoReady(true);
+        return true;
       }
+
+      cosmicVideoReadyRef.current = false;
+      setIsCosmicVideoReady(false);
+      return false;
     };
 
     const handlePlaying = (): void => {
+      consecutiveRecoveryFailures = 0;
+      cosmicVideoReadyRef.current = true;
       setIsCosmicVideoReady(true);
       if (delayedRetryTimer) {
         clearTimeout(delayedRetryTimer);
@@ -458,15 +508,83 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
     };
 
     const handleMediaReady = (): void => {
-      attemptPlay();
-      syncReadyFromMediaState();
+      void attemptPlay().then(() => {
+        syncReadyFromMediaState();
+      });
     };
 
     const handleVisibilityChange = (): void => {
-      if (document.visibilityState === 'visible') {
-        attemptPlay();
-        syncReadyFromMediaState();
+      if (document.visibilityState !== 'visible') {
+        hideVideo();
+        return;
       }
+
+      void recoverPlayback(true);
+    };
+
+    const recoverPlayback = async (forceLoad = false): Promise<void> => {
+      if (
+        disposed ||
+        isRecoveringPlayback ||
+        document.visibilityState !== 'visible' ||
+        video.ended
+      ) {
+        return;
+      }
+
+      isRecoveringPlayback = true;
+      hideVideo();
+
+      try {
+        let didResume = await attemptPlay(forceLoad);
+
+        if (
+          !didResume &&
+          !forceLoad &&
+          consecutiveRecoveryFailures < COSMIC_VIDEO_MAX_RECOVERY_FAILURES
+        ) {
+          didResume = await attemptPlay(true);
+        }
+
+        if (!didResume && consecutiveRecoveryFailures >= 1) {
+          hideVideo();
+          return;
+        }
+
+        syncReadyFromMediaState();
+      } finally {
+        isRecoveringPlayback = false;
+      }
+    };
+
+    const handlePlaybackInterruption = (
+      event: Event,
+      forceLoad = false
+    ): void => {
+      const isWaitingForData =
+        event.type === 'waiting' ||
+        event.type === 'stalled' ||
+        (event.type === 'suspend' &&
+          video.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA);
+
+      if (
+        document.visibilityState !== 'visible' ||
+        video.ended ||
+        (!video.paused && !isWaitingForData)
+      ) {
+        return;
+      }
+
+      if (consecutiveRecoveryFailures >= COSMIC_VIDEO_MAX_RECOVERY_FAILURES) {
+        hideVideo();
+        return;
+      }
+
+      void recoverPlayback(forceLoad || isWaitingForData);
+    };
+
+    const handlePageShow = (): void => {
+      void recoverPlayback(true);
     };
 
     const handleFirstInteraction = (): void => {
@@ -474,8 +592,7 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
         return;
       }
       hasRetriedOnInteraction = true;
-      attemptPlay();
-      syncReadyFromMediaState();
+      void recoverPlayback(consecutiveRecoveryFailures > 0);
       removeInteractionListeners();
     };
 
@@ -483,7 +600,12 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
     video.addEventListener('loadeddata', handleMediaReady);
     video.addEventListener('loadedmetadata', handleMediaReady);
     video.addEventListener('canplay', handleMediaReady);
+    video.addEventListener('pause', handlePlaybackInterruption);
+    video.addEventListener('suspend', handlePlaybackInterruption);
+    video.addEventListener('stalled', handlePlaybackInterruption);
+    video.addEventListener('waiting', handlePlaybackInterruption);
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('pageshow', handlePageShow);
     window.addEventListener('pointerdown', handleFirstInteraction, {
       passive: true,
     });
@@ -492,25 +614,50 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
     });
     window.addEventListener('keydown', handleFirstInteraction);
 
-    attemptPlay();
-    syncReadyFromMediaState();
+    void attemptPlay().then(() => {
+      syncReadyFromMediaState();
+    });
 
     // Some browsers briefly reject the first play() while the media pipeline
     // is still attaching source data. A short retry hardens initial startup.
     delayedRetryTimer = setTimeout(() => {
-      attemptPlay();
-      syncReadyFromMediaState();
+      void attemptPlay().then(() => {
+        syncReadyFromMediaState();
+      });
     }, 180);
 
+    const watchdogTimer = setInterval(() => {
+      if (
+        !cosmicVideoReadyRef.current ||
+        document.visibilityState !== 'visible'
+      ) {
+        return;
+      }
+
+      if (
+        video.paused ||
+        video.readyState <= HTMLMediaElement.HAVE_CURRENT_DATA
+      ) {
+        void recoverPlayback(true);
+      }
+    }, COSMIC_VIDEO_WATCHDOG_INTERVAL_MS);
+
     return () => {
+      disposed = true;
       if (delayedRetryTimer) {
         clearTimeout(delayedRetryTimer);
       }
+      clearInterval(watchdogTimer);
       video.removeEventListener('playing', handlePlaying);
       video.removeEventListener('loadeddata', handleMediaReady);
       video.removeEventListener('loadedmetadata', handleMediaReady);
       video.removeEventListener('canplay', handleMediaReady);
+      video.removeEventListener('pause', handlePlaybackInterruption);
+      video.removeEventListener('suspend', handlePlaybackInterruption);
+      video.removeEventListener('stalled', handlePlaybackInterruption);
+      video.removeEventListener('waiting', handlePlaybackInterruption);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('pageshow', handlePageShow);
       removeInteractionListeners();
     };
   }, [shouldLoadVideo]);
@@ -531,8 +678,9 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
           loop
           muted
           playsInline
-          preload="metadata"
+          preload="auto"
           poster="/images/hero/cosmic/cosmos-first-frame.webp"
+          disablePictureInPicture
         >
           <source src="/video/cosmos.mp4" type="video/mp4" />
         </video>

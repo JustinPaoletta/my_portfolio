@@ -129,4 +129,34 @@ describe('ThemeSwitcher', () => {
     expect(setColorModeMock).not.toHaveBeenCalled();
     expect(setThemeMock).not.toHaveBeenCalled();
   });
+
+  it('closes and hides the floating switcher while temporarily hidden', async () => {
+    const { rerender } = render(<ThemeSwitcher placement="floating" />);
+
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Toggle theme switcher' })
+    );
+    expect(
+      screen.getByRole('dialog', { name: 'Theme settings' })
+    ).toBeInTheDocument();
+
+    rerender(<ThemeSwitcher placement="floating" isTemporarilyHidden={true} />);
+
+    await waitFor(() => {
+      expect(
+        screen.queryByRole('dialog', { name: 'Theme settings' })
+      ).not.toBeInTheDocument();
+      expect(document.querySelector('.theme-switcher')).toHaveAttribute(
+        'hidden'
+      );
+    });
+
+    rerender(
+      <ThemeSwitcher placement="floating" isTemporarilyHidden={false} />
+    );
+
+    expect(
+      screen.getByRole('button', { name: 'Toggle theme switcher' })
+    ).toBeInTheDocument();
+  });
 });

@@ -101,8 +101,17 @@ const mockGitHubRepos = [
   },
 ];
 
+function setViewportWidth(width: number): void {
+  Object.defineProperty(window, 'innerWidth', {
+    configurable: true,
+    writable: true,
+    value: width,
+  });
+}
+
 describe('App', () => {
   beforeEach(() => {
+    setViewportWidth(1200);
     vi.stubGlobal(
       'ResizeObserver',
       class {
@@ -246,6 +255,81 @@ describe('App', () => {
     expect(await screen.findByRole('contentinfo')).toBeInTheDocument(); // footer
   });
 
+  it('hides the floating theme switcher while the mobile menu is open and restores it after close', async () => {
+    setViewportWidth(900);
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    expect(
+      await screen.findByRole('button', { name: /toggle theme switcher/i })
+    ).toBeInTheDocument();
+
+    const mobileMenuButton = document.querySelector(
+      '.mobile-menu-button'
+    ) as HTMLButtonElement | null;
+    expect(mobileMenuButton).not.toBeNull();
+
+    fireEvent.click(mobileMenuButton!);
+
+    await waitFor(() => {
+      expect(document.querySelector('.theme-switcher')).toHaveAttribute(
+        'hidden'
+      );
+      expect(
+        screen.queryByRole('button', { name: /toggle theme switcher/i })
+      ).not.toBeInTheDocument();
+    });
+
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    await waitFor(() => {
+      expect(document.querySelector('.theme-switcher')).not.toHaveAttribute(
+        'hidden'
+      );
+      expect(
+        screen.getByRole('button', { name: /toggle theme switcher/i })
+      ).toBeInTheDocument();
+    });
+  });
+
+  it('restores the floating theme switcher after resizing from mobile to desktop with the menu open', async () => {
+    setViewportWidth(900);
+
+    await act(async () => {
+      render(<App />);
+    });
+
+    const mobileMenuButton = document.querySelector(
+      '.mobile-menu-button'
+    ) as HTMLButtonElement | null;
+    expect(mobileMenuButton).not.toBeNull();
+
+    fireEvent.click(mobileMenuButton!);
+
+    await waitFor(() => {
+      expect(document.querySelector('.theme-switcher')).toHaveAttribute(
+        'hidden'
+      );
+      expect(document.body.style.overflow).toBe('hidden');
+    });
+
+    setViewportWidth(1200);
+
+    fireEvent(window, new Event('resize'));
+
+    await waitFor(() => {
+      expect(document.querySelector('.theme-switcher')).not.toHaveAttribute(
+        'hidden'
+      );
+      expect(
+        screen.getByRole('button', { name: /toggle theme switcher/i })
+      ).toBeInTheDocument();
+      expect(document.body.style.overflow).toBe('');
+    });
+  });
+
   it('does not mount deferred data sections or fetch them before intersection', async () => {
     await act(async () => {
       render(<App />);
@@ -361,7 +445,9 @@ describe('App', () => {
       'poster',
       '/images/hero/cosmic/cosmos-first-frame.webp'
     );
+    expect(cosmicVideo).toHaveAttribute('autoplay');
     expect(cosmicVideo).toHaveAttribute('preload', 'auto');
+    expect(cosmicVideo).toHaveAttribute('webkit-playsinline', '');
     const cosmicVideoSource = cosmicVideo?.querySelector('source');
     expect(cosmicVideoSource).toHaveAttribute('src', '/video/cosmos.mp4');
     if (!cosmicVideo) {
