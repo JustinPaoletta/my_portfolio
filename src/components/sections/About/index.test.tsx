@@ -1,19 +1,25 @@
 import { act, render, screen } from '@/test/test-utils';
-import { describe, expect, it, vi } from 'vitest';
-import About from '.';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+type AboutModule = typeof import('.');
 
 let breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
 let isMobileViewport = false;
+let About: AboutModule['default'];
 
 vi.mock('@/hooks/useBreakpoint', () => ({
   useBreakpoint: () => breakpoint,
 }));
 
 describe('About section', () => {
-  it('computes expanded content/story heights and resets styles on unmount', () => {
+  beforeEach(async () => {
     breakpoint = 'md';
     isMobileViewport = false;
+    vi.resetModules();
+    ({ default: About } = await import('.'));
+  });
 
+  it('computes expanded content/story heights and resets styles on unmount', () => {
     window.matchMedia = vi.fn((query: string) => ({
       matches: query === '(max-width: 640px)' ? isMobileViewport : false,
       media: query,
