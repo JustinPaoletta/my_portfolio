@@ -76,6 +76,21 @@ describe('Navigation', () => {
     });
     document.body.innerHTML = '';
 
+    const skipLink = document.createElement('a');
+    skipLink.className = 'skip-link';
+    document.body.appendChild(skipLink);
+
+    const main = document.createElement('main');
+    main.id = 'main';
+    document.body.appendChild(main);
+
+    const themeSwitcher = document.createElement('div');
+    themeSwitcher.className = 'theme-switcher';
+    document.body.appendChild(themeSwitcher);
+
+    const footer = document.createElement('footer');
+    document.body.appendChild(footer);
+
     [
       'about',
       'projects',
@@ -103,12 +118,20 @@ describe('Navigation', () => {
         y: offsetTop - window.scrollY,
         toJSON: () => ({}),
       }));
-      document.body.appendChild(section);
+      main.appendChild(section);
     });
   });
 
   afterEach(() => {
     document.body.style.overflow = '';
+    document.body.style.overscrollBehavior = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.overscrollBehavior = '';
   });
 
   it('renders full navigation in non-CLI mode and applies scrolled class on scroll', () => {
@@ -237,17 +260,26 @@ describe('Navigation', () => {
     dialog.style.transform = 'translateX(0)';
 
     expect(menuButton).toHaveAttribute('aria-label', 'Close menu');
-    expect(document.body.style.overflow).toBe('hidden');
+    expect(document.documentElement.style.overflow).toBe('hidden');
+    expect(document.body.style.position).toBe('fixed');
     expect(dialog).toHaveAttribute('role', 'dialog');
+    expect(document.getElementById('main')).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
 
-    const aboutLink = within(dialog).getByRole('link', { name: 'About' });
+    const closeButton = within(dialog).getByRole('button', {
+      name: 'Close menu',
+    });
     await waitFor(() => {
-      expect(aboutLink).toHaveFocus();
+      expect(closeButton).toHaveFocus();
     });
 
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(document.body.style.overflow).toBe('');
+    fireEvent.click(closeButton);
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(document.body.style.position).toBe('');
     expect(menuButton).toHaveFocus();
+    expect(document.getElementById('main')).not.toHaveAttribute('aria-hidden');
 
     fireEvent.click(menuButton);
     mobileMenu.style.display = 'flex';

@@ -40,6 +40,10 @@ describe('Navigation accessibility', () => {
     vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
     document.body.innerHTML = '';
 
+    const main = document.createElement('main');
+    main.id = 'main';
+    document.body.appendChild(main);
+
     [
       'about',
       'projects',
@@ -55,12 +59,20 @@ describe('Navigation accessibility', () => {
         configurable: true,
         value: 500 + i * 100,
       });
-      document.body.appendChild(section);
+      main.appendChild(section);
     });
   });
 
   afterEach(() => {
     document.body.style.overflow = '';
+    document.body.style.overscrollBehavior = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.overscrollBehavior = '';
   });
 
   it('has no violations in desktop navigation', async () => {
@@ -88,7 +100,9 @@ describe('Navigation accessibility', () => {
     dialog.style.transform = 'translateX(0)';
 
     await waitFor(() => {
-      expect(within(dialog).getByRole('link', { name: 'About' })).toHaveFocus();
+      expect(
+        within(dialog).getByRole('button', { name: 'Close menu' })
+      ).toHaveFocus();
     });
 
     expect(dialog).toHaveAttribute('role', 'dialog');

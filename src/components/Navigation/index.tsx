@@ -32,10 +32,67 @@ interface NavigationProps {
 
 const MOBILE_MENU_BREAKPOINT = 980;
 
+type ScrollLockSnapshot = {
+  bodyLeft: string;
+  bodyOverflow: string;
+  bodyOverscrollBehavior: string;
+  bodyPosition: string;
+  bodyRight: string;
+  bodyTop: string;
+  bodyWidth: string;
+  htmlOverflow: string;
+  htmlOverscrollBehavior: string;
+  scrollY: number;
+};
+
 function isMobileMenuViewport(): boolean {
   return (
     typeof window !== 'undefined' && window.innerWidth <= MOBILE_MENU_BREAKPOINT
   );
+}
+
+function lockPageScroll(): () => void {
+  if (typeof window === 'undefined') {
+    return () => undefined;
+  }
+
+  const html = document.documentElement;
+  const { body } = document;
+  const snapshot: ScrollLockSnapshot = {
+    bodyLeft: body.style.left,
+    bodyOverflow: body.style.overflow,
+    bodyOverscrollBehavior: body.style.overscrollBehavior,
+    bodyPosition: body.style.position,
+    bodyRight: body.style.right,
+    bodyTop: body.style.top,
+    bodyWidth: body.style.width,
+    htmlOverflow: html.style.overflow,
+    htmlOverscrollBehavior: html.style.overscrollBehavior,
+    scrollY: window.scrollY,
+  };
+
+  html.style.overflow = 'hidden';
+  html.style.overscrollBehavior = 'none';
+  body.style.overflow = 'hidden';
+  body.style.overscrollBehavior = 'none';
+  body.style.position = 'fixed';
+  body.style.top = `-${snapshot.scrollY}px`;
+  body.style.left = '0';
+  body.style.right = '0';
+  body.style.width = '100%';
+
+  return () => {
+    html.style.overflow = snapshot.htmlOverflow;
+    html.style.overscrollBehavior = snapshot.htmlOverscrollBehavior;
+    body.style.overflow = snapshot.bodyOverflow;
+    body.style.overscrollBehavior = snapshot.bodyOverscrollBehavior;
+    body.style.position = snapshot.bodyPosition;
+    body.style.top = snapshot.bodyTop;
+    body.style.left = snapshot.bodyLeft;
+    body.style.right = snapshot.bodyRight;
+    body.style.width = snapshot.bodyWidth;
+    window.scrollTo({ top: snapshot.scrollY, left: 0, behavior: 'auto' });
+  };
 }
 
 const navItems: NavItem[] = [
@@ -260,13 +317,13 @@ function Navigation({
       trapFocusWithin(keyboardEvent, dialog);
     };
 
-    document.body.style.overflow = 'hidden';
+    const restorePageScroll = lockPageScroll();
     document.addEventListener('keydown', handleKeyDown);
     window.requestAnimationFrame(focusInitialElement);
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      restorePageScroll();
       restoreInertState();
       if (mobileMenuButton) {
         if (mobileMenuButtonTabIndex === null) {
@@ -358,6 +415,14 @@ function Navigation({
             aria-label="Main menu"
             tabIndex={-1}
           >
+            <button
+              type="button"
+              className="mobile-menu-close-button"
+              onClick={() => closeMobileMenu(true)}
+              aria-label="Close menu"
+            >
+              <span aria-hidden="true">X</span>
+            </button>
             <nav aria-label="Mobile navigation">
               <ul className="mobile-nav-links">
                 {navItems.map((item, index) => (
