@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.11
+
+### Patch Changes
+
+- 2324c83: chore(deps-dev): bump @playwright/test from 1.58.2 to 1.59.0 in the testing group
+- f1342e2: chore(deps-dev): bump typescript-eslint from 8.57.2 to 8.58.0 in the linting group
+- c4f8730: chore(deps): bump @newrelic/browser-agent from 1.311.0 to 1.312.0
+- 28e0bf4: chore(deps-dev): bump lodash-es from 4.17.23 to 4.18.1
+- 3fcb654: chore(deps): bump lodash from 4.17.23 to 4.18.1
+
 ## 1.1.10
 
 ### Patch Changes
