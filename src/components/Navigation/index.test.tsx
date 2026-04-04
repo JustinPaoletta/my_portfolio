@@ -132,6 +132,7 @@ describe('Navigation', () => {
     document.body.style.width = '';
     document.documentElement.style.overflow = '';
     document.documentElement.style.overscrollBehavior = '';
+    document.body.innerHTML = '';
   });
 
   it('renders full navigation in non-CLI mode and applies scrolled class on scroll', () => {

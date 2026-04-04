@@ -73,6 +73,7 @@ describe('Navigation accessibility', () => {
     document.body.style.width = '';
     document.documentElement.style.overflow = '';
     document.documentElement.style.overscrollBehavior = '';
+    document.body.innerHTML = '';
   });
 
   it('has no violations in desktop navigation', async () => {
