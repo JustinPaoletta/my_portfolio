@@ -2,7 +2,7 @@
   position: fixed;
   bottom: max(20px, env(safe-area-inset-bottom, 0px));
   right: max(20px, env(safe-area-inset-right, 0px));
-  z-index: 1000;
+  z-index: 999;
   font-family: var(--font-sans);
   transform: translateZ(0);
 }
@@ -11,7 +11,7 @@
   position: relative;
   bottom: auto;
   right: auto;
-  z-index: 1002;
+  z-index: 999;
 }
 
 .theme-switcher--floating {
