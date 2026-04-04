@@ -222,7 +222,7 @@ test('mobile navigation opens, navigates, and closes', async ({ page }) => {
     'false'
   );
   await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
-  await expect(page.getByRole('link', { name: 'About' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused();
 
   await page.getByRole('link', { name: 'Contact' }).click();
 
