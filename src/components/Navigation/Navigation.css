@@ -550,8 +550,14 @@
   flex-grow: 1;
 }
 
+/* Scrollable link list: min-height:0 lets the flex child shrink so overflow-y works in short viewports (e.g. landscape). */
 .mobile-menu-content > nav {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 .mobile-nav-link {
