@@ -1,9 +1,10 @@
 import { act, fireEvent, render, screen, waitFor } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import PWAUpdatePrompt from '.';
 
 const pwaHookMock = vi.hoisted(() => vi.fn());
 const useIsStandaloneMock = vi.hoisted(() => vi.fn());
+
+let PWAUpdatePrompt: (typeof import('.'))['default'];
 
 vi.mock('@/hooks/usePWA', () => ({
   usePWA: pwaHookMock,
@@ -37,8 +38,9 @@ describe('PWAUpdatePrompt', () => {
   const dismissInstall = vi.fn();
   const closePrompt = vi.fn();
 
-  beforeEach(() => {
-    vi.clearAllMocks();
+  beforeEach(async () => {
+    vi.restoreAllMocks();
+    vi.resetModules();
     localStorage.clear();
 
     const sw = createServiceWorkerMock(true);
@@ -50,6 +52,8 @@ describe('PWAUpdatePrompt', () => {
       configurable: true,
       value: true,
     });
+
+    ({ default: PWAUpdatePrompt } = await import('.'));
 
     useIsStandaloneMock.mockReturnValue(false);
     pwaHookMock.mockReturnValue({
