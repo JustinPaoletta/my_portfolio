@@ -26,7 +26,7 @@ test('theme selection persists after reload', async ({ page }) => {
   await page.goto('/');
 
   await openThemeSwitcher(page);
-  await page.getByText('Cosmic').click();
+  await page.getByRole('radio', { name: 'Cosmic' }).click();
   await closeThemeSwitcher(page);
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
@@ -178,7 +178,7 @@ test('color mode selection persists after reload', async ({ page }) => {
   await page.goto('/');
 
   await openThemeSwitcher(page);
-  await page.getByTitle('Light').click();
+  await page.getByRole('radio', { name: 'Light' }).click();
   await closeThemeSwitcher(page);
 
   await expect(page.locator('html')).toHaveAttribute(
@@ -326,7 +326,7 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
   await openThemeSwitcher(page);
   await page
     .getByRole('dialog', { name: /theme settings/i })
-    .getByText('CLI', { exact: true })
+    .getByRole('radio', { name: 'CLI' })
     .click();
   await closeThemeSwitcher(page);
 
@@ -366,7 +366,7 @@ test('CLI close control switches back to default theme', async ({ page }) => {
   await openThemeSwitcher(page);
   await page
     .getByRole('dialog', { name: /theme settings/i })
-    .getByText('CLI', { exact: true })
+    .getByRole('radio', { name: 'CLI' })
     .click();
   await closeThemeSwitcher(page);
 
