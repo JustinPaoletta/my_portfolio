@@ -51,7 +51,7 @@ function isMobileMenuViewport(): boolean {
   );
 }
 
-function lockPageScroll(): () => void {
+function lockPageScroll(): (restoreScrollPosition?: boolean) => void {
   if (typeof window === 'undefined') {
     return () => undefined;
   }
@@ -81,7 +81,7 @@ function lockPageScroll(): () => void {
   body.style.right = '0';
   body.style.width = '100%';
 
-  return () => {
+  return (restoreScrollPosition = true) => {
     html.style.overflow = snapshot.htmlOverflow;
     html.style.overscrollBehavior = snapshot.htmlOverscrollBehavior;
     body.style.overflow = snapshot.bodyOverflow;
@@ -91,7 +91,9 @@ function lockPageScroll(): () => void {
     body.style.left = snapshot.bodyLeft;
     body.style.right = snapshot.bodyRight;
     body.style.width = snapshot.bodyWidth;
-    window.scrollTo({ top: snapshot.scrollY, left: 0, behavior: 'auto' });
+    if (restoreScrollPosition) {
+      window.scrollTo({ top: snapshot.scrollY, left: 0, behavior: 'auto' });
+    }
   };
 }
 
@@ -116,6 +118,7 @@ function Navigation({
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuDialogRef = useRef<HTMLDivElement>(null);
   const shouldRestoreMobileMenuFocus = useRef(true);
+  const shouldRestoreMobileMenuScroll = useRef(true);
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
   const isVisualTest = isVisualTestMode();
@@ -254,10 +257,20 @@ function Navigation({
     };
   }, [onMobileMenuOpenChange]);
 
-  const closeMobileMenu = useCallback((restoreFocus = true): void => {
-    shouldRestoreMobileMenuFocus.current = restoreFocus;
-    setIsMobileMenuOpen(false);
-  }, []);
+  const closeMobileMenu = useCallback(
+    ({
+      restoreFocus = true,
+      restoreScroll = true,
+    }: {
+      restoreFocus?: boolean;
+      restoreScroll?: boolean;
+    } = {}): void => {
+      shouldRestoreMobileMenuFocus.current = restoreFocus;
+      shouldRestoreMobileMenuScroll.current = restoreScroll;
+      setIsMobileMenuOpen(false);
+    },
+    []
+  );
 
   const handleNavClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
@@ -273,7 +286,7 @@ function Navigation({
         revealAndNavigate(targetId);
       }
 
-      closeMobileMenu(false);
+      closeMobileMenu({ restoreFocus: false, restoreScroll: false });
     },
     [closeMobileMenu]
   );
@@ -292,6 +305,7 @@ function Navigation({
     const mobileMenuButtonTabIndex =
       mobileMenuButton?.getAttribute('tabindex') ?? null;
     shouldRestoreMobileMenuFocus.current = true;
+    shouldRestoreMobileMenuScroll.current = true;
     mobileMenuButton?.setAttribute('tabindex', '-1');
 
     const restoreInertState = temporarilyInertElements([
@@ -310,7 +324,7 @@ function Navigation({
     const handleKeyDown = (keyboardEvent: KeyboardEvent): void => {
       if (keyboardEvent.key === 'Escape') {
         keyboardEvent.preventDefault();
-        closeMobileMenu(true);
+        closeMobileMenu();
         return;
       }
 
@@ -323,7 +337,7 @@ function Navigation({
 
     return () => {
       document.removeEventListener('keydown', handleKeyDown);
-      restorePageScroll();
+      restorePageScroll(shouldRestoreMobileMenuScroll.current);
       restoreInertState();
       if (mobileMenuButton) {
         if (mobileMenuButtonTabIndex === null) {
@@ -400,7 +414,7 @@ function Navigation({
             className="mobile-menu-backdrop"
             tabIndex={-1}
             aria-hidden="true"
-            onClick={() => closeMobileMenu(true)}
+            onClick={() => closeMobileMenu()}
           />
           <div
             ref={mobileMenuDialogRef}
@@ -414,7 +428,7 @@ function Navigation({
               <button
                 type="button"
                 className="mobile-menu-close-button"
-                onClick={() => closeMobileMenu(true)}
+                onClick={() => closeMobileMenu()}
                 aria-label="Close menu"
               >
                 <span className="mobile-menu-close-icon" aria-hidden="true">

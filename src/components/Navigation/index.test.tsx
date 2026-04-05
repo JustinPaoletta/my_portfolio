@@ -294,6 +294,48 @@ describe('Navigation', () => {
     expect(menuButton).toHaveFocus();
   });
 
+  it('does not restore a stale scroll position after mobile link navigation closes the menu', async () => {
+    setViewportWidth(900);
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 320,
+    });
+
+    const { container } = render(<Navigation />);
+
+    const menuButton = container.querySelector('.mobile-menu-button');
+    if (!menuButton) throw new Error('missing mobile menu button');
+
+    fireEvent.click(menuButton);
+
+    const mobileMenu = container.querySelector('#mobile-menu') as HTMLElement;
+    const dialog = container.querySelector(
+      '.mobile-menu-content'
+    ) as HTMLElement;
+    mobileMenu.style.display = 'flex';
+    dialog.style.transform = 'translateX(0)';
+
+    const projectsLink = within(dialog).getByRole('link', {
+      name: 'Projects',
+    });
+    fireEvent.click(projectsLink);
+
+    await waitFor(() => {
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    expect(window.scrollTo).toHaveBeenCalledWith({
+      top: 520,
+      behavior: 'smooth',
+    });
+    expect(window.scrollTo).not.toHaveBeenCalledWith({
+      top: 320,
+      left: 0,
+      behavior: 'auto',
+    });
+    expect(window.scrollY).toBe(520);
+  });
+
   it('hides nav links and mobile menu controls in CLI mode', () => {
     themeName = 'cli';
     const { container } = render(<Navigation />);
