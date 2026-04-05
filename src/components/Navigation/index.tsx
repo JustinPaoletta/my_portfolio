@@ -375,17 +375,12 @@ function Navigation({
             className={`mobile-menu-button ${isMobileMenuOpen ? 'open' : ''}`}
             type="button"
             onClick={() => {
-              if (isMobileMenuOpen) {
-                closeMobileMenu(true);
-                return;
-              }
-
               setIsMobileMenuOpen(true);
             }}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
             aria-haspopup="dialog"
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label="Open menu"
           >
             <span className="hamburger-line" />
             <span className="hamburger-line" />
@@ -415,14 +410,19 @@ function Navigation({
             aria-label="Main menu"
             tabIndex={-1}
           >
-            <button
-              type="button"
-              className="mobile-menu-close-button"
-              onClick={() => closeMobileMenu(true)}
-              aria-label="Close menu"
-            >
-              <span aria-hidden="true">X</span>
-            </button>
+            <div className="mobile-menu-header">
+              <button
+                type="button"
+                className="mobile-menu-close-button"
+                onClick={() => closeMobileMenu(true)}
+                aria-label="Close menu"
+              >
+                <span className="mobile-menu-close-icon" aria-hidden="true">
+                  <span className="mobile-menu-close-line" />
+                  <span className="mobile-menu-close-line" />
+                </span>
+              </button>
+            </div>
             <nav aria-label="Mobile navigation">
               <ul className="mobile-nav-links">
                 {navItems.map((item, index) => (

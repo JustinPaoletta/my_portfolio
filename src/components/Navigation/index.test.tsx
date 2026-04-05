@@ -260,7 +260,8 @@ describe('Navigation', () => {
     mobileMenu.style.display = 'flex';
     dialog.style.transform = 'translateX(0)';
 
-    expect(menuButton).toHaveAttribute('aria-label', 'Close menu');
+    expect(menuButton).toHaveAttribute('aria-label', 'Open menu');
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true');
     expect(document.documentElement.style.overflow).toBe('hidden');
     expect(document.body.style.position).toBe('fixed');
     expect(dialog).toHaveAttribute('role', 'dialog');
@@ -289,6 +290,7 @@ describe('Navigation', () => {
     if (!backdrop) throw new Error('missing backdrop');
     fireEvent.click(backdrop);
     expect(menuButton).toHaveAttribute('aria-label', 'Open menu');
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     expect(menuButton).toHaveFocus();
   });
 
