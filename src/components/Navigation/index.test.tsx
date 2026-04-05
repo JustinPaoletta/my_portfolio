@@ -76,6 +76,21 @@ describe('Navigation', () => {
     });
     document.body.innerHTML = '';
 
+    const skipLink = document.createElement('a');
+    skipLink.className = 'skip-link';
+    document.body.appendChild(skipLink);
+
+    const main = document.createElement('main');
+    main.id = 'main';
+    document.body.appendChild(main);
+
+    const themeSwitcher = document.createElement('div');
+    themeSwitcher.className = 'theme-switcher';
+    document.body.appendChild(themeSwitcher);
+
+    const footer = document.createElement('footer');
+    document.body.appendChild(footer);
+
     [
       'about',
       'projects',
@@ -103,12 +118,21 @@ describe('Navigation', () => {
         y: offsetTop - window.scrollY,
         toJSON: () => ({}),
       }));
-      document.body.appendChild(section);
+      main.appendChild(section);
     });
   });
 
   afterEach(() => {
     document.body.style.overflow = '';
+    document.body.style.overscrollBehavior = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.overscrollBehavior = '';
+    document.body.innerHTML = '';
   });
 
   it('renders full navigation in non-CLI mode and applies scrolled class on scroll', () => {
@@ -134,7 +158,7 @@ describe('Navigation', () => {
     expect(document.querySelector('.navigation.scrolled')).toBeInTheDocument();
   });
 
-  it('tracks active section via intersection observer and performs smooth scroll', () => {
+  it('tracks active section via intersection observer and performs auto scroll', () => {
     render(<Navigation />);
     const firstObserver = observers[0];
     const projectsSection = document.getElementById('projects');
@@ -157,7 +181,7 @@ describe('Navigation', () => {
 
     expect(window.scrollTo).toHaveBeenCalledWith({
       top: 520,
-      behavior: 'smooth',
+      behavior: 'auto',
     });
     expect(projectsLink.className).toContain('active');
     expect(projectsLink).toHaveAttribute('aria-current', 'location');
@@ -204,7 +228,7 @@ describe('Navigation', () => {
     await waitFor(() => {
       expect(window.scrollTo).toHaveBeenCalledWith({
         top: 2020,
-        behavior: 'smooth',
+        behavior: 'auto',
       });
     });
 
@@ -236,18 +260,28 @@ describe('Navigation', () => {
     mobileMenu.style.display = 'flex';
     dialog.style.transform = 'translateX(0)';
 
-    expect(menuButton).toHaveAttribute('aria-label', 'Close menu');
-    expect(document.body.style.overflow).toBe('hidden');
+    expect(menuButton).toHaveAttribute('aria-label', 'Open menu');
+    expect(menuButton).toHaveAttribute('aria-expanded', 'true');
+    expect(document.documentElement.style.overflow).toBe('hidden');
+    expect(document.body.style.position).toBe('fixed');
     expect(dialog).toHaveAttribute('role', 'dialog');
+    expect(document.getElementById('main')).toHaveAttribute(
+      'aria-hidden',
+      'true'
+    );
 
-    const aboutLink = within(dialog).getByRole('link', { name: 'About' });
+    const closeButton = within(dialog).getByRole('button', {
+      name: 'Close menu',
+    });
     await waitFor(() => {
-      expect(aboutLink).toHaveFocus();
+      expect(closeButton).toHaveFocus();
     });
 
-    fireEvent.keyDown(document, { key: 'Escape' });
-    expect(document.body.style.overflow).toBe('');
+    fireEvent.click(closeButton);
+    expect(document.documentElement.style.overflow).toBe('');
+    expect(document.body.style.position).toBe('');
     expect(menuButton).toHaveFocus();
+    expect(document.getElementById('main')).not.toHaveAttribute('aria-hidden');
 
     fireEvent.click(menuButton);
     mobileMenu.style.display = 'flex';
@@ -256,7 +290,54 @@ describe('Navigation', () => {
     if (!backdrop) throw new Error('missing backdrop');
     fireEvent.click(backdrop);
     expect(menuButton).toHaveAttribute('aria-label', 'Open menu');
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     expect(menuButton).toHaveFocus();
+  });
+
+  it('does not restore a stale scroll position after mobile link navigation closes the menu', async () => {
+    setViewportWidth(900);
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 320,
+    });
+
+    const { container } = render(<Navigation />);
+
+    const menuButton = container.querySelector('.mobile-menu-button');
+    if (!menuButton) throw new Error('missing mobile menu button');
+
+    fireEvent.click(menuButton);
+
+    const mobileMenu = container.querySelector('#mobile-menu') as HTMLElement;
+    const dialog = container.querySelector(
+      '.mobile-menu-content'
+    ) as HTMLElement;
+    mobileMenu.style.display = 'flex';
+    dialog.style.transform = 'translateX(0)';
+
+    const projectsLink = within(dialog).getByRole('link', {
+      name: 'Projects',
+    });
+    fireEvent.click(projectsLink);
+
+    await waitFor(() => {
+      expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+    });
+
+    await waitFor(() => {
+      expect(window.scrollTo).toHaveBeenCalledWith({
+        top: 520,
+        behavior: 'auto',
+      });
+    });
+    expect(window.scrollTo).not.toHaveBeenCalledWith({
+      top: 320,
+      left: 0,
+      behavior: 'auto',
+    });
+    await waitFor(() => {
+      expect(window.scrollY).toBe(520);
+    });
   });
 
   it('hides nav links and mobile menu controls in CLI mode', () => {

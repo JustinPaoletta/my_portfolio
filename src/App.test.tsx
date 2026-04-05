@@ -190,6 +190,15 @@ describe('App', () => {
 
   afterEach(() => {
     localStorage.clear();
+    document.body.style.overflow = '';
+    document.body.style.overscrollBehavior = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.documentElement.style.overflow = '';
+    document.documentElement.style.overscrollBehavior = '';
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
@@ -312,7 +321,8 @@ describe('App', () => {
       expect(document.querySelector('.theme-switcher')).toHaveAttribute(
         'hidden'
       );
-      expect(document.body.style.overflow).toBe('hidden');
+      expect(document.documentElement.style.overflow).toBe('hidden');
+      expect(document.body.style.position).toBe('fixed');
     });
 
     setViewportWidth(1200);
@@ -326,7 +336,8 @@ describe('App', () => {
       expect(
         screen.getByRole('button', { name: /toggle theme switcher/i })
       ).toBeInTheDocument();
-      expect(document.body.style.overflow).toBe('');
+      expect(document.documentElement.style.overflow).toBe('');
+      expect(document.body.style.position).toBe('');
     });
   });
 

@@ -1,6 +1,6 @@
 /**
  * Navigation Component
- * Responsive navigation with smooth scrolling
+ * Responsive navigation with in-page section jumps (instant scroll)
  * Uses passive scroll handling for sticky state
  */
 
@@ -32,10 +32,69 @@ interface NavigationProps {
 
 const MOBILE_MENU_BREAKPOINT = 980;
 
+type ScrollLockSnapshot = {
+  bodyLeft: string;
+  bodyOverflow: string;
+  bodyOverscrollBehavior: string;
+  bodyPosition: string;
+  bodyRight: string;
+  bodyTop: string;
+  bodyWidth: string;
+  htmlOverflow: string;
+  htmlOverscrollBehavior: string;
+  scrollY: number;
+};
+
 function isMobileMenuViewport(): boolean {
   return (
     typeof window !== 'undefined' && window.innerWidth <= MOBILE_MENU_BREAKPOINT
   );
+}
+
+function lockPageScroll(): (restoreScrollPosition?: boolean) => void {
+  if (typeof window === 'undefined') {
+    return () => undefined;
+  }
+
+  const html = document.documentElement;
+  const { body } = document;
+  const snapshot: ScrollLockSnapshot = {
+    bodyLeft: body.style.left,
+    bodyOverflow: body.style.overflow,
+    bodyOverscrollBehavior: body.style.overscrollBehavior,
+    bodyPosition: body.style.position,
+    bodyRight: body.style.right,
+    bodyTop: body.style.top,
+    bodyWidth: body.style.width,
+    htmlOverflow: html.style.overflow,
+    htmlOverscrollBehavior: html.style.overscrollBehavior,
+    scrollY: window.scrollY,
+  };
+
+  html.style.overflow = 'hidden';
+  html.style.overscrollBehavior = 'none';
+  body.style.overflow = 'hidden';
+  body.style.overscrollBehavior = 'none';
+  body.style.position = 'fixed';
+  body.style.top = `-${snapshot.scrollY}px`;
+  body.style.left = '0';
+  body.style.right = '0';
+  body.style.width = '100%';
+
+  return (restoreScrollPosition = true) => {
+    html.style.overflow = snapshot.htmlOverflow;
+    html.style.overscrollBehavior = snapshot.htmlOverscrollBehavior;
+    body.style.overflow = snapshot.bodyOverflow;
+    body.style.overscrollBehavior = snapshot.bodyOverscrollBehavior;
+    body.style.position = snapshot.bodyPosition;
+    body.style.top = snapshot.bodyTop;
+    body.style.left = snapshot.bodyLeft;
+    body.style.right = snapshot.bodyRight;
+    body.style.width = snapshot.bodyWidth;
+    if (restoreScrollPosition) {
+      window.scrollTo({ top: snapshot.scrollY, left: 0, behavior: 'auto' });
+    }
+  };
 }
 
 const navItems: NavItem[] = [
@@ -59,6 +118,7 @@ function Navigation({
   const mobileMenuButtonRef = useRef<HTMLButtonElement>(null);
   const mobileMenuDialogRef = useRef<HTMLDivElement>(null);
   const shouldRestoreMobileMenuFocus = useRef(true);
+  const shouldRestoreMobileMenuScroll = useRef(true);
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
   const isVisualTest = isVisualTestMode();
@@ -197,28 +257,52 @@ function Navigation({
     };
   }, [onMobileMenuOpenChange]);
 
-  const closeMobileMenu = useCallback((restoreFocus = true): void => {
-    shouldRestoreMobileMenuFocus.current = restoreFocus;
-    setIsMobileMenuOpen(false);
-  }, []);
+  const closeMobileMenu = useCallback(
+    ({
+      restoreFocus = true,
+      restoreScroll = true,
+    }: {
+      restoreFocus?: boolean;
+      restoreScroll?: boolean;
+    } = {}): void => {
+      shouldRestoreMobileMenuFocus.current = restoreFocus;
+      shouldRestoreMobileMenuScroll.current = restoreScroll;
+      setIsMobileMenuOpen(false);
+    },
+    []
+  );
 
   const handleNavClick = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
       event.preventDefault();
       const targetId = href.replace('#', '');
-      const element = document.getElementById(targetId);
+      const menuWasOpen = isMobileViewport && isMobileMenuOpen;
 
-      if (element instanceof HTMLElement) {
-        scrollToElement(element);
-        window.history.replaceState(null, '', href);
-        focusSection(targetId);
+      closeMobileMenu({ restoreFocus: false, restoreScroll: false });
+
+      const runNavigation = (): void => {
+        const element = document.getElementById(targetId);
+
+        if (element instanceof HTMLElement) {
+          scrollToElement(element, 'auto');
+          window.history.replaceState(null, '', href);
+          focusSection(targetId);
+        } else {
+          revealAndNavigate(targetId);
+        }
+      };
+
+      if (menuWasOpen) {
+        window.setTimeout(() => {
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(runNavigation);
+          });
+        }, 0);
       } else {
-        revealAndNavigate(targetId);
+        runNavigation();
       }
-
-      closeMobileMenu(false);
     },
-    [closeMobileMenu]
+    [closeMobileMenu, isMobileMenuOpen, isMobileViewport]
   );
 
   useEffect(() => {
@@ -235,6 +319,7 @@ function Navigation({
     const mobileMenuButtonTabIndex =
       mobileMenuButton?.getAttribute('tabindex') ?? null;
     shouldRestoreMobileMenuFocus.current = true;
+    shouldRestoreMobileMenuScroll.current = true;
     mobileMenuButton?.setAttribute('tabindex', '-1');
 
     const restoreInertState = temporarilyInertElements([
@@ -253,20 +338,22 @@ function Navigation({
     const handleKeyDown = (keyboardEvent: KeyboardEvent): void => {
       if (keyboardEvent.key === 'Escape') {
         keyboardEvent.preventDefault();
-        closeMobileMenu(true);
+        closeMobileMenu();
         return;
       }
 
       trapFocusWithin(keyboardEvent, dialog);
     };
 
-    document.body.style.overflow = 'hidden';
+    const restorePageScroll = lockPageScroll();
     document.addEventListener('keydown', handleKeyDown);
-    window.requestAnimationFrame(focusInitialElement);
+    const focusInitialFrameId =
+      window.requestAnimationFrame(focusInitialElement);
 
     return () => {
+      window.cancelAnimationFrame(focusInitialFrameId);
       document.removeEventListener('keydown', handleKeyDown);
-      document.body.style.overflow = '';
+      restorePageScroll(shouldRestoreMobileMenuScroll.current);
       restoreInertState();
       if (mobileMenuButton) {
         if (mobileMenuButtonTabIndex === null) {
@@ -318,17 +405,12 @@ function Navigation({
             className={`mobile-menu-button ${isMobileMenuOpen ? 'open' : ''}`}
             type="button"
             onClick={() => {
-              if (isMobileMenuOpen) {
-                closeMobileMenu(true);
-                return;
-              }
-
               setIsMobileMenuOpen(true);
             }}
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-menu"
             aria-haspopup="dialog"
-            aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+            aria-label="Open menu"
           >
             <span className="hamburger-line" />
             <span className="hamburger-line" />
@@ -348,7 +430,7 @@ function Navigation({
             className="mobile-menu-backdrop"
             tabIndex={-1}
             aria-hidden="true"
-            onClick={() => closeMobileMenu(true)}
+            onClick={() => closeMobileMenu()}
           />
           <div
             ref={mobileMenuDialogRef}
@@ -358,6 +440,19 @@ function Navigation({
             aria-label="Main menu"
             tabIndex={-1}
           >
+            <div className="mobile-menu-header">
+              <button
+                type="button"
+                className="mobile-menu-close-button"
+                onClick={() => closeMobileMenu()}
+                aria-label="Close menu"
+              >
+                <span className="mobile-menu-close-icon" aria-hidden="true">
+                  <span className="mobile-menu-close-line" />
+                  <span className="mobile-menu-close-line" />
+                </span>
+              </button>
+            </div>
             <nav aria-label="Mobile navigation">
               <ul className="mobile-nav-links">
                 {navItems.map((item, index) => (

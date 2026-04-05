@@ -163,13 +163,23 @@
   position: relative;
 }
 
+/* Full-size hit target on the native control (not pointer-events: none) so the
+   first touch activates the radio on iOS; label-only taps were focusing the label
+   without firing change until a second tap. */
 .theme-switcher-radio-input {
   position: absolute;
+  inset: 0;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  margin: 0;
   opacity: 0;
-  pointer-events: none;
+  cursor: pointer;
 }
 
 .mode-toggle-btn {
+  position: relative;
+  z-index: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,20 +195,20 @@
   opacity: 0.6;
   transition: all 0.15s ease;
 
-  &:hover,
-  &:focus {
-    opacity: 0.85;
-    background-color: var(--bg-card);
-    outline: none;
-  }
-
   &.active {
     opacity: 1;
     background-color: var(--bg-card);
   }
 }
 
+.theme-switcher-choice:hover .mode-toggle-btn:not(.active) {
+  opacity: 0.85;
+  background-color: var(--bg-card);
+}
+
 .theme-option {
+  position: relative;
+  z-index: 0;
   display: flex;
   align-items: center;
   gap: 12px;
@@ -214,16 +224,14 @@
   text-align: left;
   transition: background-color 0.15s ease;
 
-  &:hover,
-  &:focus {
-    background-color: var(--bg-card-hover);
-    outline: none;
-  }
-
   &.active {
     background-color: var(--bg-card);
     font-weight: 500;
   }
+}
+
+.theme-switcher-choice:hover .theme-option:not(.active) {
+  background-color: var(--bg-card-hover);
 }
 
 .theme-options {
@@ -235,6 +243,15 @@
 .theme-switcher-radio-input:focus-visible + .theme-option {
   outline: 2px solid var(--color-primary-ink);
   outline-offset: 2px;
+}
+
+.theme-switcher-radio-input:focus-visible + .mode-toggle-btn:not(.active) {
+  opacity: 0.85;
+  background-color: var(--bg-card);
+}
+
+.theme-switcher-radio-input:focus-visible + .theme-option:not(.active) {
+  background-color: var(--bg-card-hover);
 }
 
 .theme-swatch {
