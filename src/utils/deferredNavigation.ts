@@ -11,7 +11,7 @@ const MAX_SCROLL_RETRIES = 6;
 
 export function scrollToElement(
   element: HTMLElement,
-  behavior: ScrollBehavior = 'smooth'
+  behavior: ScrollBehavior = 'auto'
 ): void {
   const offsetTop =
     element.getBoundingClientRect().top + window.scrollY - NAV_OFFSET_PX;
@@ -37,7 +37,7 @@ export function focusSection(targetId: string): void {
 function navigateToMountedTarget(
   targetId: string,
   mountedTarget: HTMLElement,
-  behavior: ScrollBehavior = 'smooth'
+  behavior: ScrollBehavior = 'auto'
 ): void {
   scrollToElement(mountedTarget, behavior);
   window.history.replaceState(null, '', `#${targetId}`);

@@ -7,6 +7,7 @@ import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import '@/App.css';
 import '@/styles/reveal.css';
 import DeferredSection from '@/components/DeferredSection';
+import SectionRouteFallback from '@/components/SectionRouteFallback';
 import Hero from '@/components/sections/Hero';
 import { SECTION_MANIFEST } from '@/config/section-manifest';
 import {
@@ -153,7 +154,9 @@ function AppLayout(): React.ReactElement {
           shouldMountFeaturedSections &&
           SECTION_MANIFEST.map((section) => {
             const content = (
-              <Suspense fallback={null}>
+              <Suspense
+                fallback={<SectionRouteFallback sectionId={section.id} />}
+              >
                 <section.Component />
               </Suspense>
             );

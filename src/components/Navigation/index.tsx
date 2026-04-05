@@ -1,6 +1,6 @@
 /**
  * Navigation Component
- * Responsive navigation with smooth scrolling
+ * Responsive navigation with in-page section jumps (instant scroll)
  * Uses passive scroll handling for sticky state
  */
 
@@ -276,19 +276,33 @@ function Navigation({
     (event: React.MouseEvent<HTMLAnchorElement>, href: string): void => {
       event.preventDefault();
       const targetId = href.replace('#', '');
-      const element = document.getElementById(targetId);
-
-      if (element instanceof HTMLElement) {
-        scrollToElement(element);
-        window.history.replaceState(null, '', href);
-        focusSection(targetId);
-      } else {
-        revealAndNavigate(targetId);
-      }
+      const menuWasOpen = isMobileViewport && isMobileMenuOpen;
 
       closeMobileMenu({ restoreFocus: false, restoreScroll: false });
+
+      const runNavigation = (): void => {
+        const element = document.getElementById(targetId);
+
+        if (element instanceof HTMLElement) {
+          scrollToElement(element, 'auto');
+          window.history.replaceState(null, '', href);
+          focusSection(targetId);
+        } else {
+          revealAndNavigate(targetId);
+        }
+      };
+
+      if (menuWasOpen) {
+        window.setTimeout(() => {
+          window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(runNavigation);
+          });
+        }, 0);
+      } else {
+        runNavigation();
+      }
     },
-    [closeMobileMenu]
+    [closeMobileMenu, isMobileMenuOpen, isMobileViewport]
   );
 
   useEffect(() => {
@@ -333,9 +347,11 @@ function Navigation({
 
     const restorePageScroll = lockPageScroll();
     document.addEventListener('keydown', handleKeyDown);
-    window.requestAnimationFrame(focusInitialElement);
+    const focusInitialFrameId =
+      window.requestAnimationFrame(focusInitialElement);
 
     return () => {
+      window.cancelAnimationFrame(focusInitialFrameId);
       document.removeEventListener('keydown', handleKeyDown);
       restorePageScroll(shouldRestoreMobileMenuScroll.current);
       restoreInertState();

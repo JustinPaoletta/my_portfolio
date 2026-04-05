@@ -158,7 +158,7 @@ describe('Navigation', () => {
     expect(document.querySelector('.navigation.scrolled')).toBeInTheDocument();
   });
 
-  it('tracks active section via intersection observer and performs smooth scroll', () => {
+  it('tracks active section via intersection observer and performs auto scroll', () => {
     render(<Navigation />);
     const firstObserver = observers[0];
     const projectsSection = document.getElementById('projects');
@@ -181,7 +181,7 @@ describe('Navigation', () => {
 
     expect(window.scrollTo).toHaveBeenCalledWith({
       top: 520,
-      behavior: 'smooth',
+      behavior: 'auto',
     });
     expect(projectsLink.className).toContain('active');
     expect(projectsLink).toHaveAttribute('aria-current', 'location');
@@ -228,7 +228,7 @@ describe('Navigation', () => {
     await waitFor(() => {
       expect(window.scrollTo).toHaveBeenCalledWith({
         top: 2020,
-        behavior: 'smooth',
+        behavior: 'auto',
       });
     });
 
@@ -324,16 +324,20 @@ describe('Navigation', () => {
       expect(menuButton).toHaveAttribute('aria-expanded', 'false');
     });
 
-    expect(window.scrollTo).toHaveBeenCalledWith({
-      top: 520,
-      behavior: 'smooth',
+    await waitFor(() => {
+      expect(window.scrollTo).toHaveBeenCalledWith({
+        top: 520,
+        behavior: 'auto',
+      });
     });
     expect(window.scrollTo).not.toHaveBeenCalledWith({
       top: 320,
       left: 0,
       behavior: 'auto',
     });
-    expect(window.scrollY).toBe(520);
+    await waitFor(() => {
+      expect(window.scrollY).toBe(520);
+    });
   });
 
   it('hides nav links and mobile menu controls in CLI mode', () => {

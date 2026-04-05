@@ -234,6 +234,164 @@ test('mobile navigation opens, navigates, and closes', async ({ page }) => {
   );
 });
 
+/**
+ * Instruments window.scrollTo to record document.body.style.overflow whenever the
+ * nav calls scroll programmatically. The menu closes and scroll-lock cleanup runs
+ * before deferred navigation (`setTimeout` + double `requestAnimationFrame`),
+ * so the first scrollTo
+ * should not run while body overflow is still hidden.
+ */
+test('mobile menu About tap: first scrollTo runs after body scroll lock is released', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    const globalWindow = window as Window & {
+      __scrollToBodyOverflowLog?: string[];
+    };
+    globalWindow.__scrollToBodyOverflowLog = [];
+    const originalScrollTo = window.scrollTo.bind(window);
+    window.scrollTo = function scrollToWithOverflowLog(
+      ...args: Parameters<typeof window.scrollTo>
+    ): void {
+      globalWindow.__scrollToBodyOverflowLog!.push(
+        document.body.style.overflow || ''
+      );
+      originalScrollTo(...args);
+    };
+  });
+
+  await mockPortfolioApis(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  await page.getByRole('button', { name: /open menu/i }).click();
+  await expect(page.locator('#mobile-menu')).toHaveAttribute(
+    'aria-hidden',
+    'false'
+  );
+  await expect
+    .poll(async () =>
+      page.evaluate(() => document.body.style.overflow === 'hidden')
+    )
+    .toBe(true);
+
+  await page.getByRole('link', { name: 'About' }).click();
+
+  await expectSectionInViewport(page, 'about');
+
+  const overflowSnapshots = await page.evaluate(() => {
+    const globalWindow = window as Window & {
+      __scrollToBodyOverflowLog?: string[];
+    };
+    return globalWindow.__scrollToBodyOverflowLog ?? [];
+  });
+
+  expect(
+    overflowSnapshots.length,
+    'expected navigation to call window.scrollTo at least once'
+  ).toBeGreaterThan(0);
+  expect(
+    overflowSnapshots[0],
+    'first programmatic scroll should run only after overflow:hidden is cleared'
+  ).toBe('');
+});
+
+/** Delay applied to the Contact lazy chunk response (simulates slow network). */
+const CONTACT_CHUNK_DELAY_MS = 4500;
+
+/**
+ * Delivers the Contact code-split chunk late: Suspense should show
+ * SectionRouteFallback (reserved space + status) until the lazy module resolves
+ * and `#contact` mounts.
+ */
+test('slow Contact chunk: shows section fallback until Contact lazy chunk loads', async ({
+  page,
+}) => {
+  await page.route(
+    (url) =>
+      url.pathname.includes('/assets/') &&
+      /\/Contact-[^/]+\.js$/u.test(url.pathname),
+    async (route) => {
+      await new Promise((resolve) => {
+        setTimeout(resolve, CONTACT_CHUNK_DELAY_MS);
+      });
+      await route.continue();
+    }
+  );
+
+  await mockPortfolioApis(page);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/');
+
+  await expect(
+    page.getByRole('heading', { name: /Justin Paoletta/i })
+  ).toBeVisible();
+
+  expect(
+    await page.evaluate(() => document.getElementById('contact') !== null),
+    'Contact is deferred + lazy; it should not exist before navigation forces reveal'
+  ).toBe(false);
+
+  await page.getByRole('button', { name: /open menu/i }).click();
+  await expect(page.locator('#mobile-menu')).toHaveAttribute(
+    'aria-hidden',
+    'false'
+  );
+
+  await page.getByRole('link', { name: 'Contact' }).click();
+  await expect(page.locator('#mobile-menu')).toHaveAttribute(
+    'aria-hidden',
+    'true'
+  );
+
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(
+          () =>
+            document.querySelector(
+              '[data-section-route-fallback][data-section-id="contact"]'
+            ) !== null
+        ),
+      { timeout: 5000 }
+    )
+    .toBe(true);
+
+  const absentChecks = 18;
+  const absentStepMs = 180;
+  for (let i = 0; i < absentChecks; i += 1) {
+    const { contactMounted, fallbackVisible } = await page.evaluate(() => ({
+      contactMounted: document.getElementById('contact') !== null,
+      fallbackVisible: Boolean(
+        document.querySelector(
+          '[data-section-route-fallback][data-section-id="contact"]'
+        )
+      ),
+    }));
+    expect(
+      contactMounted,
+      `expected #contact to stay unmounted while chunk is delayed (sample ${i + 1}/${absentChecks})`
+    ).toBe(false);
+    expect(
+      fallbackVisible,
+      `expected Contact Suspense fallback to be visible while chunk is delayed (sample ${i + 1}/${absentChecks})`
+    ).toBe(true);
+    await page.waitForTimeout(absentStepMs);
+  }
+
+  await expect
+    .poll(
+      async () =>
+        page.evaluate(() => document.getElementById('contact') !== null),
+      { timeout: 15_000 }
+    )
+    .toBe(true);
+
+  await expect(
+    page.getByRole('heading', { name: /Get In Touch/i })
+  ).toBeVisible({ timeout: 10_000 });
+});
+
 test('mobile orientation change still reveals deferred sections while scrolling @mobile', async ({
   page,
 }) => {

@@ -1,0 +1,17 @@
+/* Reserves vertical space while a lazy section chunk loads (Suspense fallback). */
+.section-route-fallback {
+  width: 100%;
+  min-height: 12rem;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .section-route-fallback {
+    transition: none;
+  }
+}
