@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.12
+
+### Patch Changes
+
+- 7b30cb5: Fixes the navigation menu to allow closing, and not allow scroll while open
+
 ## 1.1.11
 
 ### Patch Changes
