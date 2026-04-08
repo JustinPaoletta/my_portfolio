@@ -1,13 +1,4 @@
 {
-  "git": {
-    "deploymentEnabled": {
-      "master": true,
-      "feature/*": false,
-      "fix/*": true,
-      "chore/*": false,
-      "docs/*": false
-    }
-  },
   "buildCommand": "npm run build",
   "rewrites": [
     {
