@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.1.14
+
+### Patch Changes
+
+- 512a0f8: chore(deps-dev): bump @types/node from 25.5.0 to 25.5.2 in the typescript group
+- 1e89ba0: chore(deps-dev): bump @vercel/node from 5.6.22 to 5.7.0
+- 90ffe97: chore(deps-dev): bump dotenv from 17.3.1 to 17.4.1
+- 8f7c47b: chore(deps): bump @newrelic/browser-agent from 1.312.0 to 1.312.1
+- e44577e: removes requirement of changesets on dependabot prs
+
 ## 1.1.13
 
 ### Patch Changes
