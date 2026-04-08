@@ -39,7 +39,7 @@
     "prerender": "tsx scripts/prerender.ts"
   },
   "dependencies": {
-    "@newrelic/browser-agent": "^1.312.0",
+    "@newrelic/browser-agent": "^1.312.1",
     "@upstash/redis": "^1.37.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4"
