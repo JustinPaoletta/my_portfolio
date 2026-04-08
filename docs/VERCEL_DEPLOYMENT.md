@@ -45,15 +45,9 @@ Set these only if you use the related endpoint:
 
 ## Branch Deployment Rules
 
-`vercel.json` currently includes:
+`vercel.json` does not override `git.deploymentEnabled`, so Vercel’s default applies: **preview deployments run for all connected Git branches** ([Git configuration](https://vercel.com/docs/project-configuration/git-configuration)).
 
-- `master`: explicitly enabled
-- `feature/*`: disabled
-- `fix/*`: disabled
-- `chore/*`: disabled
-- `docs/*`: disabled
-
-If you want previews for those branch naming patterns, update `vercel.json`.
+To limit deployments to specific branch patterns, add a `git.deploymentEnabled` object to `vercel.json`.
 
 ## Recommended Deploy Flow
 
