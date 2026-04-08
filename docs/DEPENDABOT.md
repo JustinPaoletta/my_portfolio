@@ -126,9 +126,11 @@ groups:
 
 Auto-merge is **enabled** via the GitHub Actions workflow at `.github/workflows/dependabot-auto-merge.yml`.
 
-Dependabot PRs also receive a deterministic patch changeset from `.github/workflows/dependabot-changeset.yml` so they satisfy the repo-wide Changesets requirement before auto-merge completes.
+The **Changeset Required** check (`.github/workflows/changeset-required.yml`) **does not require** a `.changeset/*.md` file when the pull request author is `dependabot[bot]`. The job still runs and succeeds so branch protection can keep that check required.
 
-That automatic changeset is only added on Dependabot-originated `pull_request_target` events. If a maintainer manually updates the PR branch later, the changeset workflow does not rerun under the maintainer account.
+Separately, `.github/workflows/dependabot-changeset.yml` may add a deterministic patch changeset (`.changeset/dependabot-pr-<number>.md`) on Dependabot-originated `pull_request_target` events so dependency bumps can participate in the normal Changesets release PR flow. That workflow is **not** what makes the merge gate pass anymore; it is optional from a policy perspective but still useful if you want semver bumps from merged dependency updates.
+
+That automatic changeset job only runs when `github.actor` is `dependabot[bot]`. If a maintainer manually updates the PR branch later, the changeset workflow does not rerun under the maintainer account.
 
 #### What Gets Auto-Merged?
 
@@ -143,10 +145,11 @@ Major updates to production dependencies require manual review.
 #### How It Works
 
 1. Dependabot creates a PR
-2. `.github/workflows/dependabot-changeset.yml` creates or updates `.changeset/dependabot-pr-<number>.md`
-3. Workflow enables auto-merge if criteria met
-4. PR merges automatically once all CI checks pass, including the required changeset check
-5. If that merged PR carries a real dependency bump, the normal Changesets release PR flow on `master` handles the next version bump and GitHub Release
+2. **Changeset Required** succeeds without a changeset file (Dependabot exemption)
+3. `.github/workflows/dependabot-changeset.yml` may create or update `.changeset/dependabot-pr-<number>.md` (when the triggering actor is Dependabot), if you keep that workflow enabled
+4. The auto-merge workflow enables auto-merge if its criteria are met
+5. The PR merges once all required CI checks pass
+6. If the merged branch includes a changeset with a real bump, the normal Changesets release PR flow on `master` handles the version bump and GitHub Release; merges without a changeset do not add release intent from Changesets
 
 #### Customizing Auto-Merge Rules
 
@@ -190,7 +193,7 @@ gh pr merge <PR-NUMBER> --auto --squash
 - Ensure all tests pass before merging
 - Check for deprecation warnings
 - Verify the app builds successfully
-- Verify the `Changeset Required` check passes before auto-merge is expected to complete
+- Verify the `Changeset Required` check passes before auto-merge is expected to complete (for Dependabot PRs this check passes without a changeset; other authors still need a `.changeset/*.md` file)
 
 ## Troubleshooting
 
