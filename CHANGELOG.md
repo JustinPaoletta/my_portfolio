@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.13
+
+### Patch Changes
+
+- 41e19c7: chore(deps-dev): bump @playwright/test from 1.59.0 to 1.59.1 in the testing group
+
 ## 1.1.12
 
 ### Patch Changes
