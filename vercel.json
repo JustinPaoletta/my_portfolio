@@ -3,7 +3,7 @@
     "deploymentEnabled": {
       "master": true,
       "feature/*": false,
-      "fix/*": false,
+      "fix/*": true,
       "chore/*": false,
       "docs/*": false
     }
