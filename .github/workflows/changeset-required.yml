@@ -22,7 +22,12 @@ jobs:
     if: "github.event.pull_request.title != 'chore(release): version packages'"
 
     steps:
+      - name: Dependabot PR (changeset not required)
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
+        run: echo 'Skipping changeset requirement for Dependabot PRs.'
+
       - name: Verify PR includes a changeset
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
         uses: actions/github-script@v8
         with:
           script: |
