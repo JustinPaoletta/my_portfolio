@@ -30,6 +30,9 @@ dist-ssr
 *.sln
 *.sw?
 
+# Codex
+.codex/environments/environment.toml
+
 # Testing
 /test-results/
 /playwright-report/
