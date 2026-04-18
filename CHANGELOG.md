@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.1.15
+
+### Patch Changes
+
+- 81a6dd9: gitignore file added
+- 26eb870: chore(deps-dev): bump basic-ftp from 5.2.0 to 5.2.1
+- 7bb446c: chore(deps-dev): bump basic-ftp from 5.2.1 to 5.2.2
+- 25a2f26: chore(deps-dev): bump the testing group with 4 updates
+
 ## 1.1.14
 
 ### Patch Changes
