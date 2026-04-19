@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.1.16
+
+### Patch Changes
+
+- 54b61f1: ci(deps): bump dependabot/fetch-metadata from 2 to 3
+- a6f273f: ci(deps): bump actions/github-script from 8 to 9
+- 925a6bd: chore(deps): bump the react group across 1 directory with 2 updates
+
 ## 1.1.15
 
 ### Patch Changes
