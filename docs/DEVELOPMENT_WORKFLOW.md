@@ -1,16 +1,14 @@
 # Development Workflow
 
-This repo uses Husky, commitlint, Conventional Commits, and Changesets to keep local checks, commit history, and releases aligned.
+This repo uses Husky, commitlint, Conventional Commits, and a manual changelog-driven release process.
 
-## Source of Truth
+## Source Of Truth
 
 - `.husky/`
 - `commitlint.config.js`
-- `.changeset/config.json`
-- `.github/workflows/changeset-required.yml`
-- `.github/workflows/release.yml`
-- `.github/release.yml`
 - `package.json`
+- [`CHANGELOG.md`](../CHANGELOG.md)
+- [`RELEASE.md`](../RELEASE.md)
 
 ## Git Hooks
 
@@ -35,13 +33,13 @@ This enforces the Conventional Commit rules from `commitlint.config.js`.
 
 ### `.husky/pre-push`
 
-The default pre-push hook is the light version. It runs:
+The default pre-push hook runs:
 
 1. `tsc -b`
 2. `npm run build`
 3. `npm run test:unit`
 
-Because `npm run build` already includes the production build, contrast check, sitemap generation, prerendering, and bundle-size enforcement, this catches most deployment-breaking issues.
+Because `npm run build` already includes the production build, contrast check, sitemap generation, and prerendering, this catches most deployment-breaking issues before the push leaves your machine.
 
 ### `.husky/pre-push.full`
 
@@ -52,7 +50,7 @@ The stricter optional variant also runs:
 
 Use it before a high-risk push or when you want near-CI confidence.
 
-### Swapping hooks locally
+### Swapping Hooks Locally
 
 The repo does not keep a checked-in `.husky/pre-push.light` file, so create your own temporary backup first:
 
@@ -69,7 +67,7 @@ cp .husky/pre-push.light.local .husky/pre-push
 
 If you do not want to swap files, keep the light hook active and run `npm run test:e2e` manually.
 
-### Skipping hooks
+### Skipping Hooks
 
 Use `--no-verify` sparingly:
 
@@ -81,7 +79,7 @@ git push --no-verify
 Reasonable cases:
 
 - the hook itself is broken
-- you are pushing temporary WIP to a personal branch
+- you are pushing temporary work to a personal branch
 - you have already run the equivalent checks manually
 
 If hooks stop running entirely, reinstall Husky with:
@@ -102,7 +100,7 @@ The enforced format is:
 [optional footer]
 ```
 
-### Supported commit types
+### Supported Commit Types
 
 | Type       | Purpose                           |
 | ---------- | --------------------------------- |
@@ -118,7 +116,7 @@ The enforced format is:
 | `chore`    | maintenance work                  |
 | `revert`   | revert a previous commit          |
 
-### Subject rules
+### Subject Rules
 
 - use imperative present tense
 - keep the first letter lowercase
@@ -135,96 +133,44 @@ docs(readme): update local setup instructions
 
 Breaking changes can use `!` or a `BREAKING CHANGE:` footer.
 
-Conventional Commits are still required, but they no longer drive version bumps directly. Version bumps come from committed changeset files.
+## Changelog Maintenance
 
-## Changesets
+`CHANGELOG.md` is the release source of truth.
 
-Every normal PR into `master` must include a `.changeset/*.md` file. Create one with:
+- Keep `## [Unreleased]` at the top of the file.
+- Add concise, human-written notes for user-visible or operator-visible changes.
+- Use the release categories already established in the changelog: `Added`, `Changed`, `Fixed`, `Removed`, `Security`, and `Documentation`.
+- Do not depend on bot-generated changeset files or release PRs.
+- Routine dependency upgrades are manual. Dependabot is intentionally limited to security-update PRs.
 
-```bash
-npm run changeset
-```
+## Manual Releases
 
-Choose:
+Releases now follow the root [`RELEASE.md`](../RELEASE.md) checklist.
 
-- `patch` for bug fixes and small dependency updates
-- `minor` for backward-compatible features
-- `major` for breaking changes
+The short version is:
 
-If the PR should satisfy the repo policy without publishing a new application version, commit an empty changeset instead. That is appropriate for workflow, docs, CI, and other maintenance-only changes.
+1. Merge normal work into the protected default branch.
+2. Keep `CHANGELOG.md` current under `Unreleased`.
+3. Cut `release/vX.Y.Z` from the default branch when you are ready to ship.
+4. Finalize the version bump and release notes on that release branch.
+5. Run the release validation commands.
+6. Merge the release branch back into the default branch.
+7. Tag the merge commit as `vX.Y.Z` and publish the GitHub release from the matching changelog section.
 
-The PR check in `.github/workflows/changeset-required.yml` enforces this for normal PRs. The bot-generated release PR is exempt.
+## Release Prep Commands
 
-To preview the local versioning result without opening a release PR, run:
-
-```bash
-npm run version-packages
-```
-
-That updates `package.json`, `package-lock.json`, and `CHANGELOG.md` based on pending changesets.
-
-## Releases & Changelog
-
-Releases now use the standard Changesets release PR flow on `master`.
-
-Before relying on the automation, configure the repository variable `CHANGESETS_APP_ID` and repository secret `CHANGESETS_APP_PRIVATE_KEY` for the dedicated release GitHub App. The workflow mints a short-lived installation token at runtime, and that token must be able to:
-
-- push branches and open pull requests in this repository
-- trigger `pull_request` workflows for bot-created release PRs
-- create GitHub Releases
-
-For this repository, the production app is `my-portfolio-release-bot`, owned by `JustinPaoletta` and installed only on `JustinPaoletta/my_portfolio`. It has `Contents: Read and write` and `Pull requests: Read and write`. The legacy `CHANGESETS_GITHUB_TOKEN` secret has been removed. The default `GITHUB_TOKEN` is not enough because PRs created by that token do not trigger the required `pull_request` checks on the release PR.
-
-### Normal release flow
-
-1. Open a feature PR with a `.changeset/*.md` file.
-2. Merge the PR into `master`.
-3. `.github/workflows/release.yml` mints a short-lived token with `actions/create-github-app-token@v3` and uses it to open or update the release PR titled `chore(release): version packages`.
-4. Review that release PR and merge it manually.
-5. The same workflow creates the bare semver tag and the GitHub Release with generated notes from the merge commit of that release PR if that version does not already exist.
-
-### What does not create a release PR
-
-- PRs that contain only empty changesets do not open or update the release PR.
-- Merging a workflow-only, docs-only, or maintenance-only PR with an empty changeset should not publish a new version.
-- If a release is ever missed because the post-merge release job failed, recover that version on the original release PR merge commit instead of waiting for a later unrelated PR.
-
-Tags stay in bare semver format such as `1.1.0` and `1.1.1`.
-
-`CHANGELOG.md` remains checked in, but Changesets owns future release entries after the manual `1.1.0` normalization release.
-
-### Manual release checklist
+Use these as the local baseline before opening a release PR:
 
 ```bash
-git checkout master
-git pull
-npm run lint:ci
-npm run test:coverage
-npm run test:a11y:unit
-npm run test:e2e -- --project=chromium
+npm run lint
+npm run test:unit
+npm run build
+npm run test:e2e
 ```
 
-If you want cross-browser confidence beyond CI, also run `npm run test:e2e` before merging.
+For visual or performance-sensitive releases, also run:
 
-After those checks pass, merge the open release PR from GitHub.
-
-## Why This Workflow Exists
-
-- hooks catch local issues before code review or CI
-- Conventional Commits keep history readable and machine-validated
-- Changesets makes semver intent explicit on each PR
-- release PRs keep version bumps, changelog updates, tags, and GitHub Releases consistent
-
-## Related Files
-
-- `.changeset/config.json`
-- `.github/release.yml`
-- `.github/workflows/changeset-required.yml`
-- `.github/workflows/release.yml`
-- `.github/workflows/dependabot-changeset.yml`
-- `.husky/pre-commit`
-- `.husky/commit-msg`
-- `.husky/pre-push`
-- `.husky/pre-push.full`
-- `commitlint.config.js`
-- `CHANGELOG.md`
+```bash
+npm run test:visual
+npm run lighthouse
+```

@@ -1,58 +1,59 @@
-# approves and merges trusted dependabot prs once all checks pass.
+# Enables auto-merge for the repo's grouped Dependabot security PRs.
 
 name: Dependabot Auto-Merge
 
 on:
-  pull_request:
+  pull_request_target:
     branches:
       - main
       - master
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 permissions:
   contents: write
+  issues: write
   pull-requests: write
 
 jobs:
   auto-merge:
     runs-on: ubuntu-latest
-    # only run for dependabot PRs
-    if: github.actor == 'dependabot[bot]'
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
 
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v2
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          github-token: '${{ github.token }}'
 
-      - name: Enable auto-merge
+      - name: Enable auto-merge for grouped security PRs
         if: |
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          (steps.metadata.outputs.update-type == 'version-update:semver-major' &&
-           steps.metadata.outputs.dependency-type == 'direct:development')
+          steps.metadata.outputs.dependency-group == 'npm-security-updates' ||
+          steps.metadata.outputs.dependency-group == 'github-actions-security-updates'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
 
       - name: Comment on PR
         if: |
-          steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-          steps.metadata.outputs.update-type == 'version-update:semver-minor' ||
-          (steps.metadata.outputs.update-type == 'version-update:semver-major' &&
-           steps.metadata.outputs.dependency-type == 'direct:development')
+          (steps.metadata.outputs.dependency-group == 'npm-security-updates' ||
+           steps.metadata.outputs.dependency-group == 'github-actions-security-updates') &&
+          (github.event.action == 'opened' || github.event.action == 'reopened')
         run: |
-          gh pr comment "$PR_URL" --body "🤖 **Auto-merge enabled**
+          gh pr comment "$PR_URL" --body-file - <<'EOF'
+          Dependabot security auto-merge enabled.
 
-          This PR will be automatically merged once all required checks pass.
+          This PR matches the `${{ steps.metadata.outputs.dependency-group }}` security-update group and will merge automatically once all required checks pass.
 
-          **Update type:** \`${{ steps.metadata.outputs.update-type }}\`
-          **Dependency type:** \`${{ steps.metadata.outputs.dependency-type }}\`
+          Update type: `${{ steps.metadata.outputs.update-type }}`
+          Dependency type: `${{ steps.metadata.outputs.dependency-type }}`
 
-          ---
-          *Note: Please manually approve this PR if required by your branch protection rules.*
-          *To prevent auto-merge, comment \`@dependabot cancel merge\`*"
+          To prevent auto-merge, comment `@dependabot cancel merge`.
+          EOF
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
