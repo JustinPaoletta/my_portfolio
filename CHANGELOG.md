@@ -1,5 +1,20 @@
 # Changelog
 
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Changed
+
+- Dependabot is now explicitly configured and documented as security-only, and its auto-merge workflow only targets grouped security remediation PRs.
+
+### Documentation
+
+- Standardized the repository around a manual changelog, release branches, and a root `RELEASE.md` guide shared with the other application repos.
+
 ## 1.1.17
 
 ### Patch Changes
@@ -121,13 +136,6 @@
 ### Patch Changes
 
 - e2515ed: Migrate automated versioning, release PRs, and GitHub releases to Changesets.
-
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
-## [Unreleased]
 
 ## [1.1.0] - 2026-03-23
 

@@ -1,287 +1,99 @@
-# Dependabot Configuration Guide
+# Dependabot Policy
 
 ## Overview
 
-Dependabot is configured to automatically keep your dependencies up to date by creating pull requests when new versions are available.
+This repository uses Dependabot for security remediation only.
 
-## Configuration Details
+- Routine version-update PRs are intentionally disabled.
+- Dependabot may still open PRs immediately for vulnerable npm dependencies and vulnerable GitHub Actions versions.
+- Non-security dependency refreshes are done manually in normal branches and PRs.
 
-### Update Schedule
+## Source Of Truth
 
-- **Frequency**: Weekly (every Monday at 9:00 AM America/New_York / Eastern Time)
-- **Maximum Open PRs**: 10 at a time
+- [`.github/dependabot.yml`](../.github/dependabot.yml)
+- [`.github/workflows/dependabot-auto-merge.yml`](../.github/workflows/dependabot-auto-merge.yml)
 
-### Grouped Updates
+## How The Config Works
 
-Dependencies are grouped by category to reduce PR noise and make reviews easier:
-
-#### 1. **React Group**
-
-- `react`, `react-dom`, and all `react-*` packages
-- Keeps your React ecosystem in sync
-
-#### 2. **Vite Group**
-
-- `vite`, `@vitejs/*`, and `rolldown-vite`
-- Keeps your build tooling in sync
-
-#### 3. **Testing Group**
-
-- `vitest`, `@vitest/*`
-- `@testing-library/*`
-- `@playwright/test`
-- `jsdom`
-- Keeps all testing tools together
-
-#### 4. **Linting Group**
-
-- `eslint`, `eslint-*`, `@eslint/*`
-- `prettier`
-- `typescript-eslint`
-- Keeps code quality tools in sync
-
-#### 5. **TypeScript Group**
-
-- `typescript`
-- `@types/*`
-- Keeps type definitions with TypeScript version
-
-#### 6. **Commitlint Group**
-
-- `@commitlint/*`
-- `husky`
-- `lint-staged`
-- Keeps Git workflow tools in sync
-
-### Commit Message Format
-
-All Dependabot PRs follow your conventional commit format:
-
-- **Production dependencies**: `chore(deps): update <package>`
-- **Development dependencies**: `chore(deps-dev): update <package>`
-
-### Labels
-
-All Dependabot PRs are automatically tagged with:
-
-- `dependencies` - for npm updates
-- `dependabot` - to identify bot-created PRs
-- `github-actions` - for workflow updates (when applicable)
-
-The repo currently has two Dependabot update blocks:
-
-- `npm` for package updates
-- `github-actions` for workflow updates
-
-## Customization
-
-### Add Reviewers/Assignees
-
-Update these lines in `.github/dependabot.yml`:
+Each configured ecosystem keeps a `schedule` block because GitHub requires one, but the effective policy comes from:
 
 ```yaml
-reviewers:
-  - 'your-github-username'
-assignees:
-  - 'your-github-username'
+open-pull-requests-limit: 0
 ```
 
-### Change Update Frequency
+That setting disables Dependabot version-update PRs for the ecosystem while still allowing Dependabot security updates.
 
-Options: `daily`, `weekly`, `monthly`
+This repo currently applies that policy to:
 
-```yaml
-schedule:
-  interval: 'weekly' # Change this
-  day: 'monday' # For weekly only
+- `npm`
+- `github-actions`
+
+Security PRs are grouped with:
+
+- `npm-security-updates`
+- `github-actions-security-updates`
+
+Those groups keep related security fixes together without reopening routine upgrade noise.
+
+## Important Guardrail
+
+Do not add version-range `ignore` rules unless you explicitly want to suppress security PRs too.
+
+GitHub applies dependency and version ignore rules to both version updates and security updates. In this repo, compatibility holds for routine upgrades should be handled manually, not by hiding potential security fixes from Dependabot.
+
+## Auto-Merge Automation
+
+The workflow at [`.github/workflows/dependabot-auto-merge.yml`](../.github/workflows/dependabot-auto-merge.yml):
+
+- runs on `pull_request_target` so the GitHub token can actually enable auto-merge for Dependabot PRs
+- only acts on PRs opened by `dependabot[bot]`
+- only enables auto-merge when the PR matches one of the configured security-update groups
+- uses squash merge after the repository's required checks pass
+
+If a security PR should not merge automatically, comment:
+
+```text
+@dependabot cancel merge
 ```
 
-### Adjust PR Limit
+Useful comment commands:
 
-```yaml
-open-pull-requests-limit: 10 # Change this number
-```
+- `@dependabot rebase`
+- `@dependabot recreate`
+- `@dependabot close`
+- `@dependabot ignore this dependency`
 
-### Add More Groups
+## Repository Settings
 
-To create a new group:
+For the policy to work as intended, GitHub should have:
 
-```yaml
-groups:
-  your-group-name:
-    patterns:
-      - 'package-name'
-      - 'package-prefix-*'
-```
+- Dependency graph enabled
+- Dependabot alerts enabled
+- Dependabot security updates enabled
+- Allow auto-merge enabled
+- GitHub Actions workflow permissions set to read and write
+- "Allow GitHub Actions to create and approve pull requests" enabled
 
-## Best Practices
+Branch protection on the default branch should continue to require the normal CI checks before merge.
 
-### 1. Review PRs Promptly
+## Operational Notes
 
-- Check Dependabot PRs weekly
-- Review changelogs for breaking changes
-- Test locally before merging
+- Security PRs can still be major-version jumps if that is the first safe version.
+- After merging a noteworthy security fix, add a short note to [`CHANGELOG.md`](../CHANGELOG.md) under `## [Unreleased]`.
+- If you want a routine dependency refresh, open a normal branch and PR instead of relaxing the Dependabot policy.
 
-### 2. Auto-Merge for Trusted Updates ✅
+## Verification
 
-Auto-merge is **enabled** via the GitHub Actions workflow at `.github/workflows/dependabot-auto-merge.yml`.
-
-The **Changeset Required** check (`.github/workflows/changeset-required.yml`) **does not require** a `.changeset/*.md` file when the pull request author is `dependabot[bot]`. The job still runs and succeeds so branch protection can keep that check required.
-
-Separately, `.github/workflows/dependabot-changeset.yml` may add a deterministic patch changeset (`.changeset/dependabot-pr-<number>.md`) on Dependabot-originated `pull_request_target` events so dependency bumps can participate in the normal Changesets release PR flow. That workflow is **not** what makes the merge gate pass anymore; it is optional from a policy perspective but still useful if you want semver bumps from merged dependency updates.
-
-That automatic changeset job only runs when `github.actor` is `dependabot[bot]`. If a maintainer manually updates the PR branch later, the changeset workflow does not rerun under the maintainer account.
-
-#### What Gets Auto-Merged?
-
-The workflow automatically enables auto-merge for:
-
-- ✅ **Patch updates** (1.0.0 → 1.0.1) - All dependencies
-- ✅ **Minor updates** (1.0.0 → 1.1.0) - All dependencies
-- ✅ **Major updates** (1.0.0 → 2.0.0) - Dev dependencies only
-
-Major updates to production dependencies require manual review.
-
-#### How It Works
-
-1. Dependabot creates a PR
-2. **Changeset Required** succeeds without a changeset file (Dependabot exemption)
-3. `.github/workflows/dependabot-changeset.yml` may create or update `.changeset/dependabot-pr-<number>.md` (when the triggering actor is Dependabot), if you keep that workflow enabled
-4. The auto-merge workflow enables auto-merge if its criteria are met
-5. The PR merges once all required CI checks pass
-6. If the merged branch includes a changeset with a real bump, the normal Changesets release PR flow on `main` handles the version bump and GitHub Release; merges without a changeset do not add release intent from Changesets
-
-#### Customizing Auto-Merge Rules
-
-Edit `.github/workflows/dependabot-auto-merge.yml` to adjust what gets merged:
-
-```yaml
-# Example: Only auto-merge patch updates
-if: steps.metadata.outputs.update-type == 'version-update:semver-patch'
-
-# Example: Auto-merge all dev dependencies
-if: steps.metadata.outputs.dependency-type == 'direct:development'
-
-# Example: Never auto-merge production dependencies
-if: |
-  steps.metadata.outputs.dependency-type == 'direct:development' &&
-  (steps.metadata.outputs.update-type == 'version-update:semver-patch' ||
-   steps.metadata.outputs.update-type == 'version-update:semver-minor')
-```
-
-#### Manual Auto-Merge (Alternative)
-
-For individual PRs without the workflow:
+After pushing changes to the policy, check:
 
 ```bash
-# Using GitHub CLI
-gh pr review <PR-NUMBER> --approve
-gh pr merge <PR-NUMBER> --auto --squash
-
-# Or enable in GitHub UI
-# Go to PR → Enable auto-merge → Choose merge method
-```
-
-### 3. Security Updates
-
-- Security updates are created immediately (not weekly)
-- Review and merge these as soon as possible
-- Check for breaking changes in major version bumps
-
-### 4. Monitor CI/CD
-
-- Ensure all tests pass before merging
-- Check for deprecation warnings
-- Verify the app builds successfully
-- Verify the `Changeset Required` check passes before auto-merge is expected to complete (for Dependabot PRs this check passes without a changeset; other authors still need a `.changeset/*.md` file)
-
-## Troubleshooting
-
-### Too Many PRs?
-
-- Reduce `open-pull-requests-limit`
-- Change schedule to `monthly`
-- Add more grouping patterns
-
-### Missing Updates?
-
-- Check Dependabot logs in GitHub Security tab
-- Verify `.github/dependabot.yml` syntax
-- Ensure Dependabot is enabled in repo settings
-
-### Conflicts?
-
-- Rebase the PR: Comment `@dependabot rebase`
-- Recreate the PR: Comment `@dependabot recreate`
-- Close and ignore: Comment `@dependabot close`
-
-## Useful Commands
-
-Comment these on Dependabot PRs:
-
-- `@dependabot rebase` - Rebase the PR
-- `@dependabot recreate` - Recreate the PR
-- `@dependabot merge` - Merge when tests pass
-- `@dependabot squash and merge` - Squash and merge
-- `@dependabot cancel merge` - Cancel auto-merge
-- `@dependabot close` - Close the PR
-- `@dependabot ignore this dependency` - Ignore future updates
-- `@dependabot ignore this major version` - Ignore major version
-- `@dependabot ignore this minor version` - Ignore minor version
-
-## Repository Setup for Auto-Merge
-
-For the auto-merge workflow to function properly, ensure these settings are configured:
-
-### 1. Enable Required GitHub Settings
-
-Go to **Settings → General → Pull Requests**:
-
-- ✅ Enable "Allow auto-merge"
-- ✅ Enable "Automatically delete head branches"
-
-### 2. Branch Protection (Recommended)
-
-Go to **Settings → Branches** → Add rule for `main`:
-
-- ✅ Require status checks to pass before merging
-- ✅ Select which checks are required (e.g., lint, test, build, `Changeset Required`)
-- ✅ Require branches to be up to date before merging
-- ⚠️ Do NOT require pull request approvals (workflow provides approval)
-
-### 3. Enable Dependabot
-
-Go to **Settings → Security → Dependabot**:
-
-- ✅ Enable "Dependabot alerts"
-- ✅ Enable "Dependabot security updates"
-- ✅ Enable "Dependabot version updates"
-
-### 4. Workflow Permissions
-
-Go to **Settings → Actions → General → Workflow permissions**:
-
-- ✅ Select "Read and write permissions"
-- ✅ Enable "Allow GitHub Actions to create and approve pull requests"
-
-### 5. Verify Auto-Merge Setup
-
-After pushing the workflow, test it:
-
-```bash
-# Check if workflow exists
 gh workflow list
-
-# View workflow runs
 gh run list --workflow=dependabot-auto-merge.yml
-
-# Watch for Dependabot PRs
-gh pr list --author app/dependabot
+gh pr list --author "dependabot[bot]"
 ```
 
-## Resources
+## References
 
-- [Dependabot Documentation](https://docs.github.com/en/code-security/dependabot)
-- [Configuration Options](https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file)
-- [About Dependabot Security Updates](https://docs.github.com/en/code-security/dependabot/dependabot-security-updates/about-dependabot-security-updates)
-- [Auto-merge Pull Requests](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/automatically-merging-a-pull-request)
+- [Dependabot options reference](https://docs.github.com/en/code-security/reference/supply-chain-security/dependabot-options-reference)
+- [Configuring Dependabot security updates](https://docs.github.com/en/code-security/how-tos/secure-your-supply-chain/secure-your-dependencies/configuring-dependabot-security-updates)
+- [dependabot/fetch-metadata](https://github.com/dependabot/fetch-metadata)

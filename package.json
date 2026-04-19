@@ -6,7 +6,6 @@
   "scripts": {
     "build": "npm run type-check && npm run contrast:check && node ./node_modules/vite/bin/vite.js build && npm run prerender",
     "build:analyze": "npm run type-check && ANALYZE=true node ./node_modules/vite/bin/vite.js build && npx --yes vite-bundle-visualizer@1.2.1",
-    "changeset": "changeset",
     "clean:cache": "rm -rf dist coverage .vite .lighthouseci playwright-report test-results",
     "contrast:check": "tsx scripts/contrast-check.ts",
     "generate:icons": "node scripts/generate-icons.mjs",
@@ -35,7 +34,6 @@
     "test:visual:update:linux": "./scripts/run-visual-linux.sh --update-snapshots",
     "type-check": "tsc -b --noEmit",
     "type-check:watch": "tsc -b --noEmit --watch",
-    "version-packages": "changeset version",
     "prerender": "tsx scripts/prerender.ts"
   },
   "dependencies": {
@@ -46,7 +44,6 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
-    "@changesets/cli": "^2.30.0",
     "@commitlint/cli": "^20.5.0",
     "@commitlint/config-conventional": "^20.5.0",
     "@eslint/js": "^9.39.4",

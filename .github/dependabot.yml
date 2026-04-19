@@ -1,67 +1,27 @@
-# Dependabot Configuration
-# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+# Dependabot is intentionally limited to security remediation PRs.
+# Setting `open-pull-requests-limit: 0` disables routine version-update PRs
+# while still allowing Dependabot security updates for each ecosystem.
 
 version: 2
 updates:
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
+      # GitHub still requires a schedule block even when version updates are disabled.
       interval: 'weekly'
       day: 'monday'
       time: '09:00'
       timezone: 'America/New_York'
-    ignore:
-      # eslint-plugin-jsx-a11y and eslint-plugin-react-hooks currently cap at ESLint 9.
-      - dependency-name: 'eslint'
-        versions: ['>=10']
-      - dependency-name: '@eslint/js'
-        versions: ['>=10']
-      # typescript-eslint@8 still requires typescript < 6, so ignore TS 6 until the toolchain can move together.
-      - dependency-name: 'typescript'
-        versions: ['>=6']
-      # @vitejs/plugin-react 6.x requires vite 8, but this repo is still on rolldown-vite 7.x.
-      - dependency-name: '@vitejs/plugin-react'
-        versions: ['>=6']
     groups:
-      # prod deps
-      react:
+      npm-security-updates:
+        applies-to: 'security-updates'
         patterns:
-          - 'react'
-          - 'react-dom'
-          - 'react-*'
-      # dev deps
-      vite:
-        patterns:
-          - 'vite'
-          - '@vitejs/*'
-          - 'rolldown-vite'
-      testing:
-        patterns:
-          - 'vitest'
-          - '@vitest/*'
-          - '@testing-library/*'
-          - '@playwright/test'
-          - 'jsdom'
-      linting:
-        patterns:
-          - 'eslint'
-          - 'eslint-*'
-          - '@eslint/*'
-          - 'prettier'
-          - 'typescript-eslint'
-      typescript:
-        patterns:
-          - 'typescript'
-          - '@types/*'
-      commitlint:
-        patterns:
-          - '@commitlint/*'
-          - 'husky'
-          - 'lint-staged'
+          - '*'
     labels:
       - 'dependencies'
       - 'dependabot'
-    open-pull-requests-limit: 10
+    # Disable routine version-update PRs. Security PRs still open outside this limit.
+    open-pull-requests-limit: 0
     commit-message:
       prefix: 'chore'
       prefix-development: 'chore'
@@ -71,17 +31,25 @@ updates:
     assignees:
       - 'JustinPaoletta'
 
-  # check for dependency updates weekly
   - package-ecosystem: 'github-actions'
     directory: '/'
     schedule:
+      # GitHub still requires a schedule block even when version updates are disabled.
       interval: 'weekly'
       day: 'monday'
       time: '09:00'
       timezone: 'America/New_York'
+    groups:
+      github-actions-security-updates:
+        applies-to: 'security-updates'
+        patterns:
+          - '*'
     labels:
       - 'dependencies'
+      - 'dependabot'
       - 'github-actions'
+    # Disable routine version-update PRs. Security PRs still open outside this limit.
+    open-pull-requests-limit: 0
     commit-message:
       prefix: 'ci'
       include: 'scope'
