@@ -140,7 +140,7 @@ Breaking changes can use `!` or a `BREAKING CHANGE:` footer.
 - Keep `## [Unreleased]` at the top of the file.
 - Add concise, human-written notes for user-visible or operator-visible changes.
 - Use the release categories already established in the changelog: `Added`, `Changed`, `Fixed`, `Removed`, `Security`, and `Documentation`.
-- Do not depend on bot-generated changeset files or release PRs.
+- Do not depend on release automation. Update `CHANGELOG.md` directly and cut release branches manually.
 - Routine dependency upgrades are manual. Dependabot is intentionally limited to security-update PRs.
 
 ## Manual Releases

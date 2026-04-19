@@ -10,6 +10,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Changed
 
 - Dependabot is now explicitly configured and documented as security-only, and its auto-merge workflow only targets grouped security remediation PRs.
+- Removed a stale release-docs-only workflow and aligned the release docs with the repo's manual release process.
 
 ### Documentation
 
