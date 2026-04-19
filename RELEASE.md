@@ -79,4 +79,4 @@ git push origin vX.Y.Z
 
 ## Notes
 
-- This repo no longer relies on Changesets or bot-created release PRs.
+- This repo uses manual release branches, manual version bumps, and `CHANGELOG.md` as the release source of truth.
