@@ -4,7 +4,7 @@ console.log('[SETUP] Loading application environment config...');
 import '@/config/env';
 console.log('[SETUP] Application environment config loaded successfully');
 
-import { expect, afterEach } from 'vitest';
+import { expect, afterEach, vi } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { toHaveNoViolations } from 'jest-axe';
@@ -104,4 +104,7 @@ if (!window.cancelAnimationFrame) {
 
 afterEach(() => {
   cleanup();
+  // With pool isolation disabled, stubbed globals (e.g. fetch) must not leak
+  // between test files; otherwise unrelated tests hit partial mocks.
+  vi.unstubAllGlobals();
 });

@@ -196,9 +196,23 @@ function setSvgFaviconHref(href: string): void {
 
 function getFaviconTemplate(): Promise<string | null> {
   if (!faviconTemplatePromise) {
-    faviconTemplatePromise = fetch(FAVICON_TEMPLATE_PATH)
-      .then((response) => (response.ok ? response.text() : null))
-      .catch(() => null);
+    const fetchImpl = globalThis.fetch;
+    if (typeof fetchImpl !== 'function') {
+      faviconTemplatePromise = Promise.resolve(null);
+    } else {
+      try {
+        const responsePromise = fetchImpl(FAVICON_TEMPLATE_PATH);
+        faviconTemplatePromise =
+          responsePromise != null &&
+          typeof (responsePromise as PromiseLike<unknown>).then === 'function'
+            ? (responsePromise as Promise<Response>)
+                .then((response) => (response.ok ? response.text() : null))
+                .catch(() => null)
+            : Promise.resolve(null);
+      } catch {
+        faviconTemplatePromise = Promise.resolve(null);
+      }
+    }
   }
 
   return faviconTemplatePromise;
