@@ -29,3 +29,27 @@ jobs:
           test -f CHANGELOG.md
           test -f RELEASE.md
           echo "Manual release process is documented in RELEASE.md."
+      - name: Verify PR includes a changeset
+        if: github.event.pull_request.user.login != 'dependabot[bot]'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100,
+            });
+
+            const hasChangeset = files.some((file) =>
+              file.filename.startsWith('.changeset/') &&
+              file.filename.endsWith('.md') &&
+              file.filename !== '.changeset/README.md'
+            );
+
+            if (!hasChangeset) {
+              core.setFailed(
+                'Every PR into master must include a .changeset/*.md file. ' +
+                  'Use `npm run changeset` and commit the generated file.'
+              );
+            }

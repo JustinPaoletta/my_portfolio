@@ -9,12 +9,38 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
-- Dependency maintenance after `1.1.14`, including the recent `basic-ftp` patch updates and testing-tooling updates.
 - Dependabot is now explicitly configured and documented as security-only, and its auto-merge workflow only targets grouped security remediation PRs.
 
 ### Documentation
 
 - Standardized the repository around a manual changelog, release branches, and a root `RELEASE.md` guide shared with the other application repos.
+
+## 1.1.17
+
+### Patch Changes
+
+- 86a39d1: chore(deps-dev): bump @types/node from 25.5.2 to 25.6.0 in the typescript group across 1 directory
+- f419927: chore(deps-dev): bump @vercel/node from 5.7.0 to 5.7.4
+- 8bc3b64: chore(deps-dev): bump dotenv from 17.4.1 to 17.4.2
+- e56b335: chore(deps-dev): bump globals from 17.4.0 to 17.5.0
+- e400a28: chore(deps-dev): bump the linting group across 1 directory with 3 updates
+
+## 1.1.16
+
+### Patch Changes
+
+- 54b61f1: ci(deps): bump dependabot/fetch-metadata from 2 to 3
+- a6f273f: ci(deps): bump actions/github-script from 8 to 9
+- 925a6bd: chore(deps): bump the react group across 1 directory with 2 updates
+
+## 1.1.15
+
+### Patch Changes
+
+- 81a6dd9: gitignore file added
+- 26eb870: chore(deps-dev): bump basic-ftp from 5.2.0 to 5.2.1
+- 7bb446c: chore(deps-dev): bump basic-ftp from 5.2.1 to 5.2.2
+- 25a2f26: chore(deps-dev): bump the testing group with 4 updates
 
 ## 1.1.14
 
