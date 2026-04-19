@@ -139,7 +139,7 @@ Conventional Commits are still required, but they no longer drive version bumps 
 
 ## Changesets
 
-Every normal PR into `master` must include a `.changeset/*.md` file. Create one with:
+Every normal PR into `main` must include a `.changeset/*.md` file. Create one with:
 
 ```bash
 npm run changeset
@@ -165,7 +165,7 @@ That updates `package.json`, `package-lock.json`, and `CHANGELOG.md` based on pe
 
 ## Releases & Changelog
 
-Releases now use the standard Changesets release PR flow on `master`.
+Releases now use the standard Changesets release PR flow on `main`.
 
 Before relying on the automation, configure the repository variable `CHANGESETS_APP_ID` and repository secret `CHANGESETS_APP_PRIVATE_KEY` for the dedicated release GitHub App. The workflow mints a short-lived installation token at runtime, and that token must be able to:
 
@@ -178,7 +178,7 @@ For this repository, the production app is `my-portfolio-release-bot`, owned by 
 ### Normal release flow
 
 1. Open a feature PR with a `.changeset/*.md` file.
-2. Merge the PR into `master`.
+2. Merge the PR into `main`.
 3. `.github/workflows/release.yml` mints a short-lived token with `actions/create-github-app-token@v3` and uses it to open or update the release PR titled `chore(release): version packages`.
 4. Review that release PR and merge it manually.
 5. The same workflow creates the bare semver tag and the GitHub Release with generated notes from the merge commit of that release PR if that version does not already exist.
@@ -196,7 +196,7 @@ Tags stay in bare semver format such as `1.1.0` and `1.1.1`.
 ### Manual release checklist
 
 ```bash
-git checkout master
+git checkout main
 git pull
 npm run lint:ci
 npm run test:coverage

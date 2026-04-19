@@ -149,7 +149,7 @@ Major updates to production dependencies require manual review.
 3. `.github/workflows/dependabot-changeset.yml` may create or update `.changeset/dependabot-pr-<number>.md` (when the triggering actor is Dependabot), if you keep that workflow enabled
 4. The auto-merge workflow enables auto-merge if its criteria are met
 5. The PR merges once all required CI checks pass
-6. If the merged branch includes a changeset with a real bump, the normal Changesets release PR flow on `master` handles the version bump and GitHub Release; merges without a changeset do not add release intent from Changesets
+6. If the merged branch includes a changeset with a real bump, the normal Changesets release PR flow on `main` handles the version bump and GitHub Release; merges without a changeset do not add release intent from Changesets
 
 #### Customizing Auto-Merge Rules
 
@@ -242,7 +242,7 @@ Go to **Settings → General → Pull Requests**:
 
 ### 2. Branch Protection (Recommended)
 
-Go to **Settings → Branches** → Add rule for `master`:
+Go to **Settings → Branches** → Add rule for `main`:
 
 - ✅ Require status checks to pass before merging
 - ✅ Select which checks are required (e.g., lint, test, build, `Changeset Required`)

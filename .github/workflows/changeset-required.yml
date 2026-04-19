@@ -3,7 +3,7 @@ name: Changeset Required
 on:
   pull_request:
     branches:
-      - master
+      - main
     types:
       - opened
       - reopened
@@ -46,7 +46,7 @@ jobs:
 
             if (!hasChangeset) {
               core.setFailed(
-                'Every PR into master must include a .changeset/*.md file. ' +
+                'Every PR into main must include a .changeset/*.md file. ' +
                   'Use `npm run changeset` and commit the generated file.'
               );
             }
