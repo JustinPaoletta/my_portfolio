@@ -36,7 +36,7 @@ npm run lighthouse
 4. Create the release branch:
 
    ```bash
-   git checkout master
+   git checkout main
    git pull --ff-only
    git checkout -b release/vX.Y.Z
    ```
@@ -60,7 +60,7 @@ npm run lighthouse
 10. Tag the merge commit and push the tag:
 
 ```bash
-git checkout master
+git checkout main
 git pull --ff-only
 git tag -a vX.Y.Z -m "Release vX.Y.Z"
 git push origin vX.Y.Z
@@ -80,4 +80,3 @@ git push origin vX.Y.Z
 ## Notes
 
 - This repo no longer relies on Changesets or bot-created release PRs.
-- If the default branch is renamed from `master` to `main`, keep the same process and substitute the new branch name in the commands above.

@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - main
-      - master
 
 # Explicit permissions required for checkout@v6 and PR comments (GitHub tightened default GITHUB_TOKEN)
 permissions:
