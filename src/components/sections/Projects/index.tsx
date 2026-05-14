@@ -41,6 +41,7 @@ interface Project {
   techStack: string[];
   liveUrl?: string;
   githubUrl?: string;
+  packageUrl?: string;
   private?: boolean;
   featured: boolean;
   status?: ProjectStatus;
@@ -101,6 +102,21 @@ const projects: Project[] = [
     githubUrl: `${env.social.github}/godot_practice`,
     featured: true,
     status: 'development',
+  },
+  {
+    id: 'project-4',
+    title: 'wild-apricot-exports',
+    description:
+      'A published Node CLI and library for exporting and backing up Wild Apricot data without relying on the admin UI. It pulls contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files through the public REST API and WebDAV, then writes everything locally as JSON, CSV, and original files.',
+    image: '/images/projects/wild-apricot-exports-logo.png',
+    cardImage: '/images/projects/wild-apricot-exports-logo.png',
+    cardImageAlt:
+      'wild-apricot-exports logo with an apricot mascot, terminal prompt, and CSV export icon',
+    cardImageFit: 'contain',
+    techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
+    githubUrl: `${env.social.github}/wild-apricot-exports`,
+    packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
+    featured: false,
   },
   {
     id: 'project-5',
@@ -283,6 +299,48 @@ function Projects(): React.ReactElement {
                         </a>
                       )
                     )}
+                    {project.packageUrl && (
+                      <a
+                        href={project.packageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-link"
+                        aria-label={`View ${project.title} on npm`}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="m7.5 4.27 9 5.15"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="m3.29 7 8.71 5 8.71-5"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 22V12"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>npm</span>
+                      </a>
+                    )}
                   </div>
                 </div>
               </div>
@@ -405,6 +463,47 @@ function Projects(): React.ReactElement {
                         />
                         <polyline points="15 3 21 3 21 9" strokeWidth="2" />
                         <line x1="10" y1="14" x2="21" y2="3" strokeWidth="2" />
+                      </svg>
+                    </a>
+                  )}
+                  {project.packageUrl && (
+                    <a
+                      href={project.packageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-link"
+                      aria-label={`View ${project.title} on npm`}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="m7.5 4.27 9 5.15"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="m3.29 7 8.71 5 8.71-5"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M12 22V12"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
                       </svg>
                     </a>
                   )}

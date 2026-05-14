@@ -29,6 +29,14 @@ describe('Projects section', () => {
     expect(
       screen.getByRole('link', { name: 'View @jp-design-system source code' })
     ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', {
+        name: 'View wild-apricot-exports on GitHub',
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'View wild-apricot-exports on npm' })
+    ).toBeInTheDocument();
   });
 
   it('renders project content consistently', () => {
@@ -38,6 +46,9 @@ describe('Projects section', () => {
       screen.getByRole('heading', { name: 'My Projects' })
     ).toBeInTheDocument();
     expect(screen.getByText('BitStockerz')).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: 'wild-apricot-exports' })
+    ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Plexarr' })
     ).toBeInTheDocument();

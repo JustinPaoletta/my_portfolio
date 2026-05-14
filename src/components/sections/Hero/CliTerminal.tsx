@@ -28,6 +28,7 @@ interface CliProject {
   status?: string;
   featured: boolean;
   githubUrl?: string;
+  packageUrl?: string;
   private?: boolean;
 }
 
@@ -130,6 +131,15 @@ const PROJECTS: CliProject[] = [
     status: 'In Development',
     featured: true,
     githubUrl: `${env.social.github}/godot_practice`,
+  },
+  {
+    title: 'wild-apricot-exports',
+    description:
+      'A published Node CLI and library for exporting and backing up Wild Apricot accounts without using the admin UI. It saves contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files locally as JSON, CSV, and original file backups.',
+    techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
+    featured: false,
+    githubUrl: `${env.social.github}/wild-apricot-exports`,
+    packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
   },
   {
     title: 'SideQuest: Pittsburgh',
@@ -513,6 +523,13 @@ function CliTerminal(): React.ReactElement {
             url: project.githubUrl,
           }
         : null;
+    const packageLine = project.packageUrl
+      ? {
+          kind: 'output' as const,
+          text: `npm: ${project.packageUrl}`,
+          url: project.packageUrl,
+        }
+      : null;
 
     appendLines([
       { kind: 'output', text: `[PROJECT ${selection}] ${project.title}` },
@@ -521,6 +538,7 @@ function CliTerminal(): React.ReactElement {
         text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${project.status}` : ''}`,
       },
       ...(repoLine ? [repoLine] : []),
+      ...(packageLine ? [packageLine] : []),
       { kind: 'output', text: project.description },
       { kind: 'output', text: `Stack: ${project.techStack.join(', ')}` },
       { kind: 'hint', text: 'Try another project number, or type menu.' },
