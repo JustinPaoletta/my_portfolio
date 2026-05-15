@@ -13,7 +13,7 @@ describe('Projects section', () => {
       screen.getByRole('heading', { name: 'Other Projects' })
     ).toBeInTheDocument();
 
-    expect(screen.getAllByLabelText('Project in development').length).toBe(2);
+    expect(screen.getAllByLabelText('Project in development').length).toBe(1);
     expect(screen.getByLabelText('Project planning')).toBeInTheDocument();
 
     expect(
@@ -36,6 +36,11 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'View wild-apricot-exports on npm' })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', {
+        name: 'Download wild-apricot-exports from npm',
+      })
     ).toBeInTheDocument();
   });
 

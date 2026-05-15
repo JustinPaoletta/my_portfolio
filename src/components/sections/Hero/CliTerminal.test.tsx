@@ -463,7 +463,7 @@ describe('CliTerminal', () => {
     expect(
       screen.getByText('[PROJECT 5] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
-    expect(screen.getByText('Type: Other')).toBeInTheDocument();
+    expect(screen.getByText('Type: Featured')).toBeInTheDocument();
     expect(screen.getByText('Repository: Private')).toBeInTheDocument();
   });
 

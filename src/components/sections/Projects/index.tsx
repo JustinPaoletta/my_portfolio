@@ -42,6 +42,7 @@ interface Project {
   liveUrl?: string;
   githubUrl?: string;
   packageUrl?: string;
+  packageCtaLabel?: string;
   private?: boolean;
   featured: boolean;
   status?: ProjectStatus;
@@ -100,7 +101,7 @@ const projects: Project[] = [
     image: '/images/projects/godot-playground.webp',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     githubUrl: `${env.social.github}/godot_practice`,
-    featured: true,
+    featured: false,
     status: 'development',
   },
   {
@@ -113,6 +114,7 @@ const projects: Project[] = [
     techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
     githubUrl: `${env.social.github}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
+    packageCtaLabel: 'Download npm Package',
     featured: false,
   },
   {
@@ -124,7 +126,7 @@ const projects: Project[] = [
     cardHeaderIcon: '/images/projects/sidequest-logo.png',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
-    featured: false,
+    featured: true,
   },
   {
     id: 'project-6',
@@ -530,6 +532,17 @@ function Projects(): React.ReactElement {
                 <ProjectHeadingTitle project={project} />
               </h4>
               <p className="card-description">{project.description}</p>
+              {project.packageUrl && project.packageCtaLabel && (
+                <a
+                  href={project.packageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="card-cta"
+                  aria-label={`Download ${project.title} from npm`}
+                >
+                  {project.packageCtaLabel}
+                </a>
+              )}
               <div className="card-tech">
                 {project.techStack.slice(0, 4).map((tech) => (
                   <span key={tech} className="tech-tag-small">

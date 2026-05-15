@@ -129,7 +129,7 @@ const PROJECTS: CliProject[] = [
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene.',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     status: 'In Development',
-    featured: true,
+    featured: false,
     githubUrl: `${env.social.github}/godot_practice`,
   },
   {
@@ -146,7 +146,7 @@ const PROJECTS: CliProject[] = [
     description:
       'A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built offline-first, it surfaces under-the-radar spots—prioritizing proximity, novelty, and curated tags over star ratings and influencer rankings.',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
-    featured: false,
+    featured: true,
     private: true,
   },
   {
