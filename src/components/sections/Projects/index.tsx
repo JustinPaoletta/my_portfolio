@@ -31,6 +31,8 @@ interface Project {
   title: string;
   description: string;
   image: string;
+  imageFit?: 'cover' | 'contain';
+  imagePosition?: string;
   cardImage?: string;
   cardImageAlt?: string;
   cardImageFit?: 'cover' | 'contain';
@@ -77,7 +79,7 @@ const projects: Project[] = [
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
     image: '/images/projects/bitstockerz.webp',
-    techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
+    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: `${env.social.github}/BitStockerz`,
     featured: true,
     status: 'development',
@@ -99,6 +101,7 @@ const projects: Project[] = [
     description:
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene designed to be reused or referenced in future projects.',
     image: '/images/projects/godot-playground.webp',
+    cardHeaderIcon: '/images/projects/godot-playground.webp',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     githubUrl: `${env.social.github}/godot_practice`,
     featured: false,
@@ -123,6 +126,7 @@ const projects: Project[] = [
     description:
       "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
     image: '/images/projects/sidequest-logo.png',
+    imageFit: 'contain',
     cardHeaderIcon: '/images/projects/sidequest-logo.png',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
@@ -191,11 +195,26 @@ function Projects(): React.ReactElement {
               delay={140 + index * 90}
               visible={isVisible}
             >
-              <div className="project-image-wrapper">
+              <div
+                className={`project-image-wrapper${
+                  project.imageFit === 'contain'
+                    ? ' project-image-wrapper--contain'
+                    : ''
+                }`}
+              >
                 <img
                   src={project.image}
                   alt={`${project.title} screenshot`}
-                  className="project-image"
+                  className={`project-image${
+                    project.imageFit === 'contain'
+                      ? ' project-image--contain'
+                      : ''
+                  }`}
+                  style={
+                    project.imagePosition
+                      ? { objectPosition: project.imagePosition }
+                      : undefined
+                  }
                   loading="lazy"
                   width={800}
                   height={600}

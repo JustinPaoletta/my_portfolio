@@ -1,4 +1,4 @@
-import { render, screen } from '@/test/test-utils';
+import { render, screen, within } from '@/test/test-utils';
 import { describe, expect, it } from 'vitest';
 import Projects from '.';
 
@@ -57,5 +57,25 @@ describe('Projects section', () => {
     expect(
       screen.getByRole('heading', { name: 'Plexarr' })
     ).toBeInTheDocument();
+
+    const bitStockerzCard = screen.getByText('BitStockerz').closest('article');
+    expect(bitStockerzCard).not.toBeNull();
+    if (!bitStockerzCard) {
+      throw new Error('BitStockerz card not found');
+    }
+    expect(within(bitStockerzCard).getByText('Angular')).toBeInTheDocument();
+    expect(
+      within(bitStockerzCard).queryByText('React')
+    ).not.toBeInTheDocument();
+
+    expect(
+      document.querySelector(
+        'img.folder-icon--image[src="/images/projects/godot-playground.webp"]'
+      )
+    ).toBeInTheDocument();
+
+    expect(screen.getByAltText('SideQuest: Pittsburgh screenshot')).toHaveClass(
+      'project-image--contain'
+    );
   });
 });

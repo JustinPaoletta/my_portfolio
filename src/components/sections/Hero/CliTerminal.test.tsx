@@ -387,6 +387,11 @@ describe('CliTerminal', () => {
     runCommand('projects');
     runCommand('1');
     expect(screen.getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Stack: Angular, TypeScript, Node.js, PostgreSQL, REST APIs'
+      )
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
     expect(screen.getAllByText('[PROJECTS]').length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));

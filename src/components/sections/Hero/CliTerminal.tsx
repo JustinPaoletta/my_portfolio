@@ -109,7 +109,7 @@ const PROJECTS: CliProject[] = [
     title: 'BitStockerz',
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money.',
-    techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
+    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     status: 'In Development',
     featured: true,
     githubUrl: `${env.social.github}/BitStockerz`,

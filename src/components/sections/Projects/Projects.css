@@ -51,6 +51,11 @@
     transition: transform 0.25s ease;
   }
 
+  .project-image--contain {
+    object-fit: contain;
+    object-position: center;
+  }
+
   .project-overlay {
     position: absolute;
     inset: 0;
@@ -61,6 +66,10 @@
     align-items: flex-end;
     padding: 1.5rem;
   }
+}
+
+.project-image-wrapper--contain {
+  background: #050505;
 }
 
 .project-links {
@@ -304,6 +313,7 @@
   width: 60px;
   height: 60px;
   object-fit: contain;
+  object-position: center;
 }
 
 .card-links {
