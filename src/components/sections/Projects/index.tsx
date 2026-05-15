@@ -108,11 +108,8 @@ const projects: Project[] = [
     title: 'wild-apricot-exports',
     description:
       'A published Node CLI and library for exporting and backing up Wild Apricot data without relying on the admin UI. It pulls contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files through the public REST API and WebDAV, then writes everything locally as JSON, CSV, and original files.',
-    image: '/images/projects/wild-apricot-exports-logo.png',
-    cardImage: '/images/projects/wild-apricot-exports-logo.png',
-    cardImageAlt:
-      'wild-apricot-exports logo with an apricot mascot, terminal prompt, and CSV export icon',
-    cardImageFit: 'contain',
+    image: '/images/projects/wae-exports-logo.png',
+    cardHeaderIcon: '/images/projects/wae-exports-logo.png',
     techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
     githubUrl: `${env.social.github}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
@@ -123,8 +120,8 @@ const projects: Project[] = [
     title: 'SideQuest: Pittsburgh',
     description:
       "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
-    image:
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    image: '/images/projects/sidequest-logo.png',
+    cardHeaderIcon: '/images/projects/sidequest-logo.png',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
     featured: false,
