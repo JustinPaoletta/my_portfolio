@@ -7,10 +7,31 @@ type ThemeName = 'minimal' | 'engineer' | 'cosmic' | 'cli';
 let themeName: ThemeName = 'minimal';
 let heroInView = true;
 let prefersReducedMotion = false;
+const resolvedMode: 'dark' | 'light' = 'dark';
 const defaultUserAgent = navigator.userAgent;
 
 vi.mock('@/hooks/useTheme', () => ({
-  useTheme: () => ({ themeName }),
+  useTheme: () => ({ themeName, resolvedMode }),
+}));
+
+vi.mock('@/components/sections/Hero/EngineerCircuit3D', () => ({
+  __esModule: true,
+  default: ({
+    isActive,
+    mode,
+    calmMotion,
+  }: {
+    isActive: boolean;
+    mode: string;
+    calmMotion: boolean;
+  }) => (
+    <div
+      data-testid="engineer-circuit-3d"
+      data-active={isActive ? 'true' : 'false'}
+      data-mode={mode}
+      data-calm={calmMotion ? 'true' : 'false'}
+    />
+  ),
 }));
 
 vi.mock('@/hooks/useIntersectionObserver', () => ({
@@ -317,7 +338,7 @@ describe('Hero section', () => {
     expect(screen.getByText('View My Work')).toBeInTheDocument();
     expect(screen.queryByTestId('cli-terminal')).not.toBeInTheDocument();
     expect(minimal.container.querySelector('.hero-cosmic-video')).toBeNull();
-    expect(minimal.container.querySelector('.hero-circuit')).toBeNull();
+    expect(minimal.container.querySelector('.hero-engineer-visual')).toBeNull();
 
     themeName = 'cli';
     minimal.rerender(<Hero />);
@@ -325,20 +346,10 @@ describe('Hero section', () => {
     expect(screen.queryByText('View My Work')).not.toBeInTheDocument();
   });
 
-  it('handles engineer animation profile and intersection-driven svg pause behavior', async () => {
+  it('handles engineer chip visual profile and viewport activation', async () => {
     const media = installEngineerMatchMediaMock({
       compact: false,
       reduced: false,
-    });
-    const pauseSpy = vi.fn();
-    const unpauseSpy = vi.fn();
-    Object.defineProperty(SVGSVGElement.prototype, 'pauseAnimations', {
-      configurable: true,
-      value: pauseSpy,
-    });
-    Object.defineProperty(SVGSVGElement.prototype, 'unpauseAnimations', {
-      configurable: true,
-      value: unpauseSpy,
     });
 
     themeName = 'engineer';
@@ -346,24 +357,24 @@ describe('Hero section', () => {
     const view = render(<Hero />);
 
     await waitFor(() => {
-      expect(view.container.querySelector('.hero-circuit')).toBeInTheDocument();
+      expect(
+        view.container.querySelector('.hero-engineer-visual')
+      ).toBeInTheDocument();
     });
     await waitFor(() => {
-      expect(pauseSpy).toHaveBeenCalled();
+      expect(screen.getByTestId('engineer-circuit-3d')).toBeInTheDocument();
     });
-    expect(view.container.querySelector('animateMotion')).toHaveAttribute(
-      'dur',
-      '5.8s'
-    );
+
+    const visual = view.container.querySelector('.hero-engineer-visual');
+    expect(visual).toHaveAttribute('data-engineer-circuit-active', 'false');
+    expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'normal');
+    expect(visual).toHaveAttribute('data-engineer-circuit-scene', '3d');
 
     act(() => {
       media.setCompact(true);
     });
     await waitFor(() => {
-      expect(view.container.querySelector('animateMotion')).toHaveAttribute(
-        'dur',
-        '8.8s'
-      );
+      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
     });
 
     act(() => {
@@ -371,10 +382,7 @@ describe('Hero section', () => {
       media.setReduced(true);
     });
     await waitFor(() => {
-      expect(view.container.querySelector('animateMotion')).toHaveAttribute(
-        'dur',
-        '8.8s'
-      );
+      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
     });
 
     Object.defineProperty(navigator, 'connection', {
@@ -385,10 +393,7 @@ describe('Hero section', () => {
       media.setReduced(false);
     });
     await waitFor(() => {
-      expect(view.container.querySelector('animateMotion')).toHaveAttribute(
-        'dur',
-        '8.8s'
-      );
+      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
     });
 
     Object.defineProperty(navigator, 'connection', {
@@ -399,15 +404,18 @@ describe('Hero section', () => {
       media.setReduced(false);
     });
     await waitFor(() => {
-      expect(view.container.querySelector('animateMotion')).toHaveAttribute(
-        'dur',
-        '5.8s'
-      );
+      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'normal');
     });
 
     heroInView = true;
     view.rerender(<Hero />);
-    expect(unpauseSpy).toHaveBeenCalled();
+    expect(visual).toHaveAttribute('data-engineer-circuit-active', 'true');
+    await waitFor(() => {
+      expect(screen.getByTestId('engineer-circuit-3d')).toHaveAttribute(
+        'data-active',
+        'true'
+      );
+    });
   });
 
   it('handles cosmic video autoplay, interaction retry, and ready state', async () => {

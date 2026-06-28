@@ -1,0 +1,22 @@
+.engineer-circuit3d-stage {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.engineer-circuit3d-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.engineer-circuit3d-canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .engineer-circuit3d-stage {
+    display: none;
+  }
+}

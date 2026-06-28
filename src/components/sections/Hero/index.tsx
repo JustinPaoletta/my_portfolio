@@ -13,103 +13,12 @@ import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
 import CliTerminal from './CliTerminal';
+import EngineerHeroBackground from './EngineerHeroBackground';
 import './Hero.css';
 const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
   cli: () => import('./Hero.cli.css'),
   cosmic: () => import('./Hero.cosmic.css'),
   engineer: () => import('./Hero.engineer.css'),
-};
-
-const tracePaths = [
-  { id: 'trace-top-2', d: 'M687.5 300 L687.5 250 L660.5 170 L660.5 110' },
-  { id: 'trace-top-3', d: 'M712.5 300 L712.5 250 L691.5 170 L691.5 110' },
-  { id: 'trace-top-4', d: 'M737.5 300 L737.5 250 L722.5 170 L722.5 110' },
-  { id: 'trace-top-5', d: 'M762.5 300 L762.5 250 L753.5 170 L753.5 110' },
-  { id: 'trace-top-6', d: 'M787.5 300 L787.5 250 L784.5 170 L784.5 110' },
-  { id: 'trace-top-7', d: 'M812.5 300 L812.5 250 L815.5 170 L815.5 110' },
-  { id: 'trace-top-8', d: 'M837.5 300 L837.5 250 L846.5 170 L846.5 110' },
-  { id: 'trace-top-9', d: 'M862.5 300 L862.5 250 L877.5 170 L877.5 110' },
-  { id: 'trace-top-10', d: 'M887.5 300 L887.5 250 L908.5 170 L908.5 110' },
-  { id: 'trace-top-11', d: 'M912.5 300 L912.5 250 L939.5 170 L939.5 110' },
-  { id: 'trace-bottom-2', d: 'M687.5 600 L687.5 650 L660.5 730 L660.5 810' },
-  { id: 'trace-bottom-3', d: 'M712.5 600 L712.5 650 L691.5 730 L691.5 810' },
-  { id: 'trace-bottom-4', d: 'M737.5 600 L737.5 650 L722.5 730 L722.5 810' },
-  { id: 'trace-bottom-5', d: 'M762.5 600 L762.5 650 L753.5 730 L753.5 810' },
-  { id: 'trace-bottom-6', d: 'M787.5 600 L787.5 650 L784.5 730 L784.5 810' },
-  { id: 'trace-bottom-7', d: 'M812.5 600 L812.5 650 L815.5 730 L815.5 810' },
-  { id: 'trace-bottom-8', d: 'M837.5 600 L837.5 650 L846.5 730 L846.5 810' },
-  { id: 'trace-bottom-9', d: 'M862.5 600 L862.5 650 L877.5 730 L877.5 810' },
-  { id: 'trace-bottom-10', d: 'M887.5 600 L887.5 650 L908.5 730 L908.5 810' },
-  { id: 'trace-bottom-11', d: 'M912.5 600 L912.5 650 L939.5 730 L939.5 810' },
-  {
-    id: 'trace-left-2',
-    d: 'M650 362.5 L590 362.5 L510 341.5 L200 341.5 L140 401.5',
-  },
-  {
-    id: 'trace-left-3',
-    d: 'M650 387.5 L590 387.5 L510 372.5 L200 372.5 L140 432.5',
-  },
-  {
-    id: 'trace-left-4',
-    d: 'M650 412.5 L590 412.5 L510 403.5 L200 403.5 L140 463.5',
-  },
-  {
-    id: 'trace-left-5',
-    d: 'M650 437.5 L590 437.5 L510 434.5 L200 434.5 L140 494.5',
-  },
-  {
-    id: 'trace-left-6',
-    d: 'M650 462.5 L590 462.5 L510 465.5 L200 465.5 L140 525.5',
-  },
-  {
-    id: 'trace-left-7',
-    d: 'M650 487.5 L590 487.5 L510 496.5 L200 496.5 L140 556.5',
-  },
-  {
-    id: 'trace-left-8',
-    d: 'M650 512.5 L590 512.5 L510 527.5 L200 527.5 L140 587.5',
-  },
-  {
-    id: 'trace-left-9',
-    d: 'M650 537.5 L590 537.5 L510 558.5 L200 558.5 L140 618.5',
-  },
-  {
-    id: 'trace-right-2',
-    d: 'M 950 537.5 L 1010 537.5 L 1090 558.5 L 1400 558.5 L 1460 498.5',
-  },
-  {
-    id: 'trace-right-3',
-    d: 'M 950 512.5 L 1010 512.5 L 1090 527.5 L 1400 527.5 L 1460 467.5',
-  },
-  {
-    id: 'trace-right-4',
-    d: 'M 950 487.5 L 1010 487.5 L 1090 496.5 L 1400 496.5 L 1460 436.5',
-  },
-  {
-    id: 'trace-right-5',
-    d: 'M 950 462.5 L 1010 462.5 L 1090 465.5 L 1400 465.5 L 1460 405.5',
-  },
-  {
-    id: 'trace-right-6',
-    d: 'M 950 437.5 L 1010 437.5 L 1090 434.5 L 1400 434.5 L 1460 374.5',
-  },
-  {
-    id: 'trace-right-7',
-    d: 'M 950 412.5 L 1010 412.5 L 1090 403.5 L 1400 403.5 L 1460 343.5',
-  },
-  {
-    id: 'trace-right-8',
-    d: 'M 950 387.5 L 1010 387.5 L 1090 372.5 L 1400 372.5 L 1460 312.5',
-  },
-  {
-    id: 'trace-right-9',
-    d: 'M 950 362.5 L 1010 362.5 L 1090 341.5 L 1400 341.5 L 1460 281.5',
-  },
-];
-
-type TracePoint = {
-  x: number;
-  y: number;
 };
 
 const COSMIC_VIDEO_ACTIVATION_DELAY_MS = 1200;
@@ -689,94 +598,11 @@ function ActiveCosmicHeroBackground(): React.ReactElement {
   );
 }
 
-type TraceSegment = {
-  start: TracePoint;
-  end: TracePoint;
-};
-
-const chip = {
-  x: 650,
-  y: 300,
-  size: 300,
-  radius: 14,
-  coreSize: 150,
-  coreRadius: 10,
-  pinLength: 28,
-  diagonalLength: 18,
-};
-
-const chipCoreOffset = (chip.size - chip.coreSize) / 2;
-
-const getFirstTwoPoints = (d: string): TracePoint[] => {
-  const tokens = d.match(/[ML]|-?\d+(?:\.\d+)?/g);
-  if (!tokens) {
-    return [];
-  }
-
-  const points: TracePoint[] = [];
-  let i = 0;
-  let command = '';
-
-  while (i < tokens.length) {
-    const token = tokens[i];
-    if (token === 'M' || token === 'L') {
-      command = token;
-      i += 1;
-      continue;
-    }
-
-    if (!command) {
-      i += 1;
-      continue;
-    }
-
-    const x = Number(token);
-    const y = Number(tokens[i + 1]);
-    if (Number.isNaN(x) || Number.isNaN(y)) {
-      break;
-    }
-
-    points.push({ x, y });
-    if (points.length >= 2) {
-      break;
-    }
-    i += 2;
-  }
-
-  return points;
-};
-
-const getSuffix = (id: string): number => {
-  const match = id.match(/-(\d+)$/);
-  return match ? Number(match[1]) : 0;
-};
-
-const buildPinSegments = (prefix: string): TraceSegment[] =>
-  tracePaths
-    .filter((trace) => trace.id.startsWith(prefix))
-    .sort((a, b) => getSuffix(a.id) - getSuffix(b.id))
-    .map((trace) => {
-      const points = getFirstTwoPoints(trace.d);
-      if (points.length < 2) {
-        return null;
-      }
-      return { start: points[0], end: points[1] };
-    })
-    .filter((segment): segment is TraceSegment => Boolean(segment));
-
-const chipPins = {
-  top: buildPinSegments('trace-top-'),
-  bottom: buildPinSegments('trace-bottom-'),
-  left: buildPinSegments('trace-left-'),
-  right: buildPinSegments('trace-right-'),
-};
-
 function Hero(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const heroContentRef = useRef<HTMLDivElement>(null);
-  const electronSvgRef = useRef<SVGSVGElement>(null);
   const loadedThemeStyles = useRef(new Set<string>());
-  const { themeName } = useTheme();
+  const { themeName, resolvedMode } = useTheme();
   const isVisualTest = isVisualTestMode();
   const isCosmicTheme = themeName === 'cosmic';
   const isEngineerTheme = themeName === 'engineer';
@@ -784,7 +610,7 @@ function Hero(): React.ReactElement {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const shouldEnhanceHero = useDeferredHeroEnhancement();
   const heroEnvironmentFlags = useHeroEnvironmentFlags();
-  const useCalmerElectronMotion = Boolean(
+  const useCalmerChipMotion = Boolean(
     heroEnvironmentFlags &
     (HERO_ENVIRONMENT_FLAGS.compactViewport |
       HERO_ENVIRONMENT_FLAGS.reducedMotion |
@@ -806,24 +632,6 @@ function Hero(): React.ReactElement {
     void loadThemeStyles();
     loadedThemeStyles.current.add(themeName);
   }, [themeName]);
-
-  useEffect(() => {
-    if (!isEngineerTheme || !shouldEnhanceHero || isVisualTest) {
-      return;
-    }
-
-    const svg = electronSvgRef.current;
-    if (!svg || typeof svg.pauseAnimations !== 'function') {
-      return;
-    }
-
-    if (isHeroInView) {
-      svg.unpauseAnimations();
-      return;
-    }
-
-    svg.pauseAnimations();
-  }, [isEngineerTheme, isHeroInView, isVisualTest, shouldEnhanceHero]);
 
   useEffect(() => {
     const content = heroContentRef.current;
@@ -895,20 +703,6 @@ function Hero(): React.ReactElement {
     };
   }, [disableParallax, shouldEnhanceHero]);
 
-  const electronMotion = useCalmerElectronMotion
-    ? {
-        baseDuration: 8.8,
-        durationStep: 0.8,
-        beginStep: 0.65,
-        beginCycleWindow: 5.4,
-      }
-    : {
-        baseDuration: 5.8,
-        durationStep: 0.5,
-        beginStep: 0.35,
-        beginCycleWindow: 3.2,
-      };
-
   return (
     <section
       ref={sectionRef}
@@ -929,157 +723,14 @@ function Hero(): React.ReactElement {
           aria-hidden="true"
         >
           {isEngineerTheme ? (
-            <>
-              <div className="hero-circuit">
-                <div className="circuit-board" />
-                <div className="circuit-traces" />
-                <div className="circuit-chip-svg" aria-hidden="true">
-                  <svg
-                    viewBox="0 0 1600 900"
-                    preserveAspectRatio="xMidYMid slice"
-                    aria-hidden="true"
-                  >
-                    <g className="chip-svg">
-                      <rect
-                        className="chip-body"
-                        x={chip.x}
-                        y={chip.y}
-                        width={chip.size}
-                        height={chip.size}
-                        rx={chip.radius}
-                      />
-                      <rect
-                        className="chip-core"
-                        x={chip.x + chipCoreOffset}
-                        y={chip.y + chipCoreOffset}
-                        width={chip.coreSize}
-                        height={chip.coreSize}
-                        rx={chip.coreRadius}
-                      />
-                      <circle
-                        className="chip-marker"
-                        cx={chip.x + chip.size - 24}
-                        cy={chip.y + 24}
-                        r="8"
-                      />
-                      {chipPins.top.map((segment, index) => (
-                        <line
-                          key={`chip-top-${index}`}
-                          className="chip-pin"
-                          x1={segment.start.x}
-                          y1={segment.start.y}
-                          x2={segment.end.x}
-                          y2={segment.end.y}
-                        />
-                      ))}
-                      {chipPins.bottom.map((segment, index) => (
-                        <line
-                          key={`chip-bottom-${index}`}
-                          className="chip-pin"
-                          x1={segment.start.x}
-                          y1={segment.start.y}
-                          x2={segment.end.x}
-                          y2={segment.end.y}
-                        />
-                      ))}
-                      {chipPins.left.map((segment, index) => (
-                        <line
-                          key={`chip-left-${index}`}
-                          className="chip-pin"
-                          x1={segment.start.x}
-                          y1={segment.start.y}
-                          x2={segment.end.x}
-                          y2={segment.end.y}
-                        />
-                      ))}
-                      {chipPins.right.map((segment, index) => (
-                        <line
-                          key={`chip-right-${index}`}
-                          className="chip-pin"
-                          x1={segment.start.x}
-                          y1={segment.start.y}
-                          x2={segment.end.x}
-                          y2={segment.end.y}
-                        />
-                      ))}
-                      <line
-                        className="chip-pin-diagonal"
-                        x1={chip.x}
-                        y1={chip.y}
-                        x2={chip.x - chip.diagonalLength}
-                        y2={chip.y - chip.diagonalLength}
-                      />
-                      <line
-                        className="chip-pin-diagonal"
-                        x1={chip.x + chip.size}
-                        y1={chip.y}
-                        x2={chip.x + chip.size + chip.diagonalLength}
-                        y2={chip.y - chip.diagonalLength}
-                      />
-                      <line
-                        className="chip-pin-diagonal"
-                        x1={chip.x}
-                        y1={chip.y + chip.size}
-                        x2={chip.x - chip.diagonalLength}
-                        y2={chip.y + chip.size + chip.diagonalLength}
-                      />
-                      <line
-                        className="chip-pin-diagonal"
-                        x1={chip.x + chip.size}
-                        y1={chip.y + chip.size}
-                        x2={chip.x + chip.size + chip.diagonalLength}
-                        y2={chip.y + chip.size + chip.diagonalLength}
-                      />
-                    </g>
-                  </svg>
-                </div>
-                <div className="circuit-nodes" />
-                {!isVisualTest ? (
-                  <div className="circuit-electrons">
-                    <svg
-                      ref={electronSvgRef}
-                      className="electron-svg"
-                      viewBox="0 0 1600 900"
-                      preserveAspectRatio="xMidYMid slice"
-                      aria-hidden="true"
-                    >
-                      <defs>
-                        {tracePaths.map((trace) => (
-                          <path key={trace.id} id={trace.id} d={trace.d} />
-                        ))}
-                      </defs>
-                      {tracePaths.map((trace, index) => {
-                        const duration =
-                          electronMotion.baseDuration +
-                          (index % 5) * electronMotion.durationStep;
-                        const begin =
-                          (index * electronMotion.beginStep) %
-                          electronMotion.beginCycleWindow;
-                        const reverse = index % 4 === 0;
-                        return (
-                          <circle key={trace.id} className="electron-dot" r="3">
-                            <animateMotion
-                              dur={`${duration.toFixed(1)}s`}
-                              repeatCount="indefinite"
-                              begin={`${begin.toFixed(2)}s`}
-                              {...(reverse
-                                ? {
-                                    keyPoints: '1;0',
-                                    keyTimes: '0;1',
-                                    calcMode: 'linear',
-                                  }
-                                : {})}
-                            >
-                              <mpath href={`#${trace.id}`} />
-                            </animateMotion>
-                          </circle>
-                        );
-                      })}
-                    </svg>
-                  </div>
-                ) : null}
-              </div>
-            </>
+            <EngineerHeroBackground
+              isActive={isHeroInView}
+              reducedMotion={prefersReducedMotion}
+              isVisualTest={isVisualTest}
+              shouldLoadScene={shouldEnhanceHero}
+              calmMotion={useCalmerChipMotion}
+              mode={resolvedMode}
+            />
           ) : null}
         </div>
       )}

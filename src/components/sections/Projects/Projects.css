@@ -402,39 +402,6 @@
   flex-grow: 1;
 }
 
-.card-cta {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  margin: 0 0 1rem;
-  padding: 0.7rem 1rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-hover);
-  background: rgba(var(--color-primary-rgb), 0.14);
-  color: var(--text-primary);
-  text-decoration: none;
-  font-size: 0.85rem;
-  font-weight: 600;
-  transition:
-    background 0.15s ease,
-    border-color 0.15s ease,
-    color 0.15s ease,
-    transform 0.15s ease;
-
-  &:hover {
-    background: rgba(var(--color-primary-rgb), 0.22);
-    border-color: var(--color-primary-ink);
-    color: var(--color-primary-ink);
-    transform: translateY(-1px);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary-ink);
-    outline-offset: 2px;
-  }
-}
-
 .card-tech {
   display: flex;
   flex-wrap: wrap;

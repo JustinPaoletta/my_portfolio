@@ -1,0 +1,187 @@
+.engineer-circuit {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+
+  /* Neon-tech palette tuned for the dark engineer board */
+  --circuit-trace: rgba(120, 190, 170, 0.16);
+  --circuit-flow-cyan: #38e8ff;
+  --circuit-flow-green: #4dffb0;
+  --circuit-node: rgba(120, 255, 200, 0.85);
+  --circuit-chip: rgba(20, 40, 38, 0.55);
+  --circuit-chip-stroke: rgba(120, 200, 180, 0.28);
+  --circuit-chip-inner: rgba(80, 150, 140, 0.16);
+  --circuit-pad: rgba(150, 220, 200, 0.5);
+  --cpu-socket: rgba(18, 38, 36, 0.7);
+  --cpu-socket-stroke: rgba(90, 230, 200, 0.45);
+  --circuit-die-1: #0e2a30;
+  --circuit-die-2: #06151a;
+  --cpu-pad: rgba(150, 230, 210, 0.55);
+  --cpu-core: rgba(80, 255, 200, 0.9);
+}
+
+/* Light mode: brighter board so traces read against the pale background */
+:root[data-color-mode='light'] .engineer-circuit {
+  --circuit-trace: rgba(0, 120, 140, 0.28);
+  --circuit-flow-cyan: #00b4d8;
+  --circuit-flow-green: #1fb866;
+  --circuit-node: rgba(0, 150, 160, 0.8);
+  --circuit-chip: rgba(210, 235, 235, 0.6);
+  --circuit-chip-stroke: rgba(0, 130, 150, 0.4);
+  --circuit-chip-inner: rgba(0, 130, 150, 0.12);
+  --circuit-pad: rgba(0, 140, 150, 0.55);
+  --cpu-socket: rgba(220, 240, 240, 0.7);
+  --cpu-socket-stroke: rgba(0, 160, 170, 0.5);
+  --circuit-die-1: #bfe5e8;
+  --circuit-die-2: #8fc7cc;
+  --cpu-pad: rgba(0, 140, 150, 0.6);
+  --cpu-core: rgba(0, 170, 180, 0.95);
+}
+
+.circuit-base path {
+  fill: none;
+  stroke: var(--circuit-trace);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.circuit-components .circuit-chip {
+  fill: var(--circuit-chip);
+  stroke: var(--circuit-chip-stroke);
+  stroke-width: 1.5;
+}
+
+.circuit-components .circuit-chip-inner {
+  fill: var(--circuit-chip-inner);
+  stroke: none;
+}
+
+.circuit-pads rect {
+  fill: var(--circuit-pad);
+}
+
+/* Animated data packets */
+.trace-flow {
+  fill: none;
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 16 230;
+  stroke-dashoffset: 0;
+  filter: url(#circuit-glow);
+  animation-name: circuit-flow;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-duration: calc(var(--dur, 3.4s) * var(--flow-scale, 1));
+  animation-delay: var(--delay, 0s);
+}
+
+.trace-flow--cyan {
+  stroke: var(--circuit-flow-cyan);
+}
+
+.trace-flow--green {
+  stroke: var(--circuit-flow-green);
+}
+
+@keyframes circuit-flow {
+  to {
+    /* one dash period (16 + 230) keeps the loop seamless */
+    stroke-dashoffset: -246;
+  }
+}
+
+.circuit-nodes circle {
+  fill: var(--circuit-node);
+  filter: url(#circuit-glow);
+  animation: circuit-node-pulse 2.6s ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+@keyframes circuit-node-pulse {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Central processor */
+.cpu-socket {
+  fill: var(--cpu-socket);
+  stroke: var(--cpu-socket-stroke);
+  stroke-width: 2;
+}
+
+.cpu-die {
+  stroke: var(--cpu-socket-stroke);
+  stroke-width: 1.5;
+}
+
+.cpu-pads rect {
+  fill: var(--cpu-pad);
+}
+
+.cpu-core {
+  fill: none;
+  stroke: var(--cpu-core);
+  stroke-width: 2.5;
+  filter: url(#circuit-glow);
+  animation: circuit-core-pulse 3s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes circuit-core-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.cpu-notch {
+  fill: var(--cpu-core);
+  opacity: 0.6;
+}
+
+/* Pause the flow when the hero scrolls out of view (perf) */
+.engineer-circuit:not([data-active='true']) .trace-flow,
+.engineer-circuit:not([data-active='true']) .circuit-nodes circle,
+.engineer-circuit:not([data-active='true']) .cpu-core {
+  animation-play-state: paused;
+}
+
+/* Frozen (reduced-motion preference or visual tests): hold a steady lit state */
+.engineer-circuit[data-static='true'] .trace-flow {
+  animation: none;
+  stroke-dasharray: none;
+  opacity: 0.45;
+}
+
+.engineer-circuit[data-static='true'] .circuit-nodes circle,
+.engineer-circuit[data-static='true'] .cpu-core {
+  animation: none;
+  opacity: 0.7;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trace-flow {
+    animation: none;
+    stroke-dasharray: none;
+    opacity: 0.45;
+  }
+
+  .circuit-nodes circle,
+  .cpu-core {
+    animation: none;
+    opacity: 0.7;
+  }
+}

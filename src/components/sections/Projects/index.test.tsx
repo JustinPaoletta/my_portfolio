@@ -37,11 +37,6 @@ describe('Projects section', () => {
     expect(
       screen.getByRole('link', { name: 'View wild-apricot-exports on npm' })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', {
-        name: 'Download wild-apricot-exports from npm',
-      })
-    ).toBeInTheDocument();
   });
 
   it('renders project content consistently', () => {
