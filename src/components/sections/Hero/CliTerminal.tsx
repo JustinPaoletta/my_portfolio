@@ -28,6 +28,7 @@ interface CliProject {
   status?: string;
   featured: boolean;
   githubUrl?: string;
+  packageUrl?: string;
   private?: boolean;
 }
 
@@ -108,7 +109,7 @@ const PROJECTS: CliProject[] = [
     title: 'BitStockerz',
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money.',
-    techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
+    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     status: 'In Development',
     featured: true,
     githubUrl: `${env.social.github}/BitStockerz`,
@@ -128,15 +129,24 @@ const PROJECTS: CliProject[] = [
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene.',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     status: 'In Development',
-    featured: true,
+    featured: false,
     githubUrl: `${env.social.github}/godot_practice`,
+  },
+  {
+    title: 'wild-apricot-exports',
+    description:
+      'A published Node CLI and library for exporting and backing up Wild Apricot accounts without using the admin UI. It saves contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files locally as JSON, CSV, and original file backups.',
+    techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
+    featured: false,
+    githubUrl: `${env.social.github}/wild-apricot-exports`,
+    packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
   },
   {
     title: 'SideQuest: Pittsburgh',
     description:
       'A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built offline-first, it surfaces under-the-radar spots—prioritizing proximity, novelty, and curated tags over star ratings and influencer rankings.',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
-    featured: false,
+    featured: true,
     private: true,
   },
   {
@@ -513,6 +523,13 @@ function CliTerminal(): React.ReactElement {
             url: project.githubUrl,
           }
         : null;
+    const packageLine = project.packageUrl
+      ? {
+          kind: 'output' as const,
+          text: `npm: ${project.packageUrl}`,
+          url: project.packageUrl,
+        }
+      : null;
 
     appendLines([
       { kind: 'output', text: `[PROJECT ${selection}] ${project.title}` },
@@ -521,6 +538,7 @@ function CliTerminal(): React.ReactElement {
         text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${project.status}` : ''}`,
       },
       ...(repoLine ? [repoLine] : []),
+      ...(packageLine ? [packageLine] : []),
       { kind: 'output', text: project.description },
       { kind: 'output', text: `Stack: ${project.techStack.join(', ')}` },
       { kind: 'hint', text: 'Try another project number, or type menu.' },

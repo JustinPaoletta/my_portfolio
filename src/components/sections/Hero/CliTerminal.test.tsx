@@ -174,6 +174,16 @@ describe('CliTerminal', () => {
     runCommand('project 1');
     expect(screen.getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
 
+    runCommand('project 4');
+    expect(
+      screen.getByText(/\[PROJECT 4\] wild-apricot-exports/)
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /npm: https:\/\/www\.npmjs\.com\/package\/wild-apricot-exports/i
+      )
+    ).toBeInTheDocument();
+
     runCommand('skill');
     expect(screen.getByText('[SKILLS]')).toBeInTheDocument();
 
@@ -377,6 +387,11 @@ describe('CliTerminal', () => {
     runCommand('projects');
     runCommand('1');
     expect(screen.getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Stack: Angular, TypeScript, Node.js, PostgreSQL, REST APIs'
+      )
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
     expect(screen.getAllByText('[PROJECTS]').length).toBeGreaterThan(0);
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
@@ -449,11 +464,11 @@ describe('CliTerminal', () => {
     runCommand('github');
     expect(screen.getByText('- pinned-a (77 stars)')).toBeInTheDocument();
 
-    runCommand('project 4');
+    runCommand('project 5');
     expect(
-      screen.getByText('[PROJECT 4] SideQuest: Pittsburgh')
+      screen.getByText('[PROJECT 5] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
-    expect(screen.getByText('Type: Other')).toBeInTheDocument();
+    expect(screen.getByText('Type: Featured')).toBeInTheDocument();
     expect(screen.getByText('Repository: Private')).toBeInTheDocument();
   });
 

@@ -31,6 +31,8 @@ interface Project {
   title: string;
   description: string;
   image: string;
+  imageFit?: 'cover' | 'contain';
+  imagePosition?: string;
   cardImage?: string;
   cardImageAlt?: string;
   cardImageFit?: 'cover' | 'contain';
@@ -41,6 +43,8 @@ interface Project {
   techStack: string[];
   liveUrl?: string;
   githubUrl?: string;
+  packageUrl?: string;
+  packageCtaLabel?: string;
   private?: boolean;
   featured: boolean;
   status?: ProjectStatus;
@@ -75,7 +79,7 @@ const projects: Project[] = [
     description:
       'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
     image: '/images/projects/bitstockerz.webp',
-    techStack: ['React', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
+    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
     githubUrl: `${env.social.github}/BitStockerz`,
     featured: true,
     status: 'development',
@@ -97,21 +101,36 @@ const projects: Project[] = [
     description:
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene designed to be reused or referenced in future projects.',
     image: '/images/projects/godot-playground.webp',
+    cardHeaderIcon: '/images/projects/godot-playground.webp',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     githubUrl: `${env.social.github}/godot_practice`,
-    featured: true,
+    featured: false,
     status: 'development',
+  },
+  {
+    id: 'project-4',
+    title: 'wild-apricot-exports',
+    description:
+      'A published Node CLI and library for exporting and backing up Wild Apricot data without relying on the admin UI. It pulls contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files through the public REST API and WebDAV, then writes everything locally as JSON, CSV, and original files.',
+    image: '/images/projects/wae-exports-logo.png',
+    cardHeaderIcon: '/images/projects/wae-exports-logo.png',
+    techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
+    githubUrl: `${env.social.github}/wild-apricot-exports`,
+    packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
+    packageCtaLabel: 'Download npm Package',
+    featured: false,
   },
   {
     id: 'project-5',
     title: 'SideQuest: Pittsburgh',
     description:
       "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
-    image:
-      'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop',
+    image: '/images/projects/sidequest-logo.png',
+    imageFit: 'contain',
+    cardHeaderIcon: '/images/projects/sidequest-logo.png',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
-    featured: false,
+    featured: true,
   },
   {
     id: 'project-6',
@@ -176,11 +195,26 @@ function Projects(): React.ReactElement {
               delay={140 + index * 90}
               visible={isVisible}
             >
-              <div className="project-image-wrapper">
+              <div
+                className={`project-image-wrapper${
+                  project.imageFit === 'contain'
+                    ? ' project-image-wrapper--contain'
+                    : ''
+                }`}
+              >
                 <img
                   src={project.image}
                   alt={`${project.title} screenshot`}
-                  className="project-image"
+                  className={`project-image${
+                    project.imageFit === 'contain'
+                      ? ' project-image--contain'
+                      : ''
+                  }`}
+                  style={
+                    project.imagePosition
+                      ? { objectPosition: project.imagePosition }
+                      : undefined
+                  }
                   loading="lazy"
                   width={800}
                   height={600}
@@ -282,6 +316,48 @@ function Projects(): React.ReactElement {
                           <span>Source</span>
                         </a>
                       )
+                    )}
+                    {project.packageUrl && (
+                      <a
+                        href={project.packageUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="project-link"
+                        aria-label={`View ${project.title} on npm`}
+                      >
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          aria-hidden="true"
+                        >
+                          <path
+                            d="m7.5 4.27 9 5.15"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="m3.29 7 8.71 5 8.71-5"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                          <path
+                            d="M12 22V12"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        <span>npm</span>
+                      </a>
                     )}
                   </div>
                 </div>
@@ -408,6 +484,47 @@ function Projects(): React.ReactElement {
                       </svg>
                     </a>
                   )}
+                  {project.packageUrl && (
+                    <a
+                      href={project.packageUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="card-link"
+                      aria-label={`View ${project.title} on npm`}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="m7.5 4.27 9 5.15"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="m3.29 7 8.71 5 8.71-5"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M12 22V12"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </a>
+                  )}
                 </div>
               </div>
               {project.cardImage && (
@@ -434,6 +551,17 @@ function Projects(): React.ReactElement {
                 <ProjectHeadingTitle project={project} />
               </h4>
               <p className="card-description">{project.description}</p>
+              {project.packageUrl && project.packageCtaLabel && (
+                <a
+                  href={project.packageUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="card-cta"
+                  aria-label={`Download ${project.title} from npm`}
+                >
+                  {project.packageCtaLabel}
+                </a>
+              )}
               <div className="card-tech">
                 {project.techStack.slice(0, 4).map((tech) => (
                   <span key={tech} className="tech-tag-small">
