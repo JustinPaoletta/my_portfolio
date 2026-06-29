@@ -58,12 +58,12 @@ Each URL is tested three times.
 
 ### Theme-specific Lighthouse byte-weight thresholds
 
-| Theme      | Limit           |
-| ---------- | --------------- |
-| `engineer` | `500000` bytes  |
-| `cli`      | `500000` bytes  |
-| `minimal`  | `500000` bytes  |
-| `cosmic`   | `1300000` bytes |
+| Theme      | Limit          |
+| ---------- | -------------- |
+| `engineer` | `450000` bytes |
+| `cli`      | `390000` bytes |
+| `minimal`  | `450000` bytes |
+| `cosmic`   | `600000` bytes |
 
 Several Lighthouse audits are intentionally disabled in `.lighthouserc.cjs` because they are noisy or not meaningful in this static CI environment.
 

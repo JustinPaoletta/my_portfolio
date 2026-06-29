@@ -27,7 +27,6 @@ The manifest and included assets currently reference:
 - `favicons/pwa-192x192.png`
 - `favicons/pwa-512x512.png`
 - `images/hero/cosmic/cosmos-poster.webp`
-- `og/og-image.png`
 
 The cosmic hero poster is explicitly precached so the cosmic theme's static
 fallback renders reliably offline (the interactive 3D nebula scene is loaded
@@ -41,12 +40,13 @@ npm run generate:icons
 
 ## Runtime Caching Rules
 
-| Pattern             | Strategy               | Notes                                                                   |
-| ------------------- | ---------------------- | ----------------------------------------------------------------------- |
-| Remote images       | `CacheFirst`           | 30-day cache                                                            |
-| Remote JS and CSS   | `StaleWhileRevalidate` | 7-day cache                                                             |
-| Google Fonts URLs   | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
-| `/api/*` over HTTPS | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
+| Pattern                    | Strategy               | Notes                                                                   |
+| -------------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| Same-origin images         | `CacheFirst`           | 30-day cache                                                            |
+| Same-origin video          | `CacheFirst`           | 7-day cache                                                             |
+| Same-origin JS and CSS     | `StaleWhileRevalidate` | 7-day cache                                                             |
+| Google Fonts URLs          | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
+| Same-origin `/api/*` calls | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
 
 Most local assets are handled by the precache, not those runtime rules.
 

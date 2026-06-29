@@ -16,11 +16,11 @@
 ```tsx
 // ❌ BAD - Relative paths
 import { env } from '../../config/env';
-import SEO from '../components/SEO';
+import ErrorBoundary from '../components/ErrorBoundary';
 
 // ✅ GOOD - Path alias
 import { env } from '@/config/env';
-import SEO from '@/components/SEO';
+import ErrorBoundary from '@/components/ErrorBoundary';
 ```
 
 ## Accessibility (a11y) Standards
@@ -300,7 +300,7 @@ button:focus-visible {
 - Use `@/test/test-utils` for rendering (pre-configured with providers)
 - Test accessibility: semantic roles, keyboard navigation, ARIA attributes
 - Use `screen.getByRole()` over `getByTestId()` when possible
-- Coverage thresholds: 85% for lines, functions, branches, statements
+- Coverage thresholds: 90% for lines, functions, branches, statements
 
 ### E2E Tests (Playwright)
 - Place E2E tests in `e2e/` directory with `.spec.ts` extension
@@ -405,10 +405,12 @@ async function fetchData(): Promise<Data> {
 
 ## SEO Standards
 
-### SEO Component
-- Use the `SEO` component from `@/components/SEO` for meta tags
-- SEO configuration lives in `@/config/seo.ts`
-- Always provide meaningful titles and descriptions
+### Static-First Metadata
+- Homepage metadata lives in `index.html` (title, description, canonical, OG, Twitter, JSON-LD)
+- Shared SEO constants live in `@/config/seo.ts` and `@/content/site.ts`
+- There is no runtime SEO component; update `index.html` and tests together when metadata changes
+- Build generates `sitemap.xml` and `robots.txt`; prerender fills `dist/index.html` with crawler-visible content
+- See `docs/SEO.md` for the full update checklist
 
 ### Required Meta Tags
 - `<title>` - Unique for each page
@@ -446,11 +448,11 @@ async function fetchData(): Promise<Data> {
 - CSS files: < 85 KB
 
 ### Lighthouse CI
-- Performance score target: ≥ 85
-- Accessibility score target: ≥ 95
-- Best Practices score target: ≥ 90
-- SEO score target: ≥ 90
-- Configuration in `.lighthouserc.cjs`
+- Performance score: warn below `0.70`
+- Accessibility score: error below `1.00`
+- Best Practices score target: ≥ 0.90
+- SEO score target: ≥ 0.90
+- Configuration in `.lighthouserc.cjs`; see `docs/PERFORMANCE_QUALITY.md`
 
 ### Optimization Techniques
 - Use `React.memo` for expensive components
@@ -597,7 +599,7 @@ refactor(hooks): extract PWA logic into usePWA hook
 ### When to Document
 - Update README.md when adding new features
 - Document complex algorithms or business logic
-- Keep CHANGELOG.md updated (automated via commit-and-tag-version)
+- Keep CHANGELOG.md updated under `## [Unreleased]` as work lands (manual release process; see `RELEASE.md`)
 - Add JSDoc comments for public APIs
 - Update relevant docs in `/docs` folder
 
@@ -605,7 +607,7 @@ refactor(hooks): extract PWA logic into usePWA hook
 - `docs/ENV.md` - Environment variable documentation
 - `docs/PWA.md` - PWA documentation
 - `docs/SEO.md` - SEO documentation
-- `docs/LIGHTHOUSE_CI.md` - Lighthouse CI documentation
+- `docs/PERFORMANCE_QUALITY.md` - Lighthouse CI and bundle budget documentation
 - See `/docs` folder for full list
 
 ## Visual Regression Snapshots

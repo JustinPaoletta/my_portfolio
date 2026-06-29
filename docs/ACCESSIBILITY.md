@@ -7,7 +7,7 @@ This portfolio targets WCAG 2.2 AA across every supported theme and both explici
 - `eslint-plugin-jsx-a11y` enforces baseline semantic rules in source.
 - `npm run contrast:check` validates light and dark theme token pairs, including focus-indicator contrast.
 - `npm run test:a11y:unit` runs axe-backed component tests against the app shell and custom interactive UI.
-- `npm run test:e2e -- --project=chromium` covers runtime keyboard and focus behavior, including the tagged `@a11y` browser tests.
+- `npm run test:a11y:e2e` covers runtime keyboard and focus behavior through the tagged `@a11y` Playwright specs.
 - `npm run lighthouse` enforces an accessibility score of `1.00` for every `theme + light/dark` combination.
 
 ## Review Checklist

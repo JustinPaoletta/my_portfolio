@@ -48,10 +48,10 @@ Actions do not execute on click, number key, or space alone.
 - `1` About
 - `2` Projects
 - `3` Skills
-- `4` Experience & Education
-- `5` GitHub Activity
+- `4` Experience
+- `5` GitHub Stats
 - `6` Contact
-- `7` Pet Dogs
+- `7` Pet Dawgs
 - `8` Resume
 - `9` Help
 - `0` Clear terminal
