@@ -68,13 +68,13 @@ That means the feature is usable without Redis, but the counts will not be share
 npm run start:vercel
 ```
 
-or:
+Then open `http://localhost:6173`. Prefer the npm script over calling the CLI directly so the port stays aligned with `package.json`.
+
+If you need the raw CLI equivalent:
 
 ```bash
-npx vercel dev
+npx vercel dev --listen 6173
 ```
-
-if you want `/api/pet-dogs` available locally.
 
 ## Data Flow
 

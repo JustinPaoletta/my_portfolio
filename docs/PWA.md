@@ -26,12 +26,12 @@ The manifest and included assets currently reference:
 - `favicons/apple-touch-icon.png`
 - `favicons/pwa-192x192.png`
 - `favicons/pwa-512x512.png`
-- `images/hero/cosmic/cosmos-first-frame.webp`
+- `images/hero/cosmic/cosmos-poster.webp`
 - `og/og-image.png`
-- `video/cosmos.mp4`
 
-The cosmic hero poster and video are explicitly precached so the restored
-cosmic theme can render and autoplay reliably offline.
+The cosmic hero poster is explicitly precached so the cosmic theme's static
+fallback renders reliably offline (the interactive 3D nebula scene is loaded
+lazily and is skipped under reduced-motion, save-data, and visual-test modes).
 
 Generate the PNG icon set from the SVG source with:
 

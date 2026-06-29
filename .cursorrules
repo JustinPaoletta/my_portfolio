@@ -439,10 +439,11 @@ async function fetchData(): Promise<Data> {
 
 ### Bundle Size
 - Monitor bundle sizes - limits defined in `vite.config.ts`
-- App chunks: < 150 KB
-- Vendor chunks: < 400 KB
-- Total bundle: < 700 KB
-- CSS files: < 80 KB
+- App chunks: < 125 KB
+- Vendor chunks: < 190 KB
+- `vendor-three` chunk (three.js + @react-three/fiber): < 950 KB
+- Total bundle: < 1550 KB
+- CSS files: < 85 KB
 
 ### Lighthouse CI
 - Performance score target: ≥ 85

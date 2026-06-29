@@ -4,7 +4,7 @@
  * Uses reduced-motion checks and lightweight parallax enhancement
  */
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { env } from '@/config/env';
 import { HERO_TAGLINE } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
@@ -222,7 +222,7 @@ function Hero(): React.ReactElement {
     triggerOnce: false,
   });
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const loadThemeStyles = themeStyleLoaders[themeName];
     if (!loadThemeStyles || loadedThemeStyles.current.has(themeName)) {
       return;

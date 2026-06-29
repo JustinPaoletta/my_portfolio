@@ -34,25 +34,39 @@ vi.mock('@/components/sections/Hero/EngineerCircuit3D', () => ({
   ),
 }));
 
-vi.mock('@/components/sections/Hero/CosmicScene3D', () => ({
-  __esModule: true,
-  default: ({
+vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
+  const React = await import('react');
+
+  const MockCosmicScene3D = ({
     isActive,
     mode,
     calmMotion,
+    onSceneReady,
   }: {
     isActive: boolean;
     mode: string;
     calmMotion: boolean;
-  }) => (
-    <div
-      data-testid="cosmic-scene-3d"
-      data-active={isActive ? 'true' : 'false'}
-      data-mode={mode}
-      data-calm={calmMotion ? 'true' : 'false'}
-    />
-  ),
-}));
+    onSceneReady?: () => void;
+  }): React.ReactElement => {
+    React.useLayoutEffect(() => {
+      onSceneReady?.();
+    }, [onSceneReady]);
+
+    return (
+      <div
+        data-testid="cosmic-scene-3d"
+        data-active={isActive ? 'true' : 'false'}
+        data-mode={mode}
+        data-calm={calmMotion ? 'true' : 'false'}
+      />
+    );
+  };
+
+  return {
+    __esModule: true,
+    default: MockCosmicScene3D,
+  };
+});
 
 vi.mock('@/hooks/useIntersectionObserver', () => ({
   __esModule: true,
@@ -453,7 +467,12 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
     });
-    expect(background).toHaveAttribute('data-cosmic-scene', '3d');
+    await waitFor(() => {
+      expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+        'data-cosmic-scene',
+        '3d'
+      );
+    });
     expect(screen.getByTestId('cosmic-scene-3d')).toHaveAttribute(
       'data-active',
       'true'
@@ -493,10 +512,12 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
     });
-    expect(view.container.querySelector('.hero-background')).toHaveAttribute(
-      'data-cosmic-scene',
-      '3d'
-    );
+    await waitFor(() => {
+      expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+        'data-cosmic-scene',
+        '3d'
+      );
+    });
     expect(screen.getByTestId('cosmic-scene-3d')).toHaveAttribute(
       'data-calm',
       'true'

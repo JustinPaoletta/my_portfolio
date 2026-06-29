@@ -16,7 +16,7 @@
     "nuke": "rm -rf node_modules package-lock.json dist coverage .vite .lighthouseci playwright-report test-results .vercel",
     "prepare": "husky",
     "start:dev": "node ./node_modules/vite/bin/vite.js",
-    "start:vercel": "vercel dev",
+    "start:vercel": "vercel dev --listen 6173",
     "start:prod": "npm run build && node ./node_modules/vite/bin/vite.js preview --strictPort --port 4173",
     "test": "vitest",
     "test:a11y": "npm run test:a11y:unit && npm run test:a11y:e2e",

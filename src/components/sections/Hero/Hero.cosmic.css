@@ -834,11 +834,14 @@
     --cosmic-rig-scale-drift: 1.44;
   }
 }
-:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background {
+/* Keep the painted gradient/poster fallback until the interactive 3D scene mounts. */
+:root[data-theme='cosmic'][data-color-mode='dark']
+  .hero-background[data-cosmic-scene='3d'] {
   background: none;
 }
 
-:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::before {
+:root[data-theme='cosmic'][data-color-mode='dark']
+  .hero-background[data-cosmic-scene='3d']::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -848,7 +851,8 @@
   opacity: 0.5;
 }
 
-:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::after {
+:root[data-theme='cosmic'][data-color-mode='dark']
+  .hero-background[data-cosmic-scene='3d']::after {
   content: none;
 }
 

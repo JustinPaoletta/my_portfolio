@@ -3,16 +3,36 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, act, waitFor } from '@/test/test-utils';
 import App from './App';
 
-vi.mock('@/components/sections/Hero/CosmicScene3D', () => ({
-  __esModule: true,
-  default: ({ isActive, mode }: { isActive: boolean; mode: string }) => (
-    <div
-      data-testid="cosmic-scene-3d"
-      data-active={isActive ? 'true' : 'false'}
-      data-mode={mode}
-    />
-  ),
-}));
+vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
+  const React = await import('react');
+
+  const MockCosmicScene3D = ({
+    isActive,
+    mode,
+    onSceneReady,
+  }: {
+    isActive: boolean;
+    mode: string;
+    onSceneReady?: () => void;
+  }): React.ReactElement => {
+    React.useLayoutEffect(() => {
+      onSceneReady?.();
+    }, [onSceneReady]);
+
+    return (
+      <div
+        data-testid="cosmic-scene-3d"
+        data-active={isActive ? 'true' : 'false'}
+        data-mode={mode}
+      />
+    );
+  };
+
+  return {
+    __esModule: true,
+    default: MockCosmicScene3D,
+  };
+});
 
 const mockDogStats = {
   Nala: { treats: 0, scritches: 0 },
@@ -455,7 +475,12 @@ describe('App', () => {
     await waitFor(() => {
       expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
     });
-    expect(heroBackground).toHaveAttribute('data-cosmic-scene', '3d');
+    await waitFor(() => {
+      expect(document.querySelector('.hero-background')).toHaveAttribute(
+        'data-cosmic-scene',
+        '3d'
+      );
+    });
   });
 
   it('Cosmic theme never renders a legacy video element', async () => {

@@ -45,7 +45,7 @@ Visual specs always navigate with `?visual-test=1`. The app treats that as a det
 
 - global CSS animations and transitions
 - hero parallax and motion-driven transforms
-- autoplay video and SVG motion in the hero variants
+- the interactive 3D hero scenes (the cosmic poster and engineer SVG fallbacks render instead) and SVG motion in the hero variants
 - the JP_CLI boot sequence timers
 - transient focus, caret, and hover residue during capture
 

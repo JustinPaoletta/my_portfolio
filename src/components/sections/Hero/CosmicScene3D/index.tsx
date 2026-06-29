@@ -1,4 +1,11 @@
-import { Suspense, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+} from 'react';
 import { Canvas, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {
@@ -297,16 +304,41 @@ function NebulaDome({ mode }: NebulaDomeProps): React.ReactElement {
   return <primitive object={model} />;
 }
 
+type SceneReadyNotifierProps = {
+  onSceneReady: () => void;
+};
+
+function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
+  const frameCountRef = useRef(0);
+  const hasNotifiedRef = useRef(false);
+
+  useFrame(() => {
+    if (hasNotifiedRef.current) {
+      return;
+    }
+
+    frameCountRef.current += 1;
+    if (frameCountRef.current >= 2) {
+      hasNotifiedRef.current = true;
+      onSceneReady();
+    }
+  });
+
+  return null;
+}
+
 type SceneProps = {
   isActive: boolean;
   calmMotion: boolean;
   mode: Mode;
+  onSceneReady: () => void;
 };
 
 function CosmicScene({
   isActive,
   calmMotion,
   mode,
+  onSceneReady,
 }: SceneProps): React.ReactElement {
   const groupRef = useRef<Group>(null);
   const pointer = useRef({ x: 0, y: 0 });
@@ -337,6 +369,7 @@ function CosmicScene({
         <NebulaDome mode={mode} />
       </Suspense>
       <Starfield isActive={isActive} calmMotion={calmMotion} />
+      <SceneReadyNotifier onSceneReady={onSceneReady} />
     </group>
   );
 }
@@ -360,6 +393,7 @@ export type CosmicScene3DProps = {
   reducedMotion: boolean;
   calmMotion: boolean;
   mode: Mode;
+  onSceneReady?: () => void;
 };
 
 function CosmicScene3D({
@@ -367,8 +401,12 @@ function CosmicScene3D({
   reducedMotion,
   calmMotion,
   mode,
+  onSceneReady,
 }: CosmicScene3DProps): React.ReactElement {
   const animating = isActive && !reducedMotion;
+  const handleSceneReady = useCallback((): void => {
+    onSceneReady?.();
+  }, [onSceneReady]);
 
   return (
     <div className="cosmic-scene3d-stage" aria-hidden="true">
@@ -381,7 +419,12 @@ function CosmicScene3D({
           alpha: true,
           antialias: true,
           powerPreference: 'high-performance',
+          premultipliedAlpha: false,
         }}
+        onCreated={({ gl }) => {
+          gl.setClearColor(0x000000, 0);
+        }}
+        style={{ background: 'transparent' }}
         frameloop={animating ? 'always' : 'demand'}
       >
         <CameraRig />
@@ -391,6 +434,7 @@ function CosmicScene3D({
             isActive={animating}
             calmMotion={calmMotion}
             mode={mode}
+            onSceneReady={handleSceneReady}
           />
         </Suspense>
       </Canvas>

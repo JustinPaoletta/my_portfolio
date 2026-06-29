@@ -88,6 +88,7 @@ const INITIAL_ROUTE_LIMITS = {
 function bundleSizeLimit(): Plugin {
   return {
     name: 'bundle-size-limit',
+    apply: 'build',
     enforce: 'post',
     closeBundle() {
       const distPath = path.resolve(__dirname, 'dist');

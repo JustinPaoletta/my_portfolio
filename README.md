@@ -5,7 +5,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 ## Status
 
 - Type: public web app
-- Current version: `1.1.14`
+- Current version: `1.1.17`
 - Hosting model: Vercel-friendly frontend with optional `/api/*` functions
 - Release model: manual changelog + release branch flow documented in [RELEASE.md](./RELEASE.md)
 
@@ -30,6 +30,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 - React 19
 - TypeScript 5.9
 - rolldown-backed Vite
+- three.js and `@react-three/fiber` for the 3D hero backgrounds (engineer and cosmic themes)
 - Vercel serverless functions for optional `/api/*` routes
 - Vitest, Testing Library, Playwright, and Lighthouse CI
 - `vite-plugin-pwa` and Workbox
@@ -53,15 +54,15 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 1. Install dependencies with `npm install`.
 2. Copy `.env.example` to `.env`.
 3. Fill in the `VITE_*` values you need locally.
-4. Run `npm run start:dev` for the frontend-only dev server.
-5. Use `npm run start:vercel` instead when you need local `/api/*` functions.
+4. Run `npm run start:dev` for the frontend-only dev server (`http://localhost:5173`).
+5. Use `npm run start:vercel` instead when you need local `/api/*` functions (`http://localhost:6173`).
 
 ## Common Commands
 
-- `npm run start:dev` starts the Vite frontend locally.
-- `npm run start:vercel` runs the app through `vercel dev`.
+- `npm run start:dev` starts the Vite frontend locally at `http://localhost:5173`.
+- `npm run start:vercel` runs the app through `vercel dev` at `http://localhost:6173`.
 - `npm run build` type-checks, validates contrast, builds the app, and prerenders the homepage.
-- `npm run start:prod` builds and previews the production output.
+- `npm run start:prod` builds and previews the production output at `http://localhost:4173`.
 - `npm run lint` runs the CI lint and Prettier checks.
 - `npm run lint:fix` applies eslint and Prettier fixes where possible.
 - `npm run test:unit` runs the Vitest suite once.
