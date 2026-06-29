@@ -14,7 +14,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'favicons/apple-touch-icon.png',
     'favicons/pwa-192x192.png',
     'favicons/pwa-512x512.png',
-    'images/hero/cosmic/cosmos-first-frame.webp',
+    'images/hero/cosmic/cosmos-poster.webp',
     'video/cosmos.mp4',
   ],
   manifestFilename: 'manifest.webmanifest',

@@ -202,13 +202,9 @@
           });
 
           if (resolvedTheme === 'cosmic') {
-            preloadAsset(
-              'image',
-              '/images/hero/cosmic/cosmos-first-frame.webp',
-              {
-                fetchpriority: 'high',
-              }
-            );
+            preloadAsset('image', '/images/hero/cosmic/cosmos-poster.webp', {
+              fetchpriority: 'high',
+            });
           }
         } catch (e) {}
       })();

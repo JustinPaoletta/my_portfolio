@@ -67,6 +67,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 - `npm run test:unit` runs the Vitest suite once.
 - `npm run test:e2e` runs the Playwright suite excluding visual snapshots.
 - `npm run test:visual` runs the committed visual regression suite.
+- `npm run test:visual:update:linux` refreshes CI snapshot baselines (requires Docker). See [Design changes](#design-changes).
 - `npm run lighthouse` runs the checked-in Lighthouse CI config.
 
 ## Environment & Configuration
@@ -80,6 +81,18 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 - Local baseline: `npm run lint`, `npm run test:unit`, and `npm run build`.
 - Release candidates should also pass `npm run test:e2e`.
 - User-facing releases with major visual or performance impact should also run `npm run test:visual` and `npm run lighthouse`.
+
+### Design changes
+
+If you change CSS, layout, markup, fonts, icons, images, or themes:
+
+1. `npm run test:visual` — review failures in `playwright-report/`.
+2. `npm run test:visual:update:linux` — update CI baselines (Docker required).
+3. Commit the changed files under `e2e/visual/**/*-snapshots/`.
+
+No Docker? Run the **Update Visual Snapshots** GitHub Actions workflow instead.
+
+Details: [docs/VISUAL_REGRESSION.md](./docs/VISUAL_REGRESSION.md).
 
 ## Deployment & Operations
 

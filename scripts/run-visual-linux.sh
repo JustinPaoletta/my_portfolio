@@ -3,8 +3,16 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PLAYWRIGHT_IMAGE="mcr.microsoft.com/playwright:v1.58.2-noble"
+
+# Docker image browsers must match the @playwright/test version installed by npm ci.
+# See: https://playwright.dev/docs/docker#usage
+PLAYWRIGHT_VERSION="$(
+  node -p "require('${ROOT_DIR}/package-lock.json').packages['node_modules/@playwright/test'].version"
+)"
+PLAYWRIGHT_IMAGE="mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble"
 NODE_MODULES_VOLUME="my_portfolio_visual_node_modules"
+
+echo "Using Playwright Docker image: ${PLAYWRIGHT_IMAGE}"
 
 docker run --rm \
   -v "${ROOT_DIR}:/work" \

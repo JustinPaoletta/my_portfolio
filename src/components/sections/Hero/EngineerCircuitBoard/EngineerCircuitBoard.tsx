@@ -116,71 +116,6 @@ const TRACES: Trace[] = [
     dur: 4.4,
     delay: 0.5,
   },
-  // Top side
-  {
-    points: [
-      [560, 290],
-      [560, 202],
-      [424, 202],
-      [424, 96],
-    ],
-    variant: 'cyan',
-    dur: 3.9,
-    delay: 0.75,
-  },
-  {
-    points: [
-      [640, 290],
-      [640, 162],
-      [780, 162],
-      [780, 86],
-    ],
-    variant: 'green',
-    dur: 3.4,
-    delay: 1.5,
-  },
-  // Bottom side
-  {
-    points: [
-      [560, 470],
-      [560, 560],
-      [444, 560],
-      [444, 690],
-    ],
-    variant: 'green',
-    dur: 4.1,
-    delay: 0.4,
-  },
-  {
-    points: [
-      [640, 470],
-      [640, 600],
-      [760, 600],
-      [760, 700],
-    ],
-    variant: 'cyan',
-    dur: 3.2,
-    delay: 1.0,
-  },
-  // Long horizontal buses
-  {
-    points: [
-      [120, 120],
-      [1080, 120],
-    ],
-    variant: 'cyan',
-    dur: 6.0,
-    delay: 0,
-  },
-  {
-    points: [
-      [120, 680],
-      [1080, 680],
-    ],
-    variant: 'green',
-    dur: 6.4,
-    delay: 1.2,
-  },
 ];
 
 // Surface-mounted components (ICs / capacitors) sitting at the trace endpoints.
@@ -199,10 +134,6 @@ const COMPONENTS: {
   { x: 1060, y: 278, w: 72, h: 44, pads: 3 },
   { x: 1048, y: 494, w: 82, h: 52, pads: 3 },
   { x: 968, y: 588, w: 80, h: 44, pads: 3 },
-  { x: 382, y: 62, w: 84, h: 50, pads: 4 },
-  { x: 740, y: 50, w: 82, h: 50, pads: 4 },
-  { x: 402, y: 660, w: 84, h: 48, pads: 4 },
-  { x: 720, y: 668, w: 82, h: 46, pads: 4 },
 ];
 
 const CPU = { x: 500, y: 290, w: 200, h: 180 };

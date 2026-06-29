@@ -40,7 +40,7 @@ test('theme selection persists after reload', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
 });
 
-test('cosmic theme hero video autoplays when restored from localStorage', async ({
+test('cosmic theme restores the 3D nebula hero from localStorage', async ({
   page,
 }) => {
   await mockPortfolioApis(page);
@@ -50,53 +50,21 @@ test('cosmic theme hero video autoplays when restored from localStorage', async 
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
-  await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('.hero-cosmic-video')).toHaveAttribute(
-    'poster',
-    '/images/hero/cosmic/cosmos-first-frame.webp'
-  );
-  await expect(page.locator('.hero-background')).toHaveAttribute(
-    'data-cosmic-video-ready',
-    'true'
-  );
+  await expect(page.locator('video')).toHaveCount(0);
 
-  await expect
-    .poll(async () => {
-      return page.evaluate(() => {
-        const video =
-          document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
-        if (!video) {
-          return false;
-        }
-        // Video must have been accepted for playback and have data available.
-        // Firefox headless may not advance readyState past HAVE_METADATA
-        // even when fully buffered, so we also accept buffered data.
-        const hasDecodedFrames =
-          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-        const hasBufferedData =
-          video.buffered.length > 0 && video.buffered.end(0) > 0;
-        return !video.paused && (hasDecodedFrames || hasBufferedData);
-      });
-    })
-    .toBe(true);
+  // The interactive 3D scene is mounted after the deferred hero enhancement.
+  await expect(page.locator('.hero-background')).toHaveAttribute(
+    'data-cosmic-scene',
+    '3d'
+  );
+  await expect(page.locator('.cosmic-scene3d-canvas canvas')).toHaveCount(1);
 });
 
-test('cosmic restore keeps a visible fallback while video is delayed', async ({
+test('cosmic restore shows the static poster fallback immediately', async ({
   page,
 }) => {
   await mockPortfolioApis(page);
-  await page.route('**/video/cosmos.mp4', async (route) => {
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    await route.continue();
-  });
-  await page.route(
-    '**/images/hero/cosmic/cosmos-first-frame.webp',
-    async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      await route.continue();
-    }
-  );
   await page.addInitScript(() => {
     localStorage.setItem('portfolio-theme', 'cosmic');
   });
@@ -108,69 +76,23 @@ test('cosmic restore keeps a visible fallback while video is delayed', async ({
     page.getByRole('heading', { name: 'Justin Paoletta' })
   ).toBeVisible();
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('.hero-cosmic-video')).toHaveCount(1);
-  await expect(page.locator('.hero-background')).toHaveAttribute(
-    'data-cosmic-video-ready',
-    'false'
-  );
+  await expect(page.locator('video')).toHaveCount(0);
 
   const startupState = await page.evaluate(() => {
-    const heroBackground =
-      document.querySelector<HTMLElement>('.hero-background');
     const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
-    const video =
-      document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
-
-    if (!heroBackground || !still || !video) {
+    if (!still) {
       return null;
     }
-
-    const heroStyle = getComputedStyle(heroBackground);
     const stillStyle = getComputedStyle(still);
-
     return {
-      backgroundImage: heroStyle.backgroundImage,
+      backgroundImage: stillStyle.backgroundImage,
       stillOpacity: Number.parseFloat(stillStyle.opacity),
-      videoPoster: video.getAttribute('poster'),
-      videoHasCurrentData:
-        video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA,
-      videoCurrentTime: video.currentTime,
     };
   });
 
   expect(startupState).not.toBeNull();
-  expect(startupState?.backgroundImage).not.toBe('none');
+  expect(startupState?.backgroundImage).toContain('cosmos-poster');
   expect(startupState?.stillOpacity).toBeGreaterThan(0);
-  expect(startupState?.videoPoster).toBe(
-    '/images/hero/cosmic/cosmos-first-frame.webp'
-  );
-  expect(startupState?.videoHasCurrentData).toBe(false);
-  expect(startupState?.videoCurrentTime).toBe(0);
-
-  await expect
-    .poll(async () => {
-      return page.evaluate(() => {
-        const heroBackground =
-          document.querySelector<HTMLElement>('.hero-background');
-        const video =
-          document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
-        if (!heroBackground || !video) {
-          return false;
-        }
-
-        const hasDecodedFrames =
-          video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA;
-        const hasBufferedData =
-          video.buffered.length > 0 && video.buffered.end(0) > 0;
-
-        return (
-          heroBackground.getAttribute('data-cosmic-video-ready') === 'true' &&
-          !video.paused &&
-          (hasDecodedFrames || hasBufferedData)
-        );
-      });
-    })
-    .toBe(true);
 });
 
 test('color mode selection persists after reload', async ({ page }) => {
@@ -217,9 +139,6 @@ test('query params apply theme and mode overrides', async ({ page }) => {
 
 test('cosmic light mode applies light hero styling', async ({ page }) => {
   await mockPortfolioApis(page);
-  await page.route('**/video/cosmos.mp4', async (route) => {
-    await route.abort();
-  });
   await page.goto('/?theme=cosmic&mode=light');
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
@@ -227,18 +146,14 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
     'data-color-mode',
     'light'
   );
-  await expect(page.locator('.hero-background')).toHaveAttribute(
-    'data-cosmic-video-ready',
-    'false'
-  );
+  await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
+  await expect(page.locator('video')).toHaveCount(0);
 
   await expect
     .poll(async () => {
       return page.evaluate(() => {
         const hero = document.querySelector<HTMLElement>('.hero-background');
         const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
-        const video =
-          document.querySelector<HTMLVideoElement>('.hero-cosmic-video');
         const content = document.querySelector<HTMLElement>('.hero-content');
         const name = document.querySelector<HTMLElement>('.hero-name-text');
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
@@ -249,7 +164,6 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
         if (
           !hero ||
           !still ||
-          !video ||
           !content ||
           !name ||
           !greeting ||
@@ -269,7 +183,6 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
           beforeBackground: beforeStyles.backgroundColor,
           contentBackground: contentStyles.backgroundImage,
           stillOpacity: Number.parseFloat(getComputedStyle(still).opacity),
-          videoOpacity: Number.parseFloat(getComputedStyle(video).opacity),
           nameColor: getComputedStyle(name).color,
           greetingColor: getComputedStyle(greeting).color,
           contentFontFamily: getComputedStyle(content).fontFamily,
@@ -287,7 +200,6 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       beforeBackground: 'rgba(0, 0, 0, 0)',
       contentBackground: 'none',
       stillOpacity: 0.4,
-      videoOpacity: 0,
       nameColor: 'rgb(20, 5, 31)',
       greetingColor: 'rgb(255, 255, 255)',
       contentFontFamily: expect.stringContaining('Space Grotesk'),
