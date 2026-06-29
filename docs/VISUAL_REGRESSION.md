@@ -7,12 +7,12 @@ After CSS, layout, markup, font, icon, image, or theme changes:
 ```bash
 npm run test:visual                  # 1. review diffs
 npm run test:visual:update:linux     # 2. update CI baselines (Docker required)
-git add e2e/visual/**/*-snapshots/   # 3. commit snapshots
+npm run test:visual:update           # 3. update macOS baselines (run on a Mac)
+git add e2e/visual/**/*-snapshots/   # 4. commit snapshots
 ```
 
 - **CI uses Linux snapshots** (`*-linux.png`). Always refresh with `test:visual:update:linux` before merging.
-- **No Docker?** Use the **Update Visual Snapshots** GitHub Actions workflow.
-- **Optional on macOS:** `npm run test:visual:update` refreshes local `*-darwin.png` files only.
+- **Also refresh darwin** (`*-darwin.png`) with `test:visual:update` on macOS — both sets are committed in this repo.
 
 ---
 

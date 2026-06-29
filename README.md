@@ -88,9 +88,10 @@ If you change CSS, layout, markup, fonts, icons, images, or themes:
 
 1. `npm run test:visual` — review failures in `playwright-report/`.
 2. `npm run test:visual:update:linux` — update CI baselines (Docker required).
-3. Commit the changed files under `e2e/visual/**/*-snapshots/`.
+3. `npm run test:visual:update` — update macOS baselines (run on a Mac).
+4. Commit the changed files under `e2e/visual/**/*-snapshots/`.
 
-No Docker? Run the **Update Visual Snapshots** GitHub Actions workflow instead.
+No Docker? Run the **Update Visual Snapshots** GitHub Actions workflow for Linux baselines only.
 
 Details: [docs/VISUAL_REGRESSION.md](./docs/VISUAL_REGRESSION.md).
 
