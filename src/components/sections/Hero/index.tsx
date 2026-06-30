@@ -35,6 +35,15 @@ const HERO_ENVIRONMENT_FLAGS = {
   slowNetwork: 1 << 3,
 } as const;
 
+const CALM_HERO_MOTION_FLAGS =
+  HERO_ENVIRONMENT_FLAGS.compactViewport |
+  HERO_ENVIRONMENT_FLAGS.reducedMotion |
+  HERO_ENVIRONMENT_FLAGS.saveData |
+  HERO_ENVIRONMENT_FLAGS.slowNetwork;
+
+const STATIC_HERO_SCENE_FLAGS =
+  HERO_ENVIRONMENT_FLAGS.saveData | HERO_ENVIRONMENT_FLAGS.slowNetwork;
+
 function getNavigatorConnection(): NavigatorConnectionLike | undefined {
   return (navigator as Navigator & { connection?: NavigatorConnectionLike })
     .connection;
@@ -209,11 +218,13 @@ function Hero(): React.ReactElement {
   const prefersReducedMotion = Boolean(useReducedMotion());
   const shouldEnhanceHero = useDeferredHeroEnhancement();
   const heroEnvironmentFlags = useHeroEnvironmentFlags();
+  const shouldUseStaticHeroScene = Boolean(
+    heroEnvironmentFlags & STATIC_HERO_SCENE_FLAGS
+  );
+  const shouldLoadRichHeroScene =
+    shouldEnhanceHero && !shouldUseStaticHeroScene;
   const useCalmerChipMotion = Boolean(
-    heroEnvironmentFlags &
-    (HERO_ENVIRONMENT_FLAGS.compactViewport |
-      HERO_ENVIRONMENT_FLAGS.reducedMotion |
-      HERO_ENVIRONMENT_FLAGS.saveData)
+    heroEnvironmentFlags & CALM_HERO_MOTION_FLAGS
   );
   const disableParallax = prefersReducedMotion || isCliTheme || isVisualTest;
   const isHeroInView = useIntersectionObserver(sectionRef, {
@@ -314,7 +325,7 @@ function Hero(): React.ReactElement {
           isActive={isHeroInView}
           reducedMotion={prefersReducedMotion}
           isVisualTest={isVisualTest}
-          shouldLoadScene={shouldEnhanceHero}
+          shouldLoadScene={shouldLoadRichHeroScene}
           calmMotion={useCalmerChipMotion}
           mode={resolvedMode}
         />
@@ -329,7 +340,7 @@ function Hero(): React.ReactElement {
               isActive={isHeroInView}
               reducedMotion={prefersReducedMotion}
               isVisualTest={isVisualTest}
-              shouldLoadScene={shouldEnhanceHero}
+              shouldLoadScene={shouldLoadRichHeroScene}
               calmMotion={useCalmerChipMotion}
               mode={resolvedMode}
             />

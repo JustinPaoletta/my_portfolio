@@ -7,6 +7,7 @@ type ThemeName = 'minimal' | 'engineer' | 'cosmic' | 'cli';
 let themeName: ThemeName = 'minimal';
 let heroInView = true;
 let prefersReducedMotion = false;
+let engineerCircuit3DShouldThrow = false;
 const resolvedMode: 'dark' | 'light' = 'dark';
 const defaultUserAgent = navigator.userAgent;
 
@@ -24,14 +25,20 @@ vi.mock('@/components/sections/Hero/EngineerCircuit3D', () => ({
     isActive: boolean;
     mode: string;
     calmMotion: boolean;
-  }) => (
-    <div
-      data-testid="engineer-circuit-3d"
-      data-active={isActive ? 'true' : 'false'}
-      data-mode={mode}
-      data-calm={calmMotion ? 'true' : 'false'}
-    />
-  ),
+  }) => {
+    if (engineerCircuit3DShouldThrow) {
+      throw new Error('Mock engineer 3D load failed');
+    }
+
+    return (
+      <div
+        data-testid="engineer-circuit-3d"
+        data-active={isActive ? 'true' : 'false'}
+        data-mode={mode}
+        data-calm={calmMotion ? 'true' : 'false'}
+      />
+    );
+  },
 }));
 
 vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
@@ -293,6 +300,7 @@ describe('Hero section', () => {
     themeName = 'minimal';
     heroInView = true;
     prefersReducedMotion = false;
+    engineerCircuit3DShouldThrow = false;
     vi.clearAllMocks();
     vi.stubGlobal(
       'requestIdleCallback',
@@ -429,6 +437,10 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
     });
+    await waitFor(() => {
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+    });
+    expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
 
     Object.defineProperty(navigator, 'connection', {
       configurable: true,
@@ -440,6 +452,9 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'normal');
     });
+    await waitFor(() => {
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', '3d');
+    });
 
     heroInView = true;
     view.rerender(<Hero />);
@@ -450,6 +465,51 @@ describe('Hero section', () => {
         'true'
       );
     });
+  });
+
+  it('keeps the engineer SVG fallback for slow data connections', async () => {
+    installEngineerMatchMediaMock();
+    Object.defineProperty(navigator, 'connection', {
+      configurable: true,
+      value: { saveData: false, effectiveType: '3g' },
+    });
+    themeName = 'engineer';
+
+    const view = render(<Hero />);
+    const visual = view.container.querySelector('.hero-engineer-visual');
+
+    await waitFor(() => {
+      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
+    });
+    await waitFor(() => {
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+    });
+    expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
+    expect(
+      view.container.querySelector('.engineer-circuit')
+    ).toBeInTheDocument();
+  });
+
+  it('keeps the engineer SVG fallback if the 3D scene fails to load', async () => {
+    installEngineerMatchMediaMock();
+    themeName = 'engineer';
+    engineerCircuit3DShouldThrow = true;
+    const consoleError = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    const view = render(<Hero />);
+    const visual = view.container.querySelector('.hero-engineer-visual');
+
+    await waitFor(() => {
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+    });
+    expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
+    expect(
+      view.container.querySelector('.engineer-circuit')
+    ).toBeInTheDocument();
+
+    consoleError.mockRestore();
   });
 
   it('renders the cosmic poster and mounts the 3D scene after enhancement', async () => {
@@ -502,6 +562,29 @@ describe('Hero section', () => {
     });
     expect(screen.queryByTestId('cosmic-scene-3d')).not.toBeInTheDocument();
     expect(view.container.querySelector('video')).toBeNull();
+  });
+
+  it('keeps the cosmic poster fallback for Save-Data connections', async () => {
+    installEngineerMatchMediaMock();
+    Object.defineProperty(navigator, 'connection', {
+      configurable: true,
+      value: { saveData: true },
+    });
+    themeName = 'cosmic';
+
+    const view = render(<Hero />);
+    const background = view.container.querySelector('.hero-background');
+    expect(background).toHaveAttribute('data-cosmic-theme', 'true');
+    expect(background).toHaveAttribute('data-cosmic-scene', 'poster');
+    expect(
+      view.container.querySelector('.hero-cosmic-still')
+    ).toBeInTheDocument();
+
+    await waitFor(() => {
+      const heroContent = view.container.querySelector('.hero-content');
+      expect(heroContent).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId('cosmic-scene-3d')).not.toBeInTheDocument();
   });
 
   it('applies calmer cosmic motion on compact viewports', async () => {

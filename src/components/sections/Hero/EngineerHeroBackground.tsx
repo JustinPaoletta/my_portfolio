@@ -1,4 +1,11 @@
-import { lazy, Suspense } from 'react';
+import {
+  Component,
+  lazy,
+  Suspense,
+  useState,
+  type ErrorInfo,
+  type ReactNode,
+} from 'react';
 import EngineerCircuitBoard from '@/components/sections/Hero/EngineerCircuitBoard/EngineerCircuitBoard';
 
 const EngineerCircuit3D = lazy(
@@ -14,6 +21,49 @@ export type EngineerHeroBackgroundProps = {
   mode: 'dark' | 'light';
 };
 
+type EngineerSceneErrorBoundaryProps = {
+  children: ReactNode;
+  fallback: ReactNode;
+  onSceneError: () => void;
+};
+
+type EngineerSceneErrorBoundaryState = {
+  hasError: boolean;
+};
+
+class EngineerSceneErrorBoundary extends Component<
+  EngineerSceneErrorBoundaryProps,
+  EngineerSceneErrorBoundaryState
+> {
+  state: EngineerSceneErrorBoundaryState = {
+    hasError: false,
+  };
+
+  static getDerivedStateFromError(): EngineerSceneErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    if (import.meta.env.DEV) {
+      console.error(
+        '[EngineerHeroBackground] Failed to load interactive scene:',
+        error,
+        errorInfo
+      );
+    }
+
+    this.props.onSceneError();
+  }
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
+}
+
 function EngineerHeroBackground({
   isActive,
   reducedMotion,
@@ -22,8 +72,16 @@ function EngineerHeroBackground({
   calmMotion,
   mode,
 }: EngineerHeroBackgroundProps): React.ReactElement {
+  const [hasSceneError, setHasSceneError] = useState(false);
   const showInteractiveScene =
-    shouldLoadScene && !isVisualTest && !reducedMotion;
+    shouldLoadScene && !isVisualTest && !reducedMotion && !hasSceneError;
+  const svgFallback = (
+    <EngineerCircuitBoard
+      isActive={isActive}
+      frozen={reducedMotion || isVisualTest}
+      calmMotion={calmMotion}
+    />
+  );
 
   return (
     <div
@@ -34,20 +92,21 @@ function EngineerHeroBackground({
       data-engineer-circuit-scene={showInteractiveScene ? '3d' : 'svg'}
     >
       {showInteractiveScene ? (
-        <Suspense fallback={null}>
-          <EngineerCircuit3D
-            isActive={isActive}
-            reducedMotion={reducedMotion}
-            calmMotion={calmMotion}
-            mode={mode}
-          />
-        </Suspense>
+        <EngineerSceneErrorBoundary
+          fallback={svgFallback}
+          onSceneError={() => setHasSceneError(true)}
+        >
+          <Suspense fallback={svgFallback}>
+            <EngineerCircuit3D
+              isActive={isActive}
+              reducedMotion={reducedMotion}
+              calmMotion={calmMotion}
+              mode={mode}
+            />
+          </Suspense>
+        </EngineerSceneErrorBoundary>
       ) : (
-        <EngineerCircuitBoard
-          isActive={isActive}
-          frozen={reducedMotion || isVisualTest}
-          calmMotion={calmMotion}
-        />
+        svgFallback
       )}
     </div>
   );
