@@ -14,8 +14,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'favicons/apple-touch-icon.png',
     'favicons/pwa-192x192.png',
     'favicons/pwa-512x512.png',
-    'images/hero/cosmic/cosmos-first-frame.webp',
-    'video/cosmos.mp4',
+    'images/hero/cosmic/cosmos-poster.webp',
   ],
   manifestFilename: 'manifest.webmanifest',
 
@@ -95,7 +94,7 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     // Cache only the shell and essential install assets up front.
     globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
     maximumFileSizeToCacheInBytes: 2 * 1024 * 1024,
-    globIgnores: ['**/images/**', '**/video/**', '**/articles/**', '**/og/**'],
+    globIgnores: ['**/images/**', '**/articles/**', '**/og/**'],
     navigateFallbackDenylist: [/\/[^/?]+\.[^/]+$/],
     runtimeCaching: [
       {

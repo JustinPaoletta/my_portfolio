@@ -1,9 +1,9 @@
 import { render, screen } from '@/test/test-utils';
 import { axe } from 'jest-axe';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ThemeProvider } from '@/hooks/useTheme';
 import CliTerminal from './CliTerminal';
 
-const setThemeMock = vi.fn();
 const updateDogStatsMock = vi.fn();
 
 let breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
@@ -27,12 +27,6 @@ let githubState = {
   loading: false,
   error: null as string | null,
 };
-
-vi.mock('@/hooks/useTheme', () => ({
-  useTheme: () => ({
-    setTheme: setThemeMock,
-  }),
-}));
 
 vi.mock('@/hooks/useBreakpoint', () => ({
   useBreakpoint: () => breakpoint,
@@ -81,7 +75,11 @@ describe('CLI terminal accessibility', () => {
   });
 
   it('has no violations for the interactive terminal shell', async () => {
-    const { container } = render(<CliTerminal />);
+    const { container } = render(
+      <ThemeProvider>
+        <CliTerminal />
+      </ThemeProvider>
+    );
 
     expect(
       screen.getByText(/Use panel options or type a number\/command./i)

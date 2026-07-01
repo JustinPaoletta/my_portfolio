@@ -22,6 +22,8 @@ dist-ssr
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
+# Cursor generated plan artifacts
+.cursor/plans/
 .idea
 .DS_Store
 *.suo

@@ -16,7 +16,7 @@
     "nuke": "rm -rf node_modules package-lock.json dist coverage .vite .lighthouseci playwright-report test-results .vercel",
     "prepare": "husky",
     "start:dev": "node ./node_modules/vite/bin/vite.js",
-    "start:vercel": "npx --yes vercel@50.31.1 dev",
+    "start:vercel": "vercel dev --listen 6173",
     "start:prod": "npm run build && node ./node_modules/vite/bin/vite.js preview --strictPort --port 4173",
     "test": "vitest",
     "test:a11y": "npm run test:a11y:unit && npm run test:a11y:e2e",
@@ -31,16 +31,18 @@
     "test:unit": "vitest run",
     "test:visual": "VITE_GITHUB_API_ENABLED=true playwright test --project=visual-chromium --grep @visual",
     "test:visual:update": "VITE_GITHUB_API_ENABLED=true playwright test --project=visual-chromium --grep @visual --update-snapshots",
-    "test:visual:update:linux": "./scripts/run-visual-linux.sh --update-snapshots",
+    "test:visual:update:linux": "./scripts/run-visual-linux.sh --update-snapshots=all",
     "type-check": "tsc -b --noEmit",
     "type-check:watch": "tsc -b --noEmit --watch",
     "prerender": "tsx scripts/prerender.ts"
   },
   "dependencies": {
     "@newrelic/browser-agent": "^1.312.1",
+    "@react-three/fiber": "^9.6.1",
     "@upstash/redis": "^1.37.0",
     "react": "^19.2.5",
-    "react-dom": "^19.2.5"
+    "react-dom": "^19.2.5",
+    "three": "^0.185.0"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
@@ -57,6 +59,7 @@
     "@types/node": "^25.6.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
+    "@types/three": "^0.185.0",
     "@vercel/node": "^5.7.11",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/coverage-v8": "^4.1.4",
@@ -79,6 +82,7 @@
     "tsx": "^4.21.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.58.2",
+    "vercel": "^54.18.2",
     "vite": "npm:rolldown-vite@7.1.14",
     "vite-plugin-pwa": "^1.1.0",
     "vitest": "^4.0.5",

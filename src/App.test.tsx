@@ -3,6 +3,37 @@ import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, act, waitFor } from '@/test/test-utils';
 import App from './App';
 
+vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
+  const React = await import('react');
+
+  const MockCosmicScene3D = ({
+    isActive,
+    mode,
+    onSceneReady,
+  }: {
+    isActive: boolean;
+    mode: string;
+    onSceneReady?: () => void;
+  }): React.ReactElement => {
+    React.useLayoutEffect(() => {
+      onSceneReady?.();
+    }, [onSceneReady]);
+
+    return (
+      <div
+        data-testid="cosmic-scene-3d"
+        data-active={isActive ? 'true' : 'false'}
+        data-mode={mode}
+      />
+    );
+  };
+
+  return {
+    __esModule: true,
+    default: MockCosmicScene3D,
+  };
+});
+
 const mockDogStats = {
   Nala: { treats: 0, scritches: 0 },
   Rosie: { treats: 0, scritches: 0 },
@@ -426,100 +457,44 @@ describe('App', () => {
     expect(input).toHaveAttribute('aria-describedby', 'cli-keyboard-shortcuts');
   });
 
-  it('Cosmic startup attempts autoplay from persisted theme', async () => {
+  it('Cosmic startup renders the nebula poster and mounts the 3D scene', async () => {
     localStorage.setItem('portfolio-theme', 'cosmic');
-
-    const playSpy = vi
-      .spyOn(window.HTMLMediaElement.prototype, 'play')
-      .mockResolvedValue(undefined);
 
     await act(async () => {
       render(<App />);
     });
 
-    await waitFor(() => {
-      expect(playSpy).toHaveBeenCalled();
-    });
-
     const heroBackground = document.querySelector('.hero-background');
     expect(heroBackground).toBeInTheDocument();
     expect(heroBackground).toHaveAttribute('data-cosmic-theme', 'true');
-    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
 
     const cosmicStill = document.querySelector('.hero-cosmic-still');
     expect(cosmicStill).toBeInTheDocument();
+    expect(document.querySelector('video')).toBeNull();
+
     await waitFor(() => {
-      expect(document.querySelector('.hero-cosmic-video')).toBeInTheDocument();
+      expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
     });
-    const cosmicVideo = document.querySelector('.hero-cosmic-video');
-    expect(cosmicVideo).toHaveAttribute(
-      'poster',
-      '/images/hero/cosmic/cosmos-first-frame.webp'
-    );
-    expect(cosmicVideo).toHaveAttribute('autoplay');
-    expect(cosmicVideo).toHaveAttribute('preload', 'auto');
-    expect(cosmicVideo).toHaveAttribute('webkit-playsinline', '');
-    const cosmicVideoSource = cosmicVideo?.querySelector('source');
-    expect(cosmicVideoSource).toHaveAttribute('src', '/video/cosmos.mp4');
-    if (!cosmicVideo) {
-      throw new Error('Expected cosmic video element to exist');
-    }
-
-    await act(async () => {
-      cosmicVideo.dispatchEvent(new Event('playing'));
+    await waitFor(() => {
+      expect(document.querySelector('.hero-background')).toHaveAttribute(
+        'data-cosmic-scene',
+        '3d'
+      );
     });
-
-    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'true');
   });
 
-  it('Cosmic retries autoplay after initial block', async () => {
+  it('Cosmic theme never renders a legacy video element', async () => {
     localStorage.setItem('portfolio-theme', 'cosmic');
-
-    let callCount = 0;
-    const playSpy = vi
-      .spyOn(window.HTMLMediaElement.prototype, 'play')
-      .mockImplementation(() => {
-        callCount += 1;
-        if (callCount === 1) {
-          return Promise.reject(new Error('autoplay blocked'));
-        }
-        return Promise.resolve(undefined);
-      });
 
     await act(async () => {
       render(<App />);
     });
 
     await waitFor(() => {
-      expect(playSpy).toHaveBeenCalledTimes(1);
+      expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
     });
 
-    const heroBackground = document.querySelector('.hero-background');
-    expect(heroBackground).toBeInTheDocument();
-    expect(heroBackground).toHaveAttribute('data-cosmic-theme', 'true');
-    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
-
-    await act(async () => {
-      window.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-    });
-
-    await waitFor(() => {
-      expect(playSpy.mock.calls.length).toBeGreaterThan(1);
-    });
-
-    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'false');
-
-    await waitFor(() => {
-      expect(document.querySelector('.hero-cosmic-video')).toBeInTheDocument();
-    });
-    const cosmicVideo = document.querySelector('.hero-cosmic-video');
-    if (!cosmicVideo) {
-      throw new Error('Expected cosmic video element to exist');
-    }
-    await act(async () => {
-      cosmicVideo.dispatchEvent(new Event('playing'));
-    });
-
-    expect(heroBackground).toHaveAttribute('data-cosmic-video-ready', 'true');
+    expect(document.querySelector('.hero-cosmic-video')).toBeNull();
+    expect(document.querySelector('video')).toBeNull();
   });
 });

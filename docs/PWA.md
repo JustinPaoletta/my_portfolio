@@ -26,12 +26,11 @@ The manifest and included assets currently reference:
 - `favicons/apple-touch-icon.png`
 - `favicons/pwa-192x192.png`
 - `favicons/pwa-512x512.png`
-- `images/hero/cosmic/cosmos-first-frame.webp`
-- `og/og-image.png`
-- `video/cosmos.mp4`
+- `images/hero/cosmic/cosmos-poster.webp`
 
-The cosmic hero poster and video are explicitly precached so the restored
-cosmic theme can render and autoplay reliably offline.
+The cosmic hero poster is explicitly precached so the cosmic theme's static
+fallback renders reliably offline (the interactive 3D nebula scene is loaded
+lazily and is skipped under reduced-motion, save-data, and visual-test modes).
 
 Generate the PNG icon set from the SVG source with:
 
@@ -41,12 +40,13 @@ npm run generate:icons
 
 ## Runtime Caching Rules
 
-| Pattern             | Strategy               | Notes                                                                   |
-| ------------------- | ---------------------- | ----------------------------------------------------------------------- |
-| Remote images       | `CacheFirst`           | 30-day cache                                                            |
-| Remote JS and CSS   | `StaleWhileRevalidate` | 7-day cache                                                             |
-| Google Fonts URLs   | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
-| `/api/*` over HTTPS | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
+| Pattern                    | Strategy               | Notes                                                                   |
+| -------------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| Same-origin images         | `CacheFirst`           | 30-day cache                                                            |
+| Same-origin video          | `CacheFirst`           | 7-day cache                                                             |
+| Same-origin JS and CSS     | `StaleWhileRevalidate` | 7-day cache                                                             |
+| Google Fonts URLs          | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
+| Same-origin `/api/*` calls | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
 
 Most local assets are handled by the precache, not those runtime rules.
 

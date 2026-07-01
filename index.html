@@ -202,13 +202,26 @@
           });
 
           if (resolvedTheme === 'cosmic') {
-            preloadAsset(
-              'image',
-              '/images/hero/cosmic/cosmos-first-frame.webp',
-              {
-                fetchpriority: 'high',
-              }
-            );
+            preloadAsset('image', '/images/hero/cosmic/cosmos-poster.webp', {
+              fetchpriority: 'high',
+            });
+          }
+
+          // Vite dev serves source CSS directly; preload theme hero styles before React mounts.
+          var isViteDev = !!document.querySelector(
+            'script[type="module"][src*="/src/"]'
+          );
+          var heroThemeStyles = {
+            engineer: '/src/components/sections/Hero/Hero.engineer.css',
+            cosmic: '/src/components/sections/Hero/Hero.cosmic.css',
+            cli: '/src/components/sections/Hero/Hero.cli.css',
+          };
+          var heroThemeStyle = heroThemeStyles[resolvedTheme];
+          if (isViteDev && heroThemeStyle) {
+            var themeStyleLink = document.createElement('link');
+            themeStyleLink.rel = 'stylesheet';
+            themeStyleLink.href = heroThemeStyle;
+            document.head.appendChild(themeStyleLink);
           }
         } catch (e) {}
       })();

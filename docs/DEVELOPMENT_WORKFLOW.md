@@ -174,3 +174,9 @@ For visual or performance-sensitive releases, also run:
 npm run test:visual
 npm run lighthouse
 ```
+
+After intentional design changes, update snapshots before merging:
+
+```bash
+npm run test:visual:update:linux   # Docker required; see docs/VISUAL_REGRESSION.md
+```

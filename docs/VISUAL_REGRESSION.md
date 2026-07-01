@@ -1,10 +1,26 @@
 # Visual Regression Testing
 
-This repo uses Playwright's built-in screenshot assertions for visual regression coverage. Functional E2E and visual regression are intentionally separate:
+## Design changes (quick reference)
 
-- `npm run test:e2e` runs behavior-focused Playwright coverage and excludes `@visual` specs
-- `npm run test:visual` runs only the Chromium visual suite
-- CI treats Linux Chromium as the baseline authority for visual diffs
+After CSS, layout, markup, font, icon, image, or theme changes:
+
+```bash
+npm run test:visual                  # 1. review diffs
+npm run test:visual:update:linux     # 2. update CI baselines (Docker required)
+npm run test:visual:update           # 3. update macOS baselines (run on a Mac)
+git add e2e/visual/**/*-snapshots/   # 4. commit snapshots
+```
+
+- **CI uses Linux snapshots** (`*-linux.png`). Always refresh with `test:visual:update:linux` before merging.
+- **Also refresh darwin** (`*-darwin.png`) with `test:visual:update` on macOS — both sets are committed in this repo.
+
+---
+
+Functional E2E and visual regression are separate:
+
+- `npm run test:e2e` — behavior tests; excludes `@visual`
+- `npm run test:visual` — screenshot regression only
+- CI baseline authority: Linux Chromium
 
 ## Source of Truth
 
@@ -15,27 +31,13 @@ This repo uses Playwright's built-in screenshot assertions for visual regression
 - `src/utils/visualTest.ts`
 - `scripts/run-visual-linux.sh`
 
-## Running the Visual Suite
+## Commands
 
-Run the visual suite locally:
-
-```bash
-npm run test:visual
-```
-
-If a UI change is intentional, update the baselines on your current platform:
-
-```bash
-npm run test:visual:update
-```
-
-If you need to refresh the canonical Linux baselines used by CI, use the pinned Playwright container:
-
-```bash
-npm run test:visual:update:linux
-```
-
-The Linux command uses `scripts/run-visual-linux.sh`, installs dependencies inside `mcr.microsoft.com/playwright:v1.58.2-noble`, and rewrites the `*-linux.png` snapshots.
+| Command                            | Purpose                                                                                 |
+| ---------------------------------- | --------------------------------------------------------------------------------------- |
+| `npm run test:visual`              | Run the suite; inspect failures in `playwright-report/`                                 |
+| `npm run test:visual:update:linux` | **Update CI baselines** via Docker (image version auto-synced from `package-lock.json`) |
+| `npm run test:visual:update`       | Update local macOS baselines only (`*-darwin.png`)                                      |
 
 ## What the Visual Test Mode Does
 
@@ -43,7 +45,7 @@ Visual specs always navigate with `?visual-test=1`. The app treats that as a det
 
 - global CSS animations and transitions
 - hero parallax and motion-driven transforms
-- autoplay video and SVG motion in the hero variants
+- the interactive 3D hero scenes (the cosmic poster and engineer SVG fallbacks render instead) and SVG motion in the hero variants
 - the JP_CLI boot sequence timers
 - transient focus, caret, and hover residue during capture
 
@@ -69,15 +71,19 @@ The repo currently keeps both `*-darwin.png` and `*-linux.png` snapshots. Treat 
 
 When `npm run test:visual` fails, Playwright writes the diff artifacts into `test-results/` and includes the expected, actual, and diff images in the HTML report.
 
-Use this workflow:
+1. Run `npm run test:visual` and inspect `playwright-report/` or `test-results/`.
+2. If unintended, fix the UI or stabilize the test.
+3. If intentional, run `npm run test:visual:update:linux` and commit the snapshot changes.
 
-1. Run `npm run test:visual`.
-2. Inspect the failure in `playwright-report/` or `test-results/`.
-3. If the change is unintended, fix the UI or stabilize the test.
-4. If the change is intentional, rerun `npm run test:visual:update`.
-5. Before merging a meaningful baseline change, refresh Linux snapshots with `npm run test:visual:update:linux`.
+## Troubleshooting
 
-## Adding New Visual Coverage
+**`Executable doesn't exist at /ms-playwright/...` or "Please update docker image as well"**
+
+The Docker image browsers must match `@playwright/test` in `package-lock.json`. The local script (`scripts/run-visual-linux.sh`) reads that version automatically. After bumping Playwright, also update the image tag in `.github/workflows/e2e.yml` and `.github/workflows/update-snapshots.yml` to the same version.
+
+**No snapshot files changed after update**
+
+Tests likely failed before screenshots ran. Check the command output for browser launch errors, then rerun `npm run test:visual:update:linux`.
 
 Keep new visual tests under `e2e/visual` and tag them with `@visual`. Reuse the helpers in `e2e/support/visual.ts` instead of hand-rolling setup.
 

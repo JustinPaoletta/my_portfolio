@@ -10,9 +10,9 @@ script-src 'self' 'unsafe-inline' https://cloud.umami.is https://vercel.live;
 script-src-attr 'none';
 object-src 'none';
 style-src 'self' 'unsafe-inline';
-img-src 'self' data: https:;
+img-src 'self' data: blob: https:;
 font-src 'self' data:;
-connect-src 'self' https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net https://api.github.com;
+connect-src 'self' blob: https://cloud.umami.is https://api-gateway.umami.dev https://vercel.live https://bam.nr-data.net https://api.github.com;
 frame-src 'self' https://vercel.live;
 base-uri 'self';
 form-action 'self';
@@ -25,7 +25,7 @@ upgrade-insecure-requests;
 
 - Fonts are served locally from `public/fonts`, so the policy no longer needs `fonts.googleapis.com` or `fonts.gstatic.com`.
 - The `style-src` directive is now same-origin only plus inline styles.
-- `connect-src` is limited to Umami, Vercel Live preview tooling, New Relic, and the public GitHub API.
+- `connect-src` is limited to Umami, Vercel Live preview tooling, New Relic, the public GitHub API, and `blob:` for Three.js GLB texture decoding in the cosmic hero.
 
 ## Directive Notes
 
@@ -39,8 +39,8 @@ upgrade-insecure-requests;
   Disables legacy plugin content.
 - `style-src 'self' 'unsafe-inline'`
   Allows same-origin stylesheets plus inline styles.
-- `img-src 'self' data: https:`
-  Allows local images, data URLs, and remote HTTPS images such as GitHub avatars.
+- `img-src 'self' data: blob: https:`
+  Allows local images, data URLs, blob URLs for WebGL textures, and remote HTTPS images such as GitHub avatars.
 - `font-src 'self' data:`
   Allows locally hosted fonts and data URLs.
 - `connect-src ...`

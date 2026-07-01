@@ -5,7 +5,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 ## Status
 
 - Type: public web app
-- Current version: `1.1.14`
+- Current version: `1.1.17`
 - Hosting model: Vercel-friendly frontend with optional `/api/*` functions
 - Release model: manual changelog + release branch flow documented in [RELEASE.md](./RELEASE.md)
 
@@ -30,6 +30,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 - React 19
 - TypeScript 5.9
 - rolldown-backed Vite
+- three.js and `@react-three/fiber` for the 3D hero backgrounds (engineer and cosmic themes)
 - Vercel serverless functions for optional `/api/*` routes
 - Vitest, Testing Library, Playwright, and Lighthouse CI
 - `vite-plugin-pwa` and Workbox
@@ -53,20 +54,21 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 1. Install dependencies with `npm install`.
 2. Copy `.env.example` to `.env`.
 3. Fill in the `VITE_*` values you need locally.
-4. Run `npm run start:dev` for the frontend-only dev server.
-5. Use `npm run start:vercel` instead when you need local `/api/*` functions.
+4. Run `npm run start:dev` for the frontend-only dev server (`http://localhost:5173`).
+5. Use `npm run start:vercel` instead when you need local `/api/*` functions (`http://localhost:6173`).
 
 ## Common Commands
 
-- `npm run start:dev` starts the Vite frontend locally.
-- `npm run start:vercel` runs the app through `vercel dev`.
+- `npm run start:dev` starts the Vite frontend locally at `http://localhost:5173`.
+- `npm run start:vercel` runs the app through `vercel dev` at `http://localhost:6173`.
 - `npm run build` type-checks, validates contrast, builds the app, and prerenders the homepage.
-- `npm run start:prod` builds and previews the production output.
+- `npm run start:prod` builds and previews the production output at `http://localhost:4173`.
 - `npm run lint` runs the CI lint and Prettier checks.
 - `npm run lint:fix` applies eslint and Prettier fixes where possible.
 - `npm run test:unit` runs the Vitest suite once.
 - `npm run test:e2e` runs the Playwright suite excluding visual snapshots.
 - `npm run test:visual` runs the committed visual regression suite.
+- `npm run test:visual:update:linux` refreshes CI snapshot baselines (requires Docker). See [Design changes](#design-changes).
 - `npm run lighthouse` runs the checked-in Lighthouse CI config.
 
 ## Environment & Configuration
@@ -80,6 +82,19 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 - Local baseline: `npm run lint`, `npm run test:unit`, and `npm run build`.
 - Release candidates should also pass `npm run test:e2e`.
 - User-facing releases with major visual or performance impact should also run `npm run test:visual` and `npm run lighthouse`.
+
+### Design changes
+
+If you change CSS, layout, markup, fonts, icons, images, or themes:
+
+1. `npm run test:visual` — review failures in `playwright-report/`.
+2. `npm run test:visual:update:linux` — update CI baselines (Docker required).
+3. `npm run test:visual:update` — update macOS baselines (run on a Mac).
+4. Commit the changed files under `e2e/visual/**/*-snapshots/`.
+
+No Docker? Run the **Update Visual Snapshots** GitHub Actions workflow for Linux baselines only.
+
+Details: [docs/VISUAL_REGRESSION.md](./docs/VISUAL_REGRESSION.md).
 
 ## Deployment & Operations
 

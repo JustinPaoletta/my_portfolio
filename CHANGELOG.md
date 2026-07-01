@@ -7,10 +7,20 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Added
+
+- Interactive 3D hero backgrounds for the engineer theme (an animated circuit board with flowing data packets) and the cosmic theme (a nebula dome with a procedural starfield), built with three.js and `@react-three/fiber` from Blender-authored GLB models. The scenes lazy-load after first paint and fall back to a static poster (cosmic) or SVG board (engineer) under reduced-motion, save-data, and visual-test conditions.
+
 ### Changed
 
+- The cosmic hero now renders a 3D nebula scene with a `cosmos-poster.webp` fallback instead of an autoplay background video.
+- three.js and `@react-three/fiber` are isolated into a dedicated lazy-loaded `vendor-three` bundle chunk to keep them out of the initial critical path.
 - Dependabot is now explicitly configured and documented as security-only, and its auto-merge workflow only targets grouped security remediation PRs.
 - Removed a stale release-docs-only workflow and aligned the release docs with the repo's manual release process.
+
+### Removed
+
+- The legacy cosmic hero `cosmos.mp4` video (and its PWA precache entry), the now-unused `cosmos-first-frame.webp` poster, the hero mask and cosmic star SVG assets, and the wild-apricot-exports "Download npm Package" card CTA.
 
 ### Documentation
 

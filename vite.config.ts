@@ -74,7 +74,8 @@ function excludeApiDirectory(): Plugin {
 const BUNDLE_SIZE_LIMITS = {
   appChunk: 125,
   vendorChunk: 190,
-  totalSize: 640,
+  vendorThreeChunk: 950,
+  totalSize: 1550,
   cssFile: 85,
 };
 
@@ -87,6 +88,7 @@ const INITIAL_ROUTE_LIMITS = {
 function bundleSizeLimit(): Plugin {
   return {
     name: 'bundle-size-limit',
+    apply: 'build',
     enforce: 'post',
     closeBundle() {
       const distPath = path.resolve(__dirname, 'dist');
@@ -106,9 +108,11 @@ function bundleSizeLimit(): Plugin {
           totalSize += sizeKB;
 
           if (file.endsWith('.js')) {
-            const limit = file.includes('vendor')
-              ? BUNDLE_SIZE_LIMITS.vendorChunk
-              : BUNDLE_SIZE_LIMITS.appChunk;
+            const limit = file.includes('vendor-three')
+              ? BUNDLE_SIZE_LIMITS.vendorThreeChunk
+              : file.includes('vendor')
+                ? BUNDLE_SIZE_LIMITS.vendorChunk
+                : BUNDLE_SIZE_LIMITS.appChunk;
             if (sizeKB > limit) {
               errors.push(
                 `❌ ${file}: ${sizeKB.toFixed(2)} KB (limit: ${limit} KB)`
@@ -272,6 +276,13 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (id.includes('node_modules')) {
+              if (
+                id.includes('/three/') ||
+                id.includes('\\three\\') ||
+                id.includes('@react-three/')
+              ) {
+                return 'vendor-three';
+              }
               if (id.includes('react') || id.includes('react-dom'))
                 return 'vendor-react';
               // Keep newrelic separate for lazy loading and caching

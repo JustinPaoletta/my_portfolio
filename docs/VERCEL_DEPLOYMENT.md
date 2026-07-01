@@ -71,7 +71,7 @@ To test the Vercel functions locally, use:
 npm run start:vercel
 ```
 
-That is the closest local equivalent to the deployed environment.
+Then open `http://localhost:6173`. That is the closest local equivalent to the deployed environment.
 
 ## Domain Changes
 

@@ -13,12 +13,17 @@ This project enforces performance and quality through build-time bundle budgets,
 
 The `bundle-size-limit` plugin in `vite.config.ts` fails `npm run build` if any of these limits are exceeded.
 
-| Asset type                  | Limit    |
-| --------------------------- | -------- |
-| App chunks                  | `155 KB` |
-| Vendor chunks               | `400 KB` |
-| CSS files                   | `85 KB`  |
-| Total JS + CSS asset weight | `750 KB` |
+| Asset type                  | Limit     |
+| --------------------------- | --------- |
+| App chunks                  | `125 KB`  |
+| Vendor chunks               | `190 KB`  |
+| `vendor-three` chunk        | `950 KB`  |
+| CSS files                   | `85 KB`   |
+| Total JS + CSS asset weight | `1550 KB` |
+
+The `vendor-three` chunk holds three.js and `@react-three/fiber`, which power the
+3D hero backgrounds. It is isolated into its own lazy-loaded chunk so it never
+enters the initial critical path.
 
 These checks run anywhere `npm run build` runs, including local builds, hooks, CI, and Vercel.
 
@@ -53,12 +58,12 @@ Each URL is tested three times.
 
 ### Theme-specific Lighthouse byte-weight thresholds
 
-| Theme      | Limit           |
-| ---------- | --------------- |
-| `engineer` | `500000` bytes  |
-| `cli`      | `500000` bytes  |
-| `minimal`  | `500000` bytes  |
-| `cosmic`   | `1300000` bytes |
+| Theme      | Limit          |
+| ---------- | -------------- |
+| `engineer` | `450000` bytes |
+| `cli`      | `390000` bytes |
+| `minimal`  | `450000` bytes |
+| `cosmic`   | `600000` bytes |
 
 Several Lighthouse audits are intentionally disabled in `.lighthouserc.cjs` because they are noisy or not meaningful in this static CI environment.
 
