@@ -55,8 +55,6 @@ function detectStandalone(): boolean {
  * Hook for managing PWA updates and installation
  */
 export function usePWA(): UsePWAReturn {
-  const [needRefresh, setNeedRefresh] = useState(false);
-  const [offlineReady, setOfflineReady] = useState(false);
   const [canInstall, setCanInstall] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
 
@@ -84,14 +82,6 @@ export function usePWA(): UsePWAReturn {
   const offlineReadyState = registerResult.offlineReady[0];
   const setOfflineReadyState = registerResult.offlineReady[1];
   const updateServiceWorker = registerResult.updateServiceWorker;
-
-  useEffect(() => {
-    setNeedRefresh(needRefreshState);
-  }, [needRefreshState]);
-
-  useEffect(() => {
-    setOfflineReady(offlineReadyState);
-  }, [offlineReadyState]);
 
   // Handle beforeinstallprompt event
   useEffect(() => {
@@ -190,8 +180,8 @@ export function usePWA(): UsePWAReturn {
   }, [setOfflineReadyState, setNeedRefreshState, dismissInstall]);
 
   return {
-    needRefresh,
-    offlineReady,
+    needRefresh: needRefreshState,
+    offlineReady: offlineReadyState,
     canInstall,
     isInstalling,
     updateServiceWorker,
