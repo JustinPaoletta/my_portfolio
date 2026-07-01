@@ -7,6 +7,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-07-01
+
 ### Added
 
 - Interactive 3D hero backgrounds for the engineer theme (an animated circuit board with flowing data packets) and the cosmic theme (a nebula dome with a procedural starfield), built with three.js and `@react-three/fiber` from Blender-authored GLB models. The scenes lazy-load after first paint and fall back to a static poster (cosmic) or SVG board (engineer) under reduced-motion, save-data, and visual-test conditions.
