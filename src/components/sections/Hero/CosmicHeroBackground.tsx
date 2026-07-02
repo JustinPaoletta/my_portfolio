@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useRef } from 'react';
 import HeroStillImage from '@/components/sections/Hero/HeroStillImage';
 import { useSequentialSceneReveal } from '@/components/sections/Hero/useSequentialSceneReveal';
 import { useCanvasPosterSync } from '@/hooks/useCanvasPosterSync';
@@ -53,10 +53,23 @@ function CosmicInteractiveBackground({
   calmMotion,
   mode,
 }: CosmicInteractiveBackgroundProps): React.ReactElement {
-  const { isSceneReady, isPosterHidden, transitionPhase, handleSceneReady } =
-    useSequentialSceneReveal();
-  const { livePosterSrc, handleCanvasFrame } =
-    useCanvasPosterSync(isPosterHidden);
+  const isLivePosterReadyRef = useRef(false);
+  const {
+    isSceneReady,
+    isPosterHidden,
+    isPosterFadeRequested,
+    transitionPhase,
+    handleSceneReady,
+    handlePosterFadeComplete,
+  } = useSequentialSceneReveal({ reducedMotion, isLivePosterReadyRef });
+  const { livePosterSrc, handleCanvasFrame } = useCanvasPosterSync(
+    isPosterHidden,
+    {
+      onLivePosterReady: (ready) => {
+        isLivePosterReadyRef.current = ready;
+      },
+    }
+  );
 
   return (
     <div
@@ -73,7 +86,9 @@ function CosmicInteractiveBackground({
           mode={mode}
           className="hero-cosmic-still"
           hidden={isPosterHidden}
+          fadeRequested={isPosterFadeRequested}
           liveSrc={isPosterHidden ? undefined : livePosterSrc}
+          onFadeComplete={handlePosterFadeComplete}
         />
         <Suspense fallback={null}>
           <CosmicScene3D

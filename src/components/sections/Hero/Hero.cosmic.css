@@ -8,6 +8,10 @@
   --cosmic-poster-mobile: url('/images/hero/cosmic/cosmos-poster-light-mobile.webp');
 }
 
+:root[data-theme='cosmic'] {
+  --hero-poster-fade-duration: 400ms;
+}
+
 .hero-cosmic-stage {
   position: absolute;
   inset: 0;
@@ -28,6 +32,32 @@
 }
 
 :root[data-theme='cosmic']
+  .hero-background[data-cosmic-transition='ready']
+  .hero-cosmic-still,
+:root[data-theme='cosmic']
+  .hero-background[data-cosmic-transition='fading']
+  .hero-cosmic-still {
+  z-index: 2;
+}
+
+:root[data-theme='cosmic']
+  .hero-background[data-cosmic-transition='fading']
+  .hero-cosmic-still[data-poster-fading='true'] {
+  animation: hero-poster-fade-out var(--hero-poster-fade-duration) ease-out
+    forwards;
+}
+
+@keyframes hero-poster-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+:root[data-theme='cosmic']
   .hero-background[data-cosmic-scene='3d']
   .cosmic-scene3d-stage {
   opacity: 1;
@@ -39,6 +69,13 @@
   .hero-cosmic-still {
   opacity: 0;
   visibility: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='cosmic'] .hero-cosmic-still {
+    animation: none;
+    transition: none;
+  }
 }
 
 :root[data-theme='cosmic'] .hero-subtext-layout {

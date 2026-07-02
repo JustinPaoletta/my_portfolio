@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   useHeroPosterPath,
   type HeroPosterMode,
@@ -9,8 +10,10 @@ export type HeroStillImageProps = {
   mode: HeroPosterMode;
   className: string;
   hidden?: boolean;
+  fadeRequested?: boolean;
   /** When set, replaces the static poster with a live canvas snapshot. */
   liveSrc?: string;
+  onFadeComplete?: () => void;
 };
 
 function HeroStillImage({
@@ -18,9 +21,22 @@ function HeroStillImage({
   mode,
   className,
   hidden = false,
+  fadeRequested = false,
   liveSrc,
+  onFadeComplete,
 }: HeroStillImageProps): React.ReactElement {
   const staticSrc = useHeroPosterPath(theme, mode);
+
+  const handleAnimationEnd = useCallback(
+    (event: React.AnimationEvent<HTMLImageElement>): void => {
+      if (event.animationName !== 'hero-poster-fade-out' || !fadeRequested) {
+        return;
+      }
+
+      onFadeComplete?.();
+    },
+    [fadeRequested, onFadeComplete]
+  );
 
   return (
     <img
@@ -31,7 +47,9 @@ function HeroStillImage({
       decoding="async"
       fetchPriority="high"
       data-poster-hidden={hidden ? 'true' : 'false'}
+      data-poster-fading={fadeRequested ? 'true' : 'false'}
       data-poster-source={liveSrc ? 'canvas' : 'static'}
+      onAnimationEnd={handleAnimationEnd}
     />
   );
 }

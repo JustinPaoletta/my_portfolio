@@ -2,6 +2,7 @@ import {
   Component,
   lazy,
   Suspense,
+  useRef,
   useState,
   type ErrorInfo,
   type ReactNode,
@@ -83,10 +84,23 @@ function EngineerInteractiveBackground({
   fallback,
   onSceneError,
 }: EngineerInteractiveBackgroundProps): React.ReactElement {
-  const { isSceneReady, isPosterHidden, transitionPhase, handleSceneReady } =
-    useSequentialSceneReveal();
-  const { livePosterSrc, handleCanvasFrame } =
-    useCanvasPosterSync(isPosterHidden);
+  const isLivePosterReadyRef = useRef(false);
+  const {
+    isSceneReady,
+    isPosterHidden,
+    isPosterFadeRequested,
+    transitionPhase,
+    handleSceneReady,
+    handlePosterFadeComplete,
+  } = useSequentialSceneReveal({ reducedMotion, isLivePosterReadyRef });
+  const { livePosterSrc, handleCanvasFrame } = useCanvasPosterSync(
+    isPosterHidden,
+    {
+      onLivePosterReady: (ready) => {
+        isLivePosterReadyRef.current = ready;
+      },
+    }
+  );
 
   return (
     <div
@@ -104,7 +118,9 @@ function EngineerInteractiveBackground({
           mode={mode}
           className="hero-engineer-still"
           hidden={isPosterHidden}
+          fadeRequested={isPosterFadeRequested}
           liveSrc={isPosterHidden ? undefined : livePosterSrc}
+          onFadeComplete={handlePosterFadeComplete}
         />
         <EngineerSceneErrorBoundary
           fallback={fallback}

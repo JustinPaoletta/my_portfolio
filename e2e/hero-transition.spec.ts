@@ -11,27 +11,38 @@ function stillSelector(theme: HeroTheme): string {
   return theme === 'engineer' ? '.hero-engineer-still' : '.hero-cosmic-still';
 }
 
-async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
+function transitionAttribute(theme: HeroTheme): string {
+  return theme === 'engineer'
+    ? 'data-engineer-circuit-transition'
+    : 'data-cosmic-transition';
+}
+
+function posterAttribute(theme: HeroTheme): string {
+  return theme === 'engineer'
+    ? 'data-engineer-circuit-poster'
+    : 'data-cosmic-poster';
+}
+
+function sceneAttribute(theme: HeroTheme): string {
+  return theme === 'engineer'
+    ? 'data-engineer-circuit-scene'
+    : 'data-cosmic-scene';
+}
+
+async function waitForPosterFadeStart(
+  page: Page,
+  theme: HeroTheme
+): Promise<void> {
   const rootSelector = sceneRootSelector(theme);
   const stillQuery = stillSelector(theme);
-  const sceneAttribute =
-    theme === 'engineer' ? 'data-engineer-circuit-scene' : 'data-cosmic-scene';
-  const posterAttribute =
-    theme === 'engineer'
-      ? 'data-engineer-circuit-poster'
-      : 'data-cosmic-poster';
-  const transitionAttribute =
-    theme === 'engineer'
-      ? 'data-engineer-circuit-transition'
-      : 'data-cosmic-transition';
 
   await page.waitForFunction(
     ({
       rootSelector: rootQuery,
       stillQuery,
-      sceneAttribute,
-      posterAttribute,
-      transitionAttribute,
+      sceneAttribute: sceneAttr,
+      posterAttribute: posterAttr,
+      transitionAttribute: transitionAttr,
     }) => {
       const root = document.querySelector<HTMLElement>(rootQuery);
       const still = document.querySelector<HTMLImageElement>(stillQuery);
@@ -40,9 +51,10 @@ async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
       }
 
       return (
-        root.getAttribute(transitionAttribute) === 'swapping' &&
-        root.getAttribute(sceneAttribute) === '3d' &&
-        root.getAttribute(posterAttribute) === 'visible' &&
+        root.getAttribute(transitionAttr) === 'fading' &&
+        root.getAttribute(sceneAttr) === '3d' &&
+        root.getAttribute(posterAttr) === 'visible' &&
+        still.getAttribute('data-poster-fading') === 'true' &&
         still.getAttribute('data-poster-hidden') === 'false' &&
         still.src.length > 0 &&
         root.querySelector('canvas') !== null
@@ -51,9 +63,9 @@ async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
     {
       rootSelector,
       stillQuery,
-      sceneAttribute,
-      posterAttribute,
-      transitionAttribute,
+      sceneAttribute: sceneAttribute(theme),
+      posterAttribute: posterAttribute(theme),
+      transitionAttribute: transitionAttribute(theme),
     },
     { timeout: 20_000 }
   );
@@ -61,7 +73,7 @@ async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
 
 test.describe('Hero poster transition parity', () => {
   for (const theme of ['engineer', 'cosmic'] as const) {
-    test(`${theme} reveals the canvas before hiding the poster`, async ({
+    test(`${theme} fades the poster out after the canvas is ready`, async ({
       page,
     }) => {
       await mockPortfolioApis(page);
@@ -70,14 +82,17 @@ test.describe('Hero poster transition parity', () => {
       });
 
       const root = page.locator(sceneRootSelector(theme));
-      const posterAttribute =
-        theme === 'engineer'
-          ? 'data-engineer-circuit-poster'
-          : 'data-cosmic-poster';
+      const still = page.locator(stillSelector(theme));
 
-      await waitForPosterSwap(page, theme);
+      await waitForPosterFadeStart(page, theme);
 
-      await expect(root).toHaveAttribute(posterAttribute, 'hidden', {
+      const midFadeOpacity = await still.evaluate((element) =>
+        Number.parseFloat(getComputedStyle(element).opacity)
+      );
+      expect(midFadeOpacity).toBeLessThan(1);
+      expect(midFadeOpacity).toBeGreaterThan(0);
+
+      await expect(root).toHaveAttribute(posterAttribute(theme), 'hidden', {
         timeout: 5_000,
       });
       await expect(page.locator('canvas')).toHaveCount(1);

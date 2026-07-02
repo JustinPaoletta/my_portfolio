@@ -71,6 +71,10 @@
   filter: drop-shadow(0 0 12px rgba(var(--color-primary-rgb), 0.18));
 }
 
+:root[data-theme='engineer'] {
+  --hero-poster-fade-duration: 400ms;
+}
+
 .hero-engineer-stage {
   position: absolute;
   inset: 0;
@@ -88,6 +92,32 @@
   object-position: center;
   opacity: 1;
   transition: none;
+}
+
+:root[data-theme='engineer']
+  .hero-engineer-visual[data-engineer-circuit-transition='ready']
+  .hero-engineer-still,
+:root[data-theme='engineer']
+  .hero-engineer-visual[data-engineer-circuit-transition='fading']
+  .hero-engineer-still {
+  z-index: 2;
+}
+
+:root[data-theme='engineer']
+  .hero-engineer-visual[data-engineer-circuit-transition='fading']
+  .hero-engineer-still[data-poster-fading='true'] {
+  animation: hero-poster-fade-out var(--hero-poster-fade-duration) ease-out
+    forwards;
+}
+
+@keyframes hero-poster-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 .hero-engineer-visual > .hero-engineer-stage > .engineer-circuit {
@@ -112,6 +142,13 @@
   .hero-engineer-visual[data-engineer-circuit-scene='svg']
   .hero-engineer-still {
   display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme='engineer'] .hero-engineer-still {
+    animation: none;
+    transition: none;
+  }
 }
 
 :root[data-theme='engineer'][data-color-mode='light'] .hero-engineer-visual {
