@@ -12,6 +12,7 @@ import {
   Vector3,
 } from 'three';
 import { isPosterCaptureMode } from '@/utils/heroPoster';
+import PosterFrameSync from '@/components/sections/Hero/PosterFrameSync';
 import './EngineerCircuit3D.css';
 
 const MODEL_PATH = '/models/hero/circuit-board.glb';
@@ -597,6 +598,8 @@ type ChipCanvasProps = {
   flowSpeed: number;
   mode: Mode;
   onSceneReady?: () => void;
+  onCanvasFrame?: (canvas: HTMLCanvasElement) => void;
+  syncPoster?: boolean;
 };
 
 function ChipCanvas({
@@ -604,10 +607,13 @@ function ChipCanvas({
   flowSpeed,
   mode,
   onSceneReady,
+  onCanvasFrame,
+  syncPoster = false,
 }: ChipCanvasProps): React.ReactElement {
   const keyLight = mode === 'dark' ? '#ffffff' : '#fffaf0';
   const fillLight = mode === 'dark' ? '#39d8ff' : '#bfe9ff';
   const ambient = mode === 'dark' ? 0.5 : 0.85;
+  const preserveDrawingBuffer = isPosterCaptureMode() || syncPoster;
 
   return (
     <Canvas
@@ -618,9 +624,11 @@ function ChipCanvas({
         alpha: true,
         antialias: true,
         powerPreference: 'high-performance',
-        preserveDrawingBuffer: isPosterCaptureMode(),
+        preserveDrawingBuffer,
       }}
-      frameloop={isActive && flowSpeed > 0 ? 'always' : 'demand'}
+      frameloop={
+        syncPoster ? 'always' : isActive && flowSpeed > 0 ? 'always' : 'demand'
+      }
     >
       <CameraRig />
       <ambientLight intensity={ambient} />
@@ -633,6 +641,10 @@ function ChipCanvas({
       <pointLight position={[0, 3, 0]} intensity={0.4} color="#39ff14" />
       <Suspense fallback={null}>
         <BoardScene isActive={isActive} flowSpeed={flowSpeed} mode={mode} />
+        <PosterFrameSync
+          enabled={syncPoster && Boolean(onCanvasFrame)}
+          onCanvasFrame={onCanvasFrame ?? (() => {})}
+        />
         <SceneReadyNotifier onSceneReady={onSceneReady} />
       </Suspense>
     </Canvas>
@@ -645,6 +657,8 @@ export type EngineerCircuit3DProps = {
   calmMotion: boolean;
   mode: Mode;
   onSceneReady?: () => void;
+  onCanvasFrame?: (canvas: HTMLCanvasElement) => void;
+  syncPoster?: boolean;
 };
 
 function EngineerCircuit3D({
@@ -653,6 +667,8 @@ function EngineerCircuit3D({
   calmMotion,
   mode,
   onSceneReady,
+  onCanvasFrame,
+  syncPoster = false,
 }: EngineerCircuit3DProps): React.ReactElement {
   const baseSpeed = calmMotion ? 0.6 : 1.2;
   const effectiveSpeed = reducedMotion ? 0 : baseSpeed;
@@ -664,6 +680,8 @@ function EngineerCircuit3D({
         flowSpeed={effectiveSpeed}
         mode={mode}
         onSceneReady={onSceneReady}
+        onCanvasFrame={onCanvasFrame}
+        syncPoster={syncPoster}
       />
     </div>
   );

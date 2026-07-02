@@ -13,6 +13,7 @@ function stillSelector(theme: HeroTheme): string {
 
 async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
   const rootSelector = sceneRootSelector(theme);
+  const stillQuery = stillSelector(theme);
   const sceneAttribute =
     theme === 'engineer' ? 'data-engineer-circuit-scene' : 'data-cosmic-scene';
   const posterAttribute =
@@ -27,12 +28,14 @@ async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
   await page.waitForFunction(
     ({
       rootSelector: rootQuery,
+      stillQuery,
       sceneAttribute,
       posterAttribute,
       transitionAttribute,
     }) => {
       const root = document.querySelector<HTMLElement>(rootQuery);
-      if (!root) {
+      const still = document.querySelector<HTMLImageElement>(stillQuery);
+      if (!root || !still) {
         return false;
       }
 
@@ -40,10 +43,18 @@ async function waitForPosterSwap(page: Page, theme: HeroTheme): Promise<void> {
         root.getAttribute(transitionAttribute) === 'swapping' &&
         root.getAttribute(sceneAttribute) === '3d' &&
         root.getAttribute(posterAttribute) === 'visible' &&
+        still.getAttribute('data-poster-hidden') === 'false' &&
+        still.src.length > 0 &&
         root.querySelector('canvas') !== null
       );
     },
-    { rootSelector, sceneAttribute, posterAttribute, transitionAttribute },
+    {
+      rootSelector,
+      stillQuery,
+      sceneAttribute,
+      posterAttribute,
+      transitionAttribute,
+    },
     { timeout: 20_000 }
   );
 }
@@ -65,12 +76,6 @@ test.describe('Hero poster transition parity', () => {
           : 'data-cosmic-poster';
 
       await waitForPosterSwap(page, theme);
-
-      const stillLoaded = await page.evaluate((selector) => {
-        const still = document.querySelector<HTMLImageElement>(selector);
-        return Boolean(still && still.complete && still.naturalWidth > 0);
-      }, stillSelector(theme));
-      expect(stillLoaded).toBe(true);
 
       await expect(root).toHaveAttribute(posterAttribute, 'hidden', {
         timeout: 5_000,

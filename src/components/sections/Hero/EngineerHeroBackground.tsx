@@ -9,6 +9,7 @@ import {
 import EngineerCircuitBoard from '@/components/sections/Hero/EngineerCircuitBoard/EngineerCircuitBoard';
 import HeroStillImage from '@/components/sections/Hero/HeroStillImage';
 import { useSequentialSceneReveal } from '@/components/sections/Hero/useSequentialSceneReveal';
+import { useCanvasPosterSync } from '@/hooks/useCanvasPosterSync';
 
 const EngineerCircuit3D = lazy(
   () => import('@/components/sections/Hero/EngineerCircuit3D')
@@ -84,6 +85,8 @@ function EngineerInteractiveBackground({
 }: EngineerInteractiveBackgroundProps): React.ReactElement {
   const { isSceneReady, isPosterHidden, transitionPhase, handleSceneReady } =
     useSequentialSceneReveal();
+  const { livePosterSrc, handleCanvasFrame } =
+    useCanvasPosterSync(isPosterHidden);
 
   return (
     <div
@@ -101,6 +104,7 @@ function EngineerInteractiveBackground({
           mode={mode}
           className="hero-engineer-still"
           hidden={isPosterHidden}
+          liveSrc={isPosterHidden ? undefined : livePosterSrc}
         />
         <EngineerSceneErrorBoundary
           fallback={fallback}
@@ -113,6 +117,8 @@ function EngineerInteractiveBackground({
               calmMotion={calmMotion}
               mode={mode}
               onSceneReady={handleSceneReady}
+              onCanvasFrame={handleCanvasFrame}
+              syncPoster={!isPosterHidden}
             />
           </Suspense>
         </EngineerSceneErrorBoundary>

@@ -9,6 +9,8 @@ export type HeroStillImageProps = {
   mode: HeroPosterMode;
   className: string;
   hidden?: boolean;
+  /** When set, replaces the static poster with a live canvas snapshot. */
+  liveSrc?: string;
 };
 
 function HeroStillImage({
@@ -16,18 +18,20 @@ function HeroStillImage({
   mode,
   className,
   hidden = false,
+  liveSrc,
 }: HeroStillImageProps): React.ReactElement {
-  const src = useHeroPosterPath(theme, mode);
+  const staticSrc = useHeroPosterPath(theme, mode);
 
   return (
     <img
       className={className}
-      src={src}
+      src={liveSrc ?? staticSrc}
       alt=""
       aria-hidden="true"
       decoding="async"
       fetchPriority="high"
       data-poster-hidden={hidden ? 'true' : 'false'}
+      data-poster-source={liveSrc ? 'canvas' : 'static'}
     />
   );
 }

@@ -22,6 +22,7 @@ import {
   type Texture,
 } from 'three';
 import { isPosterCaptureMode } from '@/utils/heroPoster';
+import PosterFrameSync from '@/components/sections/Hero/PosterFrameSync';
 import './CosmicScene3D.css';
 
 const MODEL_PATH = '/models/hero/cosmic-scene.glb';
@@ -408,6 +409,8 @@ export type CosmicScene3DProps = {
   calmMotion: boolean;
   mode: Mode;
   onSceneReady?: () => void;
+  onCanvasFrame?: (canvas: HTMLCanvasElement) => void;
+  syncPoster?: boolean;
 };
 
 function CosmicScene3D({
@@ -416,11 +419,14 @@ function CosmicScene3D({
   calmMotion,
   mode,
   onSceneReady,
+  onCanvasFrame,
+  syncPoster = false,
 }: CosmicScene3DProps): React.ReactElement {
   const animating = isActive && !reducedMotion;
   const handleSceneReady = useCallback((): void => {
     onSceneReady?.();
   }, [onSceneReady]);
+  const preserveDrawingBuffer = isPosterCaptureMode() || syncPoster;
 
   return (
     <div className="cosmic-scene3d-stage" aria-hidden="true">
@@ -434,13 +440,13 @@ function CosmicScene3D({
           antialias: true,
           powerPreference: 'high-performance',
           premultipliedAlpha: false,
-          preserveDrawingBuffer: isPosterCaptureMode(),
+          preserveDrawingBuffer,
         }}
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);
         }}
         style={{ background: 'transparent' }}
-        frameloop={animating ? 'always' : 'demand'}
+        frameloop={syncPoster || animating ? 'always' : 'demand'}
       >
         <CameraRig />
         <ambientLight intensity={AMBIENT_INTENSITY[mode]} />
@@ -450,6 +456,10 @@ function CosmicScene3D({
             calmMotion={calmMotion}
             mode={mode}
             onSceneReady={handleSceneReady}
+          />
+          <PosterFrameSync
+            enabled={syncPoster && Boolean(onCanvasFrame)}
+            onCanvasFrame={onCanvasFrame ?? (() => {})}
           />
         </Suspense>
       </Canvas>
