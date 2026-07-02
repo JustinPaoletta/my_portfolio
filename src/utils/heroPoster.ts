@@ -54,12 +54,23 @@ export function getHeroPosterPath(
   return POSTER_PATHS[theme][mode][variant];
 }
 
+/**
+ * The hero scenes use perspective cameras with a fixed vertical FOV, so a
+ * poster `object-fit: cover`s to a pixel-exact match of the live canvas only
+ * when the poster's aspect ratio is at least as wide as the viewport's.
+ * The mobile poster is captured at 3:4 (see scripts/capture-hero-posters.ts),
+ * so it is only used for viewports at or below that ratio; anything wider
+ * (including squarish and landscape windows) gets the wide desktop poster.
+ * Must stay in sync with the preload logic in index.html.
+ */
+export const HERO_POSTER_MOBILE_MEDIA_QUERY = '(max-aspect-ratio: 3/4)';
+
 function getPosterVariantFromViewport(): HeroPosterVariant {
   if (typeof window === 'undefined') {
     return 'desktop';
   }
 
-  return window.matchMedia('(orientation: portrait)').matches
+  return window.matchMedia(HERO_POSTER_MOBILE_MEDIA_QUERY).matches
     ? 'mobile'
     : 'desktop';
 }
@@ -77,7 +88,7 @@ export function useHeroPosterPath(
       return undefined;
     }
 
-    const mediaQuery = window.matchMedia('(orientation: portrait)');
+    const mediaQuery = window.matchMedia(HERO_POSTER_MOBILE_MEDIA_QUERY);
 
     const updatePath = (): void => {
       setPath(

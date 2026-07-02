@@ -13,7 +13,10 @@ if (!bootstrapScriptMatch) {
 
 const bootstrapScript = bootstrapScriptMatch[1];
 
-function installMatchMediaMock(isDark: boolean, isPortrait = false): void {
+function installMatchMediaMock(
+  isDark: boolean,
+  isNarrowViewport = false
+): void {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
@@ -22,8 +25,8 @@ function installMatchMediaMock(isDark: boolean, isPortrait = false): void {
         matches:
           query === '(prefers-color-scheme: dark)'
             ? isDark
-            : query === '(orientation: portrait)'
-              ? isPortrait
+            : query === '(max-aspect-ratio: 3/4)'
+              ? isNarrowViewport
               : false,
         media: query,
         onchange: null,
@@ -96,7 +99,7 @@ describe('index.html theme bootstrap', () => {
     );
   });
 
-  it('preloads the active engineer mobile poster for theme, mode, and orientation', () => {
+  it('preloads the active engineer mobile poster for theme, mode, and narrow viewports', () => {
     installMatchMediaMock(false, true);
     window.history.pushState({}, '', '/?theme=engineer&mode=dark');
 
@@ -111,7 +114,7 @@ describe('index.html theme bootstrap', () => {
     expect(posterPreload?.getAttribute('fetchpriority')).toBe('high');
   });
 
-  it('preloads the active cosmic desktop poster for theme, mode, and orientation', () => {
+  it('preloads the active cosmic desktop poster for theme, mode, and wide viewports', () => {
     installMatchMediaMock(false, false);
     window.history.pushState({}, '', '/?theme=cosmic&mode=light');
 
