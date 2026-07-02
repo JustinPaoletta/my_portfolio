@@ -311,6 +311,7 @@ type SceneReadyNotifierProps = {
 function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
   const frameCountRef = useRef(0);
   const hasNotifiedRef = useRef(false);
+  const invalidate = useThree((state) => state.invalidate);
 
   useFrame(() => {
     if (hasNotifiedRef.current) {
@@ -318,10 +319,14 @@ function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
     }
 
     frameCountRef.current += 1;
-    if (frameCountRef.current >= 2) {
-      hasNotifiedRef.current = true;
-      onSceneReady();
+
+    if (frameCountRef.current < 2) {
+      invalidate();
+      return;
     }
+
+    hasNotifiedRef.current = true;
+    onSceneReady();
   });
 
   return null;
@@ -365,9 +370,7 @@ function CosmicScene({
 
   return (
     <group ref={groupRef}>
-      <Suspense fallback={null}>
-        <NebulaDome mode={mode} />
-      </Suspense>
+      <NebulaDome mode={mode} />
       <Starfield isActive={isActive} calmMotion={calmMotion} />
       <SceneReadyNotifier onSceneReady={onSceneReady} />
     </group>

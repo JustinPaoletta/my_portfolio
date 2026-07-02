@@ -1,7 +1,18 @@
 .engineer-circuit3d-stage {
   position: absolute;
   inset: 0;
+  z-index: 2;
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 180ms ease;
+}
+
+:root[data-theme='engineer']
+  .hero-engineer-visual[data-engineer-circuit-scene='3d']
+  .engineer-circuit3d-stage {
+  opacity: 1;
+  visibility: visible;
 }
 
 .engineer-circuit3d-canvas {

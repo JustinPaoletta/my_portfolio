@@ -19,15 +19,56 @@ describe('pwaConfig', () => {
     );
   });
 
-  it('keeps large documents out of precache while explicitly shipping the cosmic hero poster', () => {
+  it('keeps large documents, GLBs, and poster variants out of precache', () => {
     expect(pwaConfig.includeAssets).not.toContain(
       'resume/Justin-Paoletta_Software-Engineer.pdf'
     );
-    expect(pwaConfig.includeAssets).toContain(
-      'images/hero/cosmic/cosmos-poster.webp'
+    expect(pwaConfig.includeAssets).not.toContain(
+      'models/hero/circuit-board.glb'
+    );
+    expect(pwaConfig.includeAssets).not.toContain(
+      'models/hero/cosmic-scene.glb'
+    );
+    expect(pwaConfig.includeAssets).not.toContain(
+      'images/hero/cosmic/cosmos-poster-dark-desktop.webp'
     );
     expect(pwaConfig.workbox?.globPatterns).toContain(
       '**/*.{js,css,html,ico,png,svg,woff2}'
     );
+    expect(pwaConfig.workbox?.globPatterns?.join(',')).not.toContain('glb');
+    expect(pwaConfig.workbox?.globPatterns?.join(',')).not.toContain('webp');
+  });
+
+  it('caches hero GLB models at runtime', () => {
+    const heroModelRoute = pwaConfig.workbox?.runtimeCaching?.find(
+      (route) => route.options?.cacheName === 'hero-models-cache'
+    );
+
+    expect(heroModelRoute).toBeDefined();
+    expect(heroModelRoute?.handler).toBe('CacheFirst');
+    expect(heroModelRoute?.options?.expiration).toMatchObject({
+      maxEntries: 4,
+      maxAgeSeconds: 30 * 24 * 60 * 60,
+    });
+    expect(heroModelRoute?.options?.cacheableResponse).toMatchObject({
+      statuses: [0, 200],
+    });
+
+    const matches = heroModelRoute?.urlPattern as (input: {
+      url: URL;
+    }) => boolean;
+    expect(
+      matches({
+        url: new URL('/models/hero/circuit-board.glb', self.location.origin),
+      })
+    ).toBe(true);
+    expect(
+      matches({
+        url: new URL(
+          '/images/hero/cosmic/cosmos-poster-dark-desktop.webp',
+          self.location.origin
+        ),
+      })
+    ).toBe(false);
   });
 });

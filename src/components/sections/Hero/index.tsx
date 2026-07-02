@@ -14,6 +14,10 @@ import { isVisualTestMode } from '@/utils/visualTest';
 import CliTerminal from './CliTerminal';
 import CosmicHeroBackground from './CosmicHeroBackground';
 import EngineerHeroBackground from './EngineerHeroBackground';
+import {
+  preloadRichHeroScene,
+  type RichHeroTheme,
+} from './preloadRichHeroScene';
 import './Hero.css';
 const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
   cli: () => import('./Hero.cli.css'),
@@ -26,6 +30,16 @@ type NavigatorConnectionLike = {
   effectiveType?: string;
   addEventListener?: (type: 'change', listener: () => void) => void;
   removeEventListener?: (type: 'change', listener: () => void) => void;
+};
+
+type DeferredHeroEnhancement = {
+  shouldPreloadRichScene: boolean;
+  shouldMountRichScene: boolean;
+};
+
+const INITIAL_DEFERRED_HERO_ENHANCEMENT: DeferredHeroEnhancement = {
+  shouldPreloadRichScene: false,
+  shouldMountRichScene: false,
 };
 
 const HERO_ENVIRONMENT_FLAGS = {
@@ -132,8 +146,10 @@ function useHeroEnvironmentFlags(): number {
   return flags;
 }
 
-function useDeferredHeroEnhancement(): boolean {
-  const [isEnhanced, setIsEnhanced] = useState(false);
+function useDeferredHeroEnhancement(): DeferredHeroEnhancement {
+  const [enhancement, setEnhancement] = useState(
+    INITIAL_DEFERRED_HERO_ENHANCEMENT
+  );
 
   useEffect(() => {
     if (typeof window === 'undefined') {
@@ -148,14 +164,28 @@ function useDeferredHeroEnhancement(): boolean {
 
     const isTestEnvironment =
       typeof navigator !== 'undefined' && /jsdom/i.test(navigator.userAgent);
-    const activationDelay = isTestEnvironment ? 0 : 180;
+    const mountDelay = isTestEnvironment ? 0 : 250;
 
     const activateEnhancement = (): void => {
+      if (cancelled) {
+        return;
+      }
+
+      setEnhancement((current) =>
+        current.shouldPreloadRichScene
+          ? current
+          : { ...current, shouldPreloadRichScene: true }
+      );
+
       timeoutId = window.setTimeout(() => {
         if (!cancelled) {
-          setIsEnhanced(true);
+          setEnhancement((current) =>
+            current.shouldMountRichScene
+              ? current
+              : { ...current, shouldMountRichScene: true }
+          );
         }
-      }, activationDelay);
+      }, mountDelay);
     };
 
     const scheduleAfterPaint = (): void => {
@@ -203,7 +233,7 @@ function useDeferredHeroEnhancement(): boolean {
     };
   }, []);
 
-  return isEnhanced;
+  return enhancement;
 }
 
 function Hero(): React.ReactElement {
@@ -216,13 +246,14 @@ function Hero(): React.ReactElement {
   const isEngineerTheme = themeName === 'engineer';
   const isCliTheme = themeName === 'cli';
   const prefersReducedMotion = Boolean(useReducedMotion());
-  const shouldEnhanceHero = useDeferredHeroEnhancement();
+  const deferredHeroEnhancement = useDeferredHeroEnhancement();
+  const shouldEnhanceHero = deferredHeroEnhancement.shouldPreloadRichScene;
   const heroEnvironmentFlags = useHeroEnvironmentFlags();
   const shouldUseStaticHeroScene = Boolean(
     heroEnvironmentFlags & STATIC_HERO_SCENE_FLAGS
   );
   const shouldLoadRichHeroScene =
-    shouldEnhanceHero && !shouldUseStaticHeroScene;
+    deferredHeroEnhancement.shouldMountRichScene && !shouldUseStaticHeroScene;
   const useCalmerChipMotion = Boolean(
     heroEnvironmentFlags & CALM_HERO_MOTION_FLAGS
   );
@@ -232,6 +263,18 @@ function Hero(): React.ReactElement {
     rootMargin: '0px',
     triggerOnce: false,
   });
+  const richHeroTheme: RichHeroTheme | null = isEngineerTheme
+    ? 'engineer'
+    : isCosmicTheme
+      ? 'cosmic'
+      : null;
+  const shouldPreloadRichHeroScene = Boolean(
+    richHeroTheme &&
+    deferredHeroEnhancement.shouldPreloadRichScene &&
+    !prefersReducedMotion &&
+    !isVisualTest &&
+    !shouldUseStaticHeroScene
+  );
 
   useLayoutEffect(() => {
     const loadThemeStyles = themeStyleLoaders[themeName];
@@ -242,6 +285,24 @@ function Hero(): React.ReactElement {
     void loadThemeStyles();
     loadedThemeStyles.current.add(themeName);
   }, [themeName]);
+
+  useEffect(() => {
+    if (!richHeroTheme || !shouldPreloadRichHeroScene) {
+      return;
+    }
+
+    let cancelled = false;
+
+    preloadRichHeroScene(richHeroTheme).catch((error: unknown) => {
+      if (!cancelled && import.meta.env.DEV) {
+        console.warn('[Hero] Failed to preload rich hero scene:', error);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [richHeroTheme, shouldPreloadRichHeroScene]);
 
   useEffect(() => {
     const content = heroContentRef.current;

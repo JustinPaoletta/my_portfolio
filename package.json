@@ -6,6 +6,7 @@
   "scripts": {
     "build": "npm run type-check && npm run contrast:check && node ./node_modules/vite/bin/vite.js build && npm run prerender",
     "build:analyze": "npm run type-check && ANALYZE=true node ./node_modules/vite/bin/vite.js build && npx --yes vite-bundle-visualizer@1.2.1",
+    "capture:hero-posters": "tsx scripts/capture-hero-posters.ts",
     "clean:cache": "rm -rf dist coverage .vite .lighthouseci playwright-report test-results",
     "contrast:check": "tsx scripts/contrast-check.ts",
     "generate:icons": "node scripts/generate-icons.mjs",

@@ -8,38 +8,66 @@ let themeName: ThemeName = 'minimal';
 let heroInView = true;
 let prefersReducedMotion = false;
 let engineerCircuit3DShouldThrow = false;
+let engineerSceneReadyCallback: (() => void) | undefined;
+let cosmicSceneReadyCallback: (() => void) | undefined;
 const resolvedMode: 'dark' | 'light' = 'dark';
 const defaultUserAgent = navigator.userAgent;
+const preloadRichHeroSceneMock = vi.hoisted(() =>
+  vi.fn(() => Promise.resolve())
+);
 
 vi.mock('@/hooks/useTheme', () => ({
   useTheme: () => ({ themeName, resolvedMode }),
 }));
 
-vi.mock('@/components/sections/Hero/EngineerCircuit3D', () => ({
-  __esModule: true,
-  default: ({
+vi.mock('./preloadRichHeroScene', () => ({
+  preloadRichHeroScene: preloadRichHeroSceneMock,
+}));
+
+vi.mock('@/components/sections/Hero/EngineerCircuit3D', async () => {
+  const React = await import('react');
+
+  const MockEngineerCircuit3D = ({
     isActive,
     mode,
     calmMotion,
+    onSceneReady,
   }: {
     isActive: boolean;
     mode: string;
     calmMotion: boolean;
-  }) => {
+    onSceneReady?: () => void;
+  }): React.ReactElement => {
     if (engineerCircuit3DShouldThrow) {
       throw new Error('Mock engineer 3D load failed');
     }
 
+    React.useLayoutEffect(() => {
+      engineerSceneReadyCallback = onSceneReady;
+
+      return () => {
+        if (engineerSceneReadyCallback === onSceneReady) {
+          engineerSceneReadyCallback = undefined;
+        }
+      };
+    }, [onSceneReady]);
+
     return (
       <div
+        className="engineer-circuit3d-stage"
         data-testid="engineer-circuit-3d"
         data-active={isActive ? 'true' : 'false'}
         data-mode={mode}
         data-calm={calmMotion ? 'true' : 'false'}
       />
     );
-  },
-}));
+  };
+
+  return {
+    __esModule: true,
+    default: MockEngineerCircuit3D,
+  };
+});
 
 vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
   const React = await import('react');
@@ -56,7 +84,13 @@ vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
     onSceneReady?: () => void;
   }): React.ReactElement => {
     React.useLayoutEffect(() => {
-      onSceneReady?.();
+      cosmicSceneReadyCallback = onSceneReady;
+
+      return () => {
+        if (cosmicSceneReadyCallback === onSceneReady) {
+          cosmicSceneReadyCallback = undefined;
+        }
+      };
     }, [onSceneReady]);
 
     return (
@@ -301,7 +335,10 @@ describe('Hero section', () => {
     heroInView = true;
     prefersReducedMotion = false;
     engineerCircuit3DShouldThrow = false;
+    engineerSceneReadyCallback = undefined;
+    cosmicSceneReadyCallback = undefined;
     vi.clearAllMocks();
+    window.history.pushState({}, '', '/');
     vi.stubGlobal(
       'requestIdleCallback',
       (callback: IdleRequestCallback): number =>
@@ -321,6 +358,7 @@ describe('Hero section', () => {
       configurable: true,
       value: { saveData: false },
     });
+    preloadRichHeroSceneMock.mockResolvedValue(undefined);
   });
 
   afterEach(() => {
@@ -407,16 +445,42 @@ describe('Hero section', () => {
       expect(screen.getByTestId('engineer-circuit-3d')).toBeInTheDocument();
     });
 
-    const visual = view.container.querySelector('.hero-engineer-visual');
-    expect(visual).toHaveAttribute('data-engineer-circuit-active', 'false');
-    expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'normal');
-    expect(visual).toHaveAttribute('data-engineer-circuit-scene', '3d');
+    const getVisual = (): Element | null =>
+      view.container.querySelector('.hero-engineer-visual');
+    expect(
+      view.container.querySelector('.hero-engineer-still')
+    ).toBeInTheDocument();
+    expect(getVisual()).toHaveAttribute(
+      'data-engineer-circuit-active',
+      'false'
+    );
+    expect(getVisual()).toHaveAttribute(
+      'data-engineer-circuit-motion',
+      'normal'
+    );
+    expect(getVisual()).toHaveAttribute(
+      'data-engineer-circuit-scene',
+      'poster'
+    );
+
+    act(() => {
+      engineerSceneReadyCallback?.();
+    });
+    await waitFor(() => {
+      expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', '3d');
+    });
+    await waitFor(() => {
+      expect(preloadRichHeroSceneMock).toHaveBeenCalledWith('engineer');
+    });
 
     act(() => {
       media.setCompact(true);
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-motion',
+        'calm'
+      );
     });
 
     act(() => {
@@ -424,7 +488,10 @@ describe('Hero section', () => {
       media.setReduced(true);
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-motion',
+        'calm'
+      );
     });
 
     Object.defineProperty(navigator, 'connection', {
@@ -435,10 +502,13 @@ describe('Hero section', () => {
       media.setReduced(false);
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-motion',
+        'calm'
+      );
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', 'svg');
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
 
@@ -450,15 +520,30 @@ describe('Hero section', () => {
       media.setReduced(false);
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'normal');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-motion',
+        'normal'
+      );
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-scene', '3d');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-scene',
+        'poster'
+      );
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId('engineer-circuit-3d')).toBeInTheDocument();
+    });
+    act(() => {
+      engineerSceneReadyCallback?.();
+    });
+    await waitFor(() => {
+      expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', '3d');
     });
 
     heroInView = true;
     view.rerender(<Hero />);
-    expect(visual).toHaveAttribute('data-engineer-circuit-active', 'true');
+    expect(getVisual()).toHaveAttribute('data-engineer-circuit-active', 'true');
     await waitFor(() => {
       expect(screen.getByTestId('engineer-circuit-3d')).toHaveAttribute(
         'data-active',
@@ -486,8 +571,56 @@ describe('Hero section', () => {
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
+      view.container.querySelector('.hero-engineer-still')
+    ).toBeInTheDocument();
+    expect(
       view.container.querySelector('.engineer-circuit')
     ).toBeInTheDocument();
+  });
+
+  it('keeps the engineer static poster state for reduced motion and visual tests', async () => {
+    installEngineerMatchMediaMock({ reduced: true });
+    prefersReducedMotion = true;
+    themeName = 'engineer';
+
+    const reducedMotionView = render(<Hero />);
+    const reducedVisual = reducedMotionView.container.querySelector(
+      '.hero-engineer-visual'
+    );
+
+    await waitFor(() => {
+      expect(reducedVisual).toHaveAttribute(
+        'data-engineer-circuit-scene',
+        'svg'
+      );
+    });
+    expect(
+      reducedMotionView.container.querySelector('.hero-engineer-still')
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
+    expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
+
+    reducedMotionView.unmount();
+    vi.clearAllMocks();
+    prefersReducedMotion = false;
+    window.history.pushState({}, '', '/?visual-test=1');
+
+    const visualTestView = render(<Hero />);
+    const visualTestVisual = visualTestView.container.querySelector(
+      '.hero-engineer-visual'
+    );
+
+    await waitFor(() => {
+      expect(visualTestVisual).toHaveAttribute(
+        'data-engineer-circuit-scene',
+        'svg'
+      );
+    });
+    expect(
+      visualTestView.container.querySelector('.hero-engineer-still')
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
+    expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
   });
 
   it('keeps the engineer SVG fallback if the 3D scene fails to load', async () => {
@@ -505,6 +638,9 @@ describe('Hero section', () => {
       expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
+    expect(
+      view.container.querySelector('.hero-engineer-still')
+    ).toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
     ).toBeInTheDocument();
@@ -527,11 +663,22 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
     });
+    expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+      'data-cosmic-scene',
+      'poster'
+    );
+
+    act(() => {
+      cosmicSceneReadyCallback?.();
+    });
     await waitFor(() => {
       expect(view.container.querySelector('.hero-background')).toHaveAttribute(
         'data-cosmic-scene',
         '3d'
       );
+    });
+    await waitFor(() => {
+      expect(preloadRichHeroSceneMock).toHaveBeenCalledWith('cosmic');
     });
     expect(screen.getByTestId('cosmic-scene-3d')).toHaveAttribute(
       'data-active',
@@ -594,6 +741,9 @@ describe('Hero section', () => {
     const view = render(<Hero />);
     await waitFor(() => {
       expect(screen.getByTestId('cosmic-scene-3d')).toBeInTheDocument();
+    });
+    act(() => {
+      cosmicSceneReadyCallback?.();
     });
     await waitFor(() => {
       expect(view.container.querySelector('.hero-background')).toHaveAttribute(
