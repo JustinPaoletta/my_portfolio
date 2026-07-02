@@ -171,6 +171,7 @@
             var link = document.createElement('link');
             link.rel = 'preload';
             link.as = as;
+            link.setAttribute('as', as);
             link.href = href;
             if (options && options.type) {
               link.type = options.type;
@@ -201,10 +202,45 @@
             });
           });
 
-          if (resolvedTheme === 'cosmic') {
-            preloadAsset('image', '/images/hero/cosmic/cosmos-poster.webp', {
-              fetchpriority: 'high',
-            });
+          var isPortrait =
+            window.matchMedia &&
+            window.matchMedia('(orientation: portrait)').matches;
+          var posterVariant = isPortrait ? 'mobile' : 'desktop';
+
+          var posterByTheme = {
+            engineer: {
+              dark: {
+                desktop:
+                  '/images/hero/engineer/engineer-poster-dark-desktop.webp',
+                mobile:
+                  '/images/hero/engineer/engineer-poster-dark-mobile.webp',
+              },
+              light: {
+                desktop:
+                  '/images/hero/engineer/engineer-poster-light-desktop.webp',
+                mobile:
+                  '/images/hero/engineer/engineer-poster-light-mobile.webp',
+              },
+            },
+            cosmic: {
+              dark: {
+                desktop: '/images/hero/cosmic/cosmos-poster-dark-desktop.webp',
+                mobile: '/images/hero/cosmic/cosmos-poster-dark-mobile.webp',
+              },
+              light: {
+                desktop: '/images/hero/cosmic/cosmos-poster-light-desktop.webp',
+                mobile: '/images/hero/cosmic/cosmos-poster-light-mobile.webp',
+              },
+            },
+          };
+
+          var heroPoster =
+            posterByTheme[resolvedTheme] &&
+            posterByTheme[resolvedTheme][resolvedMode] &&
+            posterByTheme[resolvedTheme][resolvedMode][posterVariant];
+
+          if (heroPoster) {
+            preloadAsset('image', heroPoster, { fetchpriority: 'high' });
           }
 
           // Vite dev serves source CSS directly; preload theme hero styles before React mounts.

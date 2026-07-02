@@ -14,7 +14,6 @@ export const pwaConfig: Partial<VitePWAOptions> = {
     'favicons/apple-touch-icon.png',
     'favicons/pwa-192x192.png',
     'favicons/pwa-512x512.png',
-    'images/hero/cosmic/cosmos-poster.webp',
   ],
   manifestFilename: 'manifest.webmanifest',
 
@@ -123,6 +122,23 @@ export const pwaConfig: Partial<VitePWAOptions> = {
           expiration: {
             maxEntries: 6,
             maxAgeSeconds: 7 * 24 * 60 * 60,
+          },
+          cacheableResponse: {
+            statuses: [0, 200],
+          },
+        },
+      },
+      {
+        urlPattern: ({ url }) =>
+          url.origin === self.location.origin &&
+          url.pathname.startsWith('/models/hero/') &&
+          url.pathname.endsWith('.glb'),
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'hero-models-cache',
+          expiration: {
+            maxEntries: 4,
+            maxAgeSeconds: 30 * 24 * 60 * 60,
           },
           cacheableResponse: {
             statuses: [0, 200],

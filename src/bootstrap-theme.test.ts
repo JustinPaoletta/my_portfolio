@@ -13,13 +13,18 @@ if (!bootstrapScriptMatch) {
 
 const bootstrapScript = bootstrapScriptMatch[1];
 
-function installMatchMediaMock(isDark: boolean): void {
+function installMatchMediaMock(isDark: boolean, isPortrait = false): void {
   Object.defineProperty(window, 'matchMedia', {
     configurable: true,
     writable: true,
     value: vi.fn(
       (query: string): MediaQueryList => ({
-        matches: query === '(prefers-color-scheme: dark)' ? isDark : false,
+        matches:
+          query === '(prefers-color-scheme: dark)'
+            ? isDark
+            : query === '(orientation: portrait)'
+              ? isPortrait
+              : false,
         media: query,
         onchange: null,
         addListener: () => {},
@@ -44,6 +49,9 @@ describe('index.html theme bootstrap', () => {
     document.documentElement.removeAttribute('data-color-mode');
     document.documentElement.setAttribute('style', '');
     document.body.style.backgroundColor = '';
+    document
+      .querySelectorAll('link[rel="preload"]')
+      .forEach((link) => link.remove());
     window.history.pushState({}, '', '/');
     installMatchMediaMock(false);
   });
@@ -86,5 +94,35 @@ describe('index.html theme bootstrap', () => {
     expect(document.documentElement.style.getPropertyValue('--bg-main')).toBe(
       '#0a0f0a'
     );
+  });
+
+  it('preloads the active engineer mobile poster for theme, mode, and orientation', () => {
+    installMatchMediaMock(false, true);
+    window.history.pushState({}, '', '/?theme=engineer&mode=dark');
+
+    runBootstrapScript();
+
+    const posterPreload = document.head.querySelector<HTMLLinkElement>(
+      'link[rel="preload"][as="image"]'
+    );
+    expect(posterPreload?.href).toBe(
+      `${window.location.origin}/images/hero/engineer/engineer-poster-dark-mobile.webp`
+    );
+    expect(posterPreload?.getAttribute('fetchpriority')).toBe('high');
+  });
+
+  it('preloads the active cosmic desktop poster for theme, mode, and orientation', () => {
+    installMatchMediaMock(false, false);
+    window.history.pushState({}, '', '/?theme=cosmic&mode=light');
+
+    runBootstrapScript();
+
+    const posterPreload = document.head.querySelector<HTMLLinkElement>(
+      'link[rel="preload"][as="image"]'
+    );
+    expect(posterPreload?.href).toBe(
+      `${window.location.origin}/images/hero/cosmic/cosmos-poster-light-desktop.webp`
+    );
+    expect(posterPreload?.getAttribute('fetchpriority')).toBe('high');
   });
 });

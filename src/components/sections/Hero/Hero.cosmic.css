@@ -1,13 +1,37 @@
+:root[data-theme='cosmic'][data-color-mode='dark'] {
+  --cosmic-poster-desktop: url('/images/hero/cosmic/cosmos-poster-dark-desktop.webp');
+  --cosmic-poster-mobile: url('/images/hero/cosmic/cosmos-poster-dark-mobile.webp');
+}
+
+:root[data-theme='cosmic'][data-color-mode='light'] {
+  --cosmic-poster-desktop: url('/images/hero/cosmic/cosmos-poster-light-desktop.webp');
+  --cosmic-poster-mobile: url('/images/hero/cosmic/cosmos-poster-light-mobile.webp');
+}
+
 :root[data-theme='cosmic'] .hero-cosmic-still {
   display: block;
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: url('/images/hero/cosmic/cosmos-poster.webp') no-repeat center /
-    cover;
+  background-image: var(--cosmic-poster-desktop);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
   opacity: 1;
   transition: opacity 180ms ease;
+}
+
+:root[data-theme='cosmic']
+  .hero-background[data-cosmic-scene='3d']
+  .hero-cosmic-still {
+  opacity: 0;
+}
+
+@media (orientation: portrait) {
+  :root[data-theme='cosmic'] .hero-cosmic-still {
+    background-image: var(--cosmic-poster-mobile);
+  }
 }
 
 :root[data-theme='cosmic'] .hero-subtext-layout {

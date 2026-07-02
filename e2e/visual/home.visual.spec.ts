@@ -49,6 +49,27 @@ test.describe('@visual home states', () => {
     });
   });
 
+  for (const theme of ['engineer', 'cosmic'] as const) {
+    for (const mode of ['light', 'dark'] as const) {
+      test(`captures ${theme} ${mode} mobile poster viewport`, async ({
+        page,
+      }) => {
+        await gotoVisualState(page, {
+          theme,
+          mode,
+          viewport: MOBILE_VIEWPORT,
+        });
+
+        await expect(page).toHaveScreenshot(
+          `home-${theme}-${mode}-mobile.png`,
+          {
+            caret: 'hide',
+          }
+        );
+      });
+    }
+  }
+
   test('captures minimal light mobile navigation open state', async ({
     page,
   }) => {

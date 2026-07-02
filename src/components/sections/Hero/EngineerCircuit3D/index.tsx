@@ -539,6 +539,34 @@ function BoardScene({
   );
 }
 
+type SceneReadyNotifierProps = {
+  onSceneReady?: () => void;
+};
+
+function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
+  const frameCountRef = useRef(0);
+  const hasNotifiedRef = useRef(false);
+  const invalidate = useThree((state) => state.invalidate);
+
+  useFrame(() => {
+    if (hasNotifiedRef.current) {
+      return;
+    }
+
+    frameCountRef.current += 1;
+
+    if (frameCountRef.current < 2) {
+      invalidate();
+      return;
+    }
+
+    hasNotifiedRef.current = true;
+    onSceneReady?.();
+  });
+
+  return null;
+}
+
 function CameraRig(): null {
   const camera = useThree((state) => state.camera);
   const invalidate = useThree((state) => state.invalidate);
@@ -557,12 +585,14 @@ type ChipCanvasProps = {
   isActive: boolean;
   flowSpeed: number;
   mode: Mode;
+  onSceneReady?: () => void;
 };
 
 function ChipCanvas({
   isActive,
   flowSpeed,
   mode,
+  onSceneReady,
 }: ChipCanvasProps): React.ReactElement {
   const keyLight = mode === 'dark' ? '#ffffff' : '#fffaf0';
   const fillLight = mode === 'dark' ? '#39d8ff' : '#bfe9ff';
@@ -587,6 +617,7 @@ function ChipCanvas({
       <pointLight position={[0, 3, 0]} intensity={0.4} color="#39ff14" />
       <Suspense fallback={null}>
         <BoardScene isActive={isActive} flowSpeed={flowSpeed} mode={mode} />
+        <SceneReadyNotifier onSceneReady={onSceneReady} />
       </Suspense>
     </Canvas>
   );
@@ -597,6 +628,7 @@ export type EngineerCircuit3DProps = {
   reducedMotion: boolean;
   calmMotion: boolean;
   mode: Mode;
+  onSceneReady?: () => void;
 };
 
 function EngineerCircuit3D({
@@ -604,13 +636,19 @@ function EngineerCircuit3D({
   reducedMotion,
   calmMotion,
   mode,
+  onSceneReady,
 }: EngineerCircuit3DProps): React.ReactElement {
   const baseSpeed = calmMotion ? 0.6 : 1.2;
   const effectiveSpeed = reducedMotion ? 0 : baseSpeed;
 
   return (
     <div className="engineer-circuit3d-stage" aria-hidden="true">
-      <ChipCanvas isActive={isActive} flowSpeed={effectiveSpeed} mode={mode} />
+      <ChipCanvas
+        isActive={isActive}
+        flowSpeed={effectiveSpeed}
+        mode={mode}
+        onSceneReady={onSceneReady}
+      />
     </div>
   );
 }

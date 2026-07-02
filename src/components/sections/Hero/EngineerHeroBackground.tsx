@@ -2,6 +2,7 @@ import {
   Component,
   lazy,
   Suspense,
+  useCallback,
   useState,
   type ErrorInfo,
   type ReactNode,
@@ -64,6 +65,54 @@ class EngineerSceneErrorBoundary extends Component<
   }
 }
 
+type EngineerInteractiveBackgroundProps = Omit<
+  EngineerHeroBackgroundProps,
+  'isVisualTest' | 'shouldLoadScene'
+> & {
+  fallback: ReactNode;
+  onSceneError: () => void;
+};
+
+function EngineerInteractiveBackground({
+  isActive,
+  reducedMotion,
+  calmMotion,
+  mode,
+  fallback,
+  onSceneError,
+}: EngineerInteractiveBackgroundProps): React.ReactElement {
+  const [isSceneReady, setIsSceneReady] = useState(false);
+  const handleSceneReady = useCallback((): void => {
+    setIsSceneReady(true);
+  }, []);
+
+  return (
+    <div
+      className="hero-engineer-visual"
+      aria-hidden="true"
+      data-engineer-circuit-active={isActive ? 'true' : 'false'}
+      data-engineer-circuit-motion={calmMotion ? 'calm' : 'normal'}
+      data-engineer-circuit-scene={isSceneReady ? '3d' : 'poster'}
+    >
+      <span className="hero-engineer-still" />
+      <EngineerSceneErrorBoundary
+        fallback={fallback}
+        onSceneError={onSceneError}
+      >
+        <Suspense fallback={fallback}>
+          <EngineerCircuit3D
+            isActive={isActive}
+            reducedMotion={reducedMotion}
+            calmMotion={calmMotion}
+            mode={mode}
+            onSceneReady={handleSceneReady}
+          />
+        </Suspense>
+      </EngineerSceneErrorBoundary>
+    </div>
+  );
+}
+
 function EngineerHeroBackground({
   isActive,
   reducedMotion,
@@ -83,31 +132,29 @@ function EngineerHeroBackground({
     />
   );
 
+  if (showInteractiveScene) {
+    return (
+      <EngineerInteractiveBackground
+        isActive={isActive}
+        reducedMotion={reducedMotion}
+        calmMotion={calmMotion}
+        mode={mode}
+        fallback={svgFallback}
+        onSceneError={() => setHasSceneError(true)}
+      />
+    );
+  }
+
   return (
     <div
       className="hero-engineer-visual"
       aria-hidden="true"
       data-engineer-circuit-active={isActive ? 'true' : 'false'}
       data-engineer-circuit-motion={calmMotion ? 'calm' : 'normal'}
-      data-engineer-circuit-scene={showInteractiveScene ? '3d' : 'svg'}
+      data-engineer-circuit-scene="svg"
     >
-      {showInteractiveScene ? (
-        <EngineerSceneErrorBoundary
-          fallback={svgFallback}
-          onSceneError={() => setHasSceneError(true)}
-        >
-          <Suspense fallback={svgFallback}>
-            <EngineerCircuit3D
-              isActive={isActive}
-              reducedMotion={reducedMotion}
-              calmMotion={calmMotion}
-              mode={mode}
-            />
-          </Suspense>
-        </EngineerSceneErrorBoundary>
-      ) : (
-        svgFallback
-      )}
+      <span className="hero-engineer-still" />
+      {svgFallback}
     </div>
   );
 }
