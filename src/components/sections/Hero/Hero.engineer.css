@@ -71,34 +71,47 @@
   filter: drop-shadow(0 0 12px rgba(var(--color-primary-rgb), 0.18));
 }
 
+.hero-engineer-stage {
+  position: absolute;
+  inset: 0;
+}
+
 .hero-engineer-still {
   display: block;
   position: absolute;
   inset: 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  background-image: var(--engineer-poster-desktop);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  object-fit: cover;
+  object-position: center;
   opacity: 1;
-  transition: opacity 180ms ease;
+  transition: none;
 }
 
-.hero-engineer-visual > .engineer-circuit {
+.hero-engineer-visual > .hero-engineer-stage > .engineer-circuit {
   z-index: 1;
 }
 
 :root[data-theme='engineer']
   .hero-engineer-visual[data-engineer-circuit-scene='3d']
-  .hero-engineer-still {
-  opacity: 0;
+  .engineer-circuit3d-stage {
+  opacity: 1;
+  visibility: visible;
 }
 
-@media (orientation: portrait) {
+:root[data-theme='engineer']
+  .hero-engineer-visual[data-engineer-circuit-poster='hidden']
   .hero-engineer-still {
-    background-image: var(--engineer-poster-mobile);
-  }
+  opacity: 0;
+  visibility: hidden;
+}
+
+:root[data-theme='engineer']
+  .hero-engineer-visual[data-engineer-circuit-scene='svg']
+  .hero-engineer-still {
+  display: none;
 }
 
 :root[data-theme='engineer'][data-color-mode='light'] .hero-engineer-visual {

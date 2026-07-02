@@ -462,12 +462,21 @@ describe('Hero section', () => {
       'data-engineer-circuit-scene',
       'poster'
     );
+    expect(
+      view.container.querySelector('.engineer-circuit')
+    ).not.toBeInTheDocument();
 
     act(() => {
       engineerSceneReadyCallback?.();
     });
     await waitFor(() => {
       expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', '3d');
+    });
+    await waitFor(() => {
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-poster',
+        'hidden'
+      );
     });
     await waitFor(() => {
       expect(preloadRichHeroSceneMock).toHaveBeenCalledWith('engineer');
@@ -540,6 +549,12 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', '3d');
     });
+    await waitFor(() => {
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-poster',
+        'hidden'
+      );
+    });
 
     heroInView = true;
     view.rerender(<Hero />);
@@ -572,7 +587,7 @@ describe('Hero section', () => {
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.hero-engineer-still')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
     ).toBeInTheDocument();
@@ -596,7 +611,7 @@ describe('Hero section', () => {
     });
     expect(
       reducedMotionView.container.querySelector('.hero-engineer-still')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
 
@@ -618,7 +633,7 @@ describe('Hero section', () => {
     });
     expect(
       visualTestView.container.querySelector('.hero-engineer-still')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
   });
@@ -640,7 +655,7 @@ describe('Hero section', () => {
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.hero-engineer-still')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
     ).toBeInTheDocument();
@@ -675,6 +690,12 @@ describe('Hero section', () => {
       expect(view.container.querySelector('.hero-background')).toHaveAttribute(
         'data-cosmic-scene',
         '3d'
+      );
+    });
+    await waitFor(() => {
+      expect(view.container.querySelector('.hero-background')).toHaveAttribute(
+        'data-cosmic-poster',
+        'hidden'
       );
     });
     await waitFor(() => {

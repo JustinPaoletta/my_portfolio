@@ -11,6 +11,7 @@ import {
   Object3D,
   Vector3,
 } from 'three';
+import { isPosterCaptureMode } from '@/utils/heroPoster';
 import './EngineerCircuit3D.css';
 
 const MODEL_PATH = '/models/hero/circuit-board.glb';
@@ -151,8 +152,8 @@ function buildPackets(lines: Polyline[]): Packet[] {
     for (let i = 0; i < count; i += 1) {
       packets.push({
         line: lineIndex,
-        speed: 0.55 + Math.random() * 0.5,
-        phase0: i / count + Math.random() * 0.05,
+        speed: 0.55 + ((lineIndex * 3 + i) % 6) * 0.08,
+        phase0: i / count,
         variant: ((lineIndex + i) % 2) as 0 | 1,
       });
     }
@@ -511,7 +512,7 @@ function BoardScene({
 
   useFrame((state, delta) => {
     const group = groupRef.current;
-    if (!group) {
+    if (!group || isPosterCaptureMode()) {
       return;
     }
     // Gentle pointer parallax for interactivity (no spin).
@@ -543,6 +544,8 @@ type SceneReadyNotifierProps = {
   onSceneReady?: () => void;
 };
 
+const SCENE_READY_FRAME_COUNT = 4;
+
 function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
   const frameCountRef = useRef(0);
   const hasNotifiedRef = useRef(false);
@@ -555,13 +558,21 @@ function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
 
     frameCountRef.current += 1;
 
-    if (frameCountRef.current < 2) {
+    if (frameCountRef.current < SCENE_READY_FRAME_COUNT) {
       invalidate();
       return;
     }
 
     hasNotifiedRef.current = true;
-    onSceneReady?.();
+
+    if (typeof window === 'undefined') {
+      onSceneReady?.();
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      onSceneReady?.();
+    });
   });
 
   return null;
@@ -603,7 +614,12 @@ function ChipCanvas({
       className="engineer-circuit3d-canvas"
       dpr={[1, 1.75]}
       camera={{ position: CAMERA_POSITION, fov: 42, near: 0.1, far: 100 }}
-      gl={{ alpha: true, antialias: true, powerPreference: 'high-performance' }}
+      gl={{
+        alpha: true,
+        antialias: true,
+        powerPreference: 'high-performance',
+        preserveDrawingBuffer: true,
+      }}
       frameloop={isActive && flowSpeed > 0 ? 'always' : 'demand'}
     >
       <CameraRig />

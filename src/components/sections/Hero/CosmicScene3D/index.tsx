@@ -21,6 +21,7 @@ import {
   ShaderMaterial,
   type Texture,
 } from 'three';
+import { isPosterCaptureMode } from '@/utils/heroPoster';
 import './CosmicScene3D.css';
 
 const MODEL_PATH = '/models/hero/cosmic-scene.glb';
@@ -308,6 +309,8 @@ type SceneReadyNotifierProps = {
   onSceneReady: () => void;
 };
 
+const SCENE_READY_FRAME_COUNT = 4;
+
 function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
   const frameCountRef = useRef(0);
   const hasNotifiedRef = useRef(false);
@@ -320,13 +323,21 @@ function SceneReadyNotifier({ onSceneReady }: SceneReadyNotifierProps): null {
 
     frameCountRef.current += 1;
 
-    if (frameCountRef.current < 2) {
+    if (frameCountRef.current < SCENE_READY_FRAME_COUNT) {
       invalidate();
       return;
     }
 
     hasNotifiedRef.current = true;
-    onSceneReady();
+
+    if (typeof window === 'undefined') {
+      onSceneReady();
+      return;
+    }
+
+    window.requestAnimationFrame(() => {
+      onSceneReady();
+    });
   });
 
   return null;
@@ -351,7 +362,7 @@ function CosmicScene({
 
   useFrame((state, delta) => {
     const group = groupRef.current;
-    if (!group) {
+    if (!group || isPosterCaptureMode()) {
       return;
     }
     // Continuous, very slow drift gives the cosmos life even when idle.
@@ -423,6 +434,7 @@ function CosmicScene3D({
           antialias: true,
           powerPreference: 'high-performance',
           premultipliedAlpha: false,
+          preserveDrawingBuffer: true,
         }}
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);
