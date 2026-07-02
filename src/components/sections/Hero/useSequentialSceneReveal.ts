@@ -1,20 +1,12 @@
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export type HeroPosterTransitionPhase = 'idle' | 'ready' | 'fading' | 'done';
 
 export const HERO_POSTER_FADE_MS = 400;
-export const HERO_POSTER_SYNC_TIMEOUT_MS = 500;
 export const HERO_SCENE_STABLE_FRAMES = 2;
 
 type UseSequentialSceneRevealOptions = {
   reducedMotion: boolean;
-  isLivePosterReadyRef: RefObject<boolean>;
 };
 
 type SequentialSceneReveal = {
@@ -27,12 +19,11 @@ type SequentialSceneReveal = {
 };
 
 /**
- * Reveals the WebGL canvas underneath the poster, then fades the poster out
- * so identical pixels stay visible until the opacity transition completes.
+ * Keeps the static poster overlay on top of the live WebGL canvas, then fades
+ * the overlay out so both layers are visible during the handoff.
  */
 export function useSequentialSceneReveal({
   reducedMotion,
-  isLivePosterReadyRef,
 }: UseSequentialSceneRevealOptions): SequentialSceneReveal {
   const [isSceneReady, setIsSceneReady] = useState(false);
   const [isPosterHidden, setIsPosterHidden] = useState(false);
@@ -71,7 +62,6 @@ export function useSequentialSceneReveal({
 
     let cancelled = false;
     let stableFrames = 0;
-    let syncTimedOut = false;
 
     const startFade = (): void => {
       if (cancelled || fadeStartedRef.current) {
@@ -80,17 +70,6 @@ export function useSequentialSceneReveal({
 
       fadeStartedRef.current = true;
       setTransitionPhase('fading');
-    };
-
-    const attemptFade = (): void => {
-      if (cancelled || fadeStartedRef.current) {
-        return;
-      }
-
-      const syncReady = isLivePosterReadyRef.current === true || syncTimedOut;
-      if (stableFrames >= HERO_SCENE_STABLE_FRAMES && syncReady) {
-        startFade();
-      }
     };
 
     const tickStable = (): void => {
@@ -104,7 +83,7 @@ export function useSequentialSceneReveal({
         return;
       }
 
-      attemptFade();
+      startFade();
     };
 
     if (typeof window === 'undefined') {
@@ -114,21 +93,10 @@ export function useSequentialSceneReveal({
 
     window.requestAnimationFrame(tickStable);
 
-    const timeoutId = window.setTimeout(() => {
-      syncTimedOut = true;
-      attemptFade();
-    }, HERO_POSTER_SYNC_TIMEOUT_MS);
-
-    const pollId = window.setInterval(() => {
-      attemptFade();
-    }, 50);
-
     return () => {
       cancelled = true;
-      window.clearTimeout(timeoutId);
-      window.clearInterval(pollId);
     };
-  }, [isLivePosterReadyRef, transitionPhase]);
+  }, [transitionPhase]);
 
   useEffect(() => {
     if (transitionPhase !== 'fading') {

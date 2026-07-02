@@ -19,42 +19,15 @@
 
 :root[data-theme='cosmic'] .hero-cosmic-still {
   display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   object-fit: cover;
   object-position: center;
-  opacity: 1;
-  transition: none;
 }
 
-:root[data-theme='cosmic']
-  .hero-background[data-cosmic-transition='ready']
-  .hero-cosmic-still,
-:root[data-theme='cosmic']
-  .hero-background[data-cosmic-transition='fading']
-  .hero-cosmic-still {
-  z-index: 2;
-}
-
-:root[data-theme='cosmic']
-  .hero-background[data-cosmic-transition='fading']
-  .hero-cosmic-still[data-poster-fading='true'] {
-  animation: hero-poster-fade-out var(--hero-poster-fade-duration) ease-out
-    forwards;
-}
-
-@keyframes hero-poster-fade-out {
-  from {
-    opacity: 1;
-  }
-
-  to {
-    opacity: 0;
-  }
+:root[data-theme='cosmic'] .hero-poster-overlay {
+  display: block;
 }
 
 :root[data-theme='cosmic']
@@ -62,20 +35,6 @@
   .cosmic-scene3d-stage {
   opacity: 1;
   visibility: visible;
-}
-
-:root[data-theme='cosmic']
-  .hero-background[data-cosmic-poster='hidden']
-  .hero-cosmic-still {
-  opacity: 0;
-  visibility: hidden;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  :root[data-theme='cosmic'] .hero-cosmic-still {
-    animation: none;
-    transition: none;
-  }
 }
 
 :root[data-theme='cosmic'] .hero-subtext-layout {

@@ -11,12 +11,6 @@ function stillSelector(theme: HeroTheme): string {
   return theme === 'engineer' ? '.hero-engineer-still' : '.hero-cosmic-still';
 }
 
-function transitionAttribute(theme: HeroTheme): string {
-  return theme === 'engineer'
-    ? 'data-engineer-circuit-transition'
-    : 'data-cosmic-transition';
-}
-
 function posterAttribute(theme: HeroTheme): string {
   return theme === 'engineer'
     ? 'data-engineer-circuit-poster'
@@ -29,14 +23,20 @@ function sceneAttribute(theme: HeroTheme): string {
     : 'data-cosmic-scene';
 }
 
-async function waitForPosterMidFade(
+function transitionAttribute(theme: HeroTheme): string {
+  return theme === 'engineer'
+    ? 'data-engineer-circuit-transition'
+    : 'data-cosmic-transition';
+}
+
+async function waitForPosterFadeStart(
   page: Page,
   theme: HeroTheme
-): Promise<number> {
+): Promise<void> {
   const rootSelector = sceneRootSelector(theme);
   const stillQuery = stillSelector(theme);
 
-  const handle = await page.waitForFunction(
+  await page.waitForFunction(
     ({
       rootSelector: rootQuery,
       stillQuery,
@@ -46,29 +46,20 @@ async function waitForPosterMidFade(
     }) => {
       const root = document.querySelector<HTMLElement>(rootQuery);
       const still = document.querySelector<HTMLImageElement>(stillQuery);
-      if (!root || !still) {
+      const overlay = still?.closest<HTMLElement>('.hero-poster-overlay');
+      if (!root || !still || !overlay) {
         return false;
       }
 
-      const fadeStarted =
+      return (
         root.getAttribute(transitionAttr) === 'fading' &&
         root.getAttribute(sceneAttr) === '3d' &&
         root.getAttribute(posterAttr) === 'visible' &&
-        still.getAttribute('data-poster-fading') === 'true' &&
-        still.getAttribute('data-poster-hidden') === 'false' &&
+        overlay.getAttribute('data-poster-fading') === 'true' &&
+        still.getAttribute('data-poster-source') === 'static' &&
         still.src.length > 0 &&
-        root.querySelector('canvas') !== null;
-
-      if (!fadeStarted) {
-        return false;
-      }
-
-      const opacity = Number.parseFloat(getComputedStyle(still).opacity);
-      if (opacity <= 0 || opacity >= 1) {
-        return false;
-      }
-
-      return opacity;
+        root.querySelector('canvas') !== null
+      );
     },
     {
       rootSelector,
@@ -79,13 +70,11 @@ async function waitForPosterMidFade(
     },
     { timeout: 20_000 }
   );
-
-  return handle.jsonValue() as Promise<number>;
 }
 
 test.describe('Hero poster transition parity', () => {
   for (const theme of ['engineer', 'cosmic'] as const) {
-    test(`${theme} fades the poster out after the canvas is ready`, async ({
+    test(`${theme} fades the static poster overlay over the live canvas`, async ({
       page,
     }) => {
       await mockPortfolioApis(page);
@@ -94,8 +83,18 @@ test.describe('Hero poster transition parity', () => {
       });
 
       const root = page.locator(sceneRootSelector(theme));
+      const still = page.locator(stillSelector(theme));
 
-      const midFadeOpacity = await waitForPosterMidFade(page, theme);
+      await waitForPosterFadeStart(page, theme);
+
+      const midFadeOpacity = await still.evaluate((element) => {
+        const overlay = element.closest('.hero-poster-overlay');
+        if (!overlay) {
+          return 1;
+        }
+
+        return Number.parseFloat(getComputedStyle(overlay).opacity);
+      });
       expect(midFadeOpacity).toBeLessThan(1);
       expect(midFadeOpacity).toBeGreaterThan(0);
 
@@ -103,6 +102,7 @@ test.describe('Hero poster transition parity', () => {
         timeout: 5_000,
       });
       await expect(page.locator('canvas')).toHaveCount(1);
+      await expect(page.locator('.hero-poster-overlay')).toHaveCount(0);
     });
   }
 

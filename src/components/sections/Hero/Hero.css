@@ -96,6 +96,34 @@
   display: none;
 }
 
+.hero-poster-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-poster-overlay[data-poster-fading='true'] {
+  animation: hero-poster-fade-out var(--hero-poster-fade-duration, 400ms)
+    ease-out forwards;
+}
+
+@keyframes hero-poster-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-poster-overlay {
+    animation: none !important;
+  }
+}
+
 .hero-title {
   display: flex;
   align-items: center;

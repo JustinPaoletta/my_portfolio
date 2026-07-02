@@ -8,7 +8,6 @@ type PosterFrameSyncProps = {
 
 /**
  * Notifies the parent after each rendered frame while poster sync is active.
- * Captures are throttled to canvas dimension changes (see useCanvasPosterSync).
  */
 function PosterFrameSync({
   enabled,
