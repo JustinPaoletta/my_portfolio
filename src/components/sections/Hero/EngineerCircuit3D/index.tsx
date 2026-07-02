@@ -618,7 +618,7 @@ function ChipCanvas({
         alpha: true,
         antialias: true,
         powerPreference: 'high-performance',
-        preserveDrawingBuffer: true,
+        preserveDrawingBuffer: isPosterCaptureMode(),
       }}
       frameloop={isActive && flowSpeed > 0 ? 'always' : 'demand'}
     >

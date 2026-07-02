@@ -434,7 +434,7 @@ function CosmicScene3D({
           antialias: true,
           powerPreference: 'high-performance',
           premultipliedAlpha: false,
-          preserveDrawingBuffer: true,
+          preserveDrawingBuffer: isPosterCaptureMode(),
         }}
         onCreated={({ gl }) => {
           gl.setClearColor(0x000000, 0);

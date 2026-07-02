@@ -12,9 +12,13 @@ const BASE_URL = process.env.HERO_CAPTURE_BASE_URL ?? 'http://localhost:4173';
 const viewports = {
   desktop: {
     css: { width: 1440, height: 900 },
+    output: { width: 1920, height: 1200 },
+    deviceScaleFactor: 1,
   },
   mobile: {
     css: { width: 390, height: 844 },
+    output: { width: 1080, height: 2338 },
+    deviceScaleFactor: 3,
   },
 } as const;
 
@@ -128,7 +132,10 @@ const browser = await chromium.launch();
 
 for (const capture of captures) {
   const viewport = viewports[capture.variant];
-  const page = await browser.newPage({ viewport: viewport.css });
+  const page = await browser.newPage({
+    viewport: viewport.css,
+    deviceScaleFactor: viewport.deviceScaleFactor,
+  });
 
   await preparePage(page);
   await page.emulateMedia({
@@ -161,7 +168,10 @@ for (const capture of captures) {
   });
 
   await mkdir(path.dirname(capture.out), { recursive: true });
-  await sharp(screenshot).webp({ quality: 82, effort: 5 }).toFile(capture.out);
+  await sharp(screenshot)
+    .resize(viewport.output.width, viewport.output.height, { fit: 'cover' })
+    .webp({ quality: 82, effort: 5 })
+    .toFile(capture.out);
 
   await page.close();
 }
