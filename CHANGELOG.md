@@ -7,6 +7,11 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Fixed
+
+- Hero poster images for the engineer and cosmic themes now frame the scene exactly like the live 3D canvas, eliminating the visible jump when the WebGL scene replaces the poster. The capture script reads the WebGL drawing buffer directly (the previous element screenshot could not capture the canvas region that bleeds past the viewport, producing posters that were cropped and padded with white), posters are captured at wide aspect ratios so their `object-fit: cover` crop matches the camera's fixed vertical FOV, and the mobile poster variant is now selected with `(max-aspect-ratio: 3/4)` instead of `(orientation: portrait)` so squarish windows no longer get the phone poster.
+- Once the WebGL scene is rendering, the hero poster is replaced with a live canvas snapshot at the actual display size, so poster framing stays pixel-accurate on every viewport (including ultrawide and resized windows) until the canvas takes over.
+
 ## [1.2.0] - 2026-07-01
 
 ### Added

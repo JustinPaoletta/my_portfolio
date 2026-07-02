@@ -1,18 +1,11 @@
 .cosmic-scene3d-stage {
   position: absolute;
   inset: 0;
-  z-index: 2;
+  z-index: 1;
   pointer-events: none;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 180ms ease;
-}
-
-:root[data-theme='cosmic']
-  .hero-background[data-cosmic-scene='3d']
-  .cosmic-scene3d-stage {
-  opacity: 1;
-  visibility: visible;
+  transition: none;
 }
 
 .cosmic-scene3d-canvas {

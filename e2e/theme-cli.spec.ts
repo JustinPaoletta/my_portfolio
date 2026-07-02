@@ -85,20 +85,49 @@ test('cosmic restore shows the static poster fallback immediately', async ({
   await expect(page.locator('video')).toHaveCount(0);
 
   const startupState = await page.evaluate(() => {
-    const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
+    const still =
+      document.querySelector<HTMLImageElement>('.hero-cosmic-still');
     if (!still) {
       return null;
     }
     const stillStyle = getComputedStyle(still);
     return {
-      backgroundImage: stillStyle.backgroundImage,
+      posterSrc: still.currentSrc || still.getAttribute('src') || '',
       stillOpacity: Number.parseFloat(stillStyle.opacity),
     };
   });
 
   expect(startupState).not.toBeNull();
-  expect(startupState?.backgroundImage).toContain('cosmos-poster');
+  expect(startupState?.posterSrc).toContain('cosmos-poster');
   expect(startupState?.stillOpacity).toBeGreaterThan(0);
+});
+
+test('engineer poster load shows a single visual layer before 3D is ready', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.route(
+    /\/assets\/(?:vendor-three|EngineerCircuit3D).*\.js$/,
+    async (route) => {
+      await delay(1_200);
+      await route.continue();
+    }
+  );
+
+  await page.goto('/?theme=engineer&mode=dark', {
+    waitUntil: 'domcontentloaded',
+  });
+
+  const visual = page.locator('.hero-engineer-visual');
+  await expect(visual).toHaveAttribute(
+    'data-engineer-circuit-scene',
+    'poster',
+    {
+      timeout: 5_000,
+    }
+  );
+  await expect(page.locator('.engineer-circuit')).toHaveCount(0);
+  await expect(page.locator('.hero-engineer-still')).toHaveCount(1);
 });
 
 test('engineer poster stays visible while rich scene assets are delayed', async ({
@@ -313,6 +342,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       return page.evaluate(() => {
         const hero = document.querySelector<HTMLElement>('.hero-background');
         const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
+        const stage = document.querySelector<HTMLElement>('.hero-cosmic-stage');
         const content = document.querySelector<HTMLElement>('.hero-content');
         const name = document.querySelector<HTMLElement>('.hero-name-text');
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
@@ -323,6 +353,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
         if (
           !hero ||
           !still ||
+          !stage ||
           !content ||
           !name ||
           !greeting ||
@@ -341,7 +372,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
           heroBackground: heroStyles.backgroundImage,
           beforeBackground: beforeStyles.backgroundColor,
           contentBackground: contentStyles.backgroundImage,
-          stillOpacity: Number.parseFloat(getComputedStyle(still).opacity),
+          stillOpacity: Number.parseFloat(getComputedStyle(stage).opacity),
           nameColor: getComputedStyle(name).color,
           greetingColor: getComputedStyle(greeting).color,
           contentFontFamily: getComputedStyle(content).fontFamily,

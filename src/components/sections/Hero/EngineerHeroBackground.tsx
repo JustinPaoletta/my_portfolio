@@ -2,12 +2,14 @@ import {
   Component,
   lazy,
   Suspense,
-  useCallback,
   useState,
   type ErrorInfo,
   type ReactNode,
 } from 'react';
 import EngineerCircuitBoard from '@/components/sections/Hero/EngineerCircuitBoard/EngineerCircuitBoard';
+import HeroStillImage from '@/components/sections/Hero/HeroStillImage';
+import { useSequentialSceneReveal } from '@/components/sections/Hero/useSequentialSceneReveal';
+import { useCanvasPosterSync } from '@/hooks/useCanvasPosterSync';
 
 const EngineerCircuit3D = lazy(
   () => import('@/components/sections/Hero/EngineerCircuit3D')
@@ -81,10 +83,10 @@ function EngineerInteractiveBackground({
   fallback,
   onSceneError,
 }: EngineerInteractiveBackgroundProps): React.ReactElement {
-  const [isSceneReady, setIsSceneReady] = useState(false);
-  const handleSceneReady = useCallback((): void => {
-    setIsSceneReady(true);
-  }, []);
+  const { isSceneReady, isPosterHidden, transitionPhase, handleSceneReady } =
+    useSequentialSceneReveal();
+  const { livePosterSrc, handleCanvasFrame } =
+    useCanvasPosterSync(isPosterHidden);
 
   return (
     <div
@@ -93,22 +95,34 @@ function EngineerInteractiveBackground({
       data-engineer-circuit-active={isActive ? 'true' : 'false'}
       data-engineer-circuit-motion={calmMotion ? 'calm' : 'normal'}
       data-engineer-circuit-scene={isSceneReady ? '3d' : 'poster'}
+      data-engineer-circuit-poster={isPosterHidden ? 'hidden' : 'visible'}
+      data-engineer-circuit-transition={transitionPhase}
     >
-      <span className="hero-engineer-still" />
-      <EngineerSceneErrorBoundary
-        fallback={fallback}
-        onSceneError={onSceneError}
-      >
-        <Suspense fallback={fallback}>
-          <EngineerCircuit3D
-            isActive={isActive}
-            reducedMotion={reducedMotion}
-            calmMotion={calmMotion}
-            mode={mode}
-            onSceneReady={handleSceneReady}
-          />
-        </Suspense>
-      </EngineerSceneErrorBoundary>
+      <div className="hero-engineer-stage">
+        <HeroStillImage
+          theme="engineer"
+          mode={mode}
+          className="hero-engineer-still"
+          hidden={isPosterHidden}
+          liveSrc={isPosterHidden ? undefined : livePosterSrc}
+        />
+        <EngineerSceneErrorBoundary
+          fallback={fallback}
+          onSceneError={onSceneError}
+        >
+          <Suspense fallback={null}>
+            <EngineerCircuit3D
+              isActive={isActive}
+              reducedMotion={reducedMotion}
+              calmMotion={calmMotion}
+              mode={mode}
+              onSceneReady={handleSceneReady}
+              onCanvasFrame={handleCanvasFrame}
+              syncPoster={!isPosterHidden}
+            />
+          </Suspense>
+        </EngineerSceneErrorBoundary>
+      </div>
     </div>
   );
 }
@@ -152,9 +166,9 @@ function EngineerHeroBackground({
       data-engineer-circuit-active={isActive ? 'true' : 'false'}
       data-engineer-circuit-motion={calmMotion ? 'calm' : 'normal'}
       data-engineer-circuit-scene="svg"
+      data-engineer-circuit-poster="hidden"
     >
-      <span className="hero-engineer-still" />
-      {svgFallback}
+      <div className="hero-engineer-stage">{svgFallback}</div>
     </div>
   );
 }

@@ -8,30 +8,37 @@
   --cosmic-poster-mobile: url('/images/hero/cosmic/cosmos-poster-light-mobile.webp');
 }
 
+.hero-cosmic-stage {
+  position: absolute;
+  inset: 0;
+}
+
 :root[data-theme='cosmic'] .hero-cosmic-still {
   display: block;
   position: absolute;
   inset: 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  background-image: var(--cosmic-poster-desktop);
-  background-position: center;
-  background-repeat: no-repeat;
-  background-size: cover;
+  object-fit: cover;
+  object-position: center;
   opacity: 1;
-  transition: opacity 180ms ease;
+  transition: none;
 }
 
 :root[data-theme='cosmic']
   .hero-background[data-cosmic-scene='3d']
-  .hero-cosmic-still {
-  opacity: 0;
+  .cosmic-scene3d-stage {
+  opacity: 1;
+  visibility: visible;
 }
 
-@media (orientation: portrait) {
-  :root[data-theme='cosmic'] .hero-cosmic-still {
-    background-image: var(--cosmic-poster-mobile);
-  }
+:root[data-theme='cosmic']
+  .hero-background[data-cosmic-poster='hidden']
+  .hero-cosmic-still {
+  opacity: 0;
+  visibility: hidden;
 }
 
 :root[data-theme='cosmic'] .hero-subtext-layout {
@@ -476,7 +483,7 @@
   opacity: 0.28;
 }
 
-:root[data-theme='cosmic'][data-color-mode='light'] .hero-cosmic-still {
+:root[data-theme='cosmic'][data-color-mode='light'] .hero-cosmic-stage {
   filter: saturate(1.22) brightness(0.79) contrast(1.2);
   opacity: 0.4;
 }
@@ -858,14 +865,8 @@
     --cosmic-rig-scale-drift: 1.44;
   }
 }
-/* Keep the painted gradient/poster fallback until the interactive 3D scene mounts. */
-:root[data-theme='cosmic'][data-color-mode='dark']
-  .hero-background[data-cosmic-scene='3d'] {
-  background: none;
-}
-
-:root[data-theme='cosmic'][data-color-mode='dark']
-  .hero-background[data-cosmic-scene='3d']::before {
+/* Dark cosmic scrim stays stable across poster and 3D states. */
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -875,9 +876,12 @@
   opacity: 0.5;
 }
 
-:root[data-theme='cosmic'][data-color-mode='dark']
-  .hero-background[data-cosmic-scene='3d']::after {
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-background::after {
   content: none;
+}
+
+:root[data-theme='cosmic'][data-color-mode='dark'] .hero-cosmic-stage {
+  z-index: 2;
 }
 
 /* Dark cosmic spacing parity with the lighter cosmic rhythm */

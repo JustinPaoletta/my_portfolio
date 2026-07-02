@@ -202,10 +202,13 @@
             });
           });
 
-          var isPortrait =
+          // Mobile posters are captured at 3:4; wider viewports (including
+          // squarish windows) need the wide desktop poster so its cover-crop
+          // matches the live 3D camera. Keep in sync with src/utils/heroPoster.ts.
+          var isNarrowViewport =
             window.matchMedia &&
-            window.matchMedia('(orientation: portrait)').matches;
-          var posterVariant = isPortrait ? 'mobile' : 'desktop';
+            window.matchMedia('(max-aspect-ratio: 3/4)').matches;
+          var posterVariant = isNarrowViewport ? 'mobile' : 'desktop';
 
           var posterByTheme = {
             engineer: {
