@@ -29,14 +29,14 @@ function sceneAttribute(theme: HeroTheme): string {
     : 'data-cosmic-scene';
 }
 
-async function waitForPosterFadeStart(
+async function waitForPosterMidFade(
   page: Page,
   theme: HeroTheme
-): Promise<void> {
+): Promise<number> {
   const rootSelector = sceneRootSelector(theme);
   const stillQuery = stillSelector(theme);
 
-  await page.waitForFunction(
+  const handle = await page.waitForFunction(
     ({
       rootSelector: rootQuery,
       stillQuery,
@@ -50,15 +50,25 @@ async function waitForPosterFadeStart(
         return false;
       }
 
-      return (
+      const fadeStarted =
         root.getAttribute(transitionAttr) === 'fading' &&
         root.getAttribute(sceneAttr) === '3d' &&
         root.getAttribute(posterAttr) === 'visible' &&
         still.getAttribute('data-poster-fading') === 'true' &&
         still.getAttribute('data-poster-hidden') === 'false' &&
         still.src.length > 0 &&
-        root.querySelector('canvas') !== null
-      );
+        root.querySelector('canvas') !== null;
+
+      if (!fadeStarted) {
+        return false;
+      }
+
+      const opacity = Number.parseFloat(getComputedStyle(still).opacity);
+      if (opacity <= 0 || opacity >= 1) {
+        return false;
+      }
+
+      return opacity;
     },
     {
       rootSelector,
@@ -69,6 +79,8 @@ async function waitForPosterFadeStart(
     },
     { timeout: 20_000 }
   );
+
+  return handle.jsonValue() as Promise<number>;
 }
 
 test.describe('Hero poster transition parity', () => {
@@ -82,13 +94,8 @@ test.describe('Hero poster transition parity', () => {
       });
 
       const root = page.locator(sceneRootSelector(theme));
-      const still = page.locator(stillSelector(theme));
 
-      await waitForPosterFadeStart(page, theme);
-
-      const midFadeOpacity = await still.evaluate((element) =>
-        Number.parseFloat(getComputedStyle(element).opacity)
-      );
+      const midFadeOpacity = await waitForPosterMidFade(page, theme);
       expect(midFadeOpacity).toBeLessThan(1);
       expect(midFadeOpacity).toBeGreaterThan(0);
 
