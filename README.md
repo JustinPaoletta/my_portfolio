@@ -5,7 +5,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 ## Status
 
 - Type: public web app
-- Current version: `1.1.17`
+- Current version: `1.2.0`
 - Hosting model: Vercel-friendly frontend with optional `/api/*` functions
 - Release model: manual changelog + release branch flow documented in [RELEASE.md](./RELEASE.md)
 
@@ -13,6 +13,7 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 
 - Live site: [jpengineering.dev](https://jpengineering.dev/)
 - Changelog: [CHANGELOG.md](./CHANGELOG.md)
+- Roadmap: [ROADMAP.md](./ROADMAP.md)
 - Release process: [RELEASE.md](./RELEASE.md)
 - Contributor workflow: [docs/DEVELOPMENT_WORKFLOW.md](./docs/DEVELOPMENT_WORKFLOW.md)
 - Environment reference: [docs/ENV.md](./docs/ENV.md)
@@ -114,8 +115,10 @@ Details: [docs/VISUAL_REGRESSION.md](./docs/VISUAL_REGRESSION.md).
 - [docs/ACCESSIBILITY.md](./docs/ACCESSIBILITY.md)
 - [docs/PERFORMANCE_QUALITY.md](./docs/PERFORMANCE_QUALITY.md)
 - [docs/SEO.md](./docs/SEO.md)
+- [docs/OFFLINE_RELIABILITY_PLAN.md](./docs/OFFLINE_RELIABILITY_PLAN.md)
 - [docs/VISUAL_REGRESSION.md](./docs/VISUAL_REGRESSION.md)
 - [docs/JP_CLI.md](./docs/JP_CLI.md)
+- [ROADMAP.md](./ROADMAP.md)
 
 ## License
 

@@ -17,20 +17,21 @@ The app uses `vite-plugin-pwa` with the configuration in `src/pwa-config.ts`.
 - `src/components/pwa-update-prompt/index.tsx`
 - `vercel.json`
 
-## Manifest Assets
+## Manifest And Precache Assets
 
-The manifest and included assets currently reference:
+The manifest and explicitly included install assets currently reference:
 
 - `branding/JP-no-cursor.svg`
 - `favicons/favicon-48x48.png`
 - `favicons/apple-touch-icon.png`
 - `favicons/pwa-192x192.png`
 - `favicons/pwa-512x512.png`
-- `images/hero/cosmic/cosmos-poster.webp`
 
-The cosmic hero poster is explicitly precached so the cosmic theme's static
-fallback renders reliably offline (the interactive 3D nebula scene is loaded
-lazily and is skipped under reduced-motion, save-data, and visual-test modes).
+Hero posters, project images, article images, and Open Graph images are excluded
+from the precache to keep the service worker install small. They are fetched by
+the page as needed and covered by the same-origin image runtime cache after a
+successful online load. The interactive 3D hero scenes are lazy-loaded and use
+the same-origin GLB runtime cache once requested.
 
 Generate the PNG icon set from the SVG source with:
 
@@ -40,13 +41,14 @@ npm run generate:icons
 
 ## Runtime Caching Rules
 
-| Pattern                    | Strategy               | Notes                                                                   |
-| -------------------------- | ---------------------- | ----------------------------------------------------------------------- |
-| Same-origin images         | `CacheFirst`           | 30-day cache                                                            |
-| Same-origin video          | `CacheFirst`           | 7-day cache                                                             |
-| Same-origin JS and CSS     | `StaleWhileRevalidate` | 7-day cache                                                             |
-| Google Fonts URLs          | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
-| Same-origin `/api/*` calls | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
+| Pattern                     | Strategy               | Notes                                                                   |
+| --------------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| Same-origin images          | `CacheFirst`           | 30-day cache                                                            |
+| Same-origin video           | `CacheFirst`           | 7-day cache                                                             |
+| Same-origin hero GLB models | `CacheFirst`           | 30-day cache for `/models/hero/*.glb`                                   |
+| Same-origin JS and CSS      | `StaleWhileRevalidate` | 7-day cache                                                             |
+| Google Fonts URLs           | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
+| Same-origin `/api/*` calls  | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
 
 Most local assets are handled by the precache, not those runtime rules.
 
