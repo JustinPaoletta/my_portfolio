@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react';
 import HeroStillImage from '@/components/sections/Hero/HeroStillImage';
 import { useSequentialSceneReveal } from '@/components/sections/Hero/useSequentialSceneReveal';
-import { useCanvasPosterSync } from '@/hooks/useCanvasPosterSync';
 
 const CosmicScene3D = lazy(
   () => import('@/components/sections/Hero/CosmicScene3D')
@@ -53,10 +52,14 @@ function CosmicInteractiveBackground({
   calmMotion,
   mode,
 }: CosmicInteractiveBackgroundProps): React.ReactElement {
-  const { isSceneReady, isPosterHidden, transitionPhase, handleSceneReady } =
-    useSequentialSceneReveal();
-  const { livePosterSrc, handleCanvasFrame } =
-    useCanvasPosterSync(isPosterHidden);
+  const {
+    isSceneReady,
+    isPosterHidden,
+    isPosterFadeRequested,
+    transitionPhase,
+    handleSceneReady,
+    handlePosterFadeComplete,
+  } = useSequentialSceneReveal({ reducedMotion });
 
   return (
     <div
@@ -68,13 +71,6 @@ function CosmicInteractiveBackground({
       aria-hidden="true"
     >
       <div className="hero-cosmic-stage">
-        <HeroStillImage
-          theme="cosmic"
-          mode={mode}
-          className="hero-cosmic-still"
-          hidden={isPosterHidden}
-          liveSrc={isPosterHidden ? undefined : livePosterSrc}
-        />
         <Suspense fallback={null}>
           <CosmicScene3D
             isActive={isActive}
@@ -82,10 +78,16 @@ function CosmicInteractiveBackground({
             calmMotion={calmMotion}
             mode={mode}
             onSceneReady={handleSceneReady}
-            onCanvasFrame={handleCanvasFrame}
-            syncPoster={!isPosterHidden}
           />
         </Suspense>
+        <HeroStillImage
+          theme="cosmic"
+          mode={mode}
+          className="hero-cosmic-still"
+          hidden={isPosterHidden}
+          fadeRequested={isPosterFadeRequested}
+          onFadeComplete={handlePosterFadeComplete}
+        />
       </div>
     </div>
   );

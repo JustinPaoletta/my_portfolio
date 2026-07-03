@@ -8,6 +8,10 @@
   --cosmic-poster-mobile: url('/images/hero/cosmic/cosmos-poster-light-mobile.webp');
 }
 
+:root[data-theme='cosmic'] {
+  --hero-poster-fade-duration: 400ms;
+}
+
 .hero-cosmic-stage {
   position: absolute;
   inset: 0;
@@ -15,16 +19,15 @@
 
 :root[data-theme='cosmic'] .hero-cosmic-still {
   display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   object-fit: cover;
   object-position: center;
-  opacity: 1;
-  transition: none;
+}
+
+:root[data-theme='cosmic'] .hero-poster-overlay {
+  display: block;
 }
 
 :root[data-theme='cosmic']
@@ -32,13 +35,6 @@
   .cosmic-scene3d-stage {
   opacity: 1;
   visibility: visible;
-}
-
-:root[data-theme='cosmic']
-  .hero-background[data-cosmic-poster='hidden']
-  .hero-cosmic-still {
-  opacity: 0;
-  visibility: hidden;
 }
 
 :root[data-theme='cosmic'] .hero-subtext-layout {

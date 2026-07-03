@@ -71,6 +71,10 @@
   filter: drop-shadow(0 0 12px rgba(var(--color-primary-rgb), 0.18));
 }
 
+:root[data-theme='engineer'] {
+  --hero-poster-fade-duration: 400ms;
+}
+
 .hero-engineer-stage {
   position: absolute;
   inset: 0;
@@ -78,16 +82,11 @@
 
 .hero-engineer-still {
   display: block;
-  position: absolute;
-  inset: 0;
-  z-index: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
   object-fit: cover;
   object-position: center;
-  opacity: 1;
-  transition: none;
 }
 
 .hero-engineer-visual > .hero-engineer-stage > .engineer-circuit {
@@ -99,13 +98,6 @@
   .engineer-circuit3d-stage {
   opacity: 1;
   visibility: visible;
-}
-
-:root[data-theme='engineer']
-  .hero-engineer-visual[data-engineer-circuit-poster='hidden']
-  .hero-engineer-still {
-  opacity: 0;
-  visibility: hidden;
 }
 
 :root[data-theme='engineer']

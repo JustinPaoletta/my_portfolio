@@ -472,12 +472,15 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', '3d');
     });
-    await waitFor(() => {
-      expect(getVisual()).toHaveAttribute(
-        'data-engineer-circuit-poster',
-        'hidden'
-      );
-    });
+    await waitFor(
+      () => {
+        expect(getVisual()).toHaveAttribute(
+          'data-engineer-circuit-poster',
+          'hidden'
+        );
+      },
+      { timeout: 3_000 }
+    );
     await waitFor(() => {
       expect(preloadRichHeroSceneMock).toHaveBeenCalledWith('engineer');
     });
@@ -549,12 +552,15 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', '3d');
     });
-    await waitFor(() => {
-      expect(getVisual()).toHaveAttribute(
-        'data-engineer-circuit-poster',
-        'hidden'
-      );
-    });
+    await waitFor(
+      () => {
+        expect(getVisual()).toHaveAttribute(
+          'data-engineer-circuit-poster',
+          'hidden'
+        );
+      },
+      { timeout: 3_000 }
+    );
 
     heroInView = true;
     view.rerender(<Hero />);
@@ -692,12 +698,14 @@ describe('Hero section', () => {
         '3d'
       );
     });
-    await waitFor(() => {
-      expect(view.container.querySelector('.hero-background')).toHaveAttribute(
-        'data-cosmic-poster',
-        'hidden'
-      );
-    });
+    await waitFor(
+      () => {
+        expect(
+          view.container.querySelector('.hero-background')
+        ).toHaveAttribute('data-cosmic-poster', 'hidden');
+      },
+      { timeout: 3_000 }
+    );
     await waitFor(() => {
       expect(preloadRichHeroSceneMock).toHaveBeenCalledWith('cosmic');
     });

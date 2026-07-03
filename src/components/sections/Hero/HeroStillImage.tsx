@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import {
   useHeroPosterPath,
   type HeroPosterMode,
@@ -9,8 +10,8 @@ export type HeroStillImageProps = {
   mode: HeroPosterMode;
   className: string;
   hidden?: boolean;
-  /** When set, replaces the static poster with a live canvas snapshot. */
-  liveSrc?: string;
+  fadeRequested?: boolean;
+  onFadeComplete?: () => void;
 };
 
 function HeroStillImage({
@@ -18,21 +19,42 @@ function HeroStillImage({
   mode,
   className,
   hidden = false,
-  liveSrc,
-}: HeroStillImageProps): React.ReactElement {
+  fadeRequested = false,
+  onFadeComplete,
+}: HeroStillImageProps): React.ReactElement | null {
   const staticSrc = useHeroPosterPath(theme, mode);
 
+  const handleAnimationEnd = useCallback(
+    (event: React.AnimationEvent<HTMLDivElement>): void => {
+      if (event.animationName !== 'hero-poster-fade-out' || !fadeRequested) {
+        return;
+      }
+
+      onFadeComplete?.();
+    },
+    [fadeRequested, onFadeComplete]
+  );
+
+  if (hidden) {
+    return null;
+  }
+
   return (
-    <img
-      className={className}
-      src={liveSrc ?? staticSrc}
-      alt=""
-      aria-hidden="true"
-      decoding="async"
-      fetchPriority="high"
-      data-poster-hidden={hidden ? 'true' : 'false'}
-      data-poster-source={liveSrc ? 'canvas' : 'static'}
-    />
+    <div
+      className="hero-poster-overlay"
+      data-poster-fading={fadeRequested ? 'true' : 'false'}
+      onAnimationEnd={handleAnimationEnd}
+    >
+      <img
+        className={className}
+        src={staticSrc}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        fetchPriority="high"
+        data-poster-source="static"
+      />
+    </div>
   );
 }
 
