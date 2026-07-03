@@ -5,6 +5,12 @@ This is the detailed companion plan for Priority 1 in
 priority/status source of truth and use this file for the implementation
 details.
 
+**Status (2026-07-03):** Not started. This is Priority 1 in
+[`ROADMAP.md`](../ROADMAP.md) after the `v1.2.1` release. Implement in rollout
+order: Phase 1 (avatar cache, fallback, stale GitHub data) → Phase 2 (contact
+outbox) → Phase 3 (idempotency and timeout hardening) → Phase 4 (optional
+Workbox Background Sync).
+
 ## Objective
 
 Create an offline-resilient experience where:
