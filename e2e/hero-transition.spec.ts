@@ -29,14 +29,14 @@ function transitionAttribute(theme: HeroTheme): string {
     : 'data-cosmic-transition';
 }
 
-async function waitForPosterFadeStart(
+async function waitForMidFadeOpacity(
   page: Page,
   theme: HeroTheme
-): Promise<void> {
+): Promise<number> {
   const rootSelector = sceneRootSelector(theme);
   const stillQuery = stillSelector(theme);
 
-  await page.waitForFunction(
+  const handle = await page.waitForFunction(
     ({
       rootSelector: rootQuery,
       stillQuery,
@@ -51,15 +51,25 @@ async function waitForPosterFadeStart(
         return false;
       }
 
-      return (
+      const isFading =
         root.getAttribute(transitionAttr) === 'fading' &&
         root.getAttribute(sceneAttr) === '3d' &&
         root.getAttribute(posterAttr) === 'visible' &&
         overlay.getAttribute('data-poster-fading') === 'true' &&
         still.getAttribute('data-poster-source') === 'static' &&
         still.src.length > 0 &&
-        root.querySelector('canvas') !== null
-      );
+        root.querySelector('canvas') !== null;
+
+      if (!isFading) {
+        return false;
+      }
+
+      const opacity = Number.parseFloat(getComputedStyle(overlay).opacity);
+      if (!Number.isFinite(opacity) || opacity <= 0 || opacity >= 1) {
+        return false;
+      }
+
+      return opacity;
     },
     {
       rootSelector,
@@ -68,8 +78,10 @@ async function waitForPosterFadeStart(
       posterAttribute: posterAttribute(theme),
       transitionAttribute: transitionAttribute(theme),
     },
-    { timeout: 20_000 }
+    { timeout: 20_000, polling: 16 }
   );
+
+  return handle.jsonValue() as Promise<number>;
 }
 
 test.describe('Hero poster transition parity', () => {
@@ -83,18 +95,8 @@ test.describe('Hero poster transition parity', () => {
       });
 
       const root = page.locator(sceneRootSelector(theme));
-      const still = page.locator(stillSelector(theme));
 
-      await waitForPosterFadeStart(page, theme);
-
-      const midFadeOpacity = await still.evaluate((element) => {
-        const overlay = element.closest('.hero-poster-overlay');
-        if (!overlay) {
-          return 1;
-        }
-
-        return Number.parseFloat(getComputedStyle(overlay).opacity);
-      });
+      const midFadeOpacity = await waitForMidFadeOpacity(page, theme);
       expect(midFadeOpacity).toBeLessThan(1);
       expect(midFadeOpacity).toBeGreaterThan(0);
 
