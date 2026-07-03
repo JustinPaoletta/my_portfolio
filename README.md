@@ -5,9 +5,10 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 ## Status
 
 - Type: public web app
-- Current version: `1.2.0`
+- Current version: `1.2.1`
 - Hosting model: Vercel-friendly frontend with optional `/api/*` functions
 - Release model: manual changelog + release branch flow documented in [RELEASE.md](./RELEASE.md)
+- Next up: offline reliability work in [docs/OFFLINE_RELIABILITY_PLAN.md](./docs/OFFLINE_RELIABILITY_PLAN.md) (see [ROADMAP.md](./ROADMAP.md))
 
 ## Quick Links
 

@@ -4,24 +4,18 @@ This file tracks the remaining actionable work for the portfolio repo. It is the
 source of truth for forward-looking work; detailed implementation notes can live
 in focused companion files when useful.
 
+## What's Next
+
+1. **Start Priority 1** — offline data and contact reliability per [`docs/OFFLINE_RELIABILITY_PLAN.md`](./docs/OFFLINE_RELIABILITY_PLAN.md). Begin with GitHub avatar offline caching (1.1), then avatar fallback (1.2), stale GitHub data (1.3), and the contact outbox queue (1.4–1.5).
+2. **Priority 2 (manual)** — Google Search Console verification, external profile links, and SEO monitoring when ready.
+
 ## Current Status (as of 2026-07-03)
 
-- Current app version: `1.2.0`.
-- Main branch includes unreleased hero poster framing fixes, the merged PR `#284` fade-transition work, and roadmap/documentation cleanup.
-- No open GitHub issues or pull requests were found during the latest review.
-- The deleted landscape rendering fix plan is not active backlog; that issue is already resolved in app code and covered by regression tests.
-- On-site SEO implementation is already documented in `docs/SEO.md`; the former desktop SEO follow-up note has been incorporated here, so no separate desktop SEO file is required.
-
-## Priority 0 - Release v1.2.1 Patch Work
-
-Goal: cut `v1.2.1` after the merged hero-transition work and this documentation cleanup are ready to ship.
-
-Done when:
-
-- `CHANGELOG.md` moves current `Unreleased` entries into a dated release section.
-- `package.json`, `package-lock.json`, and README version metadata are aligned.
-- Release validation follows `RELEASE.md`.
-- The release includes the hero poster framing fixes, PR `#284` fade-transition work, the deleted landscape plan cleanup, and this roadmap/doc refresh.
+- Current app version: `1.2.1`.
+- Released in `v1.2.1`: hero poster framing fixes (`#282`–`#283`), fade transitions (`#284`), and documentation refresh (`#285`).
+- No open GitHub issues or pull requests.
+- On-site SEO implementation is documented in `docs/SEO.md`; external profile follow-ups live under Priority 2 below.
+- Priority 1 (offline reliability) is not started; see `docs/OFFLINE_RELIABILITY_PLAN.md` for implementation phases.
 
 ## Priority 1 - Offline Data And Contact Reliability
 
