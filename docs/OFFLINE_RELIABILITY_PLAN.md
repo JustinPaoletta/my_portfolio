@@ -1,4 +1,9 @@
-# Offline Data and Contact Reliability Plan
+# Offline Reliability Plan
+
+This is the detailed companion plan for Priority 1 in
+[`ROADMAP.md`](../ROADMAP.md). Keep [`ROADMAP.md`](../ROADMAP.md) as the
+priority/status source of truth and use this file for the implementation
+details.
 
 ## Objective
 
@@ -27,9 +32,9 @@ Create an offline-resilient experience where:
   - `src/hooks/useGitHub.ts`
 - GitHub avatar uses `user.avatar_url` directly:
   - `src/components/sections/GitHub/index.tsx`
-- Runtime image caching only matches URLs with image extensions:
+- Runtime image caching is same-origin only:
   - `src/pwa-config.ts`
-  - This misses common GitHub avatar URLs like `avatars.githubusercontent.com/u/123?v=4`.
+  - This misses remote GitHub avatar URLs like `https://avatars.githubusercontent.com/u/123?v=4`.
 - Contact form submits directly to `/api/contact` with no offline queue:
   - `src/components/sections/Contact/index.tsx`
 - Contact API validates and sends via Resend:
@@ -78,8 +83,8 @@ Create an offline-resilient experience where:
 
 Why:
 
-- Host-based avatar URLs often have query params and no file extension.
-- Current regex misses those URLs.
+- GitHub avatar URLs are remote resources and often include query params.
+- The current same-origin image cache rule misses those URLs.
 
 ### B. Add UI fallback image for avatar load failures
 

@@ -88,4 +88,4 @@ Actions do not execute on click, number key, or space alone.
 - `exit`
 - `quit`
 
-`exit`/`quit` switches from the JP_CLI theme back to the app default theme (`engineer`).
+`exit`/`quit` switches from the JP_CLI theme back to the app default theme (`minimal`).
