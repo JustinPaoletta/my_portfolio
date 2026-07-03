@@ -318,3 +318,15 @@
     min-width: 200px;
   }
 }
+
+@media (max-height: 520px) and (max-width: 900px) {
+  .theme-switcher--floating {
+    right: 12px;
+    bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  }
+
+  .theme-switcher-toggle {
+    width: 40px;
+    height: 40px;
+  }
+}
