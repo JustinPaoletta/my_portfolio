@@ -18,6 +18,18 @@ interface LinkedInArticle {
 
 export const LINKEDIN_ARTICLES: LinkedInArticle[] = [
   {
+    id: 'less-ai-while-programming',
+    title: 'A Case for using less AI while Programming',
+    summary:
+      'A practical look at when AI accelerates development—and when predictable work belongs in scripts and automation instead of repeated agent prompts. The goal is cost-effective workflows that still ship quality software fast.',
+    publishedLabel: 'Jul 7, 2026',
+    readTime: '3 min read',
+    url: 'https://www.linkedin.com/pulse/case-using-less-ai-while-programming-justin-paoletta-ww3dc',
+    topics: ['Automation', 'AI-Assisted Development', 'Developer Productivity'],
+    image: '/articles/article_2.webp',
+    imageAlt: 'A Case for using less AI while Programming article cover',
+  },
+  {
     id: 'agentic-coding',
     title: 'The Two Competing Ideas in Agentic Coding',
     summary:
