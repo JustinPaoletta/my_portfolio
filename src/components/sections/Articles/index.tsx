@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons';
 import { env } from '@/config/env';
 import { LINKEDIN_ARTICLES } from '@/content/site';
 import './Articles.css';
@@ -100,7 +101,6 @@ export default function Articles(): React.ReactElement {
   const isVisible = useRevealInView(sectionRef);
   const [activeIndex, setActiveIndex] = useState(0);
   const articleCount = LINKEDIN_ARTICLES.length;
-  const activeArticle = LINKEDIN_ARTICLES[activeIndex];
   const canGoPrevious = activeIndex > 0;
   const canGoNext = activeIndex < articleCount - 1;
 
@@ -166,7 +166,7 @@ export default function Articles(): React.ReactElement {
             className="articles-carousel__viewport"
             role="region"
             aria-roledescription="carousel"
-            aria-label="LinkedIn articles"
+            aria-label="Article slides"
           >
             <div className="articles-carousel__controls">
               <button
@@ -176,19 +176,7 @@ export default function Articles(): React.ReactElement {
                 disabled={!canGoPrevious}
                 onClick={goToPrevious}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="m15 18-6-6 6-6"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ChevronLeftIcon size={20} aria-hidden="true" />
               </button>
 
               <div className="articles-carousel__status">
@@ -236,30 +224,26 @@ export default function Articles(): React.ReactElement {
                 disabled={!canGoNext}
                 onClick={goToNext}
               >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="m9 18 6-6-6-6"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <ChevronRightIcon size={20} aria-hidden="true" />
               </button>
             </div>
 
-            <div
-              id={`article-slide-${activeArticle.id}`}
-              role="tabpanel"
-              aria-labelledby={`article-tab-${activeArticle.id}`}
-              className="articles-carousel__slide"
-            >
-              <ArticleCard article={activeArticle} />
-            </div>
+            {LINKEDIN_ARTICLES.map((article, index) => {
+              const isActivePanel = index === activeIndex;
+
+              return (
+                <div
+                  key={article.id}
+                  id={`article-slide-${article.id}`}
+                  role="tabpanel"
+                  aria-labelledby={`article-tab-${article.id}`}
+                  hidden={!isActivePanel}
+                  className="articles-carousel__slide"
+                >
+                  <ArticleCard article={article} />
+                </div>
+              );
+            })}
           </div>
         </Reveal>
 

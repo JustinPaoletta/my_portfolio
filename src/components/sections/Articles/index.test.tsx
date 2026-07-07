@@ -1,6 +1,7 @@
-import { render, screen } from '@/test/test-utils';
+import { render, screen, within } from '@/test/test-utils';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
+import { LINKEDIN_ARTICLES } from '@/content/site';
 import Articles from '.';
 
 describe('Articles section', () => {
@@ -75,6 +76,90 @@ describe('Articles section', () => {
         name: 'A Case for using less AI while Programming',
       })
     ).toBeInTheDocument();
+  });
+
+  it('associates each carousel tab with a persistent tabpanel', () => {
+    const { container } = render(<Articles />);
+
+    const tablist = screen.getByRole('tablist', { name: 'Select article' });
+    const tabs = within(tablist).getAllByRole('tab');
+
+    expect(tabs).toHaveLength(LINKEDIN_ARTICLES.length);
+
+    for (const tab of tabs) {
+      const panelId = tab.getAttribute('aria-controls');
+      expect(panelId).toBeTruthy();
+      expect(
+        container.querySelector(`#${CSS.escape(panelId ?? '')}`)
+      ).toBeInTheDocument();
+    }
+
+    expect(screen.getAllByRole('tabpanel', { hidden: true })).toHaveLength(
+      LINKEDIN_ARTICLES.length
+    );
+  });
+
+  it('exposes carousel region semantics and live slide counter', () => {
+    render(<Articles />);
+
+    const carousel = screen.getByRole('region', { name: 'Article slides' });
+
+    expect(carousel).toHaveAttribute('aria-roledescription', 'carousel');
+    expect(screen.getByText('Article 1 of 2')).toHaveAttribute(
+      'aria-live',
+      'polite'
+    );
+    expect(screen.getByText('Article 1 of 2')).toHaveAttribute(
+      'aria-atomic',
+      'true'
+    );
+  });
+
+  it('disables boundary navigation buttons and keeps only the active panel visible', () => {
+    render(<Articles />);
+
+    expect(
+      screen.getByRole('button', { name: 'Previous article' })
+    ).toBeDisabled();
+    expect(screen.getByRole('button', { name: 'Next article' })).toBeEnabled();
+
+    const tabpanels = screen.getAllByRole('tabpanel', { hidden: true });
+    const visiblePanels = tabpanels.filter(
+      (panel) => !panel.hasAttribute('hidden')
+    );
+
+    expect(visiblePanels).toHaveLength(1);
+    expect(visiblePanels[0]).toHaveAttribute(
+      'id',
+      `article-slide-${LINKEDIN_ARTICLES[0].id}`
+    );
+  });
+
+  it('navigates directly to an article with dot tabs', async () => {
+    const user = userEvent.setup();
+
+    render(<Articles />);
+
+    const secondArticle = LINKEDIN_ARTICLES[1];
+    const secondTab = screen.getByRole('tab', {
+      name: `Show ${secondArticle.title}`,
+    });
+
+    expect(secondTab).toHaveAttribute('aria-selected', 'false');
+    expect(secondTab).toHaveAttribute('tabindex', '-1');
+
+    await user.click(secondTab);
+
+    expect(screen.getByText('Article 2 of 2')).toBeInTheDocument();
+    expect(secondTab).toHaveAttribute('aria-selected', 'true');
+    expect(secondTab).toHaveAttribute('tabindex', '0');
+    expect(
+      screen.getByRole('link', { name: secondArticle.title })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Previous article' })
+    ).toBeEnabled();
+    expect(screen.getByRole('button', { name: 'Next article' })).toBeDisabled();
   });
 
   it('renders article content consistently', () => {

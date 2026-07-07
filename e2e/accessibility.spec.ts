@@ -1,6 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
+import { revealDeferredSection } from './support/sections';
 
 async function expectNoAxeViolations(page: Page) {
   const results = await new AxeBuilder({ page }).analyze();
@@ -112,6 +113,85 @@ test('@a11y contact form surfaces field-level errors to assistive tech', async (
     'true'
   );
   await expect(page.getByText(/Enter a valid email address./i)).toBeVisible();
+});
+
+test('@a11y articles carousel exposes persistent tabpanels and boundary controls', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.goto('/');
+
+  const articlesSection = await revealDeferredSection(page, 'articles');
+
+  await expect(
+    articlesSection.getByRole('region', { name: 'Article slides' })
+  ).toBeVisible();
+  await expect(
+    articlesSection.getByRole('button', { name: 'Previous article' })
+  ).toBeDisabled();
+  await expect(
+    articlesSection.getByRole('button', { name: 'Next article' })
+  ).toBeEnabled();
+  await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
+
+  const tabAssociations = await articlesSection.evaluate(() => {
+    const tabs = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        '#articles [role="tablist"][aria-label="Select article"] [role="tab"]'
+      )
+    );
+
+    return tabs.map((tab) => {
+      const panelId = tab.getAttribute('aria-controls');
+      const panel = panelId ? document.getElementById(panelId) : null;
+
+      return {
+        label: tab.getAttribute('aria-label'),
+        panelExists: panel !== null,
+        panelHidden: panel?.hasAttribute('hidden') ?? null,
+      };
+    });
+  });
+
+  expect(tabAssociations).toHaveLength(2);
+  expect(tabAssociations.every((tab) => tab.panelExists)).toBe(true);
+  expect(
+    tabAssociations.filter((tab) => tab.panelHidden === false)
+  ).toHaveLength(1);
+
+  await articlesSection.getByRole('button', { name: 'Next article' }).click();
+
+  await expect(articlesSection.getByText('Article 2 of 2')).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', {
+      name: 'The Two Competing Ideas in Agentic Coding',
+    })
+  ).toBeVisible();
+  await expect(
+    articlesSection.getByRole('button', { name: 'Previous article' })
+  ).toBeEnabled();
+  await expect(
+    articlesSection.getByRole('button', { name: 'Next article' })
+  ).toBeDisabled();
+
+  await articlesSection
+    .getByRole('tab', {
+      name: 'Show A Case for using less AI while Programming',
+    })
+    .click();
+
+  await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', {
+      name: 'A Case for using less AI while Programming',
+    })
+  ).toBeVisible();
+
+  const results = await new AxeBuilder({ page }).include('#articles').analyze();
+  expect(
+    results.violations,
+    results.violations.map((violation) => violation.id).join(', ')
+  ).toEqual([]);
 });
 
 test('@a11y cosmic theme respects reduced motion', async ({ page }) => {

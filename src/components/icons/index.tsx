@@ -27,6 +27,22 @@ function BaseIcon({
   );
 }
 
+export function ChevronLeftIcon(props: IconProps): React.ReactElement {
+  return (
+    <BaseIcon {...props}>
+      <path d="m15 18-6-6 6-6" />
+    </BaseIcon>
+  );
+}
+
+export function ChevronRightIcon(props: IconProps): React.ReactElement {
+  return (
+    <BaseIcon {...props}>
+      <path d="m9 18 6-6-6-6" />
+    </BaseIcon>
+  );
+}
+
 export function ArrowRightIcon(props: IconProps): React.ReactElement {
   return (
     <BaseIcon {...props}>
