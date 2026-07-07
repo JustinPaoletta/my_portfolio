@@ -23,6 +23,38 @@ test.describe('@visual section states', () => {
     });
   });
 
+  test('captures articles section', async ({ page }) => {
+    await gotoVisualState(page, {
+      theme: 'minimal',
+      mode: 'light',
+      viewport: DESKTOP_SECTION_VIEWPORT,
+    });
+
+    const articles = page.locator('section#articles');
+    await waitForSectionToSettle(page, articles);
+
+    await expect(articles).toHaveScreenshot('articles-section.png', {
+      caret: 'hide',
+    });
+  });
+
+  test('captures articles section on second slide', async ({ page }) => {
+    await gotoVisualState(page, {
+      theme: 'minimal',
+      mode: 'light',
+      viewport: DESKTOP_SECTION_VIEWPORT,
+    });
+
+    const articles = page.locator('section#articles');
+    await waitForSectionToSettle(page, articles);
+    await page.getByRole('button', { name: 'Next article' }).click();
+    await waitForSectionToSettle(page, articles);
+
+    await expect(articles).toHaveScreenshot('articles-section-slide-2.png', {
+      caret: 'hide',
+    });
+  });
+
   test('captures github section', async ({ page }) => {
     await gotoVisualState(page, {
       theme: 'minimal',

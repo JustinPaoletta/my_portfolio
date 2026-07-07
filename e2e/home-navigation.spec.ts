@@ -157,6 +157,12 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
   await expect(
     articlesSection.getByRole('heading', { name: /LinkedIn Articles/i })
   ).toBeVisible();
+  await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', {
+      name: 'A Case for using less AI while Programming',
+    })
+  ).toBeVisible();
   await expect(
     githubSection.getByRole('heading', { name: /GitHub Activity/i })
   ).toBeVisible();

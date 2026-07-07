@@ -1,36 +1,50 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
+import { revealDeferredSection } from './support/sections';
 
-async function revealDeferredSection(
-  page: Page,
-  sectionId: string
-): Promise<ReturnType<Page['locator']>> {
-  await expect
-    .poll(
-      async () => {
-        await page.evaluate(() =>
-          window.scrollTo({
-            top: document.body.scrollHeight,
-            behavior: 'instant',
-          })
-        );
+test('articles carousel switches slides with prev/next and dot controls', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.goto('/');
 
-        return page.evaluate(
-          (targetId) => Boolean(document.getElementById(targetId)),
-          sectionId
-        );
-      },
-      {
-        timeout: 15_000,
-        intervals: [250, 500, 1_000],
-      }
-    )
-    .toBe(true);
+  const articlesSection = await revealDeferredSection(page, 'articles');
 
-  const section = page.locator(`section#${sectionId}`);
-  await expect(section).toBeVisible({ timeout: 10_000 });
-  return section;
-}
+  await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', {
+      name: 'A Case for using less AI while Programming',
+    })
+  ).toBeVisible();
+  await expect(
+    articlesSection.getByRole('button', { name: 'Previous article' })
+  ).toBeDisabled();
+
+  await articlesSection.getByRole('button', { name: 'Next article' }).click();
+
+  await expect(articlesSection.getByText('Article 2 of 2')).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', {
+      name: 'The Two Competing Ideas in Agentic Coding',
+    })
+  ).toBeVisible();
+  await expect(
+    articlesSection.getByRole('button', { name: 'Next article' })
+  ).toBeDisabled();
+
+  await articlesSection
+    .getByRole('tab', {
+      name: 'Show A Case for using less AI while Programming',
+    })
+    .click();
+
+  await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', {
+      name: 'A Case for using less AI while Programming',
+    })
+  ).toBeVisible();
+});
 
 test('GitHub section renders live stats from API responses', async ({
   page,

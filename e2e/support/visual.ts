@@ -160,7 +160,9 @@ async function resetTransientInteractionState(page: Page): Promise<void> {
 async function waitForImages(locator: Locator): Promise<void> {
   await locator.evaluateAll(async (elements) => {
     const imageElements = elements.flatMap((element) =>
-      Array.from(element.querySelectorAll('img'))
+      Array.from(element.querySelectorAll('img')).filter((image) => {
+        return image.closest('[hidden]') === null;
+      })
     );
 
     await Promise.all(
