@@ -8,6 +8,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { enforceRateLimit } from '../server/request-security';
 
 const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
 
@@ -118,6 +119,12 @@ export default async function handler(
     return;
   }
 
+  if (!/^[a-z\d](?:[a-z\d-]{0,37}[a-z\d])?$/i.test(username)) {
+    res.status(400).json({ error: 'Invalid username' });
+    return;
+  }
+  if (!(await enforceRateLimit(req, res, 'github', 60, 60))) return;
+
   // Check for GitHub token
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
@@ -138,6 +145,7 @@ export default async function handler(
         query: GITHUB_QUERY,
         variables: { username },
       }),
+      signal: AbortSignal.timeout(10_000),
     });
 
     if (!response.ok) {

@@ -38,7 +38,12 @@ export default [
     },
   },
   {
-    files: ['plugins/**/*.ts', 'vite.config.ts'],
+    files: [
+      'plugins/**/*.ts',
+      'server/**/*.ts',
+      'api/**/*.ts',
+      'vite.config.ts',
+    ],
     languageOptions: {
       globals: globals.node,
     },

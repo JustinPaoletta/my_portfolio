@@ -9,6 +9,11 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import {
+  allowBrowserRequest,
+  allowRequestBody,
+  enforceRateLimit,
+} from '../server/request-security';
+import {
   type ContactFormData,
   validateContactFormData,
 } from '../src/shared/contact';
@@ -92,8 +97,7 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ): Promise<void> {
-  // Set CORS headers for preflight requests
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (!allowBrowserRequest(req, res)) return;
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -108,6 +112,9 @@ export default async function handler(
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+
+  if (!allowRequestBody(req, res)) return;
+  if (!(await enforceRateLimit(req, res, 'contact', 5, 600))) return;
 
   // Check for required environment variables
   const resendApiKey = process.env.RESEND_API_KEY;
@@ -155,6 +162,7 @@ export default async function handler(
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(emailPayload),
+      signal: AbortSignal.timeout(10_000),
     });
 
     const responseData = (await response.json()) as

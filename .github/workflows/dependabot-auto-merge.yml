@@ -22,16 +22,39 @@ jobs:
     if: github.event.pull_request.user.login == 'dependabot[bot]'
 
     steps:
+      - name: Require enforced checks before enabling auto-merge
+        id: protection
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
+        with:
+          script: |
+            try {
+              const { data } = await github.rest.repos.getBranchProtection({
+                ...context.repo,
+                branch: context.payload.pull_request.base.ref,
+              });
+              const required = data.required_status_checks;
+              const count = (required?.contexts?.length || 0) + (required?.checks?.length || 0);
+              core.setOutput('safe', count > 0 && data.enforce_admins?.enabled === true);
+              if (!count || !data.enforce_admins?.enabled) {
+                core.warning('Auto-merge requires enforced status checks and administrator protection.');
+              }
+            } catch (error) {
+              if (![403, 404].includes(error.status)) throw error;
+              core.setOutput('safe', false);
+              core.warning('Branch protection could not be verified; leaving the security update for manual review.');
+            }
+
       - name: Fetch Dependabot metadata
         id: metadata
-        uses: dependabot/fetch-metadata@v3
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3
         with:
           github-token: '${{ github.token }}'
 
       - name: Enable auto-merge for grouped security PRs
         if: |
-          steps.metadata.outputs.dependency-group == 'npm-security-updates' ||
-          steps.metadata.outputs.dependency-group == 'github-actions-security-updates'
+          steps.protection.outputs.safe == 'true' &&
+          (steps.metadata.outputs.dependency-group == 'npm-security-updates' ||
+           steps.metadata.outputs.dependency-group == 'github-actions-security-updates')
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
@@ -39,20 +62,24 @@ jobs:
 
       - name: Comment on PR
         if: |
+          steps.protection.outputs.safe == 'true' &&
           (steps.metadata.outputs.dependency-group == 'npm-security-updates' ||
            steps.metadata.outputs.dependency-group == 'github-actions-security-updates') &&
           (github.event.action == 'opened' || github.event.action == 'reopened')
         run: |
-          gh pr comment "$PR_URL" --body-file - <<'EOF'
+          gh pr comment "$PR_URL" --body-file - <<EOF
           Dependabot security auto-merge enabled.
 
-          This PR matches the `${{ steps.metadata.outputs.dependency-group }}` security-update group and will merge automatically once all required checks pass.
+          This PR matches the $DEPENDENCY_GROUP security-update group and will merge automatically once all required checks pass.
 
-          Update type: `${{ steps.metadata.outputs.update-type }}`
-          Dependency type: `${{ steps.metadata.outputs.dependency-type }}`
+          Update type: $UPDATE_TYPE
+          Dependency type: $DEPENDENCY_TYPE
 
-          To prevent auto-merge, comment `@dependabot cancel merge`.
+          To prevent auto-merge, comment @dependabot cancel merge.
           EOF
         env:
+          DEPENDENCY_GROUP: ${{ steps.metadata.outputs.dependency-group }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+          DEPENDENCY_TYPE: ${{ steps.metadata.outputs.dependency-type }}
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ github.token }}
