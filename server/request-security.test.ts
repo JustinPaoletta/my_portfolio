@@ -5,7 +5,7 @@ import {
   allowBrowserRequest,
   allowRequestBody,
   enforceRateLimit,
-} from './request-security';
+} from './request-security.js';
 
 const { evalMock } = vi.hoisted(() => ({ evalMock: vi.fn() }));
 vi.mock('@upstash/redis', () => ({

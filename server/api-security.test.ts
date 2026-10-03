@@ -1,9 +1,9 @@
 // @vitest-environment node
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import contact from '../api/contact';
-import pets from '../api/pet-dogs';
-import github from '../api/github';
+import contact from '../api/contact.js';
+import pets from '../api/pet-dogs.js';
+import github from '../api/github.js';
 
 const { evalMock } = vi.hoisted(() => ({ evalMock: vi.fn() }));
 vi.mock('@upstash/redis', () => ({

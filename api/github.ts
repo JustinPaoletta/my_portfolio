@@ -8,7 +8,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { enforceRateLimit } from '../server/request-security';
+import { enforceRateLimit } from '../server/request-security.js';
 
 const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
 

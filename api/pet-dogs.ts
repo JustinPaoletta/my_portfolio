@@ -13,7 +13,7 @@ import {
   allowBrowserRequest,
   allowRequestBody,
   enforceRateLimit,
-} from '../server/request-security';
+} from '../server/request-security.js';
 
 interface PetDogsRequest {
   dogName: string;

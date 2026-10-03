@@ -12,11 +12,11 @@ import {
   allowBrowserRequest,
   allowRequestBody,
   enforceRateLimit,
-} from '../server/request-security';
+} from '../server/request-security.js';
 import {
   type ContactFormData,
   validateContactFormData,
-} from '../src/shared/contact';
+} from '../src/shared/contact.js';
 
 interface ResendEmailPayload {
   from: string;
