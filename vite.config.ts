@@ -248,7 +248,16 @@ export default defineConfig(({ mode }) => {
     server: {
       fs: {
         // Deny access to API directory (serverless functions only)
-        deny: [path.resolve(__dirname, 'api')],
+        deny: [
+          '.env',
+          '.env.*',
+          '*.{crt,pem,key,p12,pfx,cer,der}',
+          '.npmrc',
+          '.yarnrc.yml',
+          '**/.git/**',
+          path.resolve(__dirname, 'api') + '/**',
+          path.resolve(__dirname, 'server') + '/**',
+        ],
       },
     },
     optimizeDeps: {

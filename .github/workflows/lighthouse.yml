@@ -51,19 +51,17 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0 # full history for better reporting
 
       - name: Setup Node.js
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Install dependencies
-        # Workaround for npm bug with optional dependencies (https://github.com/npm/cli/issues/4828)
-        # Use npm install which handles optional dependencies better than npm ci
-        run: npm install --no-audit --no-fund --prefer-offline=false
+        run: npx --yes npm@11.6.4 ci --no-audit --no-fund
 
       - name: Install Playwright browser
         run: npx playwright install --with-deps chromium
@@ -72,18 +70,18 @@ jobs:
         run: npm run build
 
       - name: Collect Lighthouse Reports
-        run: npx @lhci/cli@latest collect --staticDistDir=./dist
+        run: npx --no-install lhci collect --staticDistDir=./dist
 
       - name: Assert Lighthouse Results
-        run: npx @lhci/cli@latest assert
+        run: npx --no-install lhci assert
 
       - name: Upload to LHCI Temporary Storage
         if: always()
-        run: npx @lhci/cli@latest upload
+        run: npx --no-install lhci upload
 
       - name: Upload LHCI artifacts
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: lhci
           path: .lighthouseci
@@ -91,7 +89,7 @@ jobs:
           retention-days: 30
 
       - name: Comment PR with Lighthouse results
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9
         if: always() && github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}

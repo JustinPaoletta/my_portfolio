@@ -89,8 +89,9 @@ export function createVitestConfig(mode = 'test') {
       testTimeout: 10_000,
       hookTimeout: 30_000,
       pool: 'forks',
-      isolate: false,
-      exclude: ['node_modules', 'dist', 'e2e', '**/*.e2e.spec.ts'],
+      isolate: true,
+      maxWorkers: 4,
+      exclude: ['node_modules', 'dist', 'e2e', 'server/**', '**/*.e2e.spec.ts'],
       coverage: {
         provider: 'v8',
         reporter: ['text', 'json', 'html', 'lcov', 'text-summary'],

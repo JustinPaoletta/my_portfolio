@@ -9,6 +9,11 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import {
+  allowBrowserRequest,
+  allowRequestBody,
+  enforceRateLimit,
+} from '../server/request-security.js';
 
 interface PetDogsRequest {
   dogName: string;
@@ -36,6 +41,10 @@ function validateRequest(
     return { valid: false, error: 'dogName is required and must be a string' };
   }
 
+  if (!['Nala', 'Rosie', 'Tito'].includes(dogName.trim())) {
+    return { valid: false, error: 'Unknown dog' };
+  }
+
   if (!action || typeof action !== 'string') {
     return { valid: false, error: 'action is required and must be a string' };
   }
@@ -60,8 +69,7 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ): Promise<void> {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  if (!allowBrowserRequest(req, res)) return;
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
@@ -79,6 +87,7 @@ export default async function handler(
 
   // GET request - return current stats
   if (req.method === 'GET') {
+    if (!(await enforceRateLimit(req, res, 'pet-dogs-read', 120, 60))) return;
     try {
       // Dynamic import of @upstash/redis (only load if available)
       let redis: typeof import('@upstash/redis');
@@ -138,6 +147,9 @@ export default async function handler(
     return;
   }
 
+  if (!allowRequestBody(req, res)) return;
+  if (!(await enforceRateLimit(req, res, 'pet-dogs', 60, 60))) return;
+
   // POST request - increment counter
   const validation = validateRequest(req.body);
   if (validation.valid === false) {
@@ -182,21 +194,16 @@ export default async function handler(
     });
     const key = `pet-dogs:${dogName}`;
 
-    // Get current stats
-    const currentStats = (await client.get<DogStats>(key)) || {
-      treats: 0,
-      scritches: 0,
-    };
-
-    // Increment the appropriate counter
-    const updatedStats: DogStats = {
-      ...currentStats,
-      [action === 'treat' ? 'treats' : 'scritches']:
-        (currentStats[action === 'treat' ? 'treats' : 'scritches'] || 0) + 1,
-    };
-
-    // Save updated stats
-    await client.set(key, updatedStats);
+    // Update the existing JSON value atomically so concurrent clicks are preserved.
+    const updatedStats = await client.eval<[string], DogStats>(
+      `local raw = redis.call('GET', KEYS[1])
+       local stats = raw and cjson.decode(raw) or {treats = 0, scritches = 0}
+       stats[ARGV[1]] = (stats[ARGV[1]] or 0) + 1
+       redis.call('SET', KEYS[1], cjson.encode(stats))
+       return cjson.encode(stats)`,
+      [key],
+      [action === 'treat' ? 'treats' : 'scritches']
+    );
 
     res.status(200).json({
       success: true,

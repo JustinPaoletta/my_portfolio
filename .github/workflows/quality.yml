@@ -1,0 +1,26 @@
+name: Quality and Security
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  quality:
+    name: Lint, Unit Tests, and Production Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npx --yes npm@11.6.4 ci --no-audit --no-fund
+      - run: npm run lint:ci
+      - run: npm run test:unit
+      - run: npx --yes npm@11.6.4 audit --omit=dev
