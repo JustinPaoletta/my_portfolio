@@ -87,6 +87,7 @@ export default async function handler(
 
   // GET request - return current stats
   if (req.method === 'GET') {
+    if (!(await enforceRateLimit(req, res, 'pet-dogs-read', 120, 60))) return;
     try {
       // Dynamic import of @upstash/redis (only load if available)
       let redis: typeof import('@upstash/redis');

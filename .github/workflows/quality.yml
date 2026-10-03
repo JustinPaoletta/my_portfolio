@@ -20,7 +20,7 @@ jobs:
         with:
           node-version: '22'
           cache: npm
-      - run: npm ci --no-audit --no-fund
+      - run: npx --yes npm@11.6.4 ci --no-audit --no-fund
       - run: npm run lint:ci
       - run: npm run test:unit
-      - run: npm audit --omit=dev
+      - run: npx --yes npm@11.6.4 audit --omit=dev

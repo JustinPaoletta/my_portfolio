@@ -112,6 +112,15 @@ describe('API security integration', () => {
     expect(evalMock.mock.calls[1][1]).toEqual(['pet-dogs:Nala']);
     expect(evalMock.mock.calls[1][2]).toEqual(['treats']);
   });
+  it('limits pet reads before querying Redis records', async () => {
+    evalMock.mockResolvedValue(121);
+    const req = request();
+    req.method = 'GET';
+    const res = response();
+    await pets(req, res);
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(evalMock).toHaveBeenCalledTimes(1);
+  });
   it('bounds GitHub usernames before spending token quota', async () => {
     const req = request();
     req.method = 'GET';

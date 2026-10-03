@@ -116,5 +116,6 @@
     "*.{json,css,md}": [
       "prettier --write"
     ]
-  }
+  },
+  "packageManager": "npm@11.6.4"
 }

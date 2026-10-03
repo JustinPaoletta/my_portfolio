@@ -93,5 +93,5 @@
       ]
     }
   ],
-  "installCommand": "npm ci"
+  "installCommand": "npx --yes npm@11.6.4 ci"
 }

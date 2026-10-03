@@ -28,7 +28,8 @@ overrides, and remove them once upstream packages request patched versions.
 ## API protection
 
 Contact submissions accept five requests per client IP per ten-minute window.
-Pet mutations and GitHub proxy requests accept sixty per minute. Limits use an
+Pet mutations and GitHub proxy requests accept sixty per minute. Pet reads accept
+120 requests per minute. Limits use an
 atomic Redis script when both `KV_REST_API_URL` and `KV_REST_API_TOKEN` are set.
 The same existing Redis configuration can back both pet counters and limits.
 Configured Redis failures return 503 instead of silently bypassing the limiter.
@@ -50,7 +51,9 @@ increments. External GitHub and Resend calls have ten-second timeouts.
 
 ## CI and development
 
-CI and Vercel install the committed lockfile with `npm ci`. CI uses Node 22,
+CI and Vercel install the committed lockfile with pinned npm 11.6.4 and `npm ci`.
+The npm version is pinned because npm 10 can restore a vulnerable routing package
+when resolving Vercel’s aliased dependency overrides. CI uses Node 22,
 matching the deployment runtime. GitHub Actions are pinned to commit hashes,
 and manual snapshot inputs enter shell commands through environment variables.
 Quality CI checks lint, browser and server unit tests, and the production audit.
