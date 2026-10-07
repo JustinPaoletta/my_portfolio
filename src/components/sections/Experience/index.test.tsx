@@ -3,14 +3,14 @@ import { describe, expect, it } from 'vitest';
 import Experience from '.';
 
 describe('Experience section', () => {
-  it('renders work/education timelines and current-role indicators', () => {
+  it('renders work history, education credentials, and current-role indicators', () => {
     render(<Experience />);
 
     expect(
-      screen.getByRole('heading', { name: 'Experience & Education' })
+      screen.getByRole('heading', { name: 'Professional Experience' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Work Experience' })
+      screen.getByRole('heading', { name: 'Work History' })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Education' })

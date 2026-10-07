@@ -39,10 +39,6 @@
     transform: scale(1.05);
   }
 
-  &:hover .project-overlay {
-    opacity: 1;
-  }
-
   .project-image {
     width: 100%;
     height: 100%;
@@ -55,17 +51,6 @@
     object-fit: contain;
     object-position: center;
   }
-
-  .project-overlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.75);
-    opacity: 0;
-    transition: opacity 0.15s ease;
-    display: flex;
-    align-items: flex-end;
-    padding: 1.5rem;
-  }
 }
 
 .project-image-wrapper--contain {
@@ -74,65 +59,57 @@
 
 .project-links {
   display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.75rem;
+  margin-top: 1.5rem;
 }
 
-.project-link {
+.projects-section .project-links .project-link {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  min-height: 44px;
   padding: 0.625rem 1rem;
-  background: rgba(255, 255, 255, 0.95);
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
-  color: #1a1a1a;
+  color: var(--text-primary);
   text-decoration: none;
   font-size: 0.875rem;
   font-weight: 500;
-  transition: all 0.15s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
-    background: #ffffff;
-    border-color: rgba(0, 0, 0, 0.15);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    background: var(--bg-card-hover);
+    border-color: var(--color-primary-ink);
   }
 
   &:focus-visible {
-    outline: 2px solid #1a1a1a;
-    outline-offset: 2px;
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 3px;
   }
 
   svg {
     width: 18px;
     height: 18px;
   }
-
-  &.project-link--disabled {
-    cursor: default;
-    pointer-events: none;
-    background: rgba(255, 255, 255, 0.6);
-    border-color: rgba(0, 0, 0, 0.08);
-    color: #4a4a4a;
-
-    &:hover {
-      background: rgba(255, 255, 255, 0.6);
-    }
-  }
 }
 
-.project-status {
+.project-status,
+.project-visibility {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem 1rem;
-  background: rgba(var(--color-accent-rgb), 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  border-radius: 8px;
-  color: #0a0a0a;
+  padding: 0.375rem 0.75rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  color: var(--text-secondary);
   font-size: 0.875rem;
-  font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  font-weight: 500;
 
   svg {
     width: 16px;
@@ -140,13 +117,9 @@
   }
 }
 
-/* Minimal theme: blue accent needs white text for WCAG AA */
-[data-theme='minimal'] .project-status {
-  color: #ffffff;
-}
-
 .project-content {
   padding: 1rem 0;
+  min-width: 0;
 }
 
 .project-title {
@@ -262,6 +235,8 @@
 
 .card-header {
   display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.25rem;
@@ -318,12 +293,13 @@
 
 .card-links {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.75rem;
 }
 
-.card-link {
-  width: 36px;
-  height: 36px;
+.projects-section .card-links .card-link {
+  width: 44px;
+  height: 44px;
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -363,13 +339,12 @@
     border-radius: 999px;
     cursor: default;
     pointer-events: none;
-    opacity: 0.5;
-    color: var(--text-muted);
+    color: var(--text-secondary);
 
     .card-link-label {
       font-size: 0.75rem;
       font-weight: 500;
-      color: var(--text-muted);
+      color: var(--text-secondary);
     }
 
     svg {
@@ -377,7 +352,7 @@
     }
 
     &:hover {
-      color: var(--text-muted);
+      color: var(--text-secondary);
       background: var(--bg-main);
       border-color: var(--border-subtle);
       transform: none;

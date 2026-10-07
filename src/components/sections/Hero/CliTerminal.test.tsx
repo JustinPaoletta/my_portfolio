@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import CliTerminal from './CliTerminal';
+import CliTerminal from '@/components/sections/Hero/CliTerminal';
 import { defaultTheme } from '@/config/themes';
 
 const setThemeMock = vi.fn();
@@ -447,6 +447,9 @@ describe('CliTerminal', () => {
       screen.queryByText(/Contributions \(last year\):/i)
     ).not.toBeInTheDocument();
     expect(screen.queryByText('Top repositories:')).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Contribution history is temporarily unavailable/)
+    ).toBeInTheDocument();
 
     githubState = {
       ...githubState,

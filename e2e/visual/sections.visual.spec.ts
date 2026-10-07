@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
   DESKTOP_SECTION_VIEWPORT,
+  MOBILE_VIEWPORT,
   gotoVisualState,
   waitForSectionToSettle,
 } from '../support/visual';
@@ -69,6 +70,26 @@ test.describe('@visual section states', () => {
       caret: 'hide',
     });
   });
+
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures professional experience on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, {
+        theme: 'minimal',
+        mode: 'light',
+        viewport,
+      });
+
+      const experience = page.locator('section#experience');
+      await waitForSectionToSettle(page, experience);
+
+      await expect(experience).toHaveScreenshot(`experience-${label}.png`, {
+        caret: 'hide',
+      });
+    });
+  }
 
   test('captures contact section', async ({ page }) => {
     await gotoVisualState(page, {

@@ -6,7 +6,7 @@ import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
-import './CliTerminal.css';
+import '@/components/sections/Hero/CliTerminal.css';
 
 type LineKind = 'system' | 'output' | 'input' | 'hint' | 'error' | 'success';
 type Context = 'main' | 'projects' | 'skills' | 'experience' | 'dogs';
@@ -42,8 +42,8 @@ interface CliExperience {
   organization: string;
   period: string;
   location: string;
-  summary: string;
-  highlights: string[];
+  summary?: string;
+  highlights?: string[];
 }
 
 interface CliDogMetadata {
@@ -232,7 +232,7 @@ const EXPERIENCES: CliExperience[] = [
       'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental modernization without a full rewrite.',
       'Engineered release automation tooling that reduced deployment time by about 75% across four applications through Jenkins pipelines, Jira automation, release notes drafting, and internal documentation generation.',
       'Developed an AI-assisted workflow with Claude Code agents, custom skills, Playwright, and Figma validation to refine requirements, generate plans, iterate on UI work, and prepare QA plus test scaffolding.',
-      'Built a Claude-powered PR review bot with GitHub Actions to enforce linting and testing coverage while flagging logic, security, and memory issues earlier.',
+      'Built a Claude-powered PR review bot in GitHub Actions to flag logic, security, and memory issues for developer review.',
     ],
   },
   {
@@ -252,25 +252,12 @@ const EXPERIENCES: CliExperience[] = [
     organization: 'Hack Reactor',
     period: '2020',
     location: '(Remote)',
-    summary:
-      'Full-time, 12-week intensive focused on full-stack JavaScript engineering and computer science fundamentals.',
-    highlights: [
-      'Completed ~600+ hours of hands-on programming under production-style deadlines.',
-      'Built and shipped multiple full-stack applications.',
-      'Applied core CS concepts: data structures, algorithms, async programming, and system design fundamentals.',
-      'Collaborated using Git/GitHub, code reviews, pair programming, and Agile workflows.',
-    ],
   },
   {
     title: 'Bachelor of Science (B.S.) in Psychology',
     organization: 'University of Central Florida',
     period: '2008-2012',
     location: 'Orlando, FL',
-    summary:
-      'Coursework emphasized research methods, statistics, cognitive psychology, and behavioral analysis.',
-    highlights: [
-      'Developed a foundation in analytical thinking, experimental design, and human-centered problem solving.',
-    ],
   },
 ];
 
@@ -644,8 +631,10 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `[TIMELINE ${selection}] ${item.title}` },
       { kind: 'output', text: `${item.organization} | ${item.location}` },
       { kind: 'output', text: item.period },
-      { kind: 'output', text: item.summary },
-      ...item.highlights.map((highlight) => ({
+      ...(item.summary
+        ? [{ kind: 'output' as const, text: item.summary }]
+        : []),
+      ...(item.highlights ?? []).map((highlight) => ({
         kind: 'output' as const,
         text: `- ${highlight}`,
       })),
@@ -704,7 +693,12 @@ function CliTerminal(): React.ReactElement {
               text: `Contributions (last year): ${contributions.totalContributions}`,
             },
           ]
-        : []),
+        : [
+            {
+              kind: 'hint' as const,
+              text: 'Contribution history is temporarily unavailable. View the profile on GitHub for current activity.',
+            },
+          ]),
       ...(topRepos.length > 0
         ? [
             { kind: 'output' as const, text: 'Top repositories:' },

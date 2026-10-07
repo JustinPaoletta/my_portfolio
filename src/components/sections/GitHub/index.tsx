@@ -7,8 +7,8 @@ import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import { useGitHub } from '@/hooks/useGitHub';
 import { env } from '@/config/env';
-import ContributionGraph from './ContributionGraph';
-import './GitHub.css';
+import ContributionGraph from '@/components/sections/GitHub/ContributionGraph';
+import '@/components/sections/GitHub/GitHub.css';
 
 function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
@@ -129,6 +129,19 @@ function GitHub(): React.ReactElement {
               loading={loading}
               isVisible={isVisible}
             />
+          </Reveal>
+        )}
+
+        {!loading && !error && user && !contributions && (
+          <Reveal
+            as="p"
+            className="github-contributions-unavailable"
+            role="status"
+            delay={240}
+            visible={isVisible}
+          >
+            Contribution history is temporarily unavailable. View the profile on
+            GitHub for current activity.
           </Reveal>
         )}
 

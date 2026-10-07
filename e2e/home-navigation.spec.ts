@@ -152,7 +152,7 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
   const contactSection = await revealDeferredSection(page, 'contact');
 
   await expect(
-    experienceSection.getByRole('heading', { name: /Experience & Education/i })
+    experienceSection.getByRole('heading', { name: /Professional Experience/i })
   ).toBeVisible();
   await expect(
     articlesSection.getByRole('heading', { name: /LinkedIn Articles/i })

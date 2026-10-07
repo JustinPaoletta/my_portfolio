@@ -6,28 +6,79 @@
 
 .experience-content {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
-  gap: 4rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 2.5rem;
+  max-width: 62rem;
+  margin: 0 auto;
 }
 
-.experience-column {
-}
-
-.column-title {
+.experience-work-header {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 0.75rem;
-  font-family: var(--font-serif);
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.work-history-title {
   font-size: 1.25rem;
   font-weight: 600;
-  margin: 0 0 2rem;
+  margin: 0;
   color: var(--text-primary);
 }
 
-.column-icon {
-  width: 28px;
-  height: 28px;
-  color: var(--color-primary-ink);
+.education-section {
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.education-title {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.education-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.education-credential {
+  padding: 1.25rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+}
+
+.education-credential-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.education-credential-title {
+  flex: 1 1 14rem;
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-primary);
+}
+
+.education-credential-org {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.875rem;
 }
 
 .timeline {
@@ -122,7 +173,7 @@
 .item-period {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: var(--color-primary-ink);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
@@ -133,7 +184,7 @@
   margin-bottom: 1rem;
 }
 
-.org-name {
+.experience-section .org-name {
   font-weight: 500;
   color: var(--text-secondary);
   text-decoration: none;
@@ -143,7 +194,7 @@
 
   &:hover,
   &:focus-visible {
-    color: var(--color-primary-contrast);
+    color: var(--text-primary);
     text-decoration: underline;
   }
 }
@@ -159,25 +210,27 @@
 }
 
 .item-description {
+  max-width: 76ch;
   font-size: 0.95rem;
   color: var(--text-secondary);
   line-height: 1.6;
   margin: 0 0 1rem;
+}
 
-  a {
-    color: var(--color-primary-ink);
-    text-decoration: none;
-    font-weight: 500;
-    transition: color 0.15s ease;
+.experience-section .item-description a {
+  color: var(--text-secondary);
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.15s ease;
 
-    &:hover {
-      color: var(--color-primary-contrast);
-      text-decoration: underline;
-    }
+  &:hover,
+  &:focus-visible {
+    color: var(--text-primary);
   }
 }
 
 .item-highlights {
+  max-width: 76ch;
   list-style: none;
   padding: 0;
   margin: 0 0 1rem;
@@ -185,7 +238,7 @@
   li {
     position: relative;
     padding-left: 1.25rem;
-    font-size: 0.875rem;
+    font-size: 0.95rem;
     color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 0.5rem;
@@ -212,12 +265,6 @@
   font-size: 0.75rem;
   font-family: var(--font-mono);
   color: var(--text-primary);
-}
-
-.resume-cta {
-  margin-top: 2rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-subtle);
 }
 
 .resume-button {
@@ -275,11 +322,8 @@
   }
 }
 
-@media (max-width: 1024px) {
-  .experience-content {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
+.experience-section .experience-work-header .resume-button {
+  color: var(--text-primary);
 }
 
 @media (max-width: 640px) {
@@ -302,5 +346,9 @@
 
   .timeline-content {
     padding: 1.25rem;
+  }
+
+  .education-list {
+    grid-template-columns: minmax(0, 1fr);
   }
 }

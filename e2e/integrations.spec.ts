@@ -66,6 +66,52 @@ test('GitHub section renders live stats from API responses', async ({
   ).toHaveAttribute('href', 'https://github.com/JustinPaoletta');
 });
 
+test('GitHub section preserves public stats and discards legacy contribution totals when the proxy fails', async ({
+  page,
+}) => {
+  await page.addInitScript(() => {
+    localStorage.setItem(
+      'github_stats_cache',
+      JSON.stringify({
+        timestamp: Date.now(),
+        data: {
+          user: { login: 'cached-user', public_repos: 999 },
+          repos: [],
+          pinnedRepos: [],
+          contributions: { totalContributions: 99999, weeks: [] },
+          loading: false,
+          error: null,
+        },
+      })
+    );
+  });
+  await mockPortfolioApis(page, { githubProxyError: true });
+  await page.goto('/');
+
+  const githubSection = await revealDeferredSection(page, 'github');
+
+  await expect(githubSection.getByText('@JustinPaoletta')).toBeVisible();
+  await expect(githubSection.getByText('42', { exact: true })).toBeVisible();
+  await expect(githubSection.getByRole('status')).toHaveText(
+    'Contribution history is temporarily unavailable. View the profile on GitHub for current activity.'
+  );
+  await expect(
+    githubSection.getByRole('heading', { name: /contributions in the last/i })
+  ).toHaveCount(0);
+  await expect(
+    githubSection.getByText('Contributions', { exact: true })
+  ).toHaveCount(0);
+  await expect(githubSection.getByText('99999', { exact: true })).toHaveCount(
+    0
+  );
+  await expect(
+    githubSection.getByRole('link', { name: /View Full Profile on GitHub/i })
+  ).toHaveAttribute('href', 'https://github.com/JustinPaoletta');
+  expect(
+    await page.evaluate(() => localStorage.getItem('github_stats_cache'))
+  ).toBeNull();
+});
+
 test('GitHub section shows resilient error state when API calls fail', async ({
   page,
 }) => {

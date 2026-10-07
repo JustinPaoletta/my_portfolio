@@ -1,30 +1,31 @@
 /**
  * Experience Section
- * Work history and education timeline
+ * Work history with supporting education credentials
  */
 
 import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import './Experience.css';
 
-interface ExperienceItem {
+interface CareerEntry {
   id: string;
-  type: 'work' | 'education';
   title: string;
   organization: string;
   organizationUrl?: string;
   location: string;
   period: string;
+}
+
+interface WorkExperience extends CareerEntry {
   current?: boolean;
   description: React.ReactNode;
   highlights: string[];
   technologies?: string[];
 }
 
-const experiences: ExperienceItem[] = [
+const workExperiences: WorkExperience[] = [
   {
     id: 'exp-1',
-    type: 'work',
     title: 'Software Engineer (UI Engineer)',
     organization: 'accesso',
     organizationUrl: 'https://www.accesso.com',
@@ -33,8 +34,7 @@ const experiences: ExperienceItem[] = [
     current: true,
     description: (
       <>
-        Contribute to the modernization of a large legacy AngularJS platform
-        using micro-frontends for the{' '}
+        Modernize the legacy AngularJS platform behind{' '}
         <a
           href="https://accesso.com/capabilities/products/passport/"
           target="_blank"
@@ -42,15 +42,16 @@ const experiences: ExperienceItem[] = [
         >
           accesso Passport
         </a>{' '}
-        platform, supporting high-volume entertainment venues worldwide.
+        with micro-frontends, supporting high-volume entertainment venues
+        worldwide.
       </>
     ),
     highlights: [
       'Architected a React + Tailwind micro-frontend inside a legacy AngularJS + Bootstrap host, isolating framework lifecycles and eliminating cross-framework styling conflicts.',
       'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental platform modernization without a full rewrite.',
-      'Engineered release automation tooling that reduced deployment time by about 75% across four applications by coordinating Jenkins pipelines and internal tooling, auto-drafting release notes, updating Jira tickets, and generating internal documentation.',
+      'Engineered release automation that reduced deployment time by about 75% across four applications, coordinating Jenkins pipelines, release notes, Jira updates, and internal documentation.',
       'Developed an AI-assisted engineering workflow using Claude Code agents, custom skills, Playwright, and Figma validation to refine Jira requirements, generate implementation plans, iterate on UI work, and prepare QA documentation plus unit and end-to-end test scaffolding after manual validation.',
-      'Built a Claude-powered PR review bot with GitHub Actions to enforce linting and testing coverage, standardize PR conventions, and flag logic, security, and memory issues earlier in review.',
+      'Built a Claude-powered PR review bot in GitHub Actions to flag logic, security, and memory issues for developer review.',
     ],
     technologies: [
       'AngularJS',
@@ -72,7 +73,6 @@ const experiences: ExperienceItem[] = [
   },
   {
     id: 'exp-2',
-    type: 'work',
     title: 'Angular Developer',
     organization: '4C Strategies',
     organizationUrl: 'https://www.4cstrategies.com',
@@ -87,40 +87,24 @@ const experiences: ExperienceItem[] = [
     ],
     technologies: ['Angular', 'Java', 'GitLab'],
   },
+];
+
+const education: CareerEntry[] = [
   {
     id: 'edu-1',
-    type: 'education',
     title: 'Advanced Software Engineering Immersive',
     organization: 'Hack Reactor',
     organizationUrl: 'https://www.hackreactor.com',
     location: '(Remote)',
     period: '2020',
-    description:
-      'Full-time, 12-week intensive focused on full-stack JavaScript engineering and computer science fundamentals.',
-    highlights: [
-      'Completed ~600+ hours of hands-on programming under production-style deadlines',
-      'Built and shipped multiple full-stack applications',
-      'Applied core CS concepts including data structures, algorithmic problem solving, asynchronous programming, and system design fundamentals',
-      'Collaborated in small engineering teams using Git/GitHub, code reviews, pair programming, and Agile workflows',
-      'Designed and implemented RESTful APIs, relational database schemas, and client-side state management',
-      'Regularly solved algorithmic challenges under time constraints (whiteboarding and live coding)',
-    ],
-    technologies: ['JavaScript', 'Node.js', 'Express', 'PostgreSQL', 'React'],
   },
   {
     id: 'edu-2',
-    type: 'education',
     title: 'Bachelor of Science (B.S.) in Psychology',
     organization: 'University of Central Florida',
     organizationUrl: 'https://www.ucf.edu',
     location: 'Orlando, FL',
     period: '2008-2012',
-    description:
-      'Coursework emphasized research methods, statistics, cognitive psychology, and behavioral analysis.',
-    highlights: [
-      'Developed a foundation in analytical thinking, experimental design, and human-centered problem solving',
-      'Applied statistical reasoning and behavioral analysis to complex systems',
-    ],
   },
 ];
 
@@ -128,8 +112,6 @@ function Experience(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useRevealInView(sectionRef);
 
-  const workExperiences = experiences.filter((e) => e.type === 'work');
-  const education = experiences.filter((e) => e.type === 'education');
   const renderOrganization = (
     organization: string,
     organizationUrl?: string
@@ -167,7 +149,7 @@ function Experience(): React.ReactElement {
             delay={40}
             visible={isVisible}
           >
-            Professional
+            Career
           </Reveal>
           <Reveal
             as="h2"
@@ -176,7 +158,7 @@ function Experience(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            Experience & Education
+            Professional Experience
           </Reveal>
         </Reveal>
 
@@ -184,34 +166,49 @@ function Experience(): React.ReactElement {
           {/* Work Experience */}
           <Reveal
             as="div"
-            className="experience-column"
-            effect="fade-left"
+            className="work-experience"
+            effect="fade-only"
             delay={140}
             visible={isVisible}
           >
-            <h3 className="column-title">
-              <svg
-                className="column-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                aria-hidden="true"
+            <div className="experience-work-header">
+              <h3 className="work-history-title">Work History</h3>
+              <a
+                href="/resume/Justin-Paoletta_Software-Engineer.pdf"
+                download="Justin_Paoletta_Resume.pdf"
+                className="resume-button"
+                aria-label="Download resume as PDF"
               >
-                <rect
-                  x="2"
-                  y="7"
-                  width="20"
-                  height="14"
-                  rx="2"
-                  strokeWidth="2"
-                />
-                <path
-                  d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"
-                  strokeWidth="2"
-                />
-              </svg>
-              Work Experience
-            </h3>
+                <svg
+                  className="resume-button-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                  <polyline
+                    points="7 10 12 15 17 10"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  <line
+                    x1="12"
+                    y1="15"
+                    x2="12"
+                    y2="3"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                  />
+                </svg>
+                <span className="resume-button-label">Download Resume</span>
+              </a>
+            </div>
 
             <div className="timeline">
               {workExperiences.map((exp, index) => (
@@ -263,101 +260,27 @@ function Experience(): React.ReactElement {
           {/* Education */}
           <Reveal
             as="div"
-            className="experience-column education-column"
-            effect="fade-right"
+            className="education-section"
+            effect="fade-only"
             delay={200}
             visible={isVisible}
           >
-            <h3 className="column-title">
-              <svg
-                className="column-icon"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" strokeWidth="2" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" strokeWidth="2" />
-              </svg>
-              Education
-            </h3>
+            <h3 className="education-title">Education</h3>
 
-            <div className="timeline">
-              {education.map((edu, index) => (
-                <Reveal
-                  as="article"
-                  key={edu.id}
-                  className="timeline-item"
-                  delay={260 + index * 90}
-                  visible={isVisible}
-                >
-                  <div className="timeline-marker" aria-hidden="true" />
-                  <div className="timeline-content">
-                    <header className="item-header">
-                      <h4 className="item-title">{edu.title}</h4>
-                      <span className="item-period">{edu.period}</span>
-                    </header>
-                    <div className="item-org">
-                      {renderOrganization(
-                        edu.organization,
-                        edu.organizationUrl
-                      )}
-                      <span className="org-location">{edu.location}</span>
-                    </div>
-                    <p className="item-description">{edu.description}</p>
-                    <ul className="item-highlights">
-                      {edu.highlights.map((highlight, i) => (
-                        <li key={i}>{highlight}</li>
-                      ))}
-                    </ul>
+            <ul className="education-list">
+              {education.map((edu) => (
+                <li key={edu.id} className="education-credential">
+                  <div className="education-credential-header">
+                    <h4 className="education-credential-title">{edu.title}</h4>
+                    <span className="item-period">{edu.period}</span>
                   </div>
-                </Reveal>
+                  <div className="education-credential-org">
+                    {renderOrganization(edu.organization, edu.organizationUrl)}
+                    <span className="org-location">{edu.location}</span>
+                  </div>
+                </li>
               ))}
-            </div>
-
-            {/* Resume Download */}
-            <Reveal
-              as="div"
-              className="resume-cta"
-              delay={420}
-              visible={isVisible}
-            >
-              <a
-                href="/resume/Justin-Paoletta_Software-Engineer.pdf"
-                download="Justin_Paoletta_Resume.pdf"
-                className="resume-button"
-                aria-label="Download resume as PDF"
-              >
-                <svg
-                  className="resume-button-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                  <polyline
-                    points="7 10 12 15 17 10"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <line
-                    x1="12"
-                    y1="15"
-                    x2="12"
-                    y2="3"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span className="resume-button-label">Download Resume</span>
-              </a>
-            </Reveal>
+            </ul>
           </Reveal>
         </div>
       </div>

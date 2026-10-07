@@ -1,6 +1,6 @@
 import { render, screen } from '@/test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import GitHub from '.';
+import GitHub from '@/components/sections/GitHub';
 
 let isInView = true;
 interface GitHubSectionState {
@@ -43,7 +43,7 @@ vi.mock('@/hooks/useGitHub', () => ({
   useGitHub: () => githubState,
 }));
 
-vi.mock('./ContributionGraph', () => ({
+vi.mock('@/components/sections/GitHub/ContributionGraph', () => ({
   default: (props: { loading: boolean; isVisible: boolean }) => (
     <div
       data-testid="contribution-graph"
@@ -156,5 +156,37 @@ describe('GitHub section', () => {
     expect(screen.getByText('justin')).toBeInTheDocument();
     expect(screen.getByAltText("justin's avatar")).toBeInTheDocument();
     expect(screen.queryByText('Contributions')).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Contribution history is temporarily unavailable.'
+    );
+    expect(screen.queryByTestId('contribution-graph')).not.toBeInTheDocument();
+    expect(screen.getByText('10')).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'View Full Profile on GitHub' })
+    ).toHaveAttribute('href', 'https://github.com/justin');
+  });
+
+  it('renders a real zero count without an unavailable message', () => {
+    githubState = {
+      user: {
+        login: 'justin',
+        name: 'Justin',
+        avatar_url: 'https://example.com/avatar.png',
+        html_url: 'https://github.com/justin',
+        public_repos: 10,
+        followers: 1,
+        following: 1,
+      },
+      contributions: { totalContributions: 0, weeks: [] },
+      loading: false,
+      error: null,
+    };
+    render(<GitHub />);
+
+    expect(screen.getByText('0')).toBeInTheDocument();
+    expect(screen.getByTestId('contribution-graph')).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Contribution history is temporarily unavailable/)
+    ).not.toBeInTheDocument();
   });
 });
