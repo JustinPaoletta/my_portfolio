@@ -1,6 +1,7 @@
-import { fireEvent, render, screen } from '@/test/test-utils';
+import { fireEvent, render, screen, within } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import CliTerminal from '@/components/sections/Hero/CliTerminal';
+import Projects from '@/components/sections/Projects';
 import { defaultTheme } from '@/config/themes';
 
 const setThemeMock = vi.fn();
@@ -389,7 +390,7 @@ describe('CliTerminal', () => {
     expect(screen.getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Stack: Angular, TypeScript, Node.js, PostgreSQL, REST APIs'
+        'Stack: Angular, TypeScript, NestJS, Prisma, MySQL/MariaDB'
       )
     ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
@@ -422,6 +423,76 @@ describe('CliTerminal', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
     expect(screen.getAllByText('[PET DOGS]').length).toBeGreaterThan(0);
   });
+
+  it.each([
+    {
+      title: 'BitStockerz',
+      selection: 1,
+      status: 'In Development',
+      requiredClaims: [
+        /recent stored bar closes/,
+        /seed mode uses synthetic data/,
+        /MySQL\/MariaDB/,
+        /adapter is implemented but disabled by default/,
+        /Live-provider verification and production launch remain pending/,
+      ],
+    },
+    {
+      title: '@jp-design-system',
+      selection: 2,
+      status: 'Pre-release',
+      requiredClaims: [
+        /automated interaction and accessibility checks/,
+        /packages are tested in a separate application/,
+        /prerelease includes stable and preview APIs/,
+        /Manual accessibility review and the first public release remain in progress/,
+      ],
+    },
+  ])(
+    'keeps $title capabilities and release limits consistent in cards and CLI',
+    ({ title, selection, status, requiredClaims }) => {
+      const cards = render(<Projects />);
+      const article = screen
+        .getByRole('heading', { name: title })
+        .closest('article');
+      if (!article) throw new Error(`Missing ${title} project card`);
+
+      const description = article.querySelector(
+        '.project-description'
+      )?.textContent;
+      if (!description) throw new Error(`Missing ${title} description`);
+      for (const claim of requiredClaims) expect(description).toMatch(claim);
+      expect(description).not.toMatch(/Track real-time prices|PostgreSQL/);
+      expect(within(article).getByText(status)).toBeInTheDocument();
+      expect(
+        within(article).queryByRole('link', { name: /live demo|on npm/i })
+      ).not.toBeInTheDocument();
+      const sourceUrl = within(article)
+        .getByRole('link', { name: `View ${title} source code` })
+        .getAttribute('href');
+      const stack = Array.from(
+        article.querySelectorAll('.tech-tag'),
+        (tag) => tag.textContent
+      ).join(', ');
+      cards.unmount();
+
+      renderTerminal();
+      runCommand('projects');
+      expect(
+        screen.getByText(`${selection}. ${title} (${status})`)
+      ).toHaveAttribute('href', sourceUrl);
+      runCommand(`project ${selection}`);
+      expect(screen.getByText(description)).toBeInTheDocument();
+      expect(
+        screen.getByText(`Type: Featured | Status: ${status}`)
+      ).toBeInTheDocument();
+      expect(screen.getByText(`Stack: ${stack}`)).toBeInTheDocument();
+      expect(screen.getByText(`GitHub: ${sourceUrl}`)).toHaveAttribute(
+        'href',
+        sourceUrl
+      );
+    }
+  );
 
   it('covers github and project detail fallback branches', () => {
     renderTerminal();

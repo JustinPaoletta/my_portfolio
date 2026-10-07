@@ -6,30 +6,16 @@
 import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import { env } from '@/config/env';
+import {
+  BITSTOCKERZ_PROJECT,
+  JP_DESIGN_SYSTEM_PROJECT,
+  PROJECT_STATUS_LABELS,
+  type ProjectSummary,
+} from '@/content/projects';
 import './Projects.css';
 
-/** Project lifecycle stages for status badge display */
-export type ProjectStatus =
-  | 'planning'
-  | 'design'
-  | 'development'
-  | 'testing'
-  | 'beta'
-  | 'live';
-
-const STATUS_LABELS: Record<ProjectStatus, string> = {
-  planning: 'Planning',
-  design: 'Design',
-  development: 'In Development',
-  testing: 'Testing',
-  beta: 'Beta',
-  live: 'Live',
-};
-
-interface Project {
+interface Project extends ProjectSummary {
   id: string;
-  title: string;
-  description: string;
   image: string;
   imageSrcSet?: string;
   imageSizes?: string;
@@ -46,13 +32,6 @@ interface Project {
   /** When set, shown instead of `title` text in the project heading (e.g. transparent PNG wordmark). */
   titleLogo?: string;
   titleLogoAlt?: string;
-  techStack: string[];
-  liveUrl?: string;
-  githubUrl?: string;
-  packageUrl?: string;
-  private?: boolean;
-  featured: boolean;
-  status?: ProjectStatus;
 }
 
 function ProjectHeadingTitle({
@@ -96,26 +75,14 @@ const sideQuestImageSizes = [
 
 const projects: Project[] = [
   {
+    ...BITSTOCKERZ_PROJECT,
     id: 'project-1',
-    title: 'BitStockerz',
-    description:
-      'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money—designed to build confidence and understanding of financial markets over time.',
     image: '/images/projects/bitstockerz.webp',
-    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
-    githubUrl: `${githubProfileUrl}/BitStockerz`,
-    featured: true,
-    status: 'development',
   },
   {
+    ...JP_DESIGN_SYSTEM_PROJECT,
     id: 'project-2',
-    title: '@jp-design-system',
-    description:
-      'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Includes form controls, data display elements, navigation patterns, and utility components—designed for rapid development and maintainability across projects.',
     image: '/images/projects/jp-design-system.webp',
-    techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
-    githubUrl: `${githubProfileUrl}/jp-design-system`,
-    featured: true,
-    status: 'planning',
   },
   {
     id: 'project-3',
@@ -266,7 +233,7 @@ function Projects(): React.ReactElement {
                   {project.status && project.status !== 'live' && (
                     <span
                       className={`project-status project-status--${project.status}`}
-                      aria-label={`Project ${STATUS_LABELS[project.status].toLowerCase()}`}
+                      aria-label={`Project ${PROJECT_STATUS_LABELS[project.status].toLowerCase()}`}
                     >
                       <svg
                         viewBox="0 0 24 24"
@@ -282,7 +249,7 @@ function Projects(): React.ReactElement {
                           strokeLinejoin="round"
                         />
                       </svg>
-                      <span>{STATUS_LABELS[project.status]}</span>
+                      <span>{PROJECT_STATUS_LABELS[project.status]}</span>
                     </span>
                   )}
                   {project.liveUrl &&

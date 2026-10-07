@@ -15,6 +15,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Fixed
 
+- Reconcile BitStockerz and design-system claims against current source and CI. Share their standard/CLI descriptions, stacks, and lifecycle labels; identify MySQL/MariaDB persistence, stored-bar paper pricing, disabled live-data integration, and the design system's prerelease and preview limits.
 - Remove synthetic GitHub contribution statistics and reject the legacy cache format. Contribution outages now show an unavailable state while retaining real profile and repository data, including in the CLI theme.
 - Make GitHub refreshes bypass cached results and prevent stale requests from overwriting newer data.
 - Normalize project repository URLs to avoid duplicate path separators.

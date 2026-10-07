@@ -1,6 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { env } from '@/config/env';
 import { defaultTheme } from '@/config/themes';
+import {
+  BITSTOCKERZ_PROJECT,
+  JP_DESIGN_SYSTEM_PROJECT,
+  PROJECT_STATUS_LABELS,
+  type ProjectSummary,
+} from '@/content/projects';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
@@ -19,17 +25,6 @@ interface TerminalLine {
   url?: string;
   /** For resume/download links, adds download attribute */
   download?: string;
-}
-
-interface CliProject {
-  title: string;
-  description: string;
-  techStack: string[];
-  status?: string;
-  featured: boolean;
-  githubUrl?: string;
-  packageUrl?: string;
-  private?: boolean;
 }
 
 interface CliSkillCategory {
@@ -104,31 +99,15 @@ const ABOUT_VALUES = [
   'Accessibility',
 ];
 
-const PROJECTS: CliProject[] = [
-  {
-    title: 'BitStockerz',
-    description:
-      'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money.',
-    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
-    status: 'In Development',
-    featured: true,
-    githubUrl: `${env.social.github}/BitStockerz`,
-  },
-  {
-    title: '@jp-design-system',
-    description:
-      'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Designed for rapid development and maintainability across projects.',
-    techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
-    status: 'Planning',
-    featured: true,
-    githubUrl: `${env.social.github}/jp-design-system`,
-  },
+const PROJECTS: ProjectSummary[] = [
+  BITSTOCKERZ_PROJECT,
+  JP_DESIGN_SYSTEM_PROJECT,
   {
     title: 'Godot Playground',
     description:
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene.',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
-    status: 'In Development',
+    status: 'development',
     featured: false,
     githubUrl: `${env.social.github}/godot_practice`,
   },
@@ -474,7 +453,9 @@ function CliTerminal(): React.ReactElement {
     appendLines([
       { kind: 'output', text: '[PROJECTS]' },
       ...PROJECTS.map((project, index) => {
-        const statusPart = project.status ? ` (${project.status})` : '';
+        const statusPart = project.status
+          ? ` (${PROJECT_STATUS_LABELS[project.status]})`
+          : '';
         const privatePart = project.private ? ' (Private)' : '';
         const text = `${index + 1}. ${project.title}${statusPart}${privatePart}`;
         return project.githubUrl
@@ -522,7 +503,7 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `[PROJECT ${selection}] ${project.title}` },
       {
         kind: 'output',
-        text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${project.status}` : ''}`,
+        text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${PROJECT_STATUS_LABELS[project.status]}` : ''}`,
       },
       ...(repoLine ? [repoLine] : []),
       ...(packageLine ? [packageLine] : []),

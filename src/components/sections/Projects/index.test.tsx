@@ -14,7 +14,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
 
     expect(screen.getAllByLabelText('Project in development').length).toBe(1);
-    expect(screen.getByLabelText('Project planning')).toBeInTheDocument();
+    expect(screen.getByLabelText('Project pre-release')).toBeInTheDocument();
 
     expect(
       screen.getByLabelText('SideQuest: Pittsburgh repository is private')
@@ -59,6 +59,12 @@ describe('Projects section', () => {
       throw new Error('BitStockerz card not found');
     }
     expect(within(bitStockerzCard).getByText('Angular')).toBeInTheDocument();
+    expect(
+      within(bitStockerzCard).getByText('MySQL/MariaDB')
+    ).toBeInTheDocument();
+    expect(
+      within(bitStockerzCard).queryByText('PostgreSQL')
+    ).not.toBeInTheDocument();
     expect(
       within(bitStockerzCard).queryByText('React')
     ).not.toBeInTheDocument();
