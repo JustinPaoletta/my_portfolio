@@ -18,6 +18,10 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 - Make GitHub refreshes bypass cached results and prevent stale requests from overwriting newer data.
 - Normalize project repository URLs to avoid duplicate path separators.
 
+### Security
+
+- Update the transitive `source-map-js` dependency to 1.2.2 to resolve GHSA-68fv-2mgg-jv7q and restore the production dependency audit gate.
+
 ## [1.2.1] - 2026-07-03
 
 ### Fixed
