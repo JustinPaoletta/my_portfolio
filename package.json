@@ -10,6 +10,7 @@
     "clean:cache": "rm -rf dist coverage .vite .lighthouseci playwright-report test-results",
     "contrast:check": "tsx scripts/contrast-check.ts",
     "generate:icons": "node scripts/generate-icons.mjs",
+    "optimize:project-logos": "node scripts/optimize-project-logos.mjs",
     "lighthouse": "npx @lhci/cli autorun",
     "lint": "npm run lint:ci",
     "lint:ci": "npm run type-check && eslint src api server e2e plugins scripts vite.config.ts vitest.config.ts vitest.server.config.ts playwright.config.ts eslint.config.js commitlint.config.js .lighthouserc.cjs && prettier --check .",

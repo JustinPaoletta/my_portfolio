@@ -69,7 +69,7 @@ describe('Projects section', () => {
       )
     ).toBeInTheDocument();
 
-    expect(screen.getByAltText('SideQuest: Pittsburgh screenshot')).toHaveClass(
+    expect(screen.getByAltText('SideQuest: Pittsburgh logo')).toHaveClass(
       'project-image--contain'
     );
   });

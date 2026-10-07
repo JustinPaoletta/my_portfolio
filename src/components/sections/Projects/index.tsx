@@ -31,12 +31,18 @@ interface Project {
   title: string;
   description: string;
   image: string;
+  imageSrcSet?: string;
+  imageSizes?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   imageFit?: 'cover' | 'contain';
   imagePosition?: string;
   cardImage?: string;
   cardImageAlt?: string;
   cardImageFit?: 'cover' | 'contain';
   cardHeaderIcon?: string;
+  cardHeaderIconSrcSet?: string;
   /** When set, shown instead of `title` text in the project heading (e.g. transparent PNG wordmark). */
   titleLogo?: string;
   titleLogoAlt?: string;
@@ -72,6 +78,21 @@ function ProjectHeadingTitle({
 }
 
 const githubProfileUrl = env.social.github.replace(/\/+$/, '');
+
+function logoSrcSet(name: string, widths: readonly number[]): string {
+  return widths
+    .map((width) => `/images/projects/${name}-${width}.webp ${width}w`)
+    .join(', ');
+}
+
+// The square artwork is contained within a 90%-wide, 4:3 frame with a 3px
+// border. Match its painted width through the stacked and two-column layouts.
+const sideQuestImageSizes = [
+  '(max-width: 640px) calc(67.5vw - 2.025rem - 6px)',
+  '(max-width: 1024px) calc(67.5vw - 2.7rem - 6px)',
+  '(max-width: 1264px) calc(36.82vw - 2.578rem - 6px)',
+  '419px',
+].join(', ');
 
 const projects: Project[] = [
   {
@@ -113,8 +134,9 @@ const projects: Project[] = [
     title: 'wild-apricot-exports',
     description:
       'A published Node CLI and library for exporting and backing up Wild Apricot data without relying on the admin UI. It pulls contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files through the public REST API and WebDAV, then writes everything locally as JSON, CSV, and original files.',
-    image: '/images/projects/wae-exports-logo.png',
-    cardHeaderIcon: '/images/projects/wae-exports-logo.png',
+    image: '/images/projects/wae-exports-logo-180.webp',
+    cardHeaderIcon: '/images/projects/wae-exports-logo-60.webp',
+    cardHeaderIconSrcSet: logoSrcSet('wae-exports-logo', [60, 120, 180]),
     techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
     githubUrl: `${githubProfileUrl}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
@@ -125,9 +147,13 @@ const projects: Project[] = [
     title: 'SideQuest: Pittsburgh',
     description:
       "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
-    image: '/images/projects/sidequest-logo.png',
+    image: '/images/projects/sidequest-logo-480.webp',
+    imageSrcSet: logoSrcSet('sidequest-logo', [240, 480, 720, 960, 1254]),
+    imageSizes: sideQuestImageSizes,
+    imageAlt: 'SideQuest: Pittsburgh logo',
+    imageWidth: 1254,
+    imageHeight: 1254,
     imageFit: 'contain',
-    cardHeaderIcon: '/images/projects/sidequest-logo.png',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
     featured: true,
@@ -135,10 +161,11 @@ const projects: Project[] = [
   {
     id: 'project-6',
     title: 'Plexarr',
-    cardHeaderIcon: '/images/projects/plexarr_icon.png',
+    cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
+    cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
     description:
       'A self-hosted media request system built for managing my at-home Plex server. Users authenticate via passkeys (WebAuthn), search for content, and submit requests through a private dashboard. API keys stay entirely server-side, with real-time service health monitoring, per-user quality profile defaults, and an activity audit log.',
-    image: '/images/projects/plexarr.png',
+    image: '/images/projects/plexarr-icon-180.webp',
     techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
     private: true,
     featured: false,
@@ -204,7 +231,9 @@ function Projects(): React.ReactElement {
               >
                 <img
                   src={project.image}
-                  alt={`${project.title} screenshot`}
+                  srcSet={project.imageSrcSet}
+                  sizes={project.imageSizes}
+                  alt={project.imageAlt ?? `${project.title} screenshot`}
                   className={`project-image${
                     project.imageFit === 'contain'
                       ? ' project-image--contain'
@@ -216,8 +245,9 @@ function Projects(): React.ReactElement {
                       : undefined
                   }
                   loading="lazy"
-                  width={800}
-                  height={600}
+                  decoding="async"
+                  width={project.imageWidth ?? 800}
+                  height={project.imageHeight ?? 600}
                 />
               </div>
               <div className="project-content">
@@ -403,12 +433,15 @@ function Projects(): React.ReactElement {
                 {project.cardHeaderIcon ? (
                   <img
                     src={project.cardHeaderIcon}
+                    srcSet={project.cardHeaderIconSrcSet}
+                    sizes={project.cardHeaderIconSrcSet ? '60px' : undefined}
                     alt=""
                     aria-hidden="true"
                     className="folder-icon folder-icon--image"
-                    width={192}
-                    height={192}
+                    width={60}
+                    height={60}
                     loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <svg

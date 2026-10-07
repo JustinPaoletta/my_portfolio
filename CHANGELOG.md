@@ -11,6 +11,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 - Give professional work the primary Experience layout, move the résumé action beside the work history, and condense education into supporting credentials.
 - Keep project source links, status, and privacy labels visible at rest, with theme-aware focus styles and larger touch targets.
+- Serve responsive WebP project logos sized for their featured artwork and 60px icon slots. Keep the original PNG masters outside the public assets and add a repeatable optimization command.
 
 ### Fixed
 
