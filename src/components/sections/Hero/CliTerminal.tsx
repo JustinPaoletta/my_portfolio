@@ -1,12 +1,18 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { env } from '@/config/env';
 import { defaultTheme } from '@/config/themes';
+import {
+  BITSTOCKERZ_PROJECT,
+  JP_DESIGN_SYSTEM_PROJECT,
+  PROJECT_STATUS_LABELS,
+  type ProjectSummary,
+} from '@/content/projects';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
-import './CliTerminal.css';
+import '@/components/sections/Hero/CliTerminal.css';
 
 type LineKind = 'system' | 'output' | 'input' | 'hint' | 'error' | 'success';
 type Context = 'main' | 'projects' | 'skills' | 'experience' | 'dogs';
@@ -21,17 +27,6 @@ interface TerminalLine {
   download?: string;
 }
 
-interface CliProject {
-  title: string;
-  description: string;
-  techStack: string[];
-  status?: string;
-  featured: boolean;
-  githubUrl?: string;
-  packageUrl?: string;
-  private?: boolean;
-}
-
 interface CliSkillCategory {
   name: string;
   skills: string[];
@@ -42,8 +37,8 @@ interface CliExperience {
   organization: string;
   period: string;
   location: string;
-  summary: string;
-  highlights: string[];
+  summary?: string;
+  highlights?: string[];
 }
 
 interface CliDogMetadata {
@@ -104,31 +99,15 @@ const ABOUT_VALUES = [
   'Accessibility',
 ];
 
-const PROJECTS: CliProject[] = [
-  {
-    title: 'BitStockerz',
-    description:
-      'A paper trading platform for cryptocurrency and stocks that lets users practice trading strategies with virtual portfolios. Track real-time prices, execute simulated trades, and learn market dynamics without risking real money.',
-    techStack: ['Angular', 'TypeScript', 'Node.js', 'PostgreSQL', 'REST APIs'],
-    status: 'In Development',
-    featured: true,
-    githubUrl: `${env.social.github}/BitStockerz`,
-  },
-  {
-    title: '@jp-design-system',
-    description:
-      'A reusable UI component library built with Angular, featuring accessible, customizable components with consistent styling and comprehensive documentation. Designed for rapid development and maintainability across projects.',
-    techStack: ['Angular', 'TypeScript', 'RxJS', 'SCSS', 'Storybook'],
-    status: 'Planning',
-    featured: true,
-    githubUrl: `${env.social.github}/jp-design-system`,
-  },
+const PROJECTS: ProjectSummary[] = [
+  BITSTOCKERZ_PROJECT,
+  JP_DESIGN_SYSTEM_PROJECT,
   {
     title: 'Godot Playground',
     description:
       'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene.',
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
-    status: 'In Development',
+    status: 'development',
     featured: false,
     githubUrl: `${env.social.github}/godot_practice`,
   },
@@ -232,7 +211,7 @@ const EXPERIENCES: CliExperience[] = [
       'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental modernization without a full rewrite.',
       'Engineered release automation tooling that reduced deployment time by about 75% across four applications through Jenkins pipelines, Jira automation, release notes drafting, and internal documentation generation.',
       'Developed an AI-assisted workflow with Claude Code agents, custom skills, Playwright, and Figma validation to refine requirements, generate plans, iterate on UI work, and prepare QA plus test scaffolding.',
-      'Built a Claude-powered PR review bot with GitHub Actions to enforce linting and testing coverage while flagging logic, security, and memory issues earlier.',
+      'Built a Claude-powered PR review bot in GitHub Actions to flag logic, security, and memory issues for developer review.',
     ],
   },
   {
@@ -252,25 +231,12 @@ const EXPERIENCES: CliExperience[] = [
     organization: 'Hack Reactor',
     period: '2020',
     location: '(Remote)',
-    summary:
-      'Full-time, 12-week intensive focused on full-stack JavaScript engineering and computer science fundamentals.',
-    highlights: [
-      'Completed ~600+ hours of hands-on programming under production-style deadlines.',
-      'Built and shipped multiple full-stack applications.',
-      'Applied core CS concepts: data structures, algorithms, async programming, and system design fundamentals.',
-      'Collaborated using Git/GitHub, code reviews, pair programming, and Agile workflows.',
-    ],
   },
   {
     title: 'Bachelor of Science (B.S.) in Psychology',
     organization: 'University of Central Florida',
     period: '2008-2012',
     location: 'Orlando, FL',
-    summary:
-      'Coursework emphasized research methods, statistics, cognitive psychology, and behavioral analysis.',
-    highlights: [
-      'Developed a foundation in analytical thinking, experimental design, and human-centered problem solving.',
-    ],
   },
 ];
 
@@ -487,7 +453,9 @@ function CliTerminal(): React.ReactElement {
     appendLines([
       { kind: 'output', text: '[PROJECTS]' },
       ...PROJECTS.map((project, index) => {
-        const statusPart = project.status ? ` (${project.status})` : '';
+        const statusPart = project.status
+          ? ` (${PROJECT_STATUS_LABELS[project.status]})`
+          : '';
         const privatePart = project.private ? ' (Private)' : '';
         const text = `${index + 1}. ${project.title}${statusPart}${privatePart}`;
         return project.githubUrl
@@ -535,7 +503,7 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `[PROJECT ${selection}] ${project.title}` },
       {
         kind: 'output',
-        text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${project.status}` : ''}`,
+        text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${PROJECT_STATUS_LABELS[project.status]}` : ''}`,
       },
       ...(repoLine ? [repoLine] : []),
       ...(packageLine ? [packageLine] : []),
@@ -644,8 +612,10 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `[TIMELINE ${selection}] ${item.title}` },
       { kind: 'output', text: `${item.organization} | ${item.location}` },
       { kind: 'output', text: item.period },
-      { kind: 'output', text: item.summary },
-      ...item.highlights.map((highlight) => ({
+      ...(item.summary
+        ? [{ kind: 'output' as const, text: item.summary }]
+        : []),
+      ...(item.highlights ?? []).map((highlight) => ({
         kind: 'output' as const,
         text: `- ${highlight}`,
       })),
@@ -704,7 +674,12 @@ function CliTerminal(): React.ReactElement {
               text: `Contributions (last year): ${contributions.totalContributions}`,
             },
           ]
-        : []),
+        : [
+            {
+              kind: 'hint' as const,
+              text: 'Contribution history is temporarily unavailable. View the profile on GitHub for current activity.',
+            },
+          ]),
       ...(topRepos.length > 0
         ? [
             { kind: 'output' as const, text: 'Top repositories:' },

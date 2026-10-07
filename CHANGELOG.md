@@ -7,6 +7,23 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Changed
+
+- Give professional work the primary Experience layout, move the résumé action beside the work history, and condense education into supporting credentials.
+- Keep project source links, status, and privacy labels visible at rest, with theme-aware focus styles and larger touch targets.
+- Serve responsive WebP project logos sized for their featured artwork and 60px icon slots. Keep the original PNG masters outside the public assets and add a repeatable optimization command.
+
+### Fixed
+
+- Reconcile BitStockerz and design-system claims against current source and CI. Share their standard/CLI descriptions, stacks, and lifecycle labels; identify MySQL/MariaDB persistence, stored-bar paper pricing, disabled live-data integration, and the design system's prerelease and preview limits.
+- Remove synthetic GitHub contribution statistics and reject the legacy cache format. Contribution outages now show an unavailable state while retaining real profile and repository data, including in the CLI theme.
+- Make GitHub refreshes bypass cached results and prevent stale requests from overwriting newer data.
+- Normalize project repository URLs to avoid duplicate path separators.
+
+### Security
+
+- Update the transitive `source-map-js` dependency to 1.2.2 to resolve GHSA-68fv-2mgg-jv7q and restore the production dependency audit gate.
+
 ## [1.2.1] - 2026-07-03
 
 ### Fixed

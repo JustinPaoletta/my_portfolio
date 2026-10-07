@@ -9,7 +9,6 @@ import type {
 const fetchGitHubUserMock = vi.hoisted(() => vi.fn());
 const fetchGitHubReposMock = vi.hoisted(() => vi.fn());
 const fetchGitHubGraphQLDataMock = vi.hoisted(() => vi.fn());
-const generateMockContributionsMock = vi.hoisted(() => vi.fn());
 const createPinnedFromReposMock = vi.hoisted(() => vi.fn());
 const normalizeContributionCalendarMock = vi.hoisted(() => vi.fn());
 
@@ -17,7 +16,6 @@ vi.mock('@/services/github', () => ({
   fetchGitHubUser: fetchGitHubUserMock,
   fetchGitHubRepos: fetchGitHubReposMock,
   fetchGitHubGraphQLData: fetchGitHubGraphQLDataMock,
-  generateMockContributions: generateMockContributionsMock,
   createPinnedFromRepos: createPinnedFromReposMock,
 }));
 
@@ -25,7 +23,7 @@ vi.mock('@/utils/contributions', () => ({
   normalizeContributionCalendar: normalizeContributionCalendarMock,
 }));
 
-import { useGitHub } from './useGitHub';
+import { useGitHub } from '@/hooks/useGitHub';
 
 const mockUser: GitHubUser = {
   login: 'justin',
@@ -84,7 +82,6 @@ describe('useGitHub', () => {
       contributions,
       pinnedRepos: [],
     });
-    generateMockContributionsMock.mockReturnValue(contributions);
     createPinnedFromReposMock.mockReturnValue([
       {
         name: 'repo-1',
@@ -101,6 +98,7 @@ describe('useGitHub', () => {
     localStorage.setItem(
       'github_stats_cache',
       JSON.stringify({
+        version: 2,
         timestamp: Date.now(),
         data: {
           user: mockUser,
@@ -138,12 +136,13 @@ describe('useGitHub', () => {
     localStorage.setItem(
       'github_stats_cache',
       JSON.stringify({
+        version: 2,
         timestamp: Date.now() - 1000 * 60 * 60 - 1,
         data: {
           user: mockUser,
           repos: mockRepos,
           pinnedRepos: [],
-          contributions: null,
+          contributions,
           loading: false,
           error: null,
         },
@@ -183,7 +182,7 @@ describe('useGitHub', () => {
     expect(createPinnedFromReposMock).not.toHaveBeenCalled();
   });
 
-  it('falls back to mock contributions when GraphQL fetch fails', async () => {
+  it('preserves real public data without inventing or caching contributions during a proxy outage', async () => {
     fetchGitHubGraphQLDataMock.mockRejectedValue(new Error('no token'));
 
     const { result } = renderHook(() => useGitHub());
@@ -192,9 +191,63 @@ describe('useGitHub', () => {
       expect(result.current.loading).toBe(false);
     });
 
-    expect(generateMockContributionsMock).toHaveBeenCalled();
+    expect(result.current.user).toEqual(mockUser);
+    expect(result.current.repos).toEqual(mockRepos);
+    expect(result.current.pinnedRepos[0]?.name).toBe('repo-1');
+    expect(result.current.contributions).toBeNull();
+    expect(normalizeContributionCalendarMock).not.toHaveBeenCalled();
     expect(createPinnedFromReposMock).toHaveBeenCalledWith(mockRepos);
     expect(result.current.error).toBeNull();
+    expect(localStorage.getItem('github_stats_cache')).toBeNull();
+  });
+
+  it('discards a fresh legacy cache that could contain synthetic contributions', async () => {
+    localStorage.setItem(
+      'github_stats_cache',
+      JSON.stringify({
+        timestamp: Date.now(),
+        data: {
+          user: mockUser,
+          repos: mockRepos,
+          pinnedRepos: [],
+          contributions: { totalContributions: 99999, weeks: [] },
+          loading: false,
+          error: null,
+        },
+      })
+    );
+    fetchGitHubGraphQLDataMock.mockRejectedValue(new Error('rate limited'));
+
+    const { result } = renderHook(() => useGitHub());
+
+    expect(result.current.loading).toBe(true);
+    expect(result.current.contributions).toBeNull();
+    expect(localStorage.getItem('github_stats_cache')).toBeNull();
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.user).toEqual(mockUser);
+    expect(result.current.contributions).toBeNull();
+    expect(localStorage.getItem('github_stats_cache')).toBeNull();
+  });
+
+  it('keeps genuine zero contributions distinct from unavailable data', async () => {
+    const zeroContributions: ContributionCalendar = {
+      totalContributions: 0,
+      weeks: [],
+    };
+    fetchGitHubGraphQLDataMock.mockResolvedValue({
+      contributions: zeroContributions,
+      pinnedRepos: [],
+    });
+
+    const { result } = renderHook(() => useGitHub());
+    await waitFor(() => expect(result.current.loading).toBe(false));
+
+    expect(result.current.contributions).toEqual(zeroContributions);
+    expect(localStorage.getItem('github_stats_cache')).toContain(
+      '"totalContributions":0'
+    );
+    expect(localStorage.getItem('github_stats_cache')).toContain('"version":2');
   });
 
   it('sets error state when REST fetch fails', async () => {
@@ -208,9 +261,11 @@ describe('useGitHub', () => {
 
     expect(result.current.error).toBe('REST unavailable');
     expect(result.current.user).toBeNull();
+    expect(result.current.contributions).toBeNull();
+    expect(localStorage.getItem('github_stats_cache')).toBeNull();
   });
 
-  it('supports manual refetch', async () => {
+  it('manual refetch bypasses a fresh cache and does not duplicate API requests', async () => {
     const { result } = renderHook(() => useGitHub());
 
     await waitFor(() => {
@@ -218,12 +273,58 @@ describe('useGitHub', () => {
     });
 
     fetchGitHubUserMock.mockClear();
-    localStorage.removeItem('github_stats_cache');
+    fetchGitHubGraphQLDataMock.mockClear();
+    fetchGitHubGraphQLDataMock.mockRejectedValue(new Error('unavailable'));
 
     await act(async () => {
       await result.current.refetch();
     });
 
     expect(fetchGitHubUserMock).toHaveBeenCalledTimes(1);
+    expect(fetchGitHubGraphQLDataMock).toHaveBeenCalledTimes(1);
+    expect(result.current.user).toEqual(mockUser);
+    expect(result.current.contributions).toBeNull();
+    expect(localStorage.getItem('github_stats_cache')).toBeNull();
+  });
+
+  it('recovers on the next visit without waiting for a failed cache to expire', async () => {
+    fetchGitHubGraphQLDataMock.mockRejectedValueOnce(new Error('unavailable'));
+    const firstVisit = renderHook(() => useGitHub());
+    await waitFor(() => expect(firstVisit.result.current.loading).toBe(false));
+    firstVisit.unmount();
+
+    const secondVisit = renderHook(() => useGitHub());
+    await waitFor(() => expect(secondVisit.result.current.loading).toBe(false));
+
+    expect(secondVisit.result.current.contributions).toEqual(contributions);
+    expect(fetchGitHubGraphQLDataMock).toHaveBeenCalledTimes(2);
+    expect(localStorage.getItem('github_stats_cache')).toContain('"version":2');
+  });
+
+  it('does not let an older in-flight result overwrite a later refresh', async () => {
+    let resolveFirstRequest!: (data: {
+      contributions: ContributionCalendar;
+      pinnedRepos: [];
+    }) => void;
+    fetchGitHubGraphQLDataMock.mockImplementationOnce(
+      () =>
+        new Promise((resolve) => {
+          resolveFirstRequest = resolve;
+        })
+    );
+    const { result } = renderHook(() => useGitHub());
+    await waitFor(() =>
+      expect(fetchGitHubGraphQLDataMock).toHaveBeenCalledTimes(1)
+    );
+    fetchGitHubGraphQLDataMock.mockRejectedValueOnce(new Error('unavailable'));
+
+    await act(async () => {
+      await result.current.refetch();
+      resolveFirstRequest({ contributions, pinnedRepos: [] });
+    });
+
+    expect(result.current.contributions).toBeNull();
+    expect(result.current.user).toEqual(mockUser);
+    expect(localStorage.getItem('github_stats_cache')).toBeNull();
   });
 });

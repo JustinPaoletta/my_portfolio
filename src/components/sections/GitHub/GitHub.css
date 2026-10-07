@@ -35,6 +35,12 @@
   flex-wrap: wrap;
 }
 
+.github-contributions-unavailable {
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0 0 2rem;
+}
+
 .github-profile-link {
   display: flex;
   align-items: center;
