@@ -341,6 +341,22 @@
   letter-spacing: 0.04em;
 }
 
+:root[data-color-mode='light'][data-theme='cosmic']
+  .navigation:not(.scrolled)
+  .nav-resume {
+  color: #572c83;
+  background: #f8f1ff;
+  border-color: #d4b9ef;
+
+  &:hover {
+    background: #ffffff;
+  }
+
+  &:focus-visible {
+    outline-color: #f8f1ff;
+  }
+}
+
 .mobile-nav-link.mobile-nav-resume {
   display: flex;
   align-items: center;
