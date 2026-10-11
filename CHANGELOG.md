@@ -9,6 +9,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
+- Rebuild CLI mode as a single terminal session with an in-terminal guide, contextual help, command history, completion, and appearance/exit commands. Remove its option sidebar, faux window controls, and floating theme button while preserving accessible output links and numeric aliases.
 - Lead with Software Engineer and the Angular/React/TypeScript stack, add hero and navigation résumé downloads, and put selected work and professional experience before supporting content.
 - Curate public projects with a real design-system showcase capture and explicitly labeled workflow diagrams; move private projects to supporting cards and retain the writing carousel.
 - Condense About and Skills around implementation evidence, omit the stylized portrait, make GitHub contributions optional, and align the CLI wording. Update contact copy and the 1200×630 identity sharing card.

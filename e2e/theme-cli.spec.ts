@@ -16,9 +16,10 @@ async function closeThemeSwitcher(page: Page): Promise<void> {
 }
 
 async function waitForCliBootComplete(page: Page): Promise<void> {
-  await expect(page.locator('.cli-history .cli-line').first()).toHaveText(
-    /Use panel options or type a number\/command\./i
-  );
+  await expect(
+    page.getByRole('heading', { name: 'Justin Paoletta', exact: true })
+  ).toBeVisible();
+  await expect(page.getByLabel('Terminal command input')).toBeVisible();
 }
 
 function delay(ms: number): Promise<void> {
@@ -318,7 +319,7 @@ test('query params apply theme and mode overrides', async ({ page }) => {
     'light'
   );
   await expect(
-    page.locator('section[aria-label="Interactive portfolio terminal"]')
+    page.locator('section[aria-label="Portfolio terminal"]')
   ).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
@@ -430,17 +431,21 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
     .getByRole('dialog', { name: /theme settings/i })
     .getByRole('radio', { name: 'CLI' })
     .click();
-  await closeThemeSwitcher(page);
+  await expect(
+    page.getByRole('dialog', { name: /theme settings/i })
+  ).toHaveCount(0);
 
   await expect(
-    page.locator('section[aria-label="Interactive portfolio terminal"]')
+    page.locator('section[aria-label="Portfolio terminal"]')
   ).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
   ).toHaveCount(0);
   await waitForCliBootComplete(page);
+  await expect(page.locator('main')).not.toHaveAttribute('inert', '');
 
   const commandInput = page.getByLabel(/terminal command input/i);
+  await expect(commandInput).toBeFocused();
   await commandInput.fill('9');
   await commandInput.press('Enter');
   await expect(page.getByText('[HELP]')).toBeVisible();
@@ -457,27 +462,50 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
     page.getByRole('navigation', { name: /main navigation/i })
   ).toBeVisible();
   await expect(
-    page.locator('section[aria-label="Interactive portfolio terminal"]')
+    page.locator('section[aria-label="Portfolio terminal"]')
   ).toHaveCount(0);
 });
 
-test('CLI close control switches back to default theme', async ({ page }) => {
+test('CLI commands control appearance and return to the main site', async ({
+  page,
+}) => {
   await mockPortfolioApis(page);
-  await page.goto('/');
+  await page.goto('/?theme=cli&mode=dark');
+  await waitForCliBootComplete(page);
+  const commandInput = page.getByLabel('Terminal command input');
+  await expect(
+    page.getByRole('button', { name: /toggle theme switcher/i })
+  ).toHaveCount(0);
 
-  await openThemeSwitcher(page);
-  await page
-    .getByRole('dialog', { name: /theme settings/i })
-    .getByRole('radio', { name: 'CLI' })
-    .click();
-  await closeThemeSwitcher(page);
+  await commandInput.fill('mode light');
+  await commandInput.press('Enter');
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-color-mode',
+    'light'
+  );
+  await expect
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem('portfolio-color-mode'))
+    )
+    .toBe('light');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-color-mode',
+    'light'
+  );
 
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cli');
-  await page
-    .getByRole('button', { name: /exit cli and switch to minimal theme/i })
-    .click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'minimal');
+  await commandInput.fill('theme engineer');
+  await commandInput.press('Enter');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'engineer');
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
   ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /toggle theme switcher/i })
+  ).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem('portfolio-theme')))
+    .toBe('engineer');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'engineer');
 });

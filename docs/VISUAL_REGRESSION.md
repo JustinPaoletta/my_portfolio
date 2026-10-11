@@ -46,7 +46,7 @@ Visual specs always navigate with `?visual-test=1`. The app treats that as a det
 - global CSS animations and transitions
 - hero parallax and motion-driven transforms
 - the interactive 3D hero scenes (the cosmic poster and engineer SVG fallbacks render instead) and SVG motion in the hero variants
-- the JP_CLI boot sequence timers
+- transient terminal caret/focus styles during captures; CLI startup has no boot delay
 - transient focus, caret, and hover residue during capture
 
 The visual helper also freezes time to `2026-03-01T12:00:00.000Z`, waits for fonts and visible images to finish loading, and applies mocked portfolio APIs before each capture.
@@ -61,6 +61,7 @@ Committed baselines live next to each visual spec:
 Current coverage includes:
 
 - desktop hero viewports for all four themes in light and dark mode
+- CLI command guides on mobile in both modes and a desktop project session
 - minimal light mobile home and open mobile navigation
 - a minimal light tall-viewport smoke capture
 - section-level captures for Projects, both Writing slides, desktop/mobile Experience, GitHub, Contact, and expanded Pet Dogs

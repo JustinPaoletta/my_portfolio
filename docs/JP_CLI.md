@@ -1,91 +1,78 @@
-# JP_CLI Theme Guide
+# JP_CLI terminal guide
 
-This document explains the interactive JP_CLI theme behavior, controls, and command model.
+The CLI theme presents the portfolio as one terminal session. The introduction,
+command guide, output, and prompt live in the same scrollable surface. There is
+no option sidebar, window-control toolbar, or floating theme menu.
 
-## Overview
+This is a portfolio command interface. It does not execute operating-system
+commands or provide access to a filesystem.
 
-The JP_CLI theme presents the portfolio as a fullscreen terminal-style interface with:
+## Start exploring
 
-- A terminal pane and a navigation pane
-- Keyboard-first interaction
-- Command parsing for section drill-in
-- A prompt styled as `jp@cli: ~%`
+Type a command at the prompt and press Enter:
 
-On app load in JP_CLI mode, output starts with minimal pre-rendered text to keep the active prompt near the top.
+```text
+projects
+project 1
+experience
+exp 1
+resume
+contact
+```
 
-## Layout Behavior
+`help` lists the available commands. `help <topic>` explains a command. After
+list and detail commands, the output explains useful next steps. Source,
+profile, email, and résumé links remain ordinary keyboard-accessible links.
 
-- Desktop/tablet:
-- Navigation pane on the left
-- Terminal pane on the right
-- Compact/mobile:
-- Terminal pane first
-- Navigation pane below terminal pane
+## Commands
 
-In JP_CLI mode, the top navbar is hidden.
+| Command                                  | Result                                                      |
+| ---------------------------------------- | ----------------------------------------------------------- |
+| `about`                                  | Background and engineering approach                         |
+| `projects` / `project <n>`               | Project list or one project's evidence and links            |
+| `skills` / `skill <n>`                   | Skills and supporting work                                  |
+| `experience` / `exp <n>`                 | Employment and education list or details                    |
+| `github`                                 | GitHub data with honest loading and unavailable states      |
+| `contact`                                | Email and professional profile links                        |
+| `resume`                                 | Link to the existing downloadable PDF                       |
+| `dogs` / `dog <n>`                       | Optional pet section and details                            |
+| `dog <n> treat` / `dog <n> scritch`      | Record the corresponding pet interaction                    |
+| `help` / `help <topic>`                  | General or contextual command guidance                      |
+| `history`                                | Commands entered during this session                        |
+| `back`                                   | Return from a detail to its list, then to the command guide |
+| `menu`                                   | Return to the command guide                                 |
+| `ls`                                     | List items in the current portfolio context                 |
+| `pwd`                                    | Show the current portfolio context                          |
+| `clear` / `cls`                          | Clear output while keeping the introduction and guidance    |
+| `theme <minimal\|engineer\|cosmic\|cli>` | Change the portfolio theme                                  |
+| `mode <light\|dark\|system>`             | Change the color mode                                       |
+| `exit` / `quit`                          | Return to the Minimal website theme                         |
 
-## Theme Switcher in JP_CLI
+The numeric aliases remain available: `1` About, `2` Projects, `3` Skills,
+`4` Experience, `5` GitHub, `6` Contact, `7` Dogs, `8` Résumé, `9` Help, and
+`0` Clear. Within a list, a number selects an item. Use named commands to jump
+directly between sections regardless of the current list.
 
-- The theme switcher is fixed in the bottom-right corner.
-- Its menu opens upward so options remain visible near the viewport edge.
+Other retained aliases include `education`, `gh`, `doggos`, `pets`, `cv`, and
+`h`. Appearance commands preserve the chosen setting on reload, including
+when the session started with theme or mode query parameters.
 
-## Interaction Model
+## Keyboard and touch
 
-JP_CLI supports staged input and Enter-to-run:
+- Enter executes the typed command. Empty Enter does nothing.
+- Up/Down recall command history and restore an unfinished draft after the newest entry.
+- Left/Right retain normal text editing.
+- Ctrl+Space completes a command or shows matching possibilities.
+- Ctrl+L clears output.
+- Ctrl+C cancels the current draft when no text is selected. Selected text can still be copied normally.
+- Tab and Shift+Tab move through links and the prompt; they do not trap focus in the terminal.
 
-- Arrow keys (`↑ ↓ ← →`) move current menu selection
-- `Space` stages the current selection value in the prompt
-- Number keys (`0-9`, including numpad) stage numeric input in the prompt
-- `Enter` executes the staged or typed command
-- Clicking a menu option stages that option in the prompt
+On mobile, tap the prompt and use the keyboard's submit key. The input does
+not automatically open the mobile keyboard. Text wraps at narrow widths and
+the transcript scrolls within the viewport.
 
-Actions do not execute on click, number key, or space alone.
-
-## Command Reference
-
-### Main menu numbers
-
-- `1` About
-- `2` Projects
-- `3` Skills
-- `4` Experience
-- `5` GitHub Stats
-- `6` Contact
-- `7` Pet Dawgs
-- `8` Resume
-- `9` Help
-- `0` Clear terminal
-
-### Aliases
-
-- `about`
-- `projects`
-- `skills`
-- `experience` or `education`
-- `github` or `gh`
-- `contact`
-- `dogs` / `doggos` / `pets`
-- `resume` / `cv`
-- `menu`
-- `help` / `h`
-- `clear` / `cls`
-
-### Drill-in commands
-
-- `project <n>`
-- `skill <n>`
-- `exp <n>`
-
-### Dog commands
-
-- `dog <n>`
-- `dog <n> treat`
-- `dog <n> scritch`
-- `dog <n> scritches`
-
-### Theme exit commands
-
-- `exit`
-- `quit`
-
-`exit`/`quit` switches from the JP_CLI theme back to the app default theme (`minimal`).
+Output is a normal readable region rather than a live region that repeats
+the entire transcript. A concise status message announces command results.
+The session retains up to 300 output lines and 100 commands; it is not saved
+across reloads. Human screen-reader and physical mobile-keyboard acceptance
+remain separate from automated checks.

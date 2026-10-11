@@ -51,3 +51,16 @@ These are content or human acceptance tasks; do not replace missing facts with i
 - Keep public source/package links available while demos are unreleased. Do not imply a deployed BitStockerz service or published design-system package.
 - Prioritize employer evidence and profile consistency over an offline contact outbox. Offline reliability remains in `docs/OFFLINE_RELIABILITY_PLAN.md` as later work.
 - Preview/CI validation does not authorize merging or publishing a production release. This work updates the existing draft PR.
+
+## CLI terminal revision — 2026-10-11
+
+The owner requested a full terminal experience with guidance in the terminal.
+Replace the option sidebar, faux window controls, and floating theme menu with
+one transcript and prompt. Preserve the audited portfolio content and existing
+links; this remains a portfolio command interface, not an operating-system shell.
+
+- [x] Implement the opening guide, contextual help, command history, completion,
+      normal text editing, cancellation/clear shortcuts, and appearance/exit commands.
+- [x] Verify named and numeric commands, links, invalid-input recovery, theme
+      persistence, focus escape, screen-reader semantics, and narrow/short viewports.
+- [ ] Review desktop/mobile light/dark screenshots and update affected Linux/macOS baselines.

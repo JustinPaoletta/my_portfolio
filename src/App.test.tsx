@@ -403,7 +403,7 @@ describe('App', () => {
     expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
   });
 
-  it('has no footer in CLI view', async () => {
+  it('keeps CLI navigation and appearance controls inside the terminal', async () => {
     localStorage.setItem('portfolio-theme', 'cli');
     await act(async () => {
       render(<App />);
@@ -414,6 +414,12 @@ describe('App', () => {
     await waitFor(() => {
       expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
     });
+    expect(
+      screen.queryByRole('button', { name: /toggle theme switcher/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('navigation', { name: /main navigation/i })
+    ).not.toBeInTheDocument();
   });
 
   it('CLI Enter submits typed command', async () => {

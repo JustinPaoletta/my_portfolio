@@ -52,8 +52,10 @@
 .main-content--cli {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   height: 100vh;
   height: 100svh;
+  height: 100dvh;
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -70,13 +72,16 @@
   width: 100%;
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
 }
 
 :root[data-theme='cli'] #root {
   min-height: 100vh;
   min-height: 100svh;
+  min-height: 100dvh;
   height: 100vh;
   height: 100svh;
+  height: 100dvh;
   overflow: hidden;
 }
 

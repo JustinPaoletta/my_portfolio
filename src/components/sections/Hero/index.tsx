@@ -19,8 +19,9 @@ import {
   type RichHeroTheme,
 } from './preloadRichHeroScene';
 import './Hero.css';
+// CLI geometry is required at first render, alongside the terminal styles.
+import './Hero.cli.css';
 const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
-  cli: () => import('./Hero.cli.css'),
   cosmic: () => import('./Hero.cosmic.css'),
   engineer: () => import('./Hero.engineer.css'),
 };

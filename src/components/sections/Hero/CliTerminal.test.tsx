@@ -1,13 +1,20 @@
-import { fireEvent, render, screen, within } from '@/test/test-utils';
+import {
+  createEvent,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import CliTerminal from '@/components/sections/Hero/CliTerminal';
 import Projects from '@/components/sections/Projects';
 import { defaultTheme } from '@/config/themes';
 
 const setThemeMock = vi.fn();
+const setColorModeMock = vi.fn();
 const updateDogStatsMock = vi.fn();
 
-let breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
 let dogsState = [
   { name: 'Nala', stats: { treats: 1, scritches: 2 } },
   { name: 'Rosie', stats: { treats: 3, scritches: 4 } },
@@ -64,11 +71,11 @@ let githubState: CliGitHubState = {
 vi.mock('@/hooks/useTheme', () => ({
   useTheme: () => ({
     setTheme: setThemeMock,
+    setColorMode: setColorModeMock,
+    themeName: 'cli',
+    colorMode: 'dark',
+    resolvedMode: 'dark',
   }),
-}));
-
-vi.mock('@/hooks/useBreakpoint', () => ({
-  useBreakpoint: () => breakpoint,
 }));
 
 vi.mock('@/hooks/usePetDogs', () => ({
@@ -82,8 +89,15 @@ vi.mock('@/hooks/useGitHub', () => ({
 function renderTerminal() {
   render(<CliTerminal />);
   expect(
-    screen.getByText(/Use panel options or type a number\/command./i)
+    screen.getByRole('region', { name: 'Portfolio terminal' })
   ).toBeInTheDocument();
+  expect(
+    screen.getByRole('heading', { name: 'Justin Paoletta', level: 1 })
+  ).toBeInTheDocument();
+}
+
+function terminalTranscript() {
+  return within(screen.getByRole('region', { name: 'Terminal transcript' }));
 }
 
 function runCommand(command: string) {
@@ -97,7 +111,6 @@ function runCommand(command: string) {
 describe('CliTerminal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    breakpoint = 'md';
     dogsState = [
       { name: 'Nala', stats: { treats: 1, scritches: 2 } },
       { name: 'Rosie', stats: { treats: 3, scritches: 4 } },
@@ -117,50 +130,46 @@ describe('CliTerminal', () => {
       loading: false,
       error: null,
     };
-
-    vi.spyOn(window, 'setTimeout').mockImplementation(((
-      callback: TimerHandler
-    ) => {
-      if (typeof callback === 'function') {
-        callback();
-      }
-      return 1 as unknown as number;
-    }) as typeof window.setTimeout);
-    vi.spyOn(window, 'clearTimeout').mockImplementation(() => {});
   });
 
   it('covers menu numerics, aliases, help, clear, unknown and exit', () => {
     renderTerminal();
 
     runCommand('1');
-    expect(screen.getByText('[ABOUT]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[ABOUT]')).toBeInTheDocument();
     expect(
-      screen.getByText(/deterministic checks and human review determine/)
+      terminalTranscript().getByText(
+        /deterministic checks and human review determine/
+      )
     ).toBeInTheDocument();
     expect(
-      screen.queryByText(/5\+ years|75% faster releases/)
+      terminalTranscript().queryByText(/5\+ years|75% faster releases/)
     ).not.toBeInTheDocument();
 
     runCommand('2');
-    expect(screen.getByText('[PROJECTS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[PROJECTS]')).toBeInTheDocument();
 
     runCommand('skills');
-    expect(screen.getByText('[SKILLS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[SKILLS]')).toBeInTheDocument();
 
     runCommand('experience');
-    expect(screen.getByText('[EXPERIENCE & EDUCATION]')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('[EXPERIENCE & EDUCATION]')
+    ).toBeInTheDocument();
 
     runCommand('9');
-    expect(screen.getByText('[HELP]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[HELP]')).toBeInTheDocument();
 
     runCommand('totally-unknown');
-    expect(screen.getByText('Type 9 for help.')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Type help for available commands.')
+    ).toBeInTheDocument();
 
     runCommand('menu');
-    expect(screen.getByText('[HELP]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[HELP]')).toBeInTheDocument();
 
     runCommand('clear');
-    expect(screen.queryByText('[HELP]')).not.toBeInTheDocument();
+    expect(terminalTranscript().queryByText('[HELP]')).not.toBeInTheDocument();
 
     runCommand('exit');
     expect(setThemeMock).toHaveBeenCalledWith(defaultTheme);
@@ -170,53 +179,65 @@ describe('CliTerminal', () => {
     renderTerminal();
 
     runCommand('project');
-    expect(screen.getByText('[PROJECTS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[PROJECTS]')).toBeInTheDocument();
 
     runCommand('project abc');
-    expect(screen.getByText('Usage: project <number>')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Usage: project <number>')
+    ).toBeInTheDocument();
 
     runCommand('project 99');
-    expect(screen.getByText('Project 99 not found.')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Project 99 not found.')
+    ).toBeInTheDocument();
 
     runCommand('project 1');
-    expect(screen.getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
+    expect(terminalTranscript().getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
 
     runCommand('project 4');
     expect(
-      screen.getByText(/\[PROJECT 4\] wild-apricot-exports/)
+      terminalTranscript().getByText(/\[PROJECT 4\] wild-apricot-exports/)
     ).toBeInTheDocument();
-    expect(screen.getByText('Type: Featured')).toBeInTheDocument();
     expect(
-      screen.getByText(
+      terminalTranscript().getByText('Type: Featured')
+    ).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(
         /npm: https:\/\/www\.npmjs\.com\/package\/wild-apricot-exports/i
       )
     ).toBeInTheDocument();
 
     runCommand('skill');
-    expect(screen.getByText('[SKILLS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[SKILLS]')).toBeInTheDocument();
 
     runCommand('skill abc');
-    expect(screen.getByText('Usage: skill <number>')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Usage: skill <number>')
+    ).toBeInTheDocument();
 
     runCommand('skill 5');
     expect(
-      screen.getByText('[SKILL CATEGORY 5] Supporting practices')
+      terminalTranscript().getByText('[SKILL CATEGORY 5] Supporting practices')
     ).toBeInTheDocument();
 
     runCommand('skill 99');
     expect(
-      screen.getByText('Skill category 99 not found.')
+      terminalTranscript().getByText('Skill category 99 not found.')
     ).toBeInTheDocument();
 
     runCommand('exp');
-    expect(screen.getByText('[EXPERIENCE & EDUCATION]')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('[EXPERIENCE & EDUCATION]')
+    ).toBeInTheDocument();
 
     runCommand('exp abc');
-    expect(screen.getByText('Usage: exp <number>')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Usage: exp <number>')
+    ).toBeInTheDocument();
 
     runCommand('exp 99');
     expect(
-      screen.getByText('Experience entry 99 not found.')
+      terminalTranscript().getByText('Experience entry 99 not found.')
     ).toBeInTheDocument();
   });
 
@@ -224,215 +245,427 @@ describe('CliTerminal', () => {
     renderTerminal();
 
     runCommand('dog');
-    expect(screen.getByText('[PET DOGS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[PET DOGS]')).toBeInTheDocument();
 
     runCommand('dog x');
     expect(
-      screen.getByText('Usage: dog <number> [treat|scritch]')
+      terminalTranscript().getByText('Usage: dog <number> [treat|scritch]')
     ).toBeInTheDocument();
 
     runCommand('dog 9');
-    expect(screen.getByText('Dog 9 not found.')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Dog 9 not found.')
+    ).toBeInTheDocument();
 
     runCommand('dog 1');
-    expect(screen.getByText('[DOG 1] Nala (Foster)')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('[DOG 1] Nala (Foster)')
+    ).toBeInTheDocument();
 
     runCommand('dog 1 treat');
     expect(updateDogStatsMock).toHaveBeenCalledWith('Nala', 'treats');
-    expect(screen.getByText(/Nala got a treat/)).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(/Nala got a treat/)
+    ).toBeInTheDocument();
 
     runCommand('dog 2 scritch');
     expect(updateDogStatsMock).toHaveBeenCalledWith('Rosie', 'scritches');
-    expect(screen.getByText(/Rosie got scritches/)).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(/Rosie got scritches/)
+    ).toBeInTheDocument();
 
     runCommand('dog 2 dance');
-    expect(screen.getByText(/Unknown dog action/)).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(/Unknown dog action/)
+    ).toBeInTheDocument();
 
     runCommand('dog 9 treat');
-    expect(screen.getAllByText('Dog 9 not found.').length).toBeGreaterThan(0);
+    expect(
+      terminalTranscript().getAllByText('Dog 9 not found.').length
+    ).toBeGreaterThan(0);
+  });
+
+  it('rejects malformed dog actions before mutating statistics', () => {
+    renderTerminal();
+    for (const command of [
+      'dog 1oops treat',
+      'dog 1 treat extra',
+      'dog -1 treat',
+      'dog 1.5 scritch',
+    ]) {
+      runCommand(command);
+    }
+    expect(updateDogStatsMock).not.toHaveBeenCalled();
   });
 
   it('covers github states and contact/resume output', () => {
     renderTerminal();
 
     runCommand('gh');
-    expect(screen.getByText('[GITHUB]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[GITHUB]')).toBeInTheDocument();
 
     githubState = { ...githubState, error: 'down' };
     runCommand('gh');
     expect(
-      screen.getByText(/Unable to load live GitHub data right now/)
+      terminalTranscript().getByText(
+        /Unable to load live GitHub data right now/
+      )
     ).toBeInTheDocument();
 
     githubState = { ...githubState, error: null, loading: true, user: null };
     runCommand('5');
-    expect(screen.getByText(/Fetching live GitHub stats/)).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(/Fetching live GitHub stats/)
+    ).toBeInTheDocument();
 
     githubState = { ...githubState, loading: false, user: null };
     runCommand('5');
     expect(
-      screen.getByText(/GitHub profile data is currently unavailable/)
+      terminalTranscript().getByText(
+        /GitHub profile data is currently unavailable/
+      )
     ).toBeInTheDocument();
 
     runCommand('contact');
-    expect(screen.getByText('[CONTACT]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[CONTACT]')).toBeInTheDocument();
 
     runCommand('resume');
-    expect(screen.getByText('[RESUME]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[RESUME]')).toBeInTheDocument();
   });
 
-  it('covers compact layout controls and keyboard helpers', () => {
-    breakpoint = 'xs';
+  it('keeps the welcome visible and leaves empty input and native keys alone', () => {
     renderTerminal();
+    const terminal = screen.getByRole('region', { name: 'Portfolio terminal' });
+    const transcript = screen.getByRole('region', {
+      name: 'Terminal transcript',
+    });
+    const input = screen.getByLabelText('Terminal command input');
 
-    fireEvent.click(
-      screen.getByRole('button', { name: 'Run selected option' })
-    );
-    expect(screen.getByText('[ABOUT]')).toBeInTheDocument();
-
-    fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
-    expect(
-      screen.getByText(/Use panel options or type a number\/command./i)
-    ).toBeInTheDocument();
-
-    const input = screen.getByLabelText(/terminal command input/i);
-    input.focus();
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    fireEvent.keyDown(input, { key: 'ArrowRight' });
-    fireEvent.keyDown(input, { key: 'ArrowUp' });
-    fireEvent.keyDown(input, { key: 'ArrowLeft' });
-    fireEvent.keyDown(input, { key: ' ' });
-    fireEvent.keyDown(input, { key: '2', code: 'Digit2' });
-    fireEvent.keyDown(input, { key: 'Unidentified', code: 'Numpad3' });
-
-    expect(input).toHaveValue('3');
+    expect(within(terminal).queryByRole('button')).not.toBeInTheDocument();
+    expect(screen.queryByRole('log')).not.toBeInTheDocument();
+    expect(transcript).not.toHaveAttribute('aria-live');
+    const initialOutput = transcript.textContent;
+    runCommand('');
+    runCommand('   ');
+    expect(transcript.textContent).toBe(initialOutput);
 
     fireEvent.change(input, { target: { value: 'project 1' } });
-    fireEvent.keyDown(input, { key: 'ArrowDown' });
-    expect(input).toHaveValue('project 1');
-    expect(input).toHaveAttribute(
-      'aria-describedby',
-      screen.getByText(/Type 9 for help/i).getAttribute('id')
-    );
+    for (const key of ['ArrowLeft', 'ArrowRight', 'Tab']) {
+      const event = createEvent.keyDown(input, { key, cancelable: true });
+      fireEvent(input, event);
+      expect(event.defaultPrevented).toBe(false);
+      expect(input).toHaveValue('project 1');
+    }
+    const shiftTab = createEvent.keyDown(input, {
+      key: 'Tab',
+      shiftKey: true,
+      cancelable: true,
+    });
+    fireEvent(input, shiftTab);
+    expect(shiftTab.defaultPrevented).toBe(false);
+
+    runCommand('about');
+    runCommand('clear');
+    expect(transcript.querySelector('.cli-history')).toBeEmptyDOMElement();
+    expect(
+      screen.getByRole('heading', { name: 'Justin Paoletta' })
+    ).toBeInTheDocument();
   });
 
-  it('supports option click staging and close button behavior', () => {
+  it('does not submit Enter while an IME composition is in progress', () => {
     renderTerminal();
+    const input = screen.getByLabelText('Terminal command input');
+    const transcript = screen.getByRole('region', {
+      name: 'Terminal transcript',
+    });
+    const previousOutput = transcript.textContent;
+    fireEvent.change(input, { target: { value: 'about' } });
+    const event = createEvent.keyDown(input, {
+      key: 'Enter',
+      isComposing: true,
+      keyCode: 229,
+      cancelable: true,
+    });
+    fireEvent(input, event);
+    expect(event.defaultPrevented).toBe(true);
+    expect(input).toHaveValue('about');
+    expect(transcript.textContent).toBe(previousOutput);
+  });
 
-    const optionButton = screen.getByRole('button', { name: /2\.Projects/i });
-    fireEvent.click(optionButton);
+  it('recalls command history and restores an unfinished draft', () => {
+    renderTerminal();
+    const input = screen.getByLabelText('Terminal command input');
+    runCommand('about');
+    runCommand('projects');
+    fireEvent.change(input, { target: { value: 'project 4' } });
 
-    const input = screen.getByLabelText(/terminal command input/i);
-    expect(input).toHaveValue('2');
-    expect(optionButton).toHaveAttribute('aria-pressed', 'true');
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('projects');
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('about');
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    expect(input).toHaveValue('about');
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('projects');
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('project 4');
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    expect(input).toHaveValue('project 4');
+  });
 
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: `Exit CLI and switch to ${defaultTheme} theme`,
-      })
+  it('completes commands without intercepting tab navigation to output links', async () => {
+    const user = userEvent.setup();
+    renderTerminal();
+    const input = screen.getByLabelText('Terminal command input');
+    fireEvent.change(input, { target: { value: 'res' } });
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(input).toHaveValue('resume ');
+
+    runCommand('resume');
+    const resume = screen.getByRole('link', { name: 'Download resume as PDF' });
+    expect(resume).toHaveAttribute(
+      'href',
+      '/resume/Justin-Paoletta_Software-Engineer.pdf'
     );
-    expect(setThemeMock).toHaveBeenCalledWith(defaultTheme);
+    expect(resume).toHaveAttribute('download');
+    input.focus();
+    await user.tab({ shift: true });
+    expect(resume).toHaveFocus();
+    await user.tab();
+    expect(input).toHaveFocus();
+  });
+
+  it('cancels draft input without hijacking copy and clears output with Ctrl+L', () => {
+    renderTerminal();
+    runCommand('about');
+    const input = screen.getByLabelText(
+      'Terminal command input'
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'project 1' } });
+    input.focus();
+    input.setSelectionRange(0, input.value.length);
+    const copy = createEvent.keyDown(input, {
+      key: 'c',
+      ctrlKey: true,
+      cancelable: true,
+    });
+    fireEvent(input, copy);
+    expect(copy.defaultPrevented).toBe(false);
+    expect(input).toHaveValue('project 1');
+
+    input.setSelectionRange(input.value.length, input.value.length);
+    const cancel = createEvent.keyDown(input, {
+      key: 'c',
+      ctrlKey: true,
+      cancelable: true,
+    });
+    fireEvent(input, cancel);
+    expect(cancel.defaultPrevented).toBe(true);
+    expect(input).toHaveValue('');
+    expect(terminalTranscript().getByText('[ABOUT]')).toBeInTheDocument();
+
+    fireEvent.keyDown(input, { key: 'l', ctrlKey: true });
+    expect(
+      screen
+        .getByRole('region', { name: 'Terminal transcript' })
+        .querySelector('.cli-history')
+    ).toBeEmptyDOMElement();
+    expect(
+      screen.getByRole('heading', { name: 'Justin Paoletta' })
+    ).toBeInTheDocument();
+  });
+
+  it('offers topic help, reports context, and retains command history after clearing output', () => {
+    renderTerminal();
+    runCommand('projects');
+    runCommand('pwd');
+    expect(
+      terminalTranscript().getByText('portfolio:/projects')
+    ).toBeInTheDocument();
+    runCommand('help projects');
+    expect(
+      terminalTranscript().getByText('[HELP: projects]')
+    ).toBeInTheDocument();
+    runCommand('ls');
+    expect(terminalTranscript().getAllByText('[PROJECTS]')).toHaveLength(2);
+    runCommand('back');
+    runCommand('pwd');
+    expect(terminalTranscript().getByText('portfolio:/')).toBeInTheDocument();
+    runCommand('clear');
+    runCommand('history');
+    expect(terminalTranscript().getByText('[HISTORY]')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(/^1\s+projects$/)
+    ).toBeInTheDocument();
+    expect(terminalTranscript().getByText(/^8\s+history$/)).toBeInTheDocument();
+  });
+
+  it('validates theme and color mode names before invoking setters', () => {
+    renderTerminal();
+    for (const value of ['minimal', 'engineer', 'cosmic', 'cli']) {
+      runCommand(`theme ${value}`);
+      expect(setThemeMock).toHaveBeenLastCalledWith(value);
+    }
+    for (const value of ['light', 'dark', 'system']) {
+      runCommand(`mode ${value}`);
+      expect(setColorModeMock).toHaveBeenLastCalledWith(value);
+    }
+    setThemeMock.mockClear();
+    setColorModeMock.mockClear();
+    for (const command of [
+      'theme missing',
+      'theme constructor',
+      'theme __proto__',
+      'theme cosmic extra',
+      'mode sepia',
+      'mode light extra',
+    ]) {
+      runCommand(command);
+    }
+    expect(setThemeMock).not.toHaveBeenCalled();
+    expect(setColorModeMock).not.toHaveBeenCalled();
+    expect(screen.getByRole('status')).not.toBeEmptyDOMElement();
+  });
+
+  it('bounds transcript and history while retaining the newest commands', () => {
+    renderTerminal();
+    const input = screen.getByLabelText('Terminal command input');
+    for (let index = 0; index < 105; index += 1) {
+      runCommand(`unknown-command-${index}`);
+    }
+    const transcript = screen.getByRole('region', {
+      name: 'Terminal transcript',
+    });
+    expect(
+      transcript.querySelectorAll('.cli-history .cli-line').length
+    ).toBeGreaterThan(0);
+    expect(
+      transcript.querySelectorAll('.cli-history .cli-line').length
+    ).toBeLessThanOrEqual(300);
+    expect(transcript).not.toHaveTextContent('unknown-command-0');
+    expect(transcript).toHaveTextContent('unknown-command-104');
+    for (let index = 0; index < 110; index += 1) {
+      fireEvent.keyDown(input, { key: 'ArrowUp' });
+    }
+    expect(input).toHaveValue('unknown-command-5');
   });
 
   it('covers remaining aliases, numeric menu branches, and unknown numeric fallback', () => {
     renderTerminal();
 
     runCommand('3');
-    expect(screen.getByText('[SKILLS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[SKILLS]')).toBeInTheDocument();
 
     runCommand('menu');
     runCommand('4');
-    expect(screen.getByText('[EXPERIENCE & EDUCATION]')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('[EXPERIENCE & EDUCATION]')
+    ).toBeInTheDocument();
 
     runCommand('menu');
     runCommand('6');
-    expect(screen.getByText('[CONTACT]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[CONTACT]')).toBeInTheDocument();
 
     runCommand('menu');
     runCommand('7');
-    expect(screen.getByText('[PET DOGS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[PET DOGS]')).toBeInTheDocument();
 
     runCommand('menu');
     runCommand('8');
-    expect(screen.getByText('[RESUME]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[RESUME]')).toBeInTheDocument();
 
     runCommand('menu');
     runCommand('11');
-    expect(screen.getByText('Unknown menu selection: 11')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Unknown menu selection: 11')
+    ).toBeInTheDocument();
 
     runCommand('0');
     expect(
-      screen.queryByText('Unknown menu selection: 11')
+      terminalTranscript().queryByText('Unknown menu selection: 11')
     ).not.toBeInTheDocument();
 
     runCommand('h');
-    expect(screen.getByText('[HELP]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[HELP]')).toBeInTheDocument();
 
     runCommand('about');
-    expect(screen.getByText('[ABOUT]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[ABOUT]')).toBeInTheDocument();
 
     runCommand('projects');
-    expect(screen.getByText('[PROJECTS]')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[PROJECTS]')).toBeInTheDocument();
 
     runCommand('doggos');
-    expect(screen.getAllByText('[PET DOGS]').length).toBeGreaterThan(0);
+    expect(
+      terminalTranscript().getAllByText('[PET DOGS]').length
+    ).toBeGreaterThan(0);
 
     runCommand('pets');
-    expect(screen.getAllByText('[PET DOGS]').length).toBeGreaterThan(0);
+    expect(
+      terminalTranscript().getAllByText('[PET DOGS]').length
+    ).toBeGreaterThan(0);
 
     runCommand('cv');
-    expect(screen.getAllByText('[RESUME]').length).toBeGreaterThan(0);
+    expect(
+      terminalTranscript().getAllByText('[RESUME]').length
+    ).toBeGreaterThan(0);
 
     runCommand('cls');
-    expect(screen.queryByText('[RESUME]')).not.toBeInTheDocument();
+    expect(
+      terminalTranscript().queryByText('[RESUME]')
+    ).not.toBeInTheDocument();
 
     runCommand('quit');
     expect(setThemeMock).toHaveBeenCalledWith(defaultTheme);
   });
 
-  it('routes numeric input by active context and supports prev navigation in detail views', () => {
-    breakpoint = 'xs';
+  it('routes numeric input by active context and supports back navigation in detail views', () => {
     renderTerminal();
 
     runCommand('projects');
     runCommand('1');
-    expect(screen.getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
+    expect(terminalTranscript().getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
     expect(
-      screen.getByText(
+      terminalTranscript().getByText(
         'Stack: Angular, TypeScript, NestJS, Prisma, MySQL/MariaDB'
       )
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
-    expect(screen.getAllByText('[PROJECTS]').length).toBeGreaterThan(0);
-    fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
+    runCommand('back');
     expect(
-      screen.getAllByText(/Use panel options or type a number\/command./i)
-        .length
+      terminalTranscript().getAllByText('[PROJECTS]').length
     ).toBeGreaterThan(0);
+    runCommand('back');
+    runCommand('pwd');
+    expect(terminalTranscript().getByText('portfolio:/')).toBeInTheDocument();
 
     runCommand('skills');
     runCommand('1');
     expect(
-      screen.getByText('[SKILL CATEGORY 1] Frontend systems')
+      terminalTranscript().getByText('[SKILL CATEGORY 1] Frontend systems')
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
-    expect(screen.getAllByText('[SKILLS]').length).toBeGreaterThan(0);
+    runCommand('back');
+    expect(
+      terminalTranscript().getAllByText('[SKILLS]').length
+    ).toBeGreaterThan(0);
 
     runCommand('experience');
     runCommand('1');
     expect(
-      screen.getByText('[TIMELINE 1] Software Engineer (UI Engineer)')
+      terminalTranscript().getByText(
+        '[TIMELINE 1] Software Engineer (UI Engineer)'
+      )
     ).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
+    runCommand('back');
     expect(
-      screen.getAllByText('[EXPERIENCE & EDUCATION]').length
+      terminalTranscript().getAllByText('[EXPERIENCE & EDUCATION]').length
     ).toBeGreaterThan(0);
 
     runCommand('dogs');
     runCommand('2');
-    expect(screen.getByText('[DOG 2] Rosie')).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
-    expect(screen.getAllByText('[PET DOGS]').length).toBeGreaterThan(0);
+    expect(terminalTranscript().getByText('[DOG 2] Rosie')).toBeInTheDocument();
+    runCommand('back');
+    expect(
+      terminalTranscript().getAllByText('[PET DOGS]').length
+    ).toBeGreaterThan(0);
   });
 
   it.each([
@@ -490,18 +723,19 @@ describe('CliTerminal', () => {
       renderTerminal();
       runCommand('projects');
       expect(
-        screen.getByText(`${selection}. ${title} (${status})`)
+        terminalTranscript().getByText(`${selection}. ${title} (${status})`)
       ).toHaveAttribute('href', sourceUrl);
       runCommand(`project ${selection}`);
-      expect(screen.getByText(description)).toBeInTheDocument();
+      expect(terminalTranscript().getByText(description)).toBeInTheDocument();
       expect(
-        screen.getByText(`Type: Featured | Status: ${status}`)
+        terminalTranscript().getByText(`Type: Featured | Status: ${status}`)
       ).toBeInTheDocument();
-      expect(screen.getByText(`Stack: ${stack}`)).toBeInTheDocument();
-      expect(screen.getByText(`GitHub: ${sourceUrl}`)).toHaveAttribute(
-        'href',
-        sourceUrl
-      );
+      expect(
+        terminalTranscript().getByText(`Stack: ${stack}`)
+      ).toBeInTheDocument();
+      expect(
+        terminalTranscript().getByText(`GitHub: ${sourceUrl}`)
+      ).toHaveAttribute('href', sourceUrl);
     }
   );
 
@@ -524,13 +758,19 @@ describe('CliTerminal', () => {
       error: null,
     };
     runCommand('github');
-    expect(screen.getByText('justin (@justin)')).toBeInTheDocument();
     expect(
-      screen.queryByText(/Contributions \(last year\):/i)
+      terminalTranscript().getByText('justin (@justin)')
+    ).toBeInTheDocument();
+    expect(
+      terminalTranscript().queryByText(/Contributions \(last year\):/i)
     ).not.toBeInTheDocument();
-    expect(screen.queryByText('Top repositories:')).not.toBeInTheDocument();
     expect(
-      screen.getByText(/Contribution history is temporarily unavailable/)
+      terminalTranscript().queryByText('Top repositories:')
+    ).not.toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText(
+        /Contribution history is temporarily unavailable/
+      )
     ).toBeInTheDocument();
 
     githubState = {
@@ -547,14 +787,18 @@ describe('CliTerminal', () => {
       contributions: { totalContributions: 123, weeks: [] },
     };
     runCommand('github');
-    expect(screen.getByText('- pinned-a (77 stars)')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('- pinned-a (77 stars)')
+    ).toBeInTheDocument();
 
     runCommand('project 5');
     expect(
-      screen.getByText('[PROJECT 5] SideQuest: Pittsburgh')
+      terminalTranscript().getByText('[PROJECT 5] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
-    expect(screen.getByText('Type: Other')).toBeInTheDocument();
-    expect(screen.getByText('Repository: Private')).toBeInTheDocument();
+    expect(terminalTranscript().getByText('Type: Other')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Repository: Private')
+    ).toBeInTheDocument();
   });
 
   it('handles whitespace input and missing dog stat fallback state', () => {
@@ -565,16 +809,16 @@ describe('CliTerminal', () => {
       document.querySelectorAll('.cli-line--input').length;
     runCommand('   ');
     expect(document.querySelectorAll('.cli-line--input').length).toBe(
-      priorInputLines + 1
+      priorInputLines
     );
-    expect(screen.getByText('[ABOUT]')).toBeInTheDocument();
+    expect(terminalTranscript().queryByText('[ABOUT]')).not.toBeInTheDocument();
 
     runCommand('dogs');
     expect(
-      screen.getByText('2. Rosie | Treats: 0 | Scritches: 0')
+      terminalTranscript().getByText('2. Rosie | Treats: 0 | Scritches: 0')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('3. Tito | Treats: 0 | Scritches: 0')
+      terminalTranscript().getByText('3. Tito | Treats: 0 | Scritches: 0')
     ).toBeInTheDocument();
   });
 });

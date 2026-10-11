@@ -1,4 +1,10 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+} from 'react';
 import { env } from '@/config/env';
 import { defaultTheme } from '@/config/themes';
 import {
@@ -11,7 +17,6 @@ import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { useTheme } from '@/hooks/useTheme';
-import { isVisualTestMode } from '@/utils/visualTest';
 import '@/components/sections/Hero/CliTerminal.css';
 
 type LineKind = 'system' | 'output' | 'input' | 'hint' | 'error' | 'success';
@@ -58,27 +63,140 @@ interface DogData {
   stats: DogStats;
 }
 
-interface SelectionOption {
-  value: number;
-  label: string;
-}
-
 type InitialLine = Omit<TerminalLine, 'id'>;
 
-const MAIN_MENU = [
-  { number: 1, label: 'About Me', command: 'about' },
-  { number: 2, label: 'Projects', command: 'projects' },
-  { number: 3, label: 'Skills', command: 'skills' },
-  { number: 4, label: 'Experience', command: 'experience' },
-  { number: 5, label: 'GitHub Stats', command: 'github' },
-  { number: 6, label: 'Contact', command: 'contact' },
-  { number: 7, label: 'Pet Dawgs', command: 'dogs' },
-  { number: 8, label: 'Resume', command: 'resume' },
-  { number: 9, label: 'Help', command: 'help' },
-  { number: 0, label: 'Clear', command: 'clear' },
-] as const;
+const MAX_SCROLLBACK_LINES = 300;
+const MAX_COMMAND_HISTORY = 100;
+const COMMANDS = [
+  'about',
+  'projects',
+  'project',
+  'skills',
+  'skill',
+  'experience',
+  'exp',
+  'github',
+  'contact',
+  'dogs',
+  'dog',
+  'resume',
+  'help',
+  'history',
+  'back',
+  'menu',
+  'pwd',
+  'ls',
+  'clear',
+  'theme',
+  'mode',
+  'exit',
+];
+const THEME_NAMES = ['minimal', 'engineer', 'cosmic', 'cli'];
+const MODE_NAMES = ['light', 'dark', 'system'];
+const NO_ARGUMENT_COMMANDS = new Set([
+  'about',
+  'projects',
+  'skills',
+  'experience',
+  'education',
+  'github',
+  'gh',
+  'contact',
+  'dogs',
+  'doggos',
+  'pets',
+  'resume',
+  'cv',
+  'history',
+  'back',
+  'menu',
+  'pwd',
+  'ls',
+  'clear',
+  'cls',
+  'exit',
+  'quit',
+]);
+const MAIN_MENU_LINES: InitialLine[] = [
+  { kind: 'output', text: '[COMMANDS]' },
+  { kind: 'output', text: 'about       Background and engineering approach' },
+  {
+    kind: 'output',
+    text: 'projects    Project details, source, and release limits',
+  },
+  { kind: 'output', text: 'experience  Work history and education' },
+  { kind: 'output', text: 'skills      Technologies with examples' },
+  { kind: 'output', text: 'github      GitHub profile and available activity' },
+  { kind: 'output', text: 'contact     Email and professional profiles' },
+  { kind: 'output', text: 'resume      Download the PDF resume' },
+  { kind: 'output', text: 'dogs        Meet Nala, Rosie, and Tito' },
+  {
+    kind: 'hint',
+    text: 'Try project 1 or exp 1. Type help for all commands; exit returns to the visual portfolio.',
+  },
+];
 
-const BOOT_MESSAGE = 'JP-CLI Initialized';
+const HELP_TOPICS: Record<string, string[]> = {
+  projects: [
+    'projects — list the projects.',
+    'project <number> — read the description, stack, source links, and release limits.',
+    'Example: project 1. Numbers also work after projects. Type back to return to the list.',
+  ],
+  skills: [
+    'skills — list skill categories.',
+    'skill <number> — see technologies and concrete examples. Example: skill 1.',
+  ],
+  experience: [
+    'experience — list work history and education.',
+    'exp <number> — read a timeline entry. Example: exp 1.',
+  ],
+  dogs: [
+    'dogs — list the dogs and current counts.',
+    'dog <number> — read a profile.',
+    'dog <number> treat | dog <number> scritch — give a treat or scritches.',
+    'Example: dog 1 treat. Counts are shared with the portfolio pet section.',
+  ],
+  keyboard: [
+    'Enter runs your command. Empty Enter does nothing.',
+    '↑ / ↓ recall previous commands and restore your unfinished draft.',
+    '← / → edit text normally. Ctrl+Space completes a command or lists matches.',
+    'Tab / Shift+Tab move focus between the transcript, links, and prompt.',
+    'Ctrl+L clears the transcript. Ctrl+C cancels the draft; selected text can still be copied.',
+  ],
+  theme: [
+    'theme minimal | engineer | cosmic | cli — change the portfolio theme.',
+    'Example: theme minimal. Your preference is saved on this browser.',
+  ],
+  mode: [
+    'mode light | dark | system — change the color preference.',
+    'Example: mode light. System follows your device preference.',
+  ],
+  navigation: [
+    'back — return from a detail to its list, or from a list to the command menu.',
+    'menu — show the main commands. ls lists the current portfolio section.',
+    'pwd — show the current portfolio context. This is a portfolio guide, not an operating-system shell.',
+    'history — show up to 100 commands from this session. clear — clear output, keeping command history.',
+    'exit — return to the minimal visual theme.',
+  ],
+  aliases: [
+    'Main-menu numbers: 1 about, 2 projects, 3 skills, 4 experience, 5 github, 6 contact, 7 dogs, 8 resume, 9 help, 0 clear.',
+    'Inside projects, skills, experience, or dogs, a number opens that entry. 9 help and 0 clear remain available.',
+    'Other aliases: h, gh, cv, education, pets, doggos, cls, quit.',
+  ],
+  about: [
+    'about — read my background and approach to modernizing frontend systems.',
+  ],
+  github: [
+    'github — show available profile data. Loading, unavailable, and partial data are labeled; run github again to refresh the output.',
+  ],
+  contact: [
+    'contact — get email, LinkedIn, and GitHub links.',
+    'Type exit to use the visual portfolio contact form.',
+  ],
+  resume: [
+    'resume — show the PDF download link. Follow the link with your pointer or keyboard.',
+  ],
+};
 
 const ABOUT_SUMMARY = [
   'I work on the practical challenges of modernizing frontend systems: keeping existing products running while making them easier to build on.',
@@ -223,20 +341,6 @@ const INITIAL_DOGS_DATA: DogData[] = DOGS.map((dog) => ({
 
 const RESUME_PATH = '/resume/Justin-Paoletta_Software-Engineer.pdf';
 
-const MAIN_MENU_LINES: InitialLine[] = [
-  { kind: 'hint', text: 'Use panel options or type a number/command.' },
-];
-
-/** Lines shown after boot completes and when user runs clear */
-function createMainMenuLines(lineIdStart: number): TerminalLine[] {
-  return MAIN_MENU_LINES.map((entry, index) => ({
-    ...entry,
-    id: lineIdStart + index + 1,
-  }));
-}
-
-const INITIAL_MENU_LINES = createMainMenuLines(0);
-
 function chunk(items: string[], size: number): string[] {
   const groups: string[] = [];
   for (let i = 0; i < items.length; i += size) {
@@ -253,16 +357,22 @@ function getCliExperienceOptionLabel(item: CliExperience): string {
 }
 
 function CliTerminal(): React.ReactElement {
-  const { setTheme } = useTheme();
+  const { setTheme, setColorMode, colorMode } = useTheme();
   const breakpoint = useBreakpoint();
   const [context, setContext] = useState<Context>('main');
   const [inputValue, setInputValue] = useState('');
-  const [selectedOptionIndex, setSelectedOptionIndex] = useState(0);
   const [isDetailView, setIsDetailView] = useState(false);
-  const [lines, setLines] = useState<TerminalLine[]>(INITIAL_MENU_LINES);
-  const lineIdRef = useRef(INITIAL_MENU_LINES.length);
+  const [lines, setLines] = useState<TerminalLine[]>([]);
+  const [commandHistory, setCommandHistory] = useState<string[]>([]);
+  const [historyIndex, setHistoryIndex] = useState<number | null>(null);
+  const [announcement, setAnnouncement] = useState({ id: 0, text: '' });
+  const draftRef = useRef('');
+  const lineIdRef = useRef(0);
+  const scrollRequestedRef = useRef(false);
+  const initialDesktopRef = useRef(breakpoint === 'lg' || breakpoint === 'xl');
   const historyRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const isComposingRef = useRef(false);
 
   const [dogStats, updateDogStats] = usePetDogs(INITIAL_DOGS_DATA);
   const {
@@ -300,103 +410,45 @@ function CliTerminal(): React.ReactElement {
     }));
   }, [pinnedRepos, repos]);
 
-  const selectionOptions = useMemo<SelectionOption[]>(() => {
-    if (context === 'projects') {
-      return [
-        ...PROJECTS.map((project, index) => ({
-          value: index + 1,
-          label: project.title,
-        })),
-        { value: 0, label: 'Clear' },
-      ];
-    }
+  const announce = (text: string): void => {
+    setAnnouncement((previous) => ({ id: previous.id + 1, text }));
+  };
 
-    if (context === 'skills') {
-      return [
-        ...SKILL_CATEGORIES.map((category, index) => ({
-          value: index + 1,
-          label: category.name,
-        })),
-        { value: 5, label: 'Supporting practices' },
-        { value: 0, label: 'Clear' },
-      ];
-    }
-
-    if (context === 'experience') {
-      return [
-        ...EXPERIENCES.map((item, index) => ({
-          value: index + 1,
-          label: getCliExperienceOptionLabel(item),
-        })),
-        { value: 0, label: 'Clear' },
-      ];
-    }
-
-    if (context === 'dogs') {
-      return [
-        ...dogs.map((dog, index) => ({
-          value: index + 1,
-          label: dog.name,
-        })),
-        { value: 0, label: 'Clear' },
-      ];
-    }
-
-    return MAIN_MENU.map((item) => ({
-      value: item.number,
-      label: item.label,
-    }));
-  }, [context, dogs]);
-
-  const currentSelection = selectionOptions[selectedOptionIndex] ?? null;
-
-  const stampLines = (entries: Omit<TerminalLine, 'id'>[]): TerminalLine[] =>
-    entries.map((entry) => ({
+  const appendLines = (entries: InitialLine[]): void => {
+    const stamped = entries.map((entry) => ({
       ...entry,
       id: ++lineIdRef.current,
     }));
-
-  const appendLines = (entries: Omit<TerminalLine, 'id'>[]): void => {
-    setLines((prev) => [...prev, ...stampLines(entries)]);
-  };
-
-  const moveSelection = (direction: -1 | 1): void => {
-    setSelectedOptionIndex((previous) => {
-      if (selectionOptions.length === 0) {
-        return 0;
-      }
-
-      return (
-        (previous + direction + selectionOptions.length) %
-        selectionOptions.length
+    setLines((previous) =>
+      [...previous, ...stamped].slice(-MAX_SCROLLBACK_LINES)
+    );
+    const outputCount = entries.filter(
+      (entry) => entry.kind !== 'input'
+    ).length;
+    if (outputCount)
+      announce(
+        `Command output ready. ${outputCount} ${outputCount === 1 ? 'line' : 'lines'} added to the transcript.`
       );
-    });
-  };
-
-  const activateSelectedOption = (): void => {
-    if (!currentSelection) {
-      return;
-    }
-
-    executeCommand(String(currentSelection.value));
   };
 
   const printMainMenu = (): void => {
     setContext('main');
     setIsDetailView(false);
-    setSelectedOptionIndex(0);
     appendLines(MAIN_MENU_LINES);
   };
 
   const resetTerminal = (): void => {
     setContext('main');
     setIsDetailView(false);
-    setSelectedOptionIndex(0);
-    lineIdRef.current = INITIAL_MENU_LINES.length;
-    setLines(INITIAL_MENU_LINES);
+    setLines([]);
+    announce(
+      'Transcript cleared. Command history is still available with the up arrow.'
+    );
   };
 
   const showAbout = (): void => {
+    setContext('main');
+    setIsDetailView(false);
     appendLines([
       { kind: 'output', text: '[ABOUT]' },
       ...ABOUT_SUMMARY.map((item) => ({
@@ -415,7 +467,6 @@ function CliTerminal(): React.ReactElement {
   const showProjectsMenu = (): void => {
     setContext('projects');
     setIsDetailView(false);
-    setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[PROJECTS]' },
       ...PROJECTS.map((project, index) => {
@@ -430,7 +481,7 @@ function CliTerminal(): React.ReactElement {
       }),
       {
         kind: 'hint',
-        text: 'Choose a project number or type "project <number>" for details.',
+        text: 'Read details with project <number>, for example project 1. Type back for the command menu.',
       },
     ]);
   };
@@ -447,7 +498,6 @@ function CliTerminal(): React.ReactElement {
 
     setContext('projects');
     setIsDetailView(true);
-    setSelectedOptionIndex(selection - 1);
     const repoLine = project.private
       ? { kind: 'output' as const, text: 'Repository: Private' }
       : project.githubUrl
@@ -475,14 +525,16 @@ function CliTerminal(): React.ReactElement {
       ...(packageLine ? [packageLine] : []),
       { kind: 'output', text: project.description },
       { kind: 'output', text: `Stack: ${project.techStack.join(', ')}` },
-      { kind: 'hint', text: 'Try another project number, or type menu.' },
+      {
+        kind: 'hint',
+        text: 'Try project <number> for another project, back for the list, or help projects.',
+      },
     ]);
   };
 
   const showSkillsMenu = (): void => {
     setContext('skills');
     setIsDetailView(false);
-    setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[SKILLS]' },
       ...SKILL_CATEGORIES.map((category, index) => ({
@@ -495,7 +547,7 @@ function CliTerminal(): React.ReactElement {
       },
       {
         kind: 'hint',
-        text: 'Choose a category number or type "skill <number>".',
+        text: 'Try skill 1 for an example. Type back for the command menu.',
       },
     ]);
   };
@@ -504,7 +556,6 @@ function CliTerminal(): React.ReactElement {
     if (selection === 5) {
       setContext('skills');
       setIsDetailView(true);
-      setSelectedOptionIndex(4);
       appendLines([
         {
           kind: 'output',
@@ -518,7 +569,10 @@ function CliTerminal(): React.ReactElement {
           kind: 'output',
           text: 'Examples: QA documentation and developer review at accesso; automated accessibility checks in the pre-release design system. Run exp 1 or project 2 for details.',
         },
-        { kind: 'hint', text: 'Choose another category or type menu.' },
+        {
+          kind: 'hint',
+          text: 'Try skill <number> for another category, or back for the list.',
+        },
       ]);
       return;
     }
@@ -534,7 +588,6 @@ function CliTerminal(): React.ReactElement {
 
     setContext('skills');
     setIsDetailView(true);
-    setSelectedOptionIndex(selection - 1);
     appendLines([
       {
         kind: 'output',
@@ -545,14 +598,16 @@ function CliTerminal(): React.ReactElement {
         text: group,
       })),
       { kind: 'output', text: category.example },
-      { kind: 'hint', text: 'Choose another category or type menu.' },
+      {
+        kind: 'hint',
+        text: 'Try skill <number> for another category, or back for the list.',
+      },
     ]);
   };
 
   const showExperienceMenu = (): void => {
     setContext('experience');
     setIsDetailView(false);
-    setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[EXPERIENCE & EDUCATION]' },
       ...EXPERIENCES.map((item, index) => ({
@@ -561,7 +616,7 @@ function CliTerminal(): React.ReactElement {
       })),
       {
         kind: 'hint',
-        text: 'Choose a timeline number or type "exp <number>".',
+        text: 'Read a role with exp <number>, for example exp 1. Type back for the command menu.',
       },
     ]);
   };
@@ -578,7 +633,6 @@ function CliTerminal(): React.ReactElement {
 
     setContext('experience');
     setIsDetailView(true);
-    setSelectedOptionIndex(selection - 1);
     appendLines([
       { kind: 'output', text: `[TIMELINE ${selection}] ${item.title}` },
       { kind: 'output', text: `${item.organization} | ${item.location}` },
@@ -590,11 +644,16 @@ function CliTerminal(): React.ReactElement {
         kind: 'output' as const,
         text: `- ${highlight}`,
       })),
-      { kind: 'hint', text: 'Choose another timeline entry or type menu.' },
+      {
+        kind: 'hint',
+        text: 'Try exp <number> for another entry, or back for the timeline.',
+      },
     ]);
   };
 
   const showGitHub = (): void => {
+    setContext('main');
+    setIsDetailView(false);
     if (githubError) {
       appendLines([
         { kind: 'output', text: '[GITHUB]' },
@@ -612,7 +671,10 @@ function CliTerminal(): React.ReactElement {
       appendLines([
         { kind: 'output', text: '[GITHUB]' },
         { kind: 'system', text: 'Fetching live GitHub stats...' },
-        { kind: 'hint', text: 'Run command 5 again in a few seconds.' },
+        {
+          kind: 'hint',
+          text: 'Run github again in a few seconds, or type contact for profile links.',
+        },
       ]);
       return;
     }
@@ -669,6 +731,8 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showContact = (): void => {
+    setContext('main');
+    setIsDetailView(false);
     appendLines([
       { kind: 'output', text: '[CONTACT]' },
       {
@@ -692,7 +756,7 @@ function CliTerminal(): React.ReactElement {
       },
       {
         kind: 'hint',
-        text: 'Switch to a non-CLI theme if you want to use the web contact form.',
+        text: 'Type exit to use the visual portfolio contact form, or resume for the PDF.',
       },
     ]);
   };
@@ -700,7 +764,6 @@ function CliTerminal(): React.ReactElement {
   const showDogsMenu = (): void => {
     setContext('dogs');
     setIsDetailView(false);
-    setSelectedOptionIndex(0);
     appendLines([
       { kind: 'output', text: '[PET DOGS]' },
       ...dogs.map((dog, index) => ({
@@ -709,7 +772,7 @@ function CliTerminal(): React.ReactElement {
       })),
       {
         kind: 'hint',
-        text: 'Choose a dog number, or run "dog <number> treat|scritch".',
+        text: 'Try dog 1, dog 1 treat, or dog 1 scritch. Type help dogs for more.',
       },
     ]);
   };
@@ -726,7 +789,6 @@ function CliTerminal(): React.ReactElement {
 
     setContext('dogs');
     setIsDetailView(true);
-    setSelectedOptionIndex(selection - 1);
     appendLines([
       {
         kind: 'output',
@@ -751,6 +813,17 @@ function CliTerminal(): React.ReactElement {
       return;
     }
 
+    if (!['treat', 'treats', 'scritch', 'scritches'].includes(action)) {
+      appendLines([
+        {
+          kind: 'error',
+          text: 'Unknown dog action. Use "treat" or "scritch".',
+        },
+      ]);
+      return;
+    }
+
+    setContext('dogs');
     setIsDetailView(true);
 
     if (action === 'treat' || action === 'treats') {
@@ -774,16 +847,11 @@ function CliTerminal(): React.ReactElement {
       ]);
       return;
     }
-
-    appendLines([
-      {
-        kind: 'error',
-        text: 'Unknown dog action. Use "treat" or "scritch".',
-      },
-    ]);
   };
 
   const showResume = (): void => {
+    setContext('main');
+    setIsDetailView(false);
     appendLines([
       { kind: 'output', text: '[RESUME]' },
       {
@@ -794,29 +862,80 @@ function CliTerminal(): React.ReactElement {
       },
       {
         kind: 'hint',
-        text: 'In the standard web sections, this is available in Experience.',
+        text: 'Follow the download link above. Type contact to get in touch, or exit for the visual portfolio.',
       },
     ]);
   };
 
-  const showHelp = (): void => {
+  const showHelp = (topic?: string): void => {
+    const aliases: Record<string, string> = {
+      project: 'projects',
+      skill: 'skills',
+      exp: 'experience',
+      dog: 'dogs',
+      history: 'navigation',
+      back: 'navigation',
+      pwd: 'navigation',
+      ls: 'navigation',
+      clear: 'navigation',
+      menu: 'navigation',
+      exit: 'navigation',
+    };
+    const resolvedTopic = topic
+      ? Object.prototype.hasOwnProperty.call(aliases, topic)
+        ? aliases[topic]
+        : topic
+      : undefined;
+    if (resolvedTopic) {
+      const instructions = Object.prototype.hasOwnProperty.call(
+        HELP_TOPICS,
+        resolvedTopic
+      )
+        ? HELP_TOPICS[resolvedTopic]
+        : undefined;
+      appendLines(
+        instructions
+          ? [
+              { kind: 'output', text: `[HELP: ${resolvedTopic}]` },
+              ...instructions.map(
+                (text): InitialLine => ({ kind: 'output', text })
+              ),
+              { kind: 'hint', text: 'Type help for all commands.' },
+            ]
+          : [
+              { kind: 'error', text: `No help topic: ${topic}` },
+              {
+                kind: 'hint',
+                text: 'Try help projects, help keyboard, or help navigation.',
+              },
+            ]
+      );
+      return;
+    }
     appendLines([
       { kind: 'output', text: '[HELP]' },
-      { kind: 'output', text: 'Main: 1-8, 9 (help), 0 (clear)' },
+      ...MAIN_MENU_LINES.slice(1, -1),
       {
         kind: 'output',
-        text: 'Aliases: about, projects, skills, experience, github, contact, dogs, resume, menu, clear, exit',
+        text: 'Details: project <n>, skill <n>, exp <n>, dog <n> [treat|scritch]',
       },
       {
         kind: 'output',
-        text: 'Drill-in commands: project <n>, skill <n>, exp <n>',
+        text: 'Navigate: back, menu, pwd, ls. Session: history, clear.',
       },
-      { kind: 'output', text: 'Dog commands: dog <n> treat | dog <n> scritch' },
       {
         kind: 'output',
-        text: `Terminal commands: exit (switches to ${defaultTheme} theme)`,
+        text: 'Appearance: theme minimal|engineer|cosmic|cli; mode light|dark|system.',
       },
-      { kind: 'hint', text: 'Example: project 1' },
+      { kind: 'output', text: 'exit returns to the minimal visual portfolio.' },
+      {
+        kind: 'hint',
+        text: 'Try help keyboard for shortcuts or help aliases for number shortcuts.',
+      },
+      {
+        kind: 'hint',
+        text: 'This is a portfolio guide, not an operating-system shell. Commands do not access your files or run programs.',
+      },
     ]);
   };
 
@@ -876,668 +995,536 @@ function CliTerminal(): React.ReactElement {
       default:
         appendLines([
           { kind: 'error', text: `Unknown menu selection: ${selection}` },
-          { kind: 'hint', text: 'Use a menu number from 0 to 9.' },
+          { kind: 'hint', text: 'Type help for available commands.' },
         ]);
     }
   };
 
-  const executeCommand = (rawInput: string): void => {
-    const raw = rawInput.trim();
-    if (!raw) {
-      return;
-    }
+  const showCurrentList = (): void => {
+    if (context === 'projects') showProjectsMenu();
+    else if (context === 'skills') showSkillsMenu();
+    else if (context === 'experience') showExperienceMenu();
+    else if (context === 'dogs') showDogsMenu();
+    else printMainMenu();
+  };
 
-    const normalized = raw.toLowerCase();
-    const tokens = normalized.split(/\s+/);
+  const goBack = (): void => {
+    if (isDetailView && context !== 'main') showCurrentList();
+    else printMainMenu();
+  };
+
+  const clearQueryOverride = (key: 'theme' | 'mode'): void => {
+    const url = new URL(window.location.href);
+    if (!url.searchParams.has(key)) return;
+    url.searchParams.delete(key);
+    window.history.replaceState(window.history.state, '', url);
+  };
+
+  const executeCommand = (raw: string, sessionHistory: string[]): void => {
+    const tokens = raw.toLowerCase().split(/\s+/);
     const [command, arg1, arg2] = tokens;
-    const numericMatch = normalized.match(/^\d+$/);
-
-    if (command === 'clear' || command === 'cls') {
-      resetTerminal();
+    if (NO_ARGUMENT_COMMANDS.has(command) && tokens.length !== 1) {
+      appendLines([
+        { kind: 'input', text: raw },
+        { kind: 'error', text: `Usage: ${command}` },
+      ]);
       return;
     }
-
-    if (command === 'exit' || command === 'quit') {
-      setTheme(defaultTheme);
+    if ((command === 'help' || command === 'h') && tokens.length > 2) {
+      appendLines([
+        { kind: 'input', text: raw },
+        { kind: 'error', text: 'Usage: help [topic]' },
+      ]);
+      return;
+    }
+    if (command === 'clear' || command === 'cls' || raw === '0') {
+      resetTerminal();
       return;
     }
 
     appendLines([{ kind: 'input', text: raw }]);
 
-    if (numericMatch) {
-      handleNumericInput(Number.parseInt(command, 10));
+    if (/^\d+$/.test(raw)) {
+      handleNumericInput(Number(raw));
       return;
     }
-
+    if (command === 'exit' || command === 'quit') {
+      clearQueryOverride('theme');
+      setTheme(defaultTheme);
+      return;
+    }
+    if (command === 'theme') {
+      if (!arg1 || !THEME_NAMES.includes(arg1) || tokens.length !== 2) {
+        appendLines([
+          { kind: 'error', text: 'Usage: theme <minimal|engineer|cosmic|cli>' },
+        ]);
+        return;
+      }
+      clearQueryOverride('theme');
+      setTheme(arg1);
+      appendLines([{ kind: 'success', text: `Theme set to ${arg1}.` }]);
+      return;
+    }
+    if (command === 'mode') {
+      if (
+        (arg1 !== 'light' && arg1 !== 'dark' && arg1 !== 'system') ||
+        tokens.length !== 2
+      ) {
+        appendLines([
+          { kind: 'error', text: 'Usage: mode <light|dark|system>' },
+        ]);
+        return;
+      }
+      clearQueryOverride('mode');
+      setColorMode(arg1);
+      appendLines([{ kind: 'success', text: `Color mode set to ${arg1}.` }]);
+      return;
+    }
+    if (command === 'help' || command === 'h') {
+      showHelp(arg1);
+      return;
+    }
+    if (command === 'history') {
+      appendLines([
+        { kind: 'output', text: '[HISTORY]' },
+        ...sessionHistory.map(
+          (text, index): InitialLine => ({
+            kind: 'output',
+            text: `${index + 1}  ${text}`,
+          })
+        ),
+        {
+          kind: 'hint',
+          text: 'Use ↑ / ↓ to recall commands. Your draft returns after the newest entry.',
+        },
+      ]);
+      return;
+    }
+    if (command === 'back') {
+      goBack();
+      return;
+    }
     if (command === 'menu') {
       printMainMenu();
       return;
     }
-
-    if (command === 'help' || command === 'h') {
-      showHelp();
+    if (command === 'ls') {
+      showCurrentList();
       return;
     }
-
+    if (command === 'pwd') {
+      appendLines([
+        {
+          kind: 'output',
+          text: context === 'main' ? 'portfolio:/' : `portfolio:/${context}`,
+        },
+        {
+          kind: 'hint',
+          text: 'This is your portfolio context. Type ls to list it, or back to return.',
+        },
+      ]);
+      return;
+    }
     if (command === 'about') {
       showAbout();
       return;
     }
-
     if (command === 'projects') {
       showProjectsMenu();
       return;
     }
-
-    if (command === 'project') {
-      if (!arg1) {
-        showProjectsMenu();
-        return;
-      }
-      const selection = Number.parseInt(arg1, 10);
-      if (Number.isNaN(selection)) {
-        appendLines([{ kind: 'error', text: 'Usage: project <number>' }]);
-        return;
-      }
-      showProjectDetail(selection);
-      return;
-    }
-
     if (command === 'skills') {
       showSkillsMenu();
       return;
     }
-
-    if (command === 'skill') {
-      if (!arg1) {
-        showSkillsMenu();
-        return;
-      }
-      const selection = Number.parseInt(arg1, 10);
-      if (Number.isNaN(selection)) {
-        appendLines([{ kind: 'error', text: 'Usage: skill <number>' }]);
-        return;
-      }
-      showSkillDetail(selection);
-      return;
-    }
-
     if (command === 'experience' || command === 'education') {
       showExperienceMenu();
       return;
     }
-
-    if (command === 'exp') {
-      if (!arg1) {
-        showExperienceMenu();
-        return;
-      }
-      const selection = Number.parseInt(arg1, 10);
-      if (Number.isNaN(selection)) {
-        appendLines([{ kind: 'error', text: 'Usage: exp <number>' }]);
-        return;
-      }
-      showExperienceDetail(selection);
-      return;
-    }
-
     if (command === 'github' || command === 'gh') {
       showGitHub();
       return;
     }
-
     if (command === 'contact') {
       showContact();
       return;
     }
-
     if (command === 'dogs' || command === 'doggos' || command === 'pets') {
       showDogsMenu();
       return;
     }
-
-    if (command === 'dog') {
-      if (!arg1) {
-        showDogsMenu();
-        return;
-      }
-      const selection = Number.parseInt(arg1, 10);
-      if (Number.isNaN(selection)) {
-        appendLines([
-          { kind: 'error', text: 'Usage: dog <number> [treat|scritch]' },
-        ]);
-        return;
-      }
-
-      if (!arg2) {
-        showDogDetail(selection);
-        return;
-      }
-
-      handleDogAction(selection, arg2);
-      return;
-    }
-
     if (command === 'resume' || command === 'cv') {
       showResume();
       return;
     }
 
+    const detailCommands: Record<
+      string,
+      { list: () => void; detail: (selection: number) => void; usage: string }
+    > = {
+      project: {
+        list: showProjectsMenu,
+        detail: showProjectDetail,
+        usage: 'Usage: project <number>',
+      },
+      skill: {
+        list: showSkillsMenu,
+        detail: showSkillDetail,
+        usage: 'Usage: skill <number>',
+      },
+      exp: {
+        list: showExperienceMenu,
+        detail: showExperienceDetail,
+        usage: 'Usage: exp <number>',
+      },
+      dog: {
+        list: showDogsMenu,
+        detail: showDogDetail,
+        usage: 'Usage: dog <number> [treat|scritch]',
+      },
+    };
+    const detailCommand = Object.prototype.hasOwnProperty.call(
+      detailCommands,
+      command
+    )
+      ? detailCommands[command]
+      : undefined;
+    if (detailCommand) {
+      if (!arg1) {
+        detailCommand.list();
+        return;
+      }
+      if (!/^\d+$/.test(arg1) || tokens.length > (command === 'dog' ? 3 : 2)) {
+        appendLines([{ kind: 'error', text: detailCommand.usage }]);
+        return;
+      }
+      if (command === 'dog' && arg2) handleDogAction(Number(arg1), arg2);
+      else detailCommand.detail(Number(arg1));
+      return;
+    }
     appendLines([
       { kind: 'error', text: `Unknown command: ${raw}` },
-      { kind: 'hint', text: 'Type 9 for help.' },
+      { kind: 'hint', text: 'Type help for available commands.' },
     ]);
   };
 
   const submitPrompt = (): void => {
-    if (inputValue.trim().length > 0) {
-      executeCommand(inputValue);
+    if (isComposingRef.current) return;
+    const command = inputValue.trim();
+    if (!command) return;
+    const nextHistory = [...commandHistory, command].slice(
+      -MAX_COMMAND_HISTORY
+    );
+    setCommandHistory(nextHistory);
+    setHistoryIndex(null);
+    draftRef.current = '';
+    setInputValue('');
+    scrollRequestedRef.current = true;
+    executeCommand(command, nextHistory);
+  };
+
+  const recallCommand = (direction: -1 | 1): void => {
+    if (commandHistory.length === 0) return;
+    if (historyIndex === null) {
+      if (direction === 1) return;
+      draftRef.current = inputValue;
+    }
+    const nextIndex = (historyIndex ?? commandHistory.length) + direction;
+    if (nextIndex < 0) return;
+    if (nextIndex >= commandHistory.length) {
+      setHistoryIndex(null);
+      setInputValue(draftRef.current);
     } else {
-      activateSelectedOption();
+      setHistoryIndex(nextIndex);
+      setInputValue(commandHistory[nextIndex]);
     }
-    setInputValue('');
+    requestAnimationFrame(() => {
+      const input = inputRef.current;
+      if (input && document.activeElement === input)
+        input.setSelectionRange(input.value.length, input.value.length);
+    });
   };
 
-  const goToPreviousList = (): void => {
-    setInputValue('');
-
-    if (context === 'main') {
+  const completeCommand = (): void => {
+    const input = inputRef.current;
+    if (
+      !input ||
+      input.selectionStart !== input.selectionEnd ||
+      input.selectionEnd !== input.value.length
+    ) {
+      announce('Move the cursor to the end of your command to complete it.');
       return;
     }
+    const value = inputValue.toLowerCase().trimStart();
+    const parts = value.split(/\s+/);
+    let candidates: string[] = [];
+    let prefix = '';
+    if (parts.length === 1) candidates = COMMANDS;
+    else if (parts.length === 2) {
+      prefix = `${parts[0]} `;
+      if (parts[0] === 'theme') candidates = THEME_NAMES;
+      else if (parts[0] === 'mode') candidates = MODE_NAMES;
+      else if (parts[0] === 'help') candidates = Object.keys(HELP_TOPICS);
+      else {
+        const counts: Record<string, number> = {
+          project: PROJECTS.length,
+          skill: 5,
+          exp: EXPERIENCES.length,
+          dog: dogs.length,
+        };
+        const count = Object.prototype.hasOwnProperty.call(counts, parts[0])
+          ? counts[parts[0]]
+          : 0;
+        candidates = Array.from({ length: count }, (_, index) =>
+          String(index + 1)
+        );
+      }
+    } else if (parts.length === 3 && parts[0] === 'dog') {
+      prefix = `dog ${parts[1]} `;
+      candidates = ['treat', 'scritch'];
+    }
+    const matches = candidates.filter((candidate) =>
+      candidate.startsWith(parts.at(-1) ?? '')
+    );
+    if (matches.length === 1) {
+      const completed = `${prefix}${matches[0]} `;
+      setInputValue(completed);
+      setHistoryIndex(null);
+      announce(`Completed: ${completed.trim()}`);
+    } else if (matches.length > 1) {
+      scrollRequestedRef.current = true;
+      appendLines([{ kind: 'hint', text: `Matches: ${matches.join(', ')}` }]);
+    } else announce('No completion found. Type help for available commands.');
+  };
 
-    if (isDetailView) {
-      if (context === 'projects') {
-        showProjectsMenu();
-        return;
-      }
-      if (context === 'skills') {
-        showSkillsMenu();
-        return;
-      }
-      if (context === 'experience') {
-        showExperienceMenu();
-        return;
-      }
-      showDogsMenu();
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>): void => {
+    if (event.nativeEvent.isComposing || isComposingRef.current) {
+      if (event.key === 'Enter') event.preventDefault();
       return;
     }
-
-    printMainMenu();
+    if (event.ctrlKey && !event.altKey && !event.metaKey) {
+      if (event.key.toLowerCase() === 'l') {
+        event.preventDefault();
+        resetTerminal();
+      } else if (event.key.toLowerCase() === 'c') {
+        const input = event.currentTarget;
+        if (
+          input.selectionStart !== input.selectionEnd ||
+          window.getSelection()?.toString()
+        )
+          return;
+        event.preventDefault();
+        setInputValue('');
+        setHistoryIndex(null);
+        draftRef.current = '';
+        announce('Draft cancelled. Ready for a command.');
+      } else if (event.code === 'Space' || event.key === ' ') {
+        event.preventDefault();
+        completeCommand();
+      }
+      return;
+    }
+    if (
+      !event.metaKey &&
+      !event.altKey &&
+      !event.shiftKey &&
+      commandHistory.length > 0
+    ) {
+      if (event.key === 'ArrowUp' || event.key === 'ArrowDown') {
+        event.preventDefault();
+        recallCommand(event.key === 'ArrowUp' ? -1 : 1);
+      }
+    }
   };
 
-  const isCompactLayout = breakpoint === 'xs' || breakpoint === 'sm';
-  const shouldAutoFocusPrompt = !isCompactLayout;
-  /** Height sized to fit all 10 main-menu options with larger tap targets (5 rows × 2 cols). */
-  const compactOptionsPanelHeight = '18rem';
-
-  const focusPromptInput = (): void => {
-    inputRef.current?.focus();
-  };
-
-  const macDotBaseStyle = {
-    width: '0.76rem',
-    height: '0.76rem',
-    padding: 0,
-    border: '1px solid rgba(0, 0, 0, 0.22)',
-    borderRadius: '50%',
-    boxShadow: 'inset 0 0.045rem 0.075rem rgba(255, 255, 255, 0.22)',
-    display: 'inline-flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    lineHeight: 1,
-  } as const;
-
-  const macCloseDotStyle = {
-    ...macDotBaseStyle,
-    background: '#ff5f57',
-    cursor: 'pointer',
-    WebkitAppearance: 'none',
-    appearance: 'none',
-    touchAction: 'manipulation',
-  } as const;
-
-  const macYellowDotStyle = {
-    ...macDotBaseStyle,
-    background: '#febc2e',
-  } as const;
-
-  const macGreenDotStyle = {
-    ...macDotBaseStyle,
-    background: '#28c840',
-  } as const;
-
-  const macCloseGlyphStyle = {
-    fontFamily: 'var(--font-sans)',
-    fontSize: '0.56rem',
-    fontWeight: 700,
-    lineHeight: 1,
-    color: 'rgba(68, 20, 15, 0.8)',
-    transform: 'translateY(-0.01rem)',
-  } as const;
-
-  /* Boot sequence: typewriter "JP-CLI Initialized", then clear and show main menu */
   useEffect(() => {
-    if (isVisualTestMode()) {
-      lineIdRef.current = 1;
-      const menuLines = createMainMenuLines(lineIdRef.current);
-      lineIdRef.current += menuLines.length;
-      setLines(menuLines);
-      return;
+    if (
+      initialDesktopRef.current &&
+      !window.matchMedia('(pointer: coarse)').matches
+    ) {
+      inputRef.current?.focus({ preventScroll: true });
     }
-
-    const charDelayMs = 50;
-    const pauseAfterBootMs = 500;
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
-    const schedule = (fn: () => void, ms: number) => {
-      timeouts.push(setTimeout(fn, ms));
-    };
-
-    let charIndex = 0;
-    const bootLineId = 1;
-    lineIdRef.current = 1;
-
-    const typeNextChar = (): void => {
-      charIndex += 1;
-      const partial = BOOT_MESSAGE.slice(0, charIndex);
-      setLines([{ id: bootLineId, kind: 'system', text: partial }]);
-
-      if (charIndex < BOOT_MESSAGE.length) {
-        schedule(typeNextChar, charDelayMs);
-      } else {
-        schedule(() => {
-          const menuLines = createMainMenuLines(lineIdRef.current);
-          lineIdRef.current += menuLines.length;
-          setLines(menuLines);
-        }, pauseAfterBootMs);
-      }
-    };
-
-    schedule(typeNextChar, charDelayMs);
-
-    return () => timeouts.forEach(clearTimeout);
   }, []);
 
   useEffect(() => {
-    const history = historyRef.current;
-    if (!history) {
-      return;
+    if (!scrollRequestedRef.current) return;
+    scrollRequestedRef.current = false;
+    const transcript = historyRef.current;
+    if (
+      transcript &&
+      document.activeElement === inputRef.current &&
+      !window.getSelection()?.toString()
+    ) {
+      transcript.scrollTop = transcript.scrollHeight;
     }
-    history.scrollTop = history.scrollHeight;
-    if (shouldAutoFocusPrompt) {
-      inputRef.current?.focus();
-    }
-  }, [lines, shouldAutoFocusPrompt]);
+  }, [lines]);
+
+  const contextHint =
+    context === 'main'
+      ? 'help for commands · exit for the visual portfolio'
+      : `help ${context} for commands · back to return · exit for the visual portfolio`;
 
   return (
-    <div className="cli-terminal-shell">
-      <h1 id="hero-heading" className="visually-hidden">
-        Hello, I&apos;m Justin Paoletta
-      </h1>
-
-      <section
-        className="cli-terminal-window"
-        aria-label="Interactive portfolio terminal"
+    <section className="cli-terminal-shell" aria-label="Portfolio terminal">
+      <div className="cli-terminal-toolbar">
+        <span className="cli-terminal-title">
+          portfolio / interactive guide
+        </span>
+        <span className="cli-terminal-mode">{colorMode ?? 'system'}</span>
+      </div>
+      {/* The scrollable transcript needs a tab stop for keyboard scrolling. */}
+      {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
+      <div
+        className="cli-session"
+        ref={historyRef}
+        role="region"
+        aria-label="Terminal transcript"
+        tabIndex={0}
       >
-        <header className="cli-terminal-toolbar">
-          <div className="cli-terminal-dots">
-            <button
-              type="button"
-              className="cli-terminal-dot cli-terminal-dot--red cli-terminal-dot--close"
-              onClick={() => setTheme(defaultTheme)}
-              aria-label={`Exit CLI and switch to ${defaultTheme} theme`}
-              title="Exit CLI theme"
-              style={macCloseDotStyle}
-            >
-              <span aria-hidden="true" style={macCloseGlyphStyle}>
-                ×
-              </span>
-            </button>
-            <span
-              className="cli-terminal-dot cli-terminal-dot--yellow"
-              aria-hidden="true"
-              style={macYellowDotStyle}
-            />
-            <span
-              className="cli-terminal-dot cli-terminal-dot--green"
-              aria-hidden="true"
-              style={macGreenDotStyle}
-            />
-          </div>
-          <span className="cli-terminal-title">jp-cli v1.0.1</span>
-        </header>
-
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: isCompactLayout
-              ? '1fr'
-              : 'minmax(230px, 290px) minmax(0, 1fr)',
-            gridTemplateRows: isCompactLayout
-              ? `1fr ${compactOptionsPanelHeight}`
-              : undefined,
-            flex: 1,
-            minHeight: 0,
-          }}
-        >
-          <div
-            className="cli-options-panel"
-            style={{
-              order: isCompactLayout ? 2 : 1,
-              borderRight: isCompactLayout
-                ? 'none'
-                : '1px solid var(--border-subtle)',
-              borderTop: isCompactLayout
-                ? '1px solid var(--border-subtle)'
-                : 'none',
-              background: 'var(--bg-card)',
-              padding: '0.85rem 0.8rem',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '0.7rem',
-              minHeight: isCompactLayout ? compactOptionsPanelHeight : 0,
-              maxHeight: isCompactLayout ? compactOptionsPanelHeight : 'none',
-              flexShrink: isCompactLayout ? 0 : undefined,
-              overflow: isCompactLayout ? 'hidden' : 'visible',
-            }}
-          >
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                gap: '0.65rem',
-              }}
-            >
-              <p
-                className="cli-line cli-line--system"
-                style={{
-                  margin: 0,
-                  fontSize: '1.04rem',
-                  letterSpacing: '0.08em',
-                }}
-              >
-                Options
-              </p>
-              {isCompactLayout ? (
-                <div
-                  style={{
-                    alignItems: 'center',
-                    display: 'inline-flex',
-                    gap: '0.45rem',
-                  }}
-                >
-                  <button
-                    type="button"
-                    onClick={() => {
-                      goToPreviousList();
-                      requestAnimationFrame(focusPromptInput);
-                    }}
-                    aria-label="Previous list"
-                    title="Previous list"
-                    style={{
-                      width: '3.5rem',
-                      height: '2.35rem',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: '8px',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-primary)',
-                      fontFamily: 'inherit',
-                      fontSize: '0.9rem',
-                      fontWeight: 700,
-                      lineHeight: 1,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: 0,
-                      touchAction: 'manipulation',
-                    }}
-                  >
-                    Prev
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      submitPrompt();
-                      requestAnimationFrame(focusPromptInput);
-                    }}
-                    aria-label="Run selected option"
-                    title="Run selected option"
-                    style={{
-                      width: '5rem',
-                      height: '2.35rem',
-                      border: '1px solid var(--border-subtle)',
-                      borderRadius: '8px',
-                      background: 'var(--bg-main)',
-                      color: 'var(--text-primary)',
-                      fontFamily: 'inherit',
-                      fontSize: '0.9rem',
-                      fontWeight: 700,
-                      lineHeight: 1,
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      gap: '0.35rem',
-                      padding: 0,
-                      touchAction: 'manipulation',
-                    }}
-                  >
-                    Enter <span aria-hidden="true">↵</span>
-                  </button>
-                </div>
-              ) : null}
-            </div>
-            <ul
-              style={{
-                margin: 0,
-                padding: 0,
-                listStyle: 'none',
-                display: 'flex',
-                flexDirection: isCompactLayout ? 'row' : 'column',
-                flexWrap: isCompactLayout ? 'wrap' : 'nowrap',
-                flex: 1,
-                gap: '0.45rem',
-                overflowY: 'auto',
-                alignContent: isCompactLayout ? 'flex-start' : undefined,
-                minHeight: 0,
-              }}
-            >
-              {selectionOptions.map((option, index) => {
-                const isSelected = index === selectedOptionIndex;
-                return (
-                  <li
-                    key={`${context}-${option.value}-${option.label}`}
-                    style={{
-                      minWidth: isCompactLayout ? 'calc(50% - 0.45rem)' : 0,
-                    }}
-                  >
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setSelectedOptionIndex(index);
-                        setInputValue(String(option.value));
-                        requestAnimationFrame(focusPromptInput);
-                      }}
-                      aria-pressed={isSelected}
-                      style={{
-                        width: '100%',
-                        textAlign: 'left',
-                        borderRadius: '8px',
-                        border: isSelected
-                          ? '1px solid var(--border-hover)'
-                          : '1px solid var(--border-subtle)',
-                        background: isSelected
-                          ? 'var(--bg-card-hover)'
-                          : 'var(--bg-main)',
-                        color: 'var(--text-primary)',
-                        padding: '0.58rem 0.7rem',
-                        display: 'flex',
-                        gap: '0.55rem',
-                        alignItems: 'center',
-                        fontSize: '0.98rem',
-                        fontFamily: 'inherit',
-                        lineHeight: 1.32,
-                      }}
-                    >
-                      <span style={{ opacity: 0.75, minWidth: '2ch' }}>
-                        {option.value}.
-                      </span>
-                      <span>{option.label}</span>
-                    </button>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-
-          <div
-            style={{
-              order: isCompactLayout ? 1 : 2,
-              display: 'flex',
-              flexDirection: 'column',
-              minHeight: 0,
-            }}
-          >
-            <div className="cli-terminal-banner" aria-hidden="true">
-              <div className="cli-banner-left">
-                <div className="cli-banner-prompt">
-                  <span>&gt;&gt; HELLO, I&apos;M</span>
-                </div>
-                <div className="cli-banner-name">JUSTIN PAOLETTA</div>
-              </div>
-              <div className="cli-banner-right">
-                Software Engineer • Angular • React • TypeScript
-              </div>
-            </div>
-
-            <p
-              id="cli-keyboard-shortcuts"
-              className="cli-line cli-line--hint"
-              style={{
-                padding: '0.42rem 1rem',
-                margin: 0,
-                borderBottom: '1px solid var(--border-subtle)',
-              }}
-            >
-              {isCompactLayout
-                ? 'Options below | Type 9 for help'
-                : 'Options left | Keys: ↑ ↓ ← → move | Space/0-9 stage input | Enter run'}
+        <div className="cli-session-content">
+          <div className="cli-intro">
+            <p className="cli-line cli-line--system">
+              Welcome to my portfolio.
             </p>
-
-            <div className="cli-session" ref={historyRef}>
-              <div className="cli-history" role="log" aria-live="polite">
-                {lines.map((line) => (
-                  <p
-                    key={line.id}
-                    className={`cli-line cli-line--${line.kind}`}
-                  >
-                    {line.kind === 'input' ? (
-                      <>
-                        <span className="cli-line-prefix">user@jp-cli: ~%</span>
-                        <span>{line.text}</span>
-                      </>
-                    ) : line.url ? (
-                      <a
-                        href={line.url}
-                        className="cli-line-link"
-                        target={
-                          line.url.startsWith('mailto:') ||
-                          line.url.startsWith('/')
-                            ? undefined
-                            : '_blank'
-                        }
-                        rel={
-                          line.url.startsWith('mailto:') ||
-                          line.url.startsWith('/')
-                            ? undefined
-                            : 'noopener noreferrer'
-                        }
-                        download={line.download}
-                        {...(line.download && {
-                          'aria-label': 'Download resume as PDF',
-                        })}
-                      >
-                        {line.text}
-                      </a>
-                    ) : (
-                      <span>{line.text}</span>
-                    )}
-                  </p>
-                ))}
+            <h1 id="hero-heading" className="cli-identity">
+              Justin Paoletta
+            </h1>
+            <p className="cli-role">Software Engineer</p>
+            <p className="cli-line">Angular · React · TypeScript</p>
+            <p className="cli-line cli-intro-summary">
+              I modernize frontend applications and build release tooling that
+              helps teams ship reliably.
+            </p>
+            <p className="cli-line">
+              An interactive guide to my work. Type a command, then press Enter.
+            </p>
+            <dl className="cli-command-guide">
+              <div>
+                <dt>projects</dt>
+                <dd>Explore the work</dd>
               </div>
-
-              <form
-                className="cli-prompt cli-prompt--inline"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  submitPrompt();
-                }}
-              >
-                <label htmlFor="cli-command-input" className="visually-hidden">
-                  Enter a command
-                </label>
-                <span className="cli-prompt-prefix">user@jp-cli: ~%</span>
-                <input
-                  ref={inputRef}
-                  id="cli-command-input"
-                  type="text"
-                  className="cli-prompt-input"
-                  value={inputValue}
-                  onChange={(event) => setInputValue(event.target.value)}
-                  autoComplete="off"
-                  spellCheck={false}
-                  aria-label="Terminal command input"
-                  aria-describedby="cli-keyboard-shortcuts"
-                  onKeyDown={(event) => {
-                    const trimmedInput = inputValue.trim();
-                    const isNavigationMode =
-                      trimmedInput.length === 0 || /^\d+$/.test(trimmedInput);
-
-                    if (!isNavigationMode) {
-                      return;
+              <div>
+                <dt>experience</dt>
+                <dd>Read my work history</dd>
+              </div>
+              <div>
+                <dt>about / skills</dt>
+                <dd>Background and approach</dd>
+              </div>
+              <div>
+                <dt>contact / resume</dt>
+                <dd>Get in touch or get the PDF</dd>
+              </div>
+              <div>
+                <dt>github / dogs</dt>
+                <dd>Activity and a little personality</dd>
+              </div>
+            </dl>
+            <p className="cli-line cli-line--hint">
+              Start with projects, or try project 1. Type help for all commands.
+            </p>
+            <p className="cli-line cli-line--hint">
+              Type exit to return to the visual portfolio. Change appearance
+              with theme or mode.
+            </p>
+          </div>
+          <div className="cli-history">
+            {lines.map((line) => (
+              <p key={line.id} className={`cli-line cli-line--${line.kind}`}>
+                {line.kind === 'input' ? (
+                  <>
+                    <span className="cli-line-prefix" aria-hidden="true">
+                      $
+                    </span>
+                    <span>{line.text}</span>
+                  </>
+                ) : line.url ? (
+                  <a
+                    href={line.url}
+                    className="cli-line-link"
+                    target={
+                      line.url.startsWith('mailto:') || line.url.startsWith('/')
+                        ? undefined
+                        : '_blank'
                     }
-
-                    if (
-                      event.key === 'ArrowDown' ||
-                      event.key === 'ArrowRight' ||
-                      event.key === 'ArrowUp' ||
-                      event.key === 'ArrowLeft'
-                    ) {
-                      event.preventDefault();
-                      moveSelection(
-                        event.key === 'ArrowDown' || event.key === 'ArrowRight'
-                          ? 1
-                          : -1
-                      );
-                      return;
+                    rel={
+                      line.url.startsWith('mailto:') || line.url.startsWith('/')
+                        ? undefined
+                        : 'noopener noreferrer'
                     }
-
-                    if (event.key === ' ') {
-                      event.preventDefault();
-                      if (currentSelection) {
-                        setInputValue(String(currentSelection.value));
-                      }
-                      return;
-                    }
-
-                    const isDigitKey = /^[0-9]$/.test(event.key);
-                    const isNumpadDigit = /^Numpad[0-9]$/.test(event.code);
-
-                    if (isDigitKey || isNumpadDigit) {
-                      event.preventDefault();
-                      const value = isDigitKey
-                        ? event.key
-                        : event.code.replace('Numpad', '');
-                      setInputValue(value);
-                      return;
-                    }
-                  }}
-                />
-              </form>
-            </div>
+                    download={line.download}
+                    {...(line.download && {
+                      'aria-label': 'Download resume as PDF',
+                    })}
+                  >
+                    {line.text}
+                  </a>
+                ) : (
+                  <span>{line.text}</span>
+                )}
+              </p>
+            ))}
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+      {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
+      <form
+        className="cli-prompt"
+        onSubmit={(event) => {
+          event.preventDefault();
+          submitPrompt();
+        }}
+      >
+        <div className="cli-prompt-content">
+          <p className="cli-line cli-context-hint">{contextHint}</p>
+          <div className="cli-prompt-row">
+            <label htmlFor="cli-command-input" className="visually-hidden">
+              Terminal command input
+            </label>
+            <span className="cli-prompt-prefix" aria-hidden="true">
+              {context === 'main' ? '~' : `~/${context}`} $
+            </span>
+            <input
+              ref={inputRef}
+              id="cli-command-input"
+              type="text"
+              className="cli-prompt-input"
+              value={inputValue}
+              onChange={(event) => {
+                setInputValue(event.target.value);
+                setHistoryIndex(null);
+              }}
+              autoComplete="off"
+              autoCapitalize="none"
+              autoCorrect="off"
+              spellCheck={false}
+              onCompositionStart={() => {
+                isComposingRef.current = true;
+              }}
+              onCompositionEnd={() => {
+                isComposingRef.current = false;
+              }}
+              enterKeyHint="send"
+              maxLength={500}
+              aria-describedby="cli-keyboard-shortcuts"
+              onKeyDown={handleKeyDown}
+            />
+          </div>
+          <p id="cli-keyboard-shortcuts" className="cli-keyboard-shortcuts">
+            Enter run · ↑ ↓ history · Ctrl+Space complete · Tab move focus ·
+            help keyboard
+          </p>
+        </div>
+      </form>
+      <div
+        className="visually-hidden"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <span key={announcement.id}>{announcement.text}</span>
+      </div>
+    </section>
   );
 }
 
