@@ -63,7 +63,7 @@ Current coverage includes:
 - desktop hero viewports for all four themes in light and dark mode
 - minimal light mobile home and open mobile navigation
 - a minimal light tall-viewport smoke capture
-- section-level captures for Projects, GitHub, Contact, and expanded Pet Dogs
+- section-level captures for Projects, both Writing slides, desktop/mobile Experience, GitHub, Contact, and expanded Pet Dogs
 
 The repo currently keeps both `*-darwin.png` and `*-linux.png` snapshots. Treat Linux as the review baseline because that is what CI executes.
 

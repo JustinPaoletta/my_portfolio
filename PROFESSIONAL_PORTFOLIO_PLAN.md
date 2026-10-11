@@ -27,11 +27,11 @@ The implementation is ready for review with stated content assumptions. Existing
 
 Completion requires observed outcomes, not only screenshots. Final results are recorded in the PR description.
 
-- [ ] TypeScript, ESLint, Prettier, frontend/server unit tests, and production build with actual prerendering pass.
+- [x] TypeScript, ESLint, Prettier, 197 frontend/server unit tests, 10 accessibility unit tests, and production build with actual prerendering pass.
 - [x] **22 (core content)** — A Chromium context with JavaScript disabled verified readable profile, selected work, employment, email, and a real PDF résumé download from the production build. Prerendering now exposes captured reveal content without JavaScript. Case-study routes await publishable case studies; this closes core content only.
-- [ ] **23, 27** — Check complete 320px, 390px, and 768px navigation, wrapping, section landing, and local PDF health; preserve project source touch/keyboard and image-response regressions.
-- [ ] **24 (automated)** — Run keyboard, reduced-motion, theme, and axe checks. Generate Linux baselines as a review artifact, inspect them, commit accepted images, and rerun visual CI.
-- [ ] **25 (mocked)** — Verify contact validation, server error, and success without sending a real message.
+- [x] **23, 27** — Verified complete 320px, 390px, and 768px navigation, wrapping, section landing, and actual PDF downloads from hero/desktop/mobile entry points. Existing touch/keyboard project and real-image response regressions pass.
+- [x] **24 (automated)** — Keyboard, reduced-motion, theme, and axe checks pass. All 23 Linux and 23 macOS visual states were generated and inspected; the reviewed baselines are committed. CI comparison results are recorded in the PR. Visual review also caught and corrected Cosmic light résumé contrast and removed skip-link pollution from section-only captures.
+- [x] **25 (mocked)** — Contact validation, server error, and success pass with isolated mock responses. No real message was sent.
 
 ## Owner inputs and acceptance
 
