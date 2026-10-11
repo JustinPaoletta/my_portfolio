@@ -134,7 +134,8 @@ async function enableSectionCaptureMode(page: Page): Promise<void> {
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-      .navigation {
+      .navigation,
+      .skip-link {
         opacity: 0 !important;
         visibility: hidden !important;
       }

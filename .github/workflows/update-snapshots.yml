@@ -57,6 +57,9 @@ jobs:
           ref: ${{ github.head_ref || github.ref_name }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Trust checked-out workspace in container
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Install dependencies
         run: npx --yes npm@11.6.4 ci
 
