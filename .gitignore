@@ -52,3 +52,7 @@ stats.html
 .npm-cache/
 .vercel
 .env*.local
+
+# Local portfolio review artifacts
+/output/playwright/professional-review/
+/.playwright-mcp/

@@ -15,7 +15,7 @@ const logos = [
   {
     source: 'sidequest-logo.png',
     output: 'sidequest-logo',
-    widths: [240, 480, 720, 960, 1254],
+    widths: [60, 120, 180, 240, 480, 720, 960, 1254],
     hasAlpha: false,
     webp: { quality: 90, effort: 6 },
   },

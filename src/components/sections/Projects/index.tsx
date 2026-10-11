@@ -17,6 +17,8 @@ import './Projects.css';
 interface Project extends ProjectSummary {
   id: string;
   image: string;
+  imageCaption?: string;
+  workflow?: { label: string; steps: string[]; caption: string };
   imageSrcSet?: string;
   imageSizes?: string;
   imageAlt?: string;
@@ -78,11 +80,28 @@ const projects: Project[] = [
     ...BITSTOCKERZ_PROJECT,
     id: 'project-1',
     image: '/images/projects/bitstockerz.webp',
+    workflow: {
+      label: 'Strategy research workflow',
+      steps: [
+        'Build a strategy',
+        'Run a historical backtest',
+        'Compare results',
+        'Paper trade with stored bars',
+      ],
+      caption:
+        'Implemented workflow diagram. Paper fills use stored bars; live-provider verification is pending.',
+    },
   },
   {
     ...JP_DESIGN_SYSTEM_PROJECT,
     id: 'project-2',
-    image: '/images/projects/jp-design-system.webp',
+    image: '/images/projects/design-system-showcase.webp',
+    imageAlt:
+      'JP Design System showcase with Angular form controls and buttons',
+    imageWidth: 1280,
+    imageHeight: 851,
+    imageCaption:
+      'Actual local Angular showcase. Components and tokens are pre-release; a public package release is still pending.',
   },
   {
     id: 'project-3',
@@ -107,23 +126,35 @@ const projects: Project[] = [
     techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
     githubUrl: `${githubProfileUrl}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
-    featured: false,
+    featured: true,
+    workflow: {
+      label: 'Portable account backups',
+      steps: [
+        'Wild Apricot REST API + WebDAV',
+        'Node.js export CLI',
+        'Local JSON, CSV, and original files',
+      ],
+      caption:
+        'Export flow based on the published CLI. Inspect the source and package below.',
+    },
   },
   {
     id: 'project-5',
     title: 'SideQuest: Pittsburgh',
     description:
-      "A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built as offline-first and driven by curiosity, not popularity. Most food discovery apps rank by reviews, ratings, and ad spend. SideQuest takes the opposite approach: it surfaces, under-the-radar spots you'd otherwise walk right past. The feed prioritizes proximity, novelty, and curated tags. Never star ratings, influencer rankings, or popularity contests. Its built for those that want to discover the unknown and keep trying something new.",
+      'A private React Native app for discovering offbeat places across Pittsburgh. An offline-first feed prioritizes proximity, novelty, and curated tags. Source access is private; this entry is supporting project context.',
     image: '/images/projects/sidequest-logo-480.webp',
     imageSrcSet: logoSrcSet('sidequest-logo', [240, 480, 720, 960, 1254]),
     imageSizes: sideQuestImageSizes,
     imageAlt: 'SideQuest: Pittsburgh logo',
+    cardHeaderIcon: '/images/projects/sidequest-logo-60.webp',
+    cardHeaderIconSrcSet: logoSrcSet('sidequest-logo', [60, 120, 180]),
     imageWidth: 1254,
     imageHeight: 1254,
     imageFit: 'contain',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
     private: true,
-    featured: true,
+    featured: false,
   },
   {
     id: 'project-6',
@@ -166,7 +197,7 @@ function Projects(): React.ReactElement {
             delay={40}
             visible={isVisible}
           >
-            Portfolio
+            Software & tools
           </Reveal>
           <Reveal
             as="h2"
@@ -175,7 +206,7 @@ function Projects(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            My Projects
+            Selected Work
           </Reveal>
         </Reveal>
 
@@ -189,35 +220,64 @@ function Projects(): React.ReactElement {
               delay={140 + index * 90}
               visible={isVisible}
             >
-              <div
-                className={`project-image-wrapper${
-                  project.imageFit === 'contain'
-                    ? ' project-image-wrapper--contain'
-                    : ''
-                }`}
-              >
-                <img
-                  src={project.image}
-                  srcSet={project.imageSrcSet}
-                  sizes={project.imageSizes}
-                  alt={project.imageAlt ?? `${project.title} screenshot`}
-                  className={`project-image${
+              {project.workflow ? (
+                <figure className="project-workflow">
+                  <p className="workflow-label">{project.workflow.label}</p>
+                  <ol>
+                    {project.workflow.steps.map((step) => (
+                      <li key={step}>{step}</li>
+                    ))}
+                  </ol>
+                  <figcaption>{project.workflow.caption}</figcaption>
+                </figure>
+              ) : (
+                <figure
+                  className={`project-image-wrapper${
                     project.imageFit === 'contain'
-                      ? ' project-image--contain'
+                      ? ' project-image-wrapper--contain'
                       : ''
                   }`}
-                  style={
-                    project.imagePosition
-                      ? { objectPosition: project.imagePosition }
-                      : undefined
-                  }
-                  loading="lazy"
-                  decoding="async"
-                  width={project.imageWidth ?? 800}
-                  height={project.imageHeight ?? 600}
-                />
-              </div>
+                >
+                  <img
+                    src={project.image}
+                    srcSet={project.imageSrcSet}
+                    sizes={project.imageSizes}
+                    alt={project.imageAlt ?? `${project.title} artwork`}
+                    className={`project-image${
+                      project.imageFit === 'contain'
+                        ? ' project-image--contain'
+                        : ''
+                    }`}
+                    style={
+                      project.imagePosition
+                        ? { objectPosition: project.imagePosition }
+                        : undefined
+                    }
+                    loading="lazy"
+                    decoding="async"
+                    width={project.imageWidth ?? 800}
+                    height={project.imageHeight ?? 600}
+                  />
+                  {project.imageCaption && (
+                    <figcaption>{project.imageCaption}</figcaption>
+                  )}
+                </figure>
+              )}
               <div className="project-content">
+                {project.cardHeaderIcon && (
+                  <img
+                    src={project.cardHeaderIcon}
+                    srcSet={project.cardHeaderIconSrcSet}
+                    sizes="60px"
+                    className="folder-icon folder-icon--image"
+                    alt=""
+                    aria-hidden="true"
+                    width={60}
+                    height={60}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                )}
                 <h3 className="project-title">
                   <ProjectHeadingTitle project={project} />
                 </h3>
@@ -381,7 +441,7 @@ function Projects(): React.ReactElement {
           delay={240}
           visible={isVisible}
         >
-          Other Projects
+          More Projects
         </Reveal>
         <div className="other-projects">
           {otherProjects.map((project, index) => (

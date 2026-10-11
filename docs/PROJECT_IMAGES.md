@@ -100,3 +100,25 @@ no copies of these three PNG masters.
 
 Favicons, Open Graph artwork, article images, and other project images are
 outside this generator's scope.
+
+## Professional presentation revision — 2026-10-11
+
+Featured work now uses inspectable evidence. `design-system-showcase.webp` is a
+1280×851 browser capture of the existing local Angular showcase's `/controls`
+view (served from `jp-design-system/dist/apps/showcase/browser`; checkout HEAD
+`b31915546a98f8ccd2cfeb85219b2030a1c995a5`). It contains demo form controls, no
+customer data, and is labeled as a local prerelease showcase. The build was
+already present; this capture does not assert a fresh upstream build or public
+release. BitStockerz and Wild Apricot use semantic HTML workflow diagrams based
+on their described implementations, not fabricated screenshots.
+
+SideQuest is now a supporting card with a 60px icon. The optimizer also produces
+60/120/180px candidates for this slot. The real-response image tests retain
+320/390/1024/1440px and DPR 1/2 coverage; previous featured-image measurements
+above are historical and no longer describe the new card layout. Wild Apricot
+and Plexarr keep their 60/120/180px lossless icon variants.
+
+The sharing image source is `assets/source/social/portfolio-card.svg`. Run
+`npm run generate:sharing-card` to regenerate the 1200×630 PNG referenced in
+Open Graph and Twitter metadata. It identifies the same person, role, and stack
+as the hero. It contains no portrait or unverified metrics.

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#101b26"/>
+  <rect x="64" y="64" width="64" height="6" rx="3" fill="#6ee7cf"/>
+  <g font-family="Arial, Helvetica, sans-serif">
+    <text x="64" y="114" fill="#a4b7c5" font-size="23" letter-spacing="3">JP ENGINEERING</text>
+    <text x="64" y="260" fill="#f3f6f8" font-size="76" font-weight="700">Justin Paoletta</text>
+    <text x="64" y="329" fill="#6ee7cf" font-size="38">Software Engineer</text>
+    <text x="64" y="410" fill="#d5e0e7" font-size="27">Angular · React · TypeScript</text>
+    <text x="64" y="457" fill="#a4b7c5" font-size="25">Frontend modernization. Reliable delivery.</text>
+    <text x="64" y="560" fill="#d5e0e7" font-size="23">jpengineering.dev</text>
+  </g>
+  <path d="M966 192h122v122M1088 398v122H966" fill="none" stroke="#294e53" stroke-width="4"/>
+</svg>

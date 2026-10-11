@@ -13,11 +13,7 @@ import {
   temporarilyInertElements,
   trapFocusWithin,
 } from '@/utils/accessibility';
-import {
-  revealAndNavigate,
-  scrollToElement,
-  focusSection,
-} from '@/utils/deferredNavigation';
+import { revealAndNavigate } from '@/utils/deferredNavigation';
 import './Navigation.css';
 
 interface NavItem {
@@ -98,12 +94,10 @@ function lockPageScroll(): (restoreScrollPosition?: boolean) => void {
 }
 
 const navItems: NavItem[] = [
-  { id: 'about', label: 'About', href: '#about' },
-  { id: 'projects', label: 'Projects', href: '#projects' },
-  { id: 'articles', label: 'Articles', href: '#articles' },
+  { id: 'projects', label: 'Work', href: '#projects' },
   { id: 'experience', label: 'Experience', href: '#experience' },
-  { id: 'skills', label: 'Skills', href: '#skills' },
-  { id: 'github', label: 'GitHub', href: '#github' },
+  { id: 'about', label: 'About', href: '#about' },
+  { id: 'articles', label: 'Writing', href: '#articles' },
   { id: 'contact', label: 'Contact', href: '#contact' },
 ];
 
@@ -281,15 +275,7 @@ function Navigation({
       closeMobileMenu({ restoreFocus: false, restoreScroll: false });
 
       const runNavigation = (): void => {
-        const element = document.getElementById(targetId);
-
-        if (element instanceof HTMLElement) {
-          scrollToElement(element, 'auto');
-          window.history.replaceState(null, '', href);
-          focusSection(targetId);
-        } else {
-          revealAndNavigate(targetId);
-        }
+        revealAndNavigate(targetId);
       };
 
       if (menuWasOpen) {
@@ -400,6 +386,16 @@ function Navigation({
         )}
 
         {!isCliTheme && (
+          <a
+            className="nav-resume"
+            href="/resume/Justin-Paoletta_Software-Engineer.pdf"
+            download="Justin_Paoletta_Resume.pdf"
+          >
+            Resume <span className="nav-resume-format">PDF</span>
+          </a>
+        )}
+
+        {!isCliTheme && (
           <button
             ref={mobileMenuButtonRef}
             className={`mobile-menu-button ${isMobileMenuOpen ? 'open' : ''}`}
@@ -474,6 +470,16 @@ function Navigation({
                     </a>
                   </li>
                 ))}
+                <li>
+                  <a
+                    className="mobile-nav-link mobile-nav-resume"
+                    href="/resume/Justin-Paoletta_Software-Engineer.pdf"
+                    download="Justin_Paoletta_Resume.pdf"
+                    onClick={() => closeMobileMenu()}
+                  >
+                    Resume <span className="nav-resume-format">PDF</span>
+                  </a>
+                </li>
               </ul>
             </nav>
           </div>

@@ -30,6 +30,7 @@ interface TerminalLine {
 interface CliSkillCategory {
   name: string;
   skills: string[];
+  example: string;
 }
 
 interface CliExperience {
@@ -80,24 +81,21 @@ const MAIN_MENU = [
 const BOOT_MESSAGE = 'JP-CLI Initialized';
 
 const ABOUT_SUMMARY = [
-  'Frontend platform engineer focused on modernizing large AngularJS applications without risky all-at-once rewrites.',
-  'At accesso, build Angular, React, and Tailwind micro-frontends inside a legacy AngularJS host serving hundreds of venues worldwide.',
-  'Use CI/CD automation and AI-assisted workflows to speed delivery, tighten QA handoff, and improve engineering velocity.',
+  'I work on the practical challenges of modernizing frontend systems: keeping existing products running while making them easier to build on.',
+  'At accesso, that means integrating Angular and React micro-frontends into a legacy AngularJS platform, isolating framework lifecycles and styles, and improving release tooling.',
+  'My personal projects give me room to explore reusable components, full-stack applications, and developer tools. I document their current capabilities and what still needs work.',
 ];
 
-const ABOUT_HIGHLIGHTS = [
-  '5+ years of professional software engineering experience',
-  '8 Angular micro-frontends migrated into an AngularJS shell',
-  'About 75% faster releases through automation',
+const ABOUT_APPROACH = [
+  'Clarify the requirements: start with the user flow, constraints, and acceptance criteria.',
+  'Check the implementation: use type checks, linting, and focused unit and browser tests.',
+  'Inspect the result: review the code and interface, then document behavior and remaining QA checks.',
 ];
 
-const ABOUT_VALUES = [
-  'Quality',
-  'Collaboration',
-  'Continuous Learning',
-  'Documentation',
-  'Accessibility',
-];
+const APPROACH_EXAMPLE =
+  'For UI work, I connect Jira requirements, Figma comparisons, Playwright checks, and QA notes. AI helps draft plans and implementations; deterministic checks and human review determine whether the change is ready.';
+
+const githubProfileUrl = env.social.github.replace(/\/+$/, '');
 
 const PROJECTS: ProjectSummary[] = [
   BITSTOCKERZ_PROJECT,
@@ -109,23 +107,23 @@ const PROJECTS: ProjectSummary[] = [
     techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
     status: 'development',
     featured: false,
-    githubUrl: `${env.social.github}/godot_practice`,
+    githubUrl: `${githubProfileUrl}/godot_practice`,
   },
   {
     title: 'wild-apricot-exports',
     description:
-      'A published Node CLI and library for exporting and backing up Wild Apricot accounts without using the admin UI. It saves contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files locally as JSON, CSV, and original file backups.',
+      'A published Node CLI and library for exporting and backing up Wild Apricot data without relying on the admin UI. It pulls contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files through the public REST API and WebDAV, then writes everything locally as JSON, CSV, and original files.',
     techStack: ['Node.js', 'TypeScript', 'Commander', 'WebDAV', 'npm CLI'],
-    featured: false,
-    githubUrl: `${env.social.github}/wild-apricot-exports`,
+    featured: true,
+    githubUrl: `${githubProfileUrl}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
   },
   {
     title: 'SideQuest: Pittsburgh',
     description:
-      'A mobile app for discovering hidden gems and offbeat restaurants across Pittsburgh. Built offline-first, it surfaces under-the-radar spots—prioritizing proximity, novelty, and curated tags over star ratings and influencer rankings.',
+      'A private React Native app for discovering offbeat places across Pittsburgh. An offline-first feed prioritizes proximity, novelty, and curated tags. Source access is private; this entry is supporting project context.',
     techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
-    featured: true,
+    featured: false,
     private: true,
   },
   {
@@ -140,63 +138,31 @@ const PROJECTS: ProjectSummary[] = [
 
 const SKILL_CATEGORIES: CliSkillCategory[] = [
   {
-    name: 'Frontend',
-    skills: [
-      'Angular',
-      'React',
-      'TypeScript',
-      'Tailwind CSS',
-      'RxJS',
-      'HTML5',
-      'CSS3',
-      'JavaScript',
-      'Playwright',
-      'AngularJS',
-    ],
+    name: 'Frontend systems',
+    skills: ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS'],
+    example:
+      'Applied at accesso: Angular and React micro-frontends inside an AngularJS host, with attention to framework lifecycles and style isolation. Run exp 1 for the work history.',
   },
   {
-    name: 'Backend',
-    skills: ['Node.js', 'Express', 'PostgreSQL', 'Java', 'Postman'],
+    name: 'APIs & data',
+    skills: ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB'],
+    example:
+      'Applied in BitStockerz: an Angular client and NestJS API for strategy research, historical backtests, and paper trading. The project is in development. Run project 1 for source and release limits.',
   },
   {
-    name: 'Tooling',
-    skills: [
-      'Git',
-      'GitHub',
-      'GitHub Actions',
-      'Jenkins',
-      'Jira',
-      'Figma',
-      'GitLab',
-      'Docker',
-      'AWS',
-      'Confluence',
-    ],
+    name: 'Testing & delivery',
+    skills: ['Playwright', 'GitHub Actions', 'Jenkins'],
+    example:
+      'Browser checks for UI behavior, continuous integration, and release automation across four applications. Run exp 1 for the delivery work.',
   },
   {
-    name: 'AI',
-    skills: ['Claude Code', 'ChatGPT', 'GitHub Copilot', 'Codex', 'Cursor'],
+    name: 'Engineering approach',
+    skills: ['Requirements', 'Deterministic checks', 'Human review'],
+    example: APPROACH_EXAMPLE,
   },
 ];
 
-const ADDITIONAL_SKILLS = [
-  'CI/CD',
-  'Micro-frontends',
-  'Platform Architecture',
-  'AngularJS Modernization',
-  'Cross-Framework Integration',
-  'Release Automation',
-  'Developer Tooling',
-  'AI Workflows',
-  'Code Reviews',
-  'Release Notes Automation',
-  'Jira Automation',
-  'QA Documentation',
-  'Unit Testing',
-  'E2E Testing',
-  'Figma Validation',
-  'Accessibility',
-];
+const ADDITIONAL_SKILLS = ['Documentation', 'Accessibility', 'Code review'];
 
 const EXPERIENCES: CliExperience[] = [
   {
@@ -210,7 +176,7 @@ const EXPERIENCES: CliExperience[] = [
       'Architected a React + Tailwind micro-frontend inside a legacy AngularJS + Bootstrap host, isolating framework lifecycles and eliminating cross-framework styling conflicts.',
       'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental modernization without a full rewrite.',
       'Engineered release automation tooling that reduced deployment time by about 75% across four applications through Jenkins pipelines, Jira automation, release notes drafting, and internal documentation generation.',
-      'Developed an AI-assisted workflow with Claude Code agents, custom skills, Playwright, and Figma validation to refine requirements, generate plans, iterate on UI work, and prepare QA plus test scaffolding.',
+      'Developed a UI workflow connecting Jira requirements, Figma comparisons, Playwright checks, and QA documentation, with AI-assisted planning and human review.',
       'Built a Claude-powered PR review bot in GitHub Actions to flag logic, security, and memory issues for developer review.',
     ],
   },
@@ -351,7 +317,7 @@ function CliTerminal(): React.ReactElement {
           value: index + 1,
           label: category.name,
         })),
-        { value: 5, label: 'Other' },
+        { value: 5, label: 'Supporting practices' },
         { value: 0, label: 'Clear' },
       ];
     }
@@ -437,12 +403,12 @@ function CliTerminal(): React.ReactElement {
         kind: 'output' as const,
         text: `- ${item}`,
       })),
-      { kind: 'output', text: `Highlights: ${ABOUT_HIGHLIGHTS.join(' | ')}` },
-      { kind: 'output', text: `Core principles: ${ABOUT_VALUES.join(', ')}` },
-      {
-        kind: 'output',
-        text: 'AI approach: use tools aggressively, validate outputs, treat as tool not oracle, code responsibly.',
-      },
+      { kind: 'output', text: 'From requirement to verified change:' },
+      ...ABOUT_APPROACH.map((item) => ({
+        kind: 'output' as const,
+        text: `- ${item}`,
+      })),
+      { kind: 'output', text: APPROACH_EXAMPLE },
     ]);
   };
 
@@ -525,7 +491,7 @@ function CliTerminal(): React.ReactElement {
       })),
       {
         kind: 'output',
-        text: `5. Other (${ADDITIONAL_SKILLS.length})`,
+        text: `5. Supporting practices (${ADDITIONAL_SKILLS.length})`,
       },
       {
         kind: 'hint',
@@ -542,12 +508,16 @@ function CliTerminal(): React.ReactElement {
       appendLines([
         {
           kind: 'output',
-          text: '[SKILL CATEGORY 5] Other',
+          text: '[SKILL CATEGORY 5] Supporting practices',
         },
         ...chunk(ADDITIONAL_SKILLS, 5).map((group) => ({
           kind: 'output' as const,
           text: group,
         })),
+        {
+          kind: 'output',
+          text: 'Examples: QA documentation and developer review at accesso; automated accessibility checks in the pre-release design system. Run exp 1 or project 2 for details.',
+        },
         { kind: 'hint', text: 'Choose another category or type menu.' },
       ]);
       return;
@@ -574,6 +544,7 @@ function CliTerminal(): React.ReactElement {
         kind: 'output' as const,
         text: group,
       })),
+      { kind: 'output', text: category.example },
       { kind: 'hint', text: 'Choose another category or type menu.' },
     ]);
   };

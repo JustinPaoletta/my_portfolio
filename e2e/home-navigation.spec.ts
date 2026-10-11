@@ -141,18 +141,24 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: /Justin Paoletta/i })
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: /My Career/i })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: /My Projects/i })
+    page.getByRole('link', { name: 'Download Resume PDF' })
+  ).toHaveAttribute('href', '/resume/Justin-Paoletta_Software-Engineer.pdf');
+  await expect(
+    page.getByRole('heading', { name: /Selected Work/i })
   ).toBeVisible();
 
   const experienceSection = await revealDeferredSection(page, 'experience');
+  const aboutSection = await revealDeferredSection(page, 'about');
   const articlesSection = await revealDeferredSection(page, 'articles');
   const githubSection = await revealDeferredSection(page, 'github');
   const contactSection = await revealDeferredSection(page, 'contact');
 
   await expect(
     experienceSection.getByRole('heading', { name: /Professional Experience/i })
+  ).toBeVisible();
+  await expect(
+    aboutSection.getByRole('heading', { name: 'How I Work' })
   ).toBeVisible();
   await expect(
     articlesSection.getByRole('heading', { name: /LinkedIn Articles/i })
@@ -396,6 +402,9 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
   await expect(
     page.getByRole('heading', { name: /Get In Touch/i })
   ).toBeVisible({ timeout: 10_000 });
+  await expectSectionInViewport(page, 'contact');
+  await expect(page.locator('section#contact')).toBeFocused();
+  await expect(page).toHaveURL(/#contact$/);
 });
 
 test('mobile orientation change still reveals deferred sections while scrolling @mobile', async ({

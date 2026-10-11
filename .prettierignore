@@ -6,3 +6,6 @@ coverage
 *.min.css
 package-lock.json
 public
+
+output/playwright/professional-review
+.playwright-mcp

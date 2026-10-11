@@ -36,7 +36,7 @@ function GitHub(): React.ReactElement {
             delay={40}
             visible={isVisible}
           >
-            Let's Code
+            Source & Activity
           </Reveal>
           <Reveal
             as="h2"
@@ -66,11 +66,14 @@ function GitHub(): React.ReactElement {
           </Reveal>
         )}
 
-        {/* GitHub Stats Overview */}
+        <Reveal as="p" className="github-intro" delay={160} visible={isVisible}>
+          Explore source code and implementation details for my public projects.
+        </Reveal>
+
         {user && (
           <Reveal
             as="div"
-            className="github-stats-bar"
+            className="github-profile"
             effect="fade-only"
             delay={200}
             visible={isVisible}
@@ -81,54 +84,22 @@ function GitHub(): React.ReactElement {
               rel="noopener noreferrer"
               className="github-profile-link"
             >
-              <img
-                src={user.avatar_url}
-                alt={`${user.name || user.login}'s avatar`}
-                className="github-avatar"
-                width={48}
-                height={48}
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="github-profile-info">
-                <span className="github-name">{user.name || user.login}</span>
-                <span className="github-username">@{user.login}</span>
-              </div>
+              <span className="github-name">{user.name || user.login}</span>
+              <span className="github-username">@{user.login}</span>
             </a>
-
-            <div className="github-stats">
-              <div className="stat-item">
-                <span className="stat-value">{user.public_repos}</span>
-                <span className="stat-label">Repos</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">{user.followers}</span>
-                <span className="stat-label">Followers</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">{user.following}</span>
-                <span className="stat-label">Following</span>
-              </div>
-              {contributions && (
-                <div className="stat-item highlight">
-                  <span className="stat-value">
-                    {contributions.totalContributions}
-                  </span>
-                  <span className="stat-label">Contributions</span>
-                </div>
-              )}
-            </div>
           </Reveal>
         )}
 
-        {/* Contribution Graph */}
         {contributions && (
           <Reveal as="div" delay={240} visible={isVisible}>
-            <ContributionGraph
-              contributions={contributions}
-              loading={loading}
-              isVisible={isVisible}
-            />
+            <details className="github-history">
+              <summary>View contribution history</summary>
+              <ContributionGraph
+                contributions={contributions}
+                loading={loading}
+                isVisible={isVisible}
+              />
+            </details>
           </Reveal>
         )}
 
@@ -154,8 +125,7 @@ function GitHub(): React.ReactElement {
             aria-busy="true"
             aria-label="Loading GitHub data"
           >
-            <div className="loading-skeleton contribution-skeleton" />
-            <div className="loading-skeleton repos-skeleton" />
+            Loading public profile…
           </div>
         )}
 

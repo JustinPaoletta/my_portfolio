@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { revealAndNavigate } from '@/utils/deferredNavigation';
 import Contact from '.';
 
 describe('Contact section', () => {
@@ -192,5 +193,33 @@ describe('Contact section', () => {
       'aria-invalid',
       'true'
     );
+  });
+
+  it('keeps validation focus when submitted before deferred navigation settles', async () => {
+    vi.useFakeTimers();
+    try {
+      revealAndNavigate('contact');
+      render(<Contact />);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1);
+      });
+
+      const form = screen
+        .getByRole('button', { name: /send message/i })
+        .closest('form');
+      if (!form) throw new Error('missing contact form');
+      fireEvent.submit(form);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(500);
+      });
+
+      expect(screen.getByLabelText('Your Name')).toHaveFocus();
+      expect(screen.getByLabelText('Your Name')).toHaveAccessibleDescription(
+        'Enter a name with at least 2 characters.'
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

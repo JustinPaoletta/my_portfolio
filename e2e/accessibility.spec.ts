@@ -61,14 +61,28 @@ test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
     'aria-hidden',
     'false'
   );
-  await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
+  const dialog = page.getByRole('dialog', { name: 'Main menu' });
+  await expect(dialog).toBeVisible();
   await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused();
 
-  await pressKeyboardTab(page, browserName);
-  await expect(page.getByRole('link', { name: 'About' })).toBeFocused();
+  for (const label of [
+    'Work',
+    'Experience',
+    'About',
+    'Writing',
+    'Contact',
+    'Resume PDF',
+  ]) {
+    await pressKeyboardTab(page, browserName);
+    await expect(
+      dialog.getByRole('link', { name: label, exact: true })
+    ).toBeFocused();
+  }
 
   await pressKeyboardTab(page, browserName);
-  await expect(page.getByRole('link', { name: 'Projects' })).toBeFocused();
+  await expect(
+    dialog.getByRole('button', { name: 'Close menu' })
+  ).toBeFocused();
 
   await page.keyboard.press('Escape');
   await expect(menuButton).toBeFocused();

@@ -1,5 +1,5 @@
 export const HERO_TAGLINE =
-  'Frontend platform engineer focused on AngularJS modernization, cross-framework micro-frontends, CI/CD automation, and AI-assisted developer workflows.';
+  'I modernize frontend applications and build the tooling that helps teams ship reliably—from AngularJS migrations and micro-frontends to CI/CD automation.';
 
 export const SEO_DESCRIPTION =
   'Justin Paoletta is a software engineer focused on frontend platform architecture, AngularJS modernization, micro-frontends, and CI/CD automation.';

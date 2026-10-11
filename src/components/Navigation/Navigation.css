@@ -271,10 +271,10 @@
 
 .nav-link {
   position: relative;
-  padding: 0.85rem 1.3rem;
+  padding: 0.85rem 1rem;
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 0.95rem;
   font-weight: 600;
   transition: color 0.15s ease;
   border-radius: 12px;
@@ -305,6 +305,46 @@
     outline: 2px solid var(--color-primary-ink);
     outline-offset: 2px;
   }
+}
+
+.nav-resume {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--color-primary-ink);
+    background: var(--bg-card-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 3px;
+  }
+}
+
+.nav-resume-format {
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  letter-spacing: 0.04em;
+}
+
+.mobile-nav-link.mobile-nav-resume {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 @media (max-width: 1120px) {
@@ -610,6 +650,7 @@
   }
 
   .nav-links,
+  .nav-resume,
   .nav-social {
     display: none;
   }

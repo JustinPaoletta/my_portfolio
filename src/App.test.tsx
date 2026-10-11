@@ -245,20 +245,6 @@ describe('App', () => {
     expect(heading).toHaveTextContent(/./); // Ensures heading has some text
   });
 
-  it('renders the JP image with correct attributes', async () => {
-    await act(async () => {
-      render(<App />);
-    });
-
-    const jpImage = await screen.findByAltText(
-      /Justin Paoletta working on code/i
-    );
-    expect(jpImage).toBeInTheDocument();
-    expect(jpImage).toHaveAttribute('width', '400');
-    expect(jpImage).toHaveAttribute('height', '400');
-    expect(jpImage).toHaveAttribute('src', '/branding/jp-headshot/jp-400.webp');
-  });
-
   it('renders skip link for keyboard navigation', async () => {
     const scrollIntoViewMock = vi.fn();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
@@ -377,7 +363,7 @@ describe('App', () => {
       render(<App />);
     });
 
-    await screen.findByRole('heading', { name: /My Projects/i });
+    await screen.findByRole('heading', { name: /Selected Work/i });
 
     expect(document.getElementById('github')).not.toBeInTheDocument();
     expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
@@ -401,12 +387,12 @@ describe('App', () => {
       render(<App />);
     });
 
-    await screen.findByRole('heading', { name: /My Projects/i });
+    await screen.findByRole('heading', { name: /Selected Work/i });
 
     await waitFor(() => {
       expect(
         document.querySelectorAll('[data-deferred-sentinel="true"]')
-      ).toHaveLength(6);
+      ).toHaveLength(7);
     });
 
     expect(document.getElementById('articles')).not.toBeInTheDocument();

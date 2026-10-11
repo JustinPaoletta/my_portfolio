@@ -134,6 +134,12 @@ describe('CliTerminal', () => {
 
     runCommand('1');
     expect(screen.getByText('[ABOUT]')).toBeInTheDocument();
+    expect(
+      screen.getByText(/deterministic checks and human review determine/)
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/5\+ years|75% faster releases/)
+    ).not.toBeInTheDocument();
 
     runCommand('2');
     expect(screen.getByText('[PROJECTS]')).toBeInTheDocument();
@@ -179,6 +185,7 @@ describe('CliTerminal', () => {
     expect(
       screen.getByText(/\[PROJECT 4\] wild-apricot-exports/)
     ).toBeInTheDocument();
+    expect(screen.getByText('Type: Featured')).toBeInTheDocument();
     expect(
       screen.getByText(
         /npm: https:\/\/www\.npmjs\.com\/package\/wild-apricot-exports/i
@@ -192,7 +199,9 @@ describe('CliTerminal', () => {
     expect(screen.getByText('Usage: skill <number>')).toBeInTheDocument();
 
     runCommand('skill 5');
-    expect(screen.getByText('[SKILL CATEGORY 5] Other')).toBeInTheDocument();
+    expect(
+      screen.getByText('[SKILL CATEGORY 5] Supporting practices')
+    ).toBeInTheDocument();
 
     runCommand('skill 99');
     expect(
@@ -403,7 +412,9 @@ describe('CliTerminal', () => {
 
     runCommand('skills');
     runCommand('1');
-    expect(screen.getByText('[SKILL CATEGORY 1] Frontend')).toBeInTheDocument();
+    expect(
+      screen.getByText('[SKILL CATEGORY 1] Frontend systems')
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Previous list' }));
     expect(screen.getAllByText('[SKILLS]').length).toBeGreaterThan(0);
 
@@ -542,7 +553,7 @@ describe('CliTerminal', () => {
     expect(
       screen.getByText('[PROJECT 5] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
-    expect(screen.getByText('Type: Featured')).toBeInTheDocument();
+    expect(screen.getByText('Type: Other')).toBeInTheDocument();
     expect(screen.getByText('Repository: Private')).toBeInTheDocument();
   });
 

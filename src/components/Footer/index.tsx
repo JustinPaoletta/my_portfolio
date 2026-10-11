@@ -18,17 +18,17 @@ function Footer(): React.ReactElement {
             <span className="visually-hidden">- Go to top</span>
           </a>
           <p className="footer-tagline">
-            <span>Ideas</span>
+            <span>Design</span>
             <ArrowRightIcon
               className="footer-tagline-icon"
               aria-hidden="true"
             />
-            <span>Prompts</span>
+            <span>Build</span>
             <ArrowRightIcon
               className="footer-tagline-icon"
               aria-hidden="true"
             />
-            <span>Production</span>
+            <span>Verify</span>
           </p>
         </div>
         <p className="copyright">

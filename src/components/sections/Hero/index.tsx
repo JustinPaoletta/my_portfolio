@@ -443,26 +443,19 @@ function Hero(): React.ReactElement {
                   <ul className="hero-title-list" aria-label="Core roles">
                     <li className="hero-title-list-item">Software Engineer</li>
                     <li className="hero-title-list-item">
-                      Frontend Platform Architecture
+                      Angular · React · TypeScript
                     </li>
                     <li className="hero-title-list-item">
-                      Modernization &amp; Automation
+                      Modernization &amp; Release Tooling
                     </li>
                   </ul>
                 ) : (
                   <p className="hero-title">
-                    <span className="title-text">Software Engineer</span>
-                    <span className="title-divider" aria-hidden="true">
-                      •
+                    <span className="title-text hero-role">
+                      Software Engineer
                     </span>
-                    <span className="title-text">
-                      Frontend Platform Architecture
-                    </span>
-                    <span className="title-divider" aria-hidden="true">
-                      •
-                    </span>
-                    <span className="title-text">
-                      Modernization &amp; Automation
+                    <span className="title-text hero-stack">
+                      Angular · React · TypeScript
                     </span>
                   </p>
                 )}
@@ -514,8 +507,13 @@ function Hero(): React.ReactElement {
                   />
                 </svg>
               </a>
-              <a href="#contact" className="cta-secondary">
-                <span>Get In Touch</span>
+              <a
+                href="/resume/Justin-Paoletta_Software-Engineer.pdf"
+                download="Justin_Paoletta_Resume.pdf"
+                className="cta-secondary"
+              >
+                <span>Download Resume</span>{' '}
+                <span className="cta-file-type">PDF</span>
               </a>
             </div>
 

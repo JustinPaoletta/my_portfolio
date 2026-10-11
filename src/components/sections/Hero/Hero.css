@@ -126,9 +126,10 @@
 
 .hero-title {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
   margin: 0 0 1.5rem;
   opacity: 1;
@@ -138,6 +139,18 @@
   font-size: clamp(1.08rem, 3.25vw, 1.35rem);
   color: var(--text-secondary);
   font-weight: 600;
+}
+
+.hero-role {
+  color: var(--text-primary);
+  font-size: clamp(1.3rem, 3vw, 1.65rem);
+  font-weight: 650;
+}
+
+.hero-stack {
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  font-weight: 500;
 }
 
 .title-divider {
@@ -243,6 +256,13 @@
   width: 18px;
   height: 18px;
   transition: transform 0.15s ease;
+}
+
+.cta-file-type {
+  font-family: var(--font-mono);
+  font-size: 0.65em;
+  letter-spacing: 0.04em;
+  opacity: 0.75;
 }
 
 .cta-primary:hover .cta-icon {

@@ -7,10 +7,10 @@ describe('Projects section', () => {
     render(<Projects />);
 
     expect(
-      screen.getByRole('heading', { name: 'My Projects' })
+      screen.getByRole('heading', { name: 'Selected Work' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Other Projects' })
+      screen.getByRole('heading', { name: 'More Projects' })
     ).toBeInTheDocument();
 
     expect(screen.getAllByLabelText('Project in development').length).toBe(1);
@@ -31,7 +31,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', {
-        name: 'View wild-apricot-exports on GitHub',
+        name: 'View wild-apricot-exports source code',
       })
     ).toBeInTheDocument();
     expect(
@@ -43,7 +43,7 @@ describe('Projects section', () => {
     render(<Projects />);
 
     expect(
-      screen.getByRole('heading', { name: 'My Projects' })
+      screen.getByRole('heading', { name: 'Selected Work' })
     ).toBeInTheDocument();
     expect(screen.getByText('BitStockerz')).toBeInTheDocument();
     expect(
@@ -75,8 +75,8 @@ describe('Projects section', () => {
       )
     ).toBeInTheDocument();
 
-    expect(screen.getByAltText('SideQuest: Pittsburgh logo')).toHaveClass(
-      'project-image--contain'
-    );
+    expect(
+      screen.getByAltText(/JP Design System showcase/)
+    ).toBeInTheDocument();
   });
 });

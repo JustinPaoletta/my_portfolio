@@ -46,7 +46,7 @@ test('articles carousel switches slides with prev/next and dot controls', async 
   ).toBeVisible();
 });
 
-test('GitHub section renders live stats from API responses', async ({
+test('GitHub section reveals real contribution history on request', async ({
   page,
 }) => {
   await mockPortfolioApis(page);
@@ -58,15 +58,23 @@ test('GitHub section renders live stats from API responses', async ({
     githubSection.getByRole('heading', { name: /GitHub Activity/i })
   ).toBeVisible();
   await expect(githubSection.getByText('@JustinPaoletta')).toBeVisible();
+  const contributionHeading = githubSection.getByRole('heading', {
+    name: /contributions in the last/i,
+  });
+  await expect(contributionHeading).not.toBeVisible();
+  await githubSection
+    .getByText('View contribution history', { exact: true })
+    .click();
+  await expect(contributionHeading).toBeVisible();
   await expect(
-    githubSection.getByRole('heading', { name: /contributions in the last/i })
-  ).toBeVisible();
+    githubSection.getByText('Followers', { exact: true })
+  ).toHaveCount(0);
   await expect(
     githubSection.getByRole('link', { name: /View Full Profile on GitHub/i })
   ).toHaveAttribute('href', 'https://github.com/JustinPaoletta');
 });
 
-test('GitHub section preserves public stats and discards legacy contribution totals when the proxy fails', async ({
+test('GitHub section preserves the public profile and discards legacy contribution totals when the proxy fails', async ({
   page,
 }) => {
   await page.addInitScript(() => {
@@ -91,7 +99,6 @@ test('GitHub section preserves public stats and discards legacy contribution tot
   const githubSection = await revealDeferredSection(page, 'github');
 
   await expect(githubSection.getByText('@JustinPaoletta')).toBeVisible();
-  await expect(githubSection.getByText('42', { exact: true })).toBeVisible();
   await expect(githubSection.getByRole('status')).toHaveText(
     'Contribution history is temporarily unavailable. View the profile on GitHub for current activity.'
   );
@@ -146,26 +153,56 @@ test('deferred GitHub and pet dogs requests wait until their sections mount', as
     }
   });
 
+  await page.addInitScript(() => {
+    const prematureRequests: string[] = [];
+    Object.defineProperty(window, '__portfolioPrematureRequests', {
+      value: prematureRequests,
+    });
+    const originalFetch = window.fetch.bind(window);
+    window.fetch = (input, init) => {
+      const url = new URL(
+        input instanceof Request ? input.url : String(input),
+        window.location.href
+      );
+      const method =
+        init?.method ?? (input instanceof Request ? input.method : 'GET');
+      const sectionId =
+        url.pathname === '/api/github'
+          ? 'github'
+          : url.pathname === '/api/pet-dogs' && method.toUpperCase() === 'GET'
+            ? 'pet-dogs'
+            : null;
+      if (sectionId && !document.querySelector(`section#${sectionId}`)) {
+        prematureRequests.push(sectionId);
+      }
+      return originalFetch(input, init);
+    };
+  });
+
   await mockPortfolioApis(page);
   await page.goto('/');
   await page.waitForLoadState('networkidle');
 
   expect(githubProxyRequests).toBe(0);
-  const initialPetDogsGetRequests = petDogsGetRequests;
+  expect(petDogsGetRequests).toBe(0);
+  await expect(page.locator('section#github')).toHaveCount(0);
+  await expect(page.locator('section#pet-dogs')).toHaveCount(0);
 
-  await page
-    .getByRole('navigation', { name: /main navigation/i })
-    .getByRole('link', { name: 'GitHub', exact: true })
-    .click();
+  await page.evaluate(() => {
+    window.location.hash = 'github';
+  });
   await expect(page.locator('section#github')).toBeVisible({ timeout: 10_000 });
   await expect.poll(() => githubProxyRequests).toBeGreaterThan(0);
-  await expect(page.locator('section#pet-dogs')).toHaveCount(0);
-  expect(petDogsGetRequests).toBe(initialPetDogsGetRequests);
 
   await revealDeferredSection(page, 'pet-dogs');
-  await expect
-    .poll(() => petDogsGetRequests)
-    .toBeGreaterThan(initialPetDogsGetRequests);
+  await expect.poll(() => petDogsGetRequests).toBeGreaterThan(0);
+  expect(
+    await page.evaluate(
+      () =>
+        (window as Window & { __portfolioPrematureRequests: string[] })
+          .__portfolioPrematureRequests
+    )
+  ).toEqual([]);
 });
 
 test('contact form submits successfully and clears form state', async ({

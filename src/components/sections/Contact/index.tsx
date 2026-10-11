@@ -174,9 +174,9 @@ function Contact(): React.ReactElement {
             visible={isVisible}
           >
             <p className="contact-intro">
-              I&apos;m always open to discussing new projects, creative ideas,
-              or opportunities to be part of your vision. Feel free to reach out
-              through any of these channels.
+              Want to discuss a software engineering role or a frontend team
+              challenge? Share the role, team, and working arrangement below, or
+              get in touch by email.
             </p>
 
             <div className="contact-methods">
@@ -249,7 +249,7 @@ function Contact(): React.ReactElement {
                 <span className="indicator-dot" />
               </div>
               <span className="availability-text">
-                Currently entertaining freelance & full-time opportunities
+                Software engineering roles & technical conversations
               </span>
             </Reveal>
           </Reveal>
@@ -330,7 +330,7 @@ function Contact(): React.ReactElement {
                 onChange={handleChange}
                 rows={5}
                 className="form-input form-textarea"
-                placeholder="Tell me about your project..."
+                placeholder="Tell me about the role, team, or engineering challenge..."
                 aria-invalid={Boolean(fieldErrors.message)}
                 aria-describedby={
                   fieldErrors.message ? 'message-error' : undefined

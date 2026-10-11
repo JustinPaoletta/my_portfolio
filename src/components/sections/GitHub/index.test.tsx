@@ -44,9 +44,14 @@ vi.mock('@/hooks/useGitHub', () => ({
 }));
 
 vi.mock('@/components/sections/GitHub/ContributionGraph', () => ({
-  default: (props: { loading: boolean; isVisible: boolean }) => (
+  default: (props: {
+    loading: boolean;
+    isVisible: boolean;
+    contributions: { totalContributions: number };
+  }) => (
     <div
       data-testid="contribution-graph"
+      data-total={props.contributions.totalContributions}
       data-loading={props.loading ? 'true' : 'false'}
       data-visible={props.isVisible ? 'true' : 'false'}
     />
@@ -82,7 +87,7 @@ vi.mock('@/components/Reveal', async () => {
 });
 
 describe('GitHub section', () => {
-  it('renders profile stats, contribution graph, and CTA', () => {
+  it('renders the profile and optional contribution history without vanity counters', () => {
     isInView = true;
     githubState = {
       user: {
@@ -108,7 +113,16 @@ describe('GitHub section', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Justin')).toBeInTheDocument();
     expect(screen.getByText('@justin')).toBeInTheDocument();
-    expect(screen.getByText('123')).toBeInTheDocument();
+    expect(screen.queryByText('Followers')).not.toBeInTheDocument();
+    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+    expect(screen.queryByText('Repos')).not.toBeInTheDocument();
+    expect(
+      screen.getByText('View contribution history').closest('details')
+    ).not.toHaveAttribute('open');
+    expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
+      'data-total',
+      '123'
+    );
     expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
       'data-visible',
       'true'
@@ -154,13 +168,11 @@ describe('GitHub section', () => {
     render(<GitHub />);
 
     expect(screen.getByText('justin')).toBeInTheDocument();
-    expect(screen.getByAltText("justin's avatar")).toBeInTheDocument();
     expect(screen.queryByText('Contributions')).not.toBeInTheDocument();
     expect(screen.getByRole('status')).toHaveTextContent(
       'Contribution history is temporarily unavailable.'
     );
     expect(screen.queryByTestId('contribution-graph')).not.toBeInTheDocument();
-    expect(screen.getByText('10')).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'View Full Profile on GitHub' })
     ).toHaveAttribute('href', 'https://github.com/justin');
@@ -183,7 +195,10 @@ describe('GitHub section', () => {
     };
     render(<GitHub />);
 
-    expect(screen.getByText('0')).toBeInTheDocument();
+    expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
+      'data-total',
+      '0'
+    );
     expect(screen.getByTestId('contribution-graph')).toBeInTheDocument();
     expect(
       screen.queryByText(/Contribution history is temporarily unavailable/)

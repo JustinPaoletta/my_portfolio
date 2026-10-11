@@ -43,8 +43,8 @@ const TARGETS: readonly ProjectImageTarget[] = [
   {
     name: 'SideQuest: Pittsburgh',
     basename: 'sidequest-logo',
-    kind: 'featured',
-    candidateWidths: [240, 480, 720, 960, 1254],
+    kind: 'icon',
+    candidateWidths: [60, 120, 180],
   },
   {
     name: 'wild-apricot-exports',

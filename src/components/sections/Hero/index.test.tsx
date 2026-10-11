@@ -416,6 +416,15 @@ describe('Hero section', () => {
     const minimal = render(<Hero />);
     expect(screen.getByText("Hello, I'm")).toBeInTheDocument();
     expect(screen.getByText('View My Work')).toBeInTheDocument();
+    expect(
+      screen.getByText('Angular · React · TypeScript')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'Download Resume PDF' })
+    ).toHaveAttribute('href', '/resume/Justin-Paoletta_Software-Engineer.pdf');
+    expect(
+      screen.getByRole('link', { name: 'Download Resume PDF' })
+    ).toHaveAttribute('download', 'Justin_Paoletta_Resume.pdf');
     expect(screen.queryByTestId('cli-terminal')).not.toBeInTheDocument();
     expect(minimal.container.querySelector('.hero-cosmic-video')).toBeNull();
     expect(minimal.container.querySelector('.hero-engineer-visual')).toBeNull();

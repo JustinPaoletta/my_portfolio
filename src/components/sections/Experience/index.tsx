@@ -50,7 +50,7 @@ const workExperiences: WorkExperience[] = [
       'Architected a React + Tailwind micro-frontend inside a legacy AngularJS + Bootstrap host, isolating framework lifecycles and eliminating cross-framework styling conflicts.',
       'Led migration of 8 Angular micro-frontends into an AngularJS shell using ngUpgrade, enabling incremental platform modernization without a full rewrite.',
       'Engineered release automation that reduced deployment time by about 75% across four applications, coordinating Jenkins pipelines, release notes, Jira updates, and internal documentation.',
-      'Developed an AI-assisted engineering workflow using Claude Code agents, custom skills, Playwright, and Figma validation to refine Jira requirements, generate implementation plans, iterate on UI work, and prepare QA documentation plus unit and end-to-end test scaffolding after manual validation.',
+      'Developed a UI workflow connecting Jira requirements, Figma comparisons, Playwright checks, and QA documentation, with AI-assisted planning and human review.',
       'Built a Claude-powered PR review bot in GitHub Actions to flag logic, security, and memory issues for developer review.',
     ],
     technologies: [

@@ -145,7 +145,11 @@ describe('Navigation', () => {
     expect(
       screen.getByRole('navigation', { name: 'Main navigation' })
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Articles' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Writing' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Resume PDF' })).toHaveAttribute(
+      'download',
+      'Justin_Paoletta_Resume.pdf'
+    );
     expect(container.querySelector('.mobile-menu-button')).toBeInTheDocument();
 
     act(() => {
@@ -176,7 +180,7 @@ describe('Navigation', () => {
       );
     });
 
-    const projectsLink = screen.getAllByRole('link', { name: 'Projects' })[0];
+    const projectsLink = screen.getAllByRole('link', { name: 'Work' })[0];
     fireEvent.click(projectsLink);
 
     expect(window.scrollTo).toHaveBeenCalledWith({
@@ -316,7 +320,7 @@ describe('Navigation', () => {
     dialog.style.transform = 'translateX(0)';
 
     const projectsLink = within(dialog).getByRole('link', {
-      name: 'Projects',
+      name: 'Work',
     });
     fireEvent.click(projectsLink);
 
@@ -348,6 +352,35 @@ describe('Navigation', () => {
       container.querySelector('.mobile-menu-button')
     ).not.toBeInTheDocument();
     expect(container.querySelector('.nav-links')).not.toBeInTheDocument();
+  });
+
+  it('offers the resume in the mobile menu and releases the scroll lock after selection', () => {
+    setViewportWidth(900);
+    const { container } = render(<Navigation />);
+    const menuButton = container.querySelector('.mobile-menu-button');
+    if (!menuButton) throw new Error('missing mobile menu button');
+    fireEvent.click(menuButton);
+
+    const dialog = container.querySelector(
+      '.mobile-menu-content'
+    ) as HTMLElement;
+    const mobileMenu = container.querySelector('#mobile-menu') as HTMLElement;
+    mobileMenu.style.display = 'flex';
+    dialog.style.transform = 'translateX(0)';
+    const resumeLink = within(dialog).getByRole('link', { name: 'Resume PDF' });
+    expect(resumeLink).toHaveAttribute(
+      'href',
+      '/resume/Justin-Paoletta_Software-Engineer.pdf'
+    );
+    expect(resumeLink).toHaveAttribute(
+      'download',
+      'Justin_Paoletta_Resume.pdf'
+    );
+
+    fireEvent.click(resumeLink);
+    expect(menuButton).toHaveAttribute('aria-expanded', 'false');
+    expect(document.body.style.position).toBe('');
+    expect(menuButton).toHaveFocus();
   });
 
   it('auto-closes mobile menu after switching from non-CLI to CLI theme', () => {
