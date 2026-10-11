@@ -75,3 +75,9 @@ generated in review workflow `38114624992`, inspected, and accepted. The deploye
 preview executes contextual help with zero UI buttons or browser exceptions.
 Final CI status is recorded in the PR. Physical mobile-keyboard and human
 screen-reader acceptance remain owner checks.
+
+Prompt-flow follow-up: the input now follows the last output inside the scrolling
+transcript. A browser regression verifies short and long output, scrolling back,
+and clearing. All 205 unit tests, 10 accessibility tests, eight focused browser
+journeys, and five affected macOS visual comparisons pass. The matching Linux
+screenshots from review workflow `38178442391` were inspected and accepted.
