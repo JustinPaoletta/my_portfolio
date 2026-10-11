@@ -438,6 +438,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const resetTerminal = (): void => {
+    scrollRequestedRef.current = true;
     setContext('main');
     setIsDetailView(false);
     setLines([]);
@@ -1342,7 +1343,7 @@ function CliTerminal(): React.ReactElement {
       initialDesktopRef.current &&
       !window.matchMedia('(pointer: coarse)').matches
     ) {
-      inputRef.current?.focus({ preventScroll: true });
+      inputRef.current?.focus();
     }
   }, []);
 
@@ -1465,57 +1466,57 @@ function CliTerminal(): React.ReactElement {
               </p>
             ))}
           </div>
+          <form
+            className="cli-prompt"
+            onSubmit={(event) => {
+              event.preventDefault();
+              submitPrompt();
+            }}
+          >
+            <div className="cli-prompt-content">
+              <div className="cli-prompt-row">
+                <label htmlFor="cli-command-input" className="visually-hidden">
+                  Terminal command input
+                </label>
+                <span className="cli-prompt-prefix" aria-hidden="true">
+                  {context === 'main' ? '~' : `~/${context}`} $
+                </span>
+                <input
+                  ref={inputRef}
+                  id="cli-command-input"
+                  type="text"
+                  className="cli-prompt-input"
+                  value={inputValue}
+                  onChange={(event) => {
+                    setInputValue(event.target.value);
+                    setHistoryIndex(null);
+                  }}
+                  autoComplete="off"
+                  autoCapitalize="none"
+                  autoCorrect="off"
+                  spellCheck={false}
+                  onCompositionStart={() => {
+                    isComposingRef.current = true;
+                  }}
+                  onCompositionEnd={() => {
+                    isComposingRef.current = false;
+                  }}
+                  enterKeyHint="send"
+                  maxLength={500}
+                  aria-describedby="cli-keyboard-shortcuts"
+                  onKeyDown={handleKeyDown}
+                />
+              </div>
+              <p className="cli-line cli-context-hint">{contextHint}</p>
+              <p id="cli-keyboard-shortcuts" className="cli-keyboard-shortcuts">
+                Enter run · ↑ ↓ history · Ctrl+Space complete · Tab move focus ·
+                help keyboard
+              </p>
+            </div>
+          </form>
         </div>
       </div>
       {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
-      <form
-        className="cli-prompt"
-        onSubmit={(event) => {
-          event.preventDefault();
-          submitPrompt();
-        }}
-      >
-        <div className="cli-prompt-content">
-          <p className="cli-line cli-context-hint">{contextHint}</p>
-          <div className="cli-prompt-row">
-            <label htmlFor="cli-command-input" className="visually-hidden">
-              Terminal command input
-            </label>
-            <span className="cli-prompt-prefix" aria-hidden="true">
-              {context === 'main' ? '~' : `~/${context}`} $
-            </span>
-            <input
-              ref={inputRef}
-              id="cli-command-input"
-              type="text"
-              className="cli-prompt-input"
-              value={inputValue}
-              onChange={(event) => {
-                setInputValue(event.target.value);
-                setHistoryIndex(null);
-              }}
-              autoComplete="off"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              onCompositionStart={() => {
-                isComposingRef.current = true;
-              }}
-              onCompositionEnd={() => {
-                isComposingRef.current = false;
-              }}
-              enterKeyHint="send"
-              maxLength={500}
-              aria-describedby="cli-keyboard-shortcuts"
-              onKeyDown={handleKeyDown}
-            />
-          </div>
-          <p id="cli-keyboard-shortcuts" className="cli-keyboard-shortcuts">
-            Enter run · ↑ ↓ history · Ctrl+Space complete · Tab move focus ·
-            help keyboard
-          </p>
-        </div>
-      </form>
       <div
         className="visually-hidden"
         role="status"

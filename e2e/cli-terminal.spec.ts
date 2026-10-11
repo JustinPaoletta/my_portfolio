@@ -1,5 +1,5 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 
 async function openTerminal(page: Page, mode = 'dark'): Promise<void> {
@@ -17,6 +17,80 @@ async function runCommand(page: Page, command: string): Promise<void> {
   await prompt.press('Enter');
   await expect(prompt).toHaveValue('');
 }
+
+test('terminal prompt follows the output and scrolls with the transcript', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 1000 });
+  await openTerminal(page);
+  const transcript = page.getByRole('region', { name: 'Terminal transcript' });
+  const intro = transcript.locator('.cli-intro');
+  const history = transcript.locator('.cli-history');
+  const form = transcript.locator('form');
+  const prompt = page.getByLabel('Terminal command input');
+
+  const expectPromptFollows = async (preceding: Locator): Promise<void> => {
+    await expect(form).toHaveCount(1);
+    await expect
+      .poll(async () => {
+        const [previousBox, formBox] = await Promise.all([
+          preceding.boundingBox(),
+          form.boundingBox(),
+        ]);
+        if (!previousBox || !formBox) return false;
+        const gap = formBox.y - (previousBox.y + previousBox.height);
+        return gap >= -1 && gap <= 48;
+      })
+      .toBe(true);
+  };
+
+  await expectPromptFollows(intro);
+  const initialForm = await form.boundingBox();
+  expect(initialForm).not.toBeNull();
+  // A short session leaves unused space below the prompt rather than pinning it.
+  expect(initialForm!.y + initialForm!.height).toBeLessThan(800);
+
+  await runCommand(page, 'pwd');
+  await expectPromptFollows(history.locator('.cli-line').last());
+  await expect
+    .poll(async () => (await form.boundingBox())?.y ?? 0)
+    .toBeGreaterThan(initialForm!.y + 24);
+
+  for (const command of ['help', 'exp 1', 'project 1']) {
+    await runCommand(page, command);
+  }
+  await expect(prompt).toBeFocused();
+  await expect(prompt).toBeInViewport({ ratio: 1 });
+  await expectPromptFollows(history.locator('.cli-line').last());
+  const bottomScroll = await transcript.evaluate(
+    (element) => element.scrollTop
+  );
+  expect(bottomScroll).toBeGreaterThan(200);
+  const scrolledForm = await form.boundingBox();
+  expect(scrolledForm).not.toBeNull();
+
+  await transcript.evaluate((element) => {
+    element.scrollTop = 0;
+  });
+  await expect
+    .poll(() => transcript.evaluate((element) => element.scrollTop))
+    .toBe(0);
+  await expect(prompt).not.toBeInViewport();
+  const movedForm = await form.boundingBox();
+  expect(movedForm).not.toBeNull();
+  expect(
+    Math.abs(movedForm!.y - scrolledForm!.y - bottomScroll)
+  ).toBeLessThanOrEqual(2);
+
+  await runCommand(page, 'clear');
+  await expect(history).toBeEmpty();
+  await expectPromptFollows(intro);
+  await expect(prompt).toBeFocused();
+  await expect(prompt).toBeInViewport({ ratio: 1 });
+  await expect
+    .poll(() => transcript.evaluate((element) => element.scrollTop))
+    .toBe(0);
+});
 
 test('terminal keyboard editing, completion and history preserve the draft', async ({
   page,

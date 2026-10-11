@@ -43,6 +43,7 @@
   scrollbar-color: var(--text-muted) var(--bg-main);
   scrollbar-width: thin;
   padding: clamp(1.25rem, 4vh, 2.5rem) clamp(1rem, 4vw, 3rem);
+  padding-bottom: max(clamp(1.25rem, 4vh, 2.5rem), env(safe-area-inset-bottom));
   scroll-padding-block: 1rem;
 }
 
@@ -51,10 +52,6 @@
   width: 100%;
   max-width: 100ch;
   min-width: 0;
-}
-
-:root[data-theme='cli'] .cli-intro {
-  padding-bottom: 1.5rem;
 }
 
 :root[data-theme='cli'] .cli-identity {
@@ -163,16 +160,13 @@
 }
 
 :root[data-theme='cli'] .cli-prompt {
-  flex-shrink: 0;
-  margin: 0;
-  padding: 0.9rem clamp(1rem, 4vw, 3rem);
-  padding-bottom: max(0.9rem, env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border-subtle);
-  background: var(--bg-main);
+  margin: 1rem 0 0;
+  padding: 0;
+  border: 0;
 }
 
 :root[data-theme='cli'] .cli-context-hint {
-  margin-bottom: 0.35rem;
+  margin-top: 0.35rem;
   font-size: 0.75rem;
   color: var(--text-muted);
 }

@@ -3,6 +3,9 @@
 The CLI theme presents the portfolio as one terminal session. The introduction,
 command guide, output, and prompt live in the same scrollable surface. There is
 no option sidebar, window-control toolbar, or floating theme menu.
+The prompt follows the last output in normal document flow and scrolls with the
+transcript. Submitting a command scrolls its new output and prompt into view;
+scrolling up lets you read earlier output without a fixed input covering it.
 
 This is a portfolio command interface. It does not execute operating-system
 commands or provide access to a filesystem.

@@ -58,6 +58,8 @@ The owner requested a full terminal experience with guidance in the terminal.
 Replace the option sidebar, faux window controls, and floating theme menu with
 one transcript and prompt. Preserve the audited portfolio content and existing
 links; this remains a portfolio command interface, not an operating-system shell.
+The prompt follows the latest output and scrolls with the transcript, as requested
+in the follow-up review; it is not pinned to the viewport.
 
 - [x] Implement the opening guide, contextual help, command history, completion,
       normal text editing, cancellation/clear shortcuts, and appearance/exit commands.
