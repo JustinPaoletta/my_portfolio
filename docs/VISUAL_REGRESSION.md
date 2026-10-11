@@ -98,3 +98,13 @@ Preferred patterns:
 ## CI Behavior
 
 The visual regression job runs from `.github/workflows/e2e.yml` as a separate Chromium-only job. A visual mismatch fails the job and uploads the Playwright report and diff artifacts for PR review.
+
+## Review Linux baselines through GitHub Actions
+
+Run **Update Visual Snapshots** on the PR branch with `commit_snapshots` left
+false. Download the `linux-visual-snapshots` artifact, inspect the images, then
+copy accepted files into the corresponding `e2e/visual/*-snapshots/` directories
+and commit them. The artifact contains only Linux PNG baselines and expires
+after three days. Newly created baselines are included in change detection.
+Automatic commit/push is available only when `commit_snapshots` is explicitly
+selected; use the review-artifact path for a design change.

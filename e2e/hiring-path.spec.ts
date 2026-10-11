@@ -12,11 +12,8 @@ const hiringDestinations = [
 
 async function expectNoHorizontalOverflow(page: Page): Promise<void> {
   const overflow = await page.evaluate(() => {
-    const width = document.documentElement.clientWidth;
-    return Math.max(
-      document.documentElement.scrollWidth - width,
-      document.body.scrollWidth - width
-    );
+    const scroller = document.scrollingElement ?? document.documentElement;
+    return scroller.scrollWidth - scroller.clientWidth;
   });
   expect(overflow).toBeLessThanOrEqual(1);
 }
@@ -208,6 +205,7 @@ test.describe('production portfolio without JavaScript', () => {
     page,
   }) => {
     await page.goto('/');
+    await expect(page.getByRole('main')).toHaveCount(1);
     await expectReadable(
       page
         .getByRole('heading', { name: 'Justin Paoletta', exact: true })

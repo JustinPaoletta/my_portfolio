@@ -17,7 +17,7 @@ The implementation is ready for review with stated content assumptions. Existing
 - [x] **10 — Honest project visuals.** Replace featured promotional images with a captured Angular showcase and labeled implementation workflow diagrams. Captions explain exactly what is shown and preserve release/provider limitations.
 - [x] **11 — Curate inspectable work.** Feature BitStockerz, the design system, and the published Wild Apricot CLI with visible source/package actions. Private projects remain smaller supporting cards. Richer personal-ownership narratives belong with the evidence work below.
 - [x] **14 — One engineering approach.** Consolidate requirements, deterministic checks, code/UI inspection, and QA handoff into About. Shorten the Experience example and align CLI wording.
-- [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters and make contribution history an optional disclosure; preserve honest unavailable states.
+- [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters from the standard page and make contribution history an optional disclosure; preserve honest unavailable states.
 - [x] **16 — Identity assets (local implementation).** Omit the stylized portrait, remove its Person structured-data reference, and generate a matching 1200×630 name/role sharing card. An external sharing-cache preview remains a production follow-up.
 - [x] **17 — Presentation.** Reduce crowded hero labels, hover-dependent content, oversized project shadows, and repeated skills/prose. Keep theme-aware focus and wrapping controls.
 - [x] **18 — Contact wording (partial).** Ask about a software engineering role or frontend challenge, with email prominent. Do not invent location or working-arrangement preferences.
@@ -28,7 +28,7 @@ The implementation is ready for review with stated content assumptions. Existing
 Completion requires observed outcomes, not only screenshots. Final results are recorded in the PR description.
 
 - [ ] TypeScript, ESLint, Prettier, frontend/server unit tests, and production build with actual prerendering pass.
-- [ ] **22 (core content)** — Production HTML exposes the role, work, experience, résumé, and contact without JavaScript. Case-study routes await publishable case studies.
+- [x] **22 (core content)** — A Chromium context with JavaScript disabled verified readable profile, selected work, employment, email, and a real PDF résumé download from the production build. Prerendering now exposes captured reveal content without JavaScript. Case-study routes await publishable case studies; this closes core content only.
 - [ ] **23, 27** — Check complete 320px, 390px, and 768px navigation, wrapping, section landing, and local PDF health; preserve project source touch/keyboard and image-response regressions.
 - [ ] **24 (automated)** — Run keyboard, reduced-motion, theme, and axe checks. Generate Linux baselines as a review artifact, inspect them, commit accepted images, and rerun visual CI.
 - [ ] **25 (mocked)** — Verify contact validation, server error, and success without sending a real message.

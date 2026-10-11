@@ -673,7 +673,7 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: '[CONTACT]' },
       {
         kind: 'output',
-        text: 'Currently entertaining freelance & full-time opportunities.',
+        text: 'Software engineering roles and technical conversations. Share the role, team, and working arrangement.',
       },
       {
         kind: 'output',
@@ -1405,8 +1405,7 @@ function CliTerminal(): React.ReactElement {
                 <div className="cli-banner-name">JUSTIN PAOLETTA</div>
               </div>
               <div className="cli-banner-right">
-                Software Engineer • Frontend Platform Architecture •
-                Modernization & Automation
+                Software Engineer • Angular • React • TypeScript
               </div>
             </div>
 

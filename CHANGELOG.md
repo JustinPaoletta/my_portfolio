@@ -19,6 +19,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Fixed
 
+- Keep captured portfolio content visible in prerendered HTML when JavaScript is disabled, and omit the duplicate fallback summary after a successful prerender.
+- Reveal the About approach vertically so its offscreen entrance does not widen tablet layouts.
 - Cancel delayed section navigation when visitors interact or choose another destination so contact validation retains field focus; wait for slow chunks within a bounded 12-second window.
 
 - Reconcile BitStockerz and design-system claims against current source and CI. Share their standard/CLI descriptions, stacks, and lifecycle labels; identify MySQL/MariaDB persistence, stored-bar paper pricing, disabled live-data integration, and the design system's prerelease and preview limits.

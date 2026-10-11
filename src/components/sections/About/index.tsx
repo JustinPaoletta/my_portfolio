@@ -90,7 +90,7 @@ function About(): React.ReactElement {
           <Reveal
             as="div"
             className="about-approach"
-            effect="fade-right"
+            effect="fade-up"
             delay={180}
             visible={isVisible}
           >
