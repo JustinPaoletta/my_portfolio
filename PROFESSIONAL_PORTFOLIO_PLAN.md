@@ -63,4 +63,13 @@ links; this remains a portfolio command interface, not an operating-system shell
       normal text editing, cancellation/clear shortcuts, and appearance/exit commands.
 - [x] Verify named and numeric commands, links, invalid-input recovery, theme
       persistence, focus escape, screen-reader semantics, and narrow/short viewports.
-- [ ] Review desktop/mobile light/dark screenshots and update affected Linux/macOS baselines.
+- [x] Review desktop/mobile light/dark screenshots and update affected Linux/macOS baselines.
+
+Validation: 205 frontend/server unit tests, 10 accessibility unit tests, 18 CLI/theme
+browser checks, and all 26 macOS visual comparisons pass. The final cold-load CSS
+fix also passed 10 Hero tests. TypeScript, lint, formatting, production build,
+contrast, bundle limits, and prerender pass. Five affected Linux screenshots were
+generated in review workflow `38114624992`, inspected, and accepted. The deployed
+preview executes contextual help with zero UI buttons or browser exceptions.
+Final CI status is recorded in the PR. Physical mobile-keyboard and human
+screen-reader acceptance remain owner checks.
