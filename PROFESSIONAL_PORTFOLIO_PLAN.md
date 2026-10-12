@@ -23,7 +23,7 @@ The implementation is ready for review with stated content assumptions. Existing
 - [x] **18 — Contact wording (partial).** Ask about a software engineering role or frontend challenge, with email prominent. Do not invent location or working-arrangement preferences.
 - [x] **24 — Focus defect.** Cancel deferred navigation after new visitor interaction or another jump; preserve Contact validation focus and complete slow-loading section navigation within a bounded 12-second window.
 
-## Verification for this revision
+## Earlier verification (before the review refinements)
 
 Completion requires observed outcomes, not only screenshots. Final results are recorded in the PR description.
 
@@ -55,8 +55,8 @@ These are content or human acceptance tasks; do not replace missing facts with i
 ## CLI terminal revision — 2026-10-11
 
 The owner requested a full terminal experience with guidance in the terminal.
-Replace the option sidebar, faux window controls, and floating theme menu with
-one transcript and prompt. Preserve the audited portfolio content and existing
+Replace the option sidebar and floating theme menu with one transcript and
+prompt. The follow-up below restores macOS traffic lights. Preserve the audited portfolio content and existing
 links; this remains a portfolio command interface, not an operating-system shell.
 The prompt follows the latest output and scrolls with the transcript, as requested
 in the follow-up review; it is not pinned to the viewport.
@@ -97,4 +97,9 @@ screenshots from review workflow `38178442391` were inspected and accepted.
       navigation and the section headings. Pair View My Work with Contact in the hero.
 - [x] Restore tiny local technology logos beside every displayed skill label,
       grouped in the three applied-skills cards.
-- [ ] Record final browser, accessibility, and reviewed visual evidence in the PR.
+- [x] Record final browser and accessibility evidence in the PR. The exact source
+      passed full lint, 208 unit tests, 10 accessibility unit tests, production
+      build/prerender, 30 focused Chromium journeys, and 28 macOS visual comparisons.
+      Live preview captures confirm the Contact action, skill icons, GitHub API
+      avatar/always-visible history, and terminal header/prompt. All 28 Linux states were generated in workflow `38188195420`, inspected,
+      and accepted. Final-head CI results are recorded in the PR.
