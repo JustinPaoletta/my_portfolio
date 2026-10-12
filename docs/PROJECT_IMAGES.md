@@ -121,4 +121,7 @@ and Plexarr keep their 60/120/180px lossless icon variants.
 The sharing image source is `assets/source/social/portfolio-card.svg`. Run
 `npm run generate:sharing-card` to regenerate the 1200×630 PNG referenced in
 Open Graph and Twitter metadata. It identifies the same person, role, and stack
-as the hero. It contains no portrait or unverified metrics.
+as the hero. The typography-led card uses a restrained JP monogram and contains
+no groundhog, portrait, or unverified metrics. Metadata points to
+`/og/justin-paoletta-software-engineer.png`; `/og/og-image.png` remains an identical
+legacy alias. Both files are generated from the same SVG.
