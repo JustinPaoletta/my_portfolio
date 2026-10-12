@@ -175,9 +175,8 @@ function Contact(): React.ReactElement {
             visible={isVisible}
           >
             <p className="contact-intro">
-              Want to discuss a software engineering role or a frontend team
-              challenge? Share the role, team, and working arrangement below, or
-              get in touch by email.
+              Recruiting for a software engineering role? Share the opportunity,
+              team, and job details below, or contact me directly by email.
             </p>
 
             <div className="contact-methods">
@@ -250,7 +249,7 @@ function Contact(): React.ReactElement {
                 <span className="indicator-dot" />
               </div>
               <span className="availability-text">
-                Software engineering roles & technical conversations
+                Currently entertaining freelance & full-time opportunities
               </span>
             </Reveal>
           </Reveal>

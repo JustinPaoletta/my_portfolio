@@ -20,7 +20,7 @@ The implementation is ready for review with stated content assumptions. Existing
 - [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters, restore the GitHub avatar next to the profile, and show contribution history directly; preserve honest unavailable states.
 - [x] **16 — Identity assets (local implementation).** Omit the stylized portrait, remove its Person structured-data reference, and generate a matching 1200×630 name/role sharing card. An external sharing-cache preview remains a production follow-up.
 - [x] **17 — Presentation.** Reduce crowded hero labels, hover-dependent content, oversized project shadows, and repeated skills/prose. Keep theme-aware focus and wrapping controls.
-- [x] **18 — Contact wording (partial).** Ask about a software engineering role or frontend challenge, with email prominent. Do not invent location or working-arrangement preferences.
+- [x] **18 — Contact wording.** Address recruiters directly and invite the opportunity, team, and job details, with email prominent. Restore the original freelance/full-time availability badge at the owner’s request. Do not invent location or working-arrangement preferences.
 - [x] **24 — Focus defect.** Cancel deferred navigation after new visitor interaction or another jump; preserve Contact validation focus and complete slow-loading section navigation within a bounded 12-second window.
 
 ## Earlier verification (before the review refinements)
