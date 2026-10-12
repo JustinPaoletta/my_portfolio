@@ -24,7 +24,7 @@ export const SITE_PERSON_NAME = SITE_AUTHOR;
 export const SITE_ORIGIN = 'https://jpengineering.dev';
 export const SITE_URL = `${SITE_ORIGIN}/`;
 const SITE_LOCALE = 'en_US';
-const DEFAULT_OG_IMAGE = '/og/justin-paoletta-software-engineer.png';
+const DEFAULT_OG_IMAGE = '/og/og-image.png';
 export const DEFAULT_HOME_TITLE = `${SITE_PERSON_NAME} | Software Engineer | ${SITE_NAME}`;
 export const DEFAULT_ROBOTS_CONTENT =
   'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';

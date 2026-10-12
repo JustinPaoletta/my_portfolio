@@ -118,10 +118,5 @@ SideQuest is now a supporting card with a 60px icon. The optimizer also produces
 above are historical and no longer describe the new card layout. Wild Apricot
 and Plexarr keep their 60/120/180px lossless icon variants.
 
-The sharing image source is `assets/source/social/portfolio-card.svg`. Run
-`npm run generate:sharing-card` to regenerate the 1200×630 PNG referenced in
-Open Graph and Twitter metadata. It identifies the same person, role, and stack
-as the hero. The typography-led card uses a restrained JP monogram and contains
-no groundhog, portrait, or unverified metrics. Metadata points to
-`/og/justin-paoletta-software-engineer.png`; `/og/og-image.png` remains an identical
-legacy alias. Both files are generated from the same SVG.
+The existing Open Graph image is retained unchanged from the PR base. The
+replacement design is deferred at the owner’s request.
