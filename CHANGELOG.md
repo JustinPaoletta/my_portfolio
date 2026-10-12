@@ -9,6 +9,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
+- Replace the Cosmic hero illustration with the Blender astronaut and asteroid, a once-playing wave, reduced-motion/limited-connection stills, and download-failure recovery. Include editable source, reusable skinned GLB, and rebuild/validation tools.
 - Share navigation labels with their destination headings and remove the GitHub introduction and contribution-history disclosure.
 
 - Rebuild CLI mode as a single terminal session with an in-terminal guide, contextual help, command history, completion, and appearance/exit commands. The prompt follows the latest output and scrolls with the transcript. Use ls/cd navigation, a two-line delayed welcome, and a responsive identity row with macOS dots. The red dot exits; yellow and green are decorative. Preserve accessible output links and compatibility aliases.

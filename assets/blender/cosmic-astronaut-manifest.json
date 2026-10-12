@@ -1,0 +1,123 @@
+{
+  "schema_version": 3,
+  "blender": "5.1.2",
+  "target": "Single cosmic portfolio hero, with reusable skinned GLB",
+  "coordinate_space": "Blender Z-up/-Y-forward; GLB Y-up",
+  "clip": {
+    "name": "WaveThenRest",
+    "wave_seconds": 3,
+    "lower_seconds": 1,
+    "source_fps": 20,
+    "source_frames": 96,
+    "glb_seconds": 4.75,
+    "hero_playback_seconds": 4.8,
+    "play_once": true,
+    "final_pose": "Both hands on lap"
+  },
+  "files": {
+    "src/config/cosmicAstronautAssets.ts": {
+      "sha256": "e574d87f6474df3f7d0ebead8d935da323e1d9fb482b77eff5eb7cb7c9409095",
+      "bytes": 269
+    },
+    "public/images/hero/cosmic/astronaut-asteroid.webp": {
+      "sha256": "15b9c9bda2e1998bb5d9001a3653950d56afe648555de49b0c8c13936c5a15aa",
+      "bytes": 45778
+    },
+    "public/images/hero/cosmic/astronaut-wave.webp": {
+      "sha256": "03bc388fa3762b57f9ce77c5eb9ef25f23cb28ffb941551e24a0e755241dc840",
+      "bytes": 500638
+    },
+    "public/models/hero/cosmic-astronaut.glb": {
+      "sha256": "608ab2147092122ce6e135eded90163b8c180723a508aab86c4e51a767aa6d98",
+      "bytes": 6028336
+    },
+    "scripts/blender/create_cosmic_astronaut.py": {
+      "sha256": "bc94a14cf7ce453e4c469436a005cd1e181f73a12edffbbeb71f6e9b5de59d7a",
+      "bytes": 23189
+    },
+    "scripts/blender/encode_cosmic_wave.mjs": {
+      "sha256": "2651af6ca229f2b5b779547e20939c8a1ab9b78b151ba6feb05235265c883fb0",
+      "bytes": 2708
+    },
+    "scripts/blender/refine_cosmic_astronaut.py": {
+      "sha256": "8946aa714a7605bf2f041f8ad8e9fddccdf9dd7d857c3218fc47b8d8002979d4",
+      "bytes": 19880
+    },
+    "scripts/blender/refine_cosmic_chest_pack.py": {
+      "sha256": "8f1de155814eea5dcf7c033eab0f7c39f5fbf87217ca27817fd01c21ca225ccd",
+      "bytes": 5292
+    },
+    "scripts/blender/release_cosmic_astronaut.py": {
+      "sha256": "d16308fbd92e594b941acd31e25a695010684a25f7d01ec975463e8c79188322",
+      "bytes": 6447
+    },
+    "scripts/blender/validate_cosmic_glb.py": {
+      "sha256": "eefb33c202612b9ba40fe095471e965957e2259400c50d64c4b5a0931f65ebdc",
+      "bytes": 3053
+    },
+    "scripts/blender/viewer.html": {
+      "sha256": "e59b635227ee22ef41f2309d42fd83731023bb82c4f400b61029f51546c19625",
+      "bytes": 931
+    },
+    "scripts/blender/viewer.mjs": {
+      "sha256": "8c886ae94089032735441da00c6eb3f4698efc235f7424e286f245048ad82cac",
+      "bytes": 3093
+    },
+    "assets/blender/cosmic-astronaut.blend": {
+      "sha256": "244ab259221fd6103ca954c50c6b08d70037f834af125c4b24392dc70a2e9472",
+      "bytes": 2565874
+    },
+    "assets/blender/README.md": {
+      "sha256": "4a35e826264f1873b3a424ea261312809e0c8b0ee2c2c847d55925614b5e316e",
+      "bytes": 4562
+    },
+    "assets/blender/textures/asteroid-basecolor.png": {
+      "sha256": "a626436e8a4504c0f744616679763d5cb29cdf84de8547cea392eefef55f4563",
+      "bytes": 152236
+    },
+    "assets/blender/textures/suit-basecolor.png": {
+      "sha256": "96d9361a79cf49bf7d8f688cce512e516d4d9bc69dff51c2f15ed01f7d61d36f",
+      "bytes": 302761
+    },
+    "assets/blender/textures/suit-normal.png": {
+      "sha256": "5a5b354ef0e64d5a7de1ad2f9c52dc51b18450ad5642f3754dee73d7e768f8eb",
+      "bytes": 409580
+    },
+    "assets/blender/textures/asteroid-normal.png": {
+      "sha256": "f6a3ebabf25d062d9d8ef2137357f9ca9587bec24969d9602155e85b6d1f29e8",
+      "bytes": 374510
+    },
+    "assets/blender/textures/american-flag-badge.png": {
+      "sha256": "24a8b53f47f6522abfadc53134f35c9380dd9103ccc899baa17eb45eb0d9322b",
+      "bytes": 20900
+    },
+    "assets/blender/checkpoints/cosmic-astronaut-before-chest-pack.blend": {
+      "sha256": "c52b898952e8f3f80f0fb549e72e812ae2ace717e64e28a749c225eb7d7fb42c",
+      "bytes": 2571074
+    },
+    "assets/blender/checkpoints/cosmic-astronaut-pre-production.blend": {
+      "sha256": "f57dd48bda3d9335977cfaae20d5eb3bf33381b011fc19ccc9a30d7e191b3aa8",
+      "bytes": 2112776
+    },
+    "assets/blender/verification.json": {
+      "sha256": "aa37379cfc04c093a8d31ae05865bbbd69fc4bafc65cde4e5d70ef907a5dd911",
+      "bytes": 2135
+    }
+  },
+  "checks": {
+    "summary": "assets/blender/verification.json",
+    "source": "Read-only Blender 5.1.2 inspection: one WaveThenRest action, 96 frame times, packed badge image, no inventory warnings",
+    "glb": "Finite geometry, unit normals, bounded indices, normalized skin weights, valid joint indices and five embedded images; reusable model is not downloaded by the hero",
+    "runtime": "Three.js/Chrome WebGL wrist parity across all 96 frame times within 0.00001 m; intermediate exported poses reviewed",
+    "web": "Isolated production build, 222 unit tests, 10 accessibility unit tests, 9 focused browser tests and four macOS Cosmic states passed; hosted preview/Linux results are recorded in the PR"
+  },
+  "limits": "One seated gesture rig; no full-body locomotion or runtime IK. Native mobile GPU performance and other engine importers were not measured.",
+  "appearance": {
+    "chest_pack": "0.55 m wide enamel case; centered embroidered flag above controls",
+    "hero_camera": [
+      1.35,
+      -8,
+      3.8
+    ]
+  }
+}

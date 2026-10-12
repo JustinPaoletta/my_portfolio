@@ -6,6 +6,10 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { env } from '@/config/env';
+import {
+  COSMIC_ASTRONAUT_ANIMATION,
+  COSMIC_ASTRONAUT_POSTER,
+} from '@/config/cosmicAstronautAssets';
 import { HERO_TAGLINE, SECTION_NAMES } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
@@ -244,6 +248,8 @@ function Hero(): React.ReactElement {
   const { themeName, resolvedMode } = useTheme();
   const isVisualTest = isVisualTestMode();
   const isCosmicTheme = themeName === 'cosmic';
+  const [astronautAnimationFailed, setAstronautAnimationFailed] =
+    useState(false);
   const isEngineerTheme = themeName === 'engineer';
   const isCliTheme = themeName === 'cli';
   const prefersReducedMotion = Boolean(useReducedMotion());
@@ -255,6 +261,11 @@ function Hero(): React.ReactElement {
   );
   const shouldLoadRichHeroScene =
     deferredHeroEnhancement.shouldMountRichScene && !shouldUseStaticHeroScene;
+  const shouldAnimateAstronaut =
+    shouldLoadRichHeroScene &&
+    !prefersReducedMotion &&
+    !isVisualTest &&
+    !astronautAnimationFailed;
   const useCalmerChipMotion = Boolean(
     heroEnvironmentFlags & CALM_HERO_MOTION_FLAGS
   );
@@ -469,12 +480,25 @@ function Hero(): React.ReactElement {
               </div>
 
               {isCosmicTheme && (
-                <span className="hero-astronaut-rig" aria-hidden="true">
-                  <span className="hero-asteroid-tail" />
-                  <span className="hero-asteroid" />
+                <span
+                  className="hero-astronaut-rig"
+                  data-astronaut-motion={
+                    shouldAnimateAstronaut ? 'wave' : 'still'
+                  }
+                  aria-hidden="true"
+                >
                   <img
                     className="hero-astronaut"
-                    src="/images/hero/astro.webp"
+                    src={
+                      shouldAnimateAstronaut
+                        ? COSMIC_ASTRONAUT_ANIMATION
+                        : COSMIC_ASTRONAUT_POSTER
+                    }
+                    onError={() => {
+                      if (shouldAnimateAstronaut) {
+                        setAstronautAnimationFailed(true);
+                      }
+                    }}
                     alt=""
                     aria-hidden="true"
                     loading="eager"

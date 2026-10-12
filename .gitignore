@@ -56,3 +56,7 @@ stats.html
 # Local portfolio review artifacts
 /output/playwright/professional-review/
 /.playwright-mcp/
+
+# Generated cosmic hero review artifacts and Blender backup copies
+/output/playwright/cosmic-astronaut/
+/assets/blender/*.blend1
