@@ -1,5 +1,6 @@
 import {
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -387,6 +388,7 @@ function CliTerminal(): React.ReactElement {
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
   const [announcement, setAnnouncement] = useState({ id: 0, text: '' });
   const draftRef = useRef('');
+  const historyCaretRequestedRef = useRef(false);
   const lineIdRef = useRef(0);
   const scrollRequestedRef = useRef(false);
   const initialDesktopRef = useRef(breakpoint === 'lg' || breakpoint === 'xl');
@@ -1354,6 +1356,7 @@ function CliTerminal(): React.ReactElement {
     }
     const nextIndex = (historyIndex ?? commandHistory.length) + direction;
     if (nextIndex < 0) return;
+    historyCaretRequestedRef.current = true;
     if (nextIndex >= commandHistory.length) {
       setHistoryIndex(null);
       setInputValue(draftRef.current);
@@ -1361,12 +1364,15 @@ function CliTerminal(): React.ReactElement {
       setHistoryIndex(nextIndex);
       setInputValue(commandHistory[nextIndex]);
     }
-    requestAnimationFrame(() => {
-      const input = inputRef.current;
-      if (input && document.activeElement === input)
-        input.setSelectionRange(input.value.length, input.value.length);
-    });
   };
+
+  useLayoutEffect(() => {
+    if (!historyCaretRequestedRef.current) return;
+    historyCaretRequestedRef.current = false;
+    const input = inputRef.current;
+    if (input && document.activeElement === input)
+      input.setSelectionRange(input.value.length, input.value.length);
+  }, [inputValue, historyIndex]);
 
   const completeCommand = (): void => {
     const input = inputRef.current;

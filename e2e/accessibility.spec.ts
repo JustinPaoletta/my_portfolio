@@ -112,7 +112,10 @@ test('@a11y contact form surfaces field-level errors to assistive tech', async (
 }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
   await expect(page.locator('section#contact')).toBeVisible({
     timeout: 10_000,
   });
