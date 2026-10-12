@@ -114,10 +114,6 @@
   "limits": "One seated gesture rig; no full-body locomotion or runtime IK. Native mobile GPU performance and other engine importers were not measured.",
   "appearance": {
     "chest_pack": "0.55 m wide enamel case; centered embroidered flag above controls",
-    "hero_camera": [
-      1.35,
-      -8,
-      3.8
-    ]
+    "hero_camera": [1.35, -8, 3.8]
   }
 }
