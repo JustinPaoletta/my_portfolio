@@ -95,6 +95,24 @@ export async function waitForSectionToSettle(
   await waitForImages(locator);
   await resetTransientInteractionState(page);
   await page.waitForTimeout(500);
+  await locator.evaluate((section) => {
+    if (section.dataset.visualPixelAligned === 'true') return;
+    // Keep component crops independent of fractional offsets from preceding
+    // sections, including Playwright's temporary viewport resize for tall crops.
+    const align = (): void => {
+      section.style.translate = 'none';
+      const rect = section.getBoundingClientRect();
+      const scale = window.devicePixelRatio || 1;
+      const x = Math.round(rect.x * scale) / scale - rect.x;
+      const y = Math.round(rect.y * scale) / scale - rect.y;
+      section.style.translate = `${x}px ${y}px`;
+    };
+    align();
+    window.addEventListener('resize', align);
+    const observer = new ResizeObserver(align);
+    observer.observe(section);
+    section.dataset.visualPixelAligned = 'true';
+  });
 }
 
 async function revealSectionIfDeferred(

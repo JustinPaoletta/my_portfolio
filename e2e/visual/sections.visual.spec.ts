@@ -90,12 +90,6 @@ test.describe('@visual section states', () => {
 
     const github = page.locator('section#github');
     await waitForSectionToSettle(page, github);
-    // Fractional document positions can add a pixel to element screenshots
-    // when a preceding section changes height. Keep this crop on pixel boundaries.
-    await github.evaluate((section) => {
-      const rect = section.getBoundingClientRect();
-      section.style.translate = `${Math.round(rect.x) - rect.x}px ${Math.round(rect.y) - rect.y}px`;
-    });
 
     await expect(github).toHaveScreenshot('github-section.png', {
       caret: 'hide',
