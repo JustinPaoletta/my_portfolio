@@ -182,7 +182,10 @@ test('desktop navigation scrolls to Contact section', async ({ page }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
 
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
 
   await expectSectionInViewport(page, 'contact');
   await expect(page.locator('section#contact')).toBeFocused();
@@ -236,7 +239,10 @@ test('mobile navigation opens, navigates, and closes', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused();
 
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
 
   await expectSectionInViewport(page, 'contact');
   await expect(page.locator('section#contact')).toBeFocused();
@@ -350,7 +356,10 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
     'false'
   );
 
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
   await expect(page.locator('#mobile-menu')).toHaveAttribute(
     'aria-hidden',
     'true'
