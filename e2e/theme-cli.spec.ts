@@ -240,8 +240,10 @@ test('reduced motion and Save-Data skip hero GLB requests', async ({
   });
   await expect(page.locator('.hero-engineer-visual')).toHaveAttribute(
     'data-engineer-circuit-scene',
-    'svg'
+    'still'
   );
+  await expect(page.locator('.hero-engineer-still')).toBeVisible();
+  await expect(page.locator('.engineer-circuit3d-stage canvas')).toHaveCount(0);
   await page.waitForTimeout(1_000);
   expect(glbRequests).toBe(0);
 

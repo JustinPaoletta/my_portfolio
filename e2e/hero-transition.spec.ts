@@ -29,59 +29,73 @@ function transitionAttribute(theme: HeroTheme): string {
     : 'data-cosmic-transition';
 }
 
-async function waitForMidFadeOpacity(
-  page: Page,
-  theme: HeroTheme
-): Promise<number> {
-  const rootSelector = sceneRootSelector(theme);
-  const stillQuery = stillSelector(theme);
-
-  const handle = await page.waitForFunction(
-    ({
-      rootSelector: rootQuery,
-      stillQuery,
-      sceneAttribute: sceneAttr,
-      posterAttribute: posterAttr,
-      transitionAttribute: transitionAttr,
-    }) => {
-      const root = document.querySelector<HTMLElement>(rootQuery);
-      const still = document.querySelector<HTMLImageElement>(stillQuery);
-      const overlay = still?.closest<HTMLElement>('.hero-poster-overlay');
-      if (!root || !still || !overlay) {
-        return false;
-      }
-
-      const isFading =
-        root.getAttribute(transitionAttr) === 'fading' &&
-        root.getAttribute(sceneAttr) === '3d' &&
-        root.getAttribute(posterAttr) === 'visible' &&
-        overlay.getAttribute('data-poster-fading') === 'true' &&
-        still.getAttribute('data-poster-source') === 'static' &&
-        still.src.length > 0 &&
-        root.querySelector('canvas') !== null;
-
-      if (!isFading) {
-        return false;
-      }
-
-      const opacity = Number.parseFloat(getComputedStyle(overlay).opacity);
-      if (!Number.isFinite(opacity) || opacity <= 0 || opacity >= 1) {
-        return false;
-      }
-
-      return opacity;
+// Sample the real CSS animation at its midpoint when it starts. A short fade
+// can elapse between Playwright polls on software-rendered CI, even when the
+// handoff is correct. Install before navigation so this also covers a warm cache.
+async function installFadeSampler(page: Page, theme: HeroTheme): Promise<void> {
+  await page.addInitScript(
+    ({ rootQuery, stillQuery, sceneAttr, posterAttr, transitionAttr }) => {
+      const observer = new MutationObserver(() => {
+        const root = document.querySelector<HTMLElement>(rootQuery);
+        const still = document.querySelector<HTMLImageElement>(stillQuery);
+        const overlay = still?.closest<HTMLElement>('.hero-poster-overlay');
+        if (!root || !still || !overlay) return;
+        const isFading =
+          root.getAttribute(transitionAttr) === 'fading' &&
+          root.getAttribute(sceneAttr) === '3d' &&
+          root.getAttribute(posterAttr) === 'visible' &&
+          overlay.getAttribute('data-poster-fading') === 'true' &&
+          still.getAttribute('data-poster-source') === 'static' &&
+          still.src.length > 0 &&
+          root.querySelector('canvas') !== null;
+        if (!isFading) return;
+        const animation = overlay
+          .getAnimations()
+          .find(
+            (item) =>
+              item instanceof CSSAnimation &&
+              item.animationName === 'hero-poster-fade-out'
+          );
+        const duration = Number(animation?.effect?.getTiming().duration);
+        if (!animation || !Number.isFinite(duration) || duration <= 0) return;
+        animation.currentTime = duration / 2;
+        const sample = Number.parseFloat(getComputedStyle(overlay).opacity);
+        (
+          window as typeof window & { heroPosterFadeSample?: number }
+        ).heroPosterFadeSample = sample;
+        observer.disconnect();
+      });
+      observer.observe(document, {
+        subtree: true,
+        childList: true,
+        attributes: true,
+      });
     },
     {
-      rootSelector,
-      stillQuery,
-      sceneAttribute: sceneAttribute(theme),
-      posterAttribute: posterAttribute(theme),
-      transitionAttribute: transitionAttribute(theme),
-    },
-    { timeout: 20_000, polling: 16 }
+      rootQuery: sceneRootSelector(theme),
+      stillQuery: stillSelector(theme),
+      sceneAttr: sceneAttribute(theme),
+      posterAttr: posterAttribute(theme),
+      transitionAttr: transitionAttribute(theme),
+    }
   );
-
-  return handle.jsonValue() as Promise<number>;
+}
+async function waitForMidFadeOpacity(page: Page): Promise<number> {
+  const handle = await page.waitForFunction(
+    () => {
+      const sample = (
+        window as typeof window & { heroPosterFadeSample?: number }
+      ).heroPosterFadeSample;
+      return typeof sample === 'number' && Number.isFinite(sample)
+        ? { opacity: sample }
+        : false;
+    },
+    undefined,
+    { timeout: 20_000 }
+  );
+  const sample = await handle.jsonValue();
+  if (!sample) throw new Error('Poster fade was not sampled');
+  return sample.opacity;
 }
 
 test.describe('Hero poster transition parity', () => {
@@ -90,13 +104,14 @@ test.describe('Hero poster transition parity', () => {
       page,
     }) => {
       await mockPortfolioApis(page);
+      await installFadeSampler(page, theme);
       await page.goto(`/?theme=${theme}&mode=dark`, {
         waitUntil: 'domcontentloaded',
       });
 
       const root = page.locator(sceneRootSelector(theme));
 
-      const midFadeOpacity = await waitForMidFadeOpacity(page, theme);
+      const midFadeOpacity = await waitForMidFadeOpacity(page);
       expect(midFadeOpacity).toBeLessThan(1);
       expect(midFadeOpacity).toBeGreaterThan(0);
 
