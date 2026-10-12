@@ -61,7 +61,12 @@ test.describe('@visual section states', () => {
     ['mobile', MOBILE_VIEWPORT],
   ] as const) {
     test(`captures skill icons on ${label}`, async ({ page }) => {
-      await gotoVisualState(page, { theme: 'cosmic', mode: 'dark', viewport });
+      await gotoVisualState(page, {
+        theme: 'cosmic',
+        mode: 'dark',
+        // Fit the tall component without screenshot-time viewport resizing.
+        viewport: label === 'mobile' ? { ...viewport, height: 1600 } : viewport,
+      });
       const skills = page.locator('section#skills');
       await waitForSectionToSettle(page, skills);
       const icons = skills.locator('.skill-icon img');
