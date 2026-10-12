@@ -77,7 +77,8 @@
 .contribution-grid {
   display: flex;
   gap: 2px;
-  width: 100%;
+  width: max-content;
+  max-width: 100%;
   overflow: visible;
   contain: layout;
   background: var(--contrib-grid-bg, var(--bg-card));
@@ -87,7 +88,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  flex: 1 1 0;
+  flex: 0 0 var(--week-width, 11px);
+  width: var(--week-width, 11px);
   min-width: 0;
   overflow: visible;
 }

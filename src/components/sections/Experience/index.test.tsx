@@ -7,7 +7,7 @@ describe('Experience section', () => {
     render(<Experience />);
 
     expect(
-      screen.getByRole('heading', { name: 'Professional Experience' })
+      screen.getByRole('heading', { name: 'Experience' })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Work History' })

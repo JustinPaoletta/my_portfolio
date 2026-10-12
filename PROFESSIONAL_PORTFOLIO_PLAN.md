@@ -12,12 +12,12 @@ The implementation is ready for review with stated content assumptions. Existing
 
 - [x] **1, 2, 3, 4, 13, 21 — Prior credibility work.** Preserve the professional experience layout, visible project actions, truthful GitHub failure states, audited project claims, verified GitHub profile destination, and responsive logos. See the PR history and `docs/PROJECT_CLAIMS.md` for the earlier evidence.
 - [x] **5 — Recognizable role.** Lead with Software Engineer and Angular / React / TypeScript, followed by a concrete modernization and delivery-tooling description. Avoid guessed tenure or additional achievement claims.
-- [x] **6 — Résumé access.** Add visible PDF actions to the hero and desktop/mobile navigation; retain the existing public PDF in Experience and CLI.
+- [x] **6 — Résumé access.** Keep visible PDF actions in desktop/mobile navigation, Experience, and CLI. The hero pairs View My Work with Contact, as requested in review.
 - [x] **7 — Evidence-first order.** Present Work, Experience, About, Skills, Writing, and Contact before optional GitHub activity and pets. Limit the main menu to the hiring journey and résumé.
 - [x] **10 — Honest project visuals.** Replace featured promotional images with a captured Angular showcase and labeled implementation workflow diagrams. Captions explain exactly what is shown and preserve release/provider limitations.
 - [x] **11 — Curate inspectable work.** Feature BitStockerz, the design system, and the published Wild Apricot CLI with visible source/package actions. Private projects remain smaller supporting cards. Richer personal-ownership narratives belong with the evidence work below.
 - [x] **14 — One engineering approach.** Consolidate requirements, deterministic checks, code/UI inspection, and QA handoff into About. Shorten the Experience example and align CLI wording.
-- [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters from the standard page and make contribution history an optional disclosure; preserve honest unavailable states.
+- [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters, restore the GitHub avatar next to the profile, and show contribution history directly; preserve honest unavailable states.
 - [x] **16 — Identity assets (local implementation).** Omit the stylized portrait, remove its Person structured-data reference, and generate a matching 1200×630 name/role sharing card. An external sharing-cache preview remains a production follow-up.
 - [x] **17 — Presentation.** Reduce crowded hero labels, hover-dependent content, oversized project shadows, and repeated skills/prose. Keep theme-aware focus and wrapping controls.
 - [x] **18 — Contact wording (partial).** Ask about a software engineering role or frontend challenge, with email prominent. Do not invent location or working-arrangement preferences.
@@ -81,3 +81,20 @@ transcript. A browser regression verifies short and long output, scrolling back,
 and clearing. All 205 unit tests, 10 accessibility tests, eight focused browser
 journeys, and five affected macOS visual comparisons pass. The matching Linux
 screenshots from review workflow `38178442391` were inspected and accepted.
+
+## Review refinements — 2026-10-11
+
+- [x] Use `ls` and `cd` for directory navigation, with relative/absolute paths,
+      path completion, invalid-path recovery, and a matching prompt location.
+- [x] Restore the macOS dots: red shows × on hover/focus and performs `exit`;
+      yellow and green are decorative. Put name, role, and stack in the title row,
+      retaining the name on narrow screens.
+- [x] Open with “Welcome to JP-CLI,” then reveal instructions 500ms later.
+      Reduced motion displays them immediately. Keep the prompt in transcript flow.
+- [x] Remove the GitHub introduction, restore the API profile avatar, and show
+      contribution history without an expand/collapse control.
+- [x] Share the Work, Experience, About, Writing, and Contact labels between
+      navigation and the section headings. Pair View My Work with Contact in the hero.
+- [x] Restore tiny local technology logos beside every displayed skill label,
+      grouped in the three applied-skills cards.
+- [ ] Record final browser, accessibility, and reviewed visual evidence in the PR.

@@ -9,10 +9,12 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
-- Rebuild CLI mode as a single terminal session with an in-terminal guide, contextual help, command history, completion, and appearance/exit commands. The prompt follows the latest output and scrolls with the transcript. Remove its option sidebar, faux window controls, and floating theme button while preserving accessible output links and numeric aliases.
-- Lead with Software Engineer and the Angular/React/TypeScript stack, add hero and navigation résumé downloads, and put selected work and professional experience before supporting content.
+- Share navigation labels with their destination headings and remove the GitHub introduction and contribution-history disclosure.
+
+- Rebuild CLI mode as a single terminal session with an in-terminal guide, contextual help, command history, completion, and appearance/exit commands. The prompt follows the latest output and scrolls with the transcript. Use ls/cd navigation, a two-line delayed welcome, and a responsive identity row with macOS dots. The red dot exits; yellow and green are decorative. Preserve accessible output links and compatibility aliases.
+- Lead with Software Engineer and the Angular/React/TypeScript stack, pair the hero work action with Contact and retain navigation résumé downloads, and put selected work and professional experience before supporting content.
 - Curate public projects with a real design-system showcase capture and explicitly labeled workflow diagrams; move private projects to supporting cards and retain the writing carousel.
-- Condense About and Skills around implementation evidence, omit the stylized portrait, make GitHub contributions optional, and align the CLI wording. Update contact copy and the 1200×630 identity sharing card.
+- Condense About and Skills around implementation evidence, omit the stylized portrait, show GitHub contributions directly with the profile avatar, and align the CLI wording. Update contact copy and the 1200×630 identity sharing card.
 
 - Give professional work the primary Experience layout, move the résumé action beside the work history, and condense education into supporting credentials.
 - Keep project source links, status, and privacy labels visible at rest, with theme-aware focus styles and larger touch targets.

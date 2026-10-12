@@ -26,8 +26,103 @@
   font-size: 0.75rem;
 }
 
-:root[data-theme='cli'] .cli-terminal-title {
-  overflow-wrap: anywhere;
+:root[data-theme='cli'] .cli-terminal-heading {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-width: 0;
+}
+
+:root[data-theme='cli'] .cli-window-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+}
+
+:root[data-theme='cli'] .cli-window-dot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+:root[data-theme='cli'] .cli-window-dot--red {
+  background: #ff5f57;
+}
+
+:root[data-theme='cli'] .cli-window-dot--yellow {
+  background: #febc2e;
+}
+
+:root[data-theme='cli'] .cli-window-dot--green {
+  background: #28c840;
+}
+
+:root[data-theme='cli'] .cli-window-close {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin: -7px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+:root[data-theme='cli'] .cli-window-close-icon {
+  opacity: 0;
+  color: #57110d;
+  font-family: Arial, sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+:root[data-theme='cli'] .cli-window-close:hover .cli-window-close-icon,
+:root[data-theme='cli'] .cli-window-close:focus-visible .cli-window-close-icon {
+  opacity: 1;
+}
+
+:root[data-theme='cli'] .cli-window-close:focus-visible {
+  outline: 2px solid var(--color-primary-ink);
+  outline-offset: 2px;
+}
+
+:root[data-theme='cli'] .cli-terminal-identity {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  min-width: 0;
+}
+
+:root[data-theme='cli'] .cli-terminal-name {
+  margin: 0;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 700;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  :root[data-theme='cli'] .cli-terminal-role,
+  :root[data-theme='cli'] .cli-terminal-technologies {
+    display: none;
+  }
+}
+
+@media (max-width: 540px) {
+  :root[data-theme='cli'] .cli-terminal-mode {
+    display: none;
+  }
 }
 
 :root[data-theme='cli'] .cli-terminal-mode {
@@ -52,51 +147,6 @@
   width: 100%;
   max-width: 100ch;
   min-width: 0;
-}
-
-:root[data-theme='cli'] .cli-identity {
-  margin: 0.6rem 0 0;
-  color: var(--text-primary);
-  font-family: inherit;
-  font-size: clamp(1.2rem, 2vw, 1.5rem);
-  font-weight: 700;
-  line-height: 1.4;
-  letter-spacing: 0;
-  text-transform: none;
-  overflow-wrap: anywhere;
-}
-
-:root[data-theme='cli'] .cli-role {
-  margin: 0;
-  color: var(--color-primary-ink);
-  font: inherit;
-}
-
-:root[data-theme='cli'] .cli-intro-summary {
-  max-width: 76ch;
-  margin-block: 1rem;
-}
-
-:root[data-theme='cli'] .cli-command-guide {
-  display: grid;
-  gap: 0.35rem;
-  margin-block: 1rem;
-  font-size: 0.9375rem;
-}
-
-:root[data-theme='cli'] .cli-command-guide > div {
-  display: grid;
-  grid-template-columns: 18ch minmax(0, 1fr);
-  gap: 1.5ch;
-}
-
-:root[data-theme='cli'] .cli-command-guide dt {
-  color: var(--color-primary-ink);
-}
-
-:root[data-theme='cli'] .cli-command-guide dd {
-  margin: 0;
-  color: var(--text-secondary);
 }
 
 :root[data-theme='cli'] .cli-history {
@@ -215,19 +265,6 @@
 }
 
 @media (max-width: 540px) {
-  :root[data-theme='cli'] .cli-command-guide > div {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  :root[data-theme='cli'] .cli-command-guide {
-    gap: 0.65rem;
-  }
-
-  :root[data-theme='cli'] .cli-command-guide dd {
-    font-size: 0.8125rem;
-  }
-
   :root[data-theme='cli'] .cli-prompt-prefix {
     font-size: 0.875rem;
   }

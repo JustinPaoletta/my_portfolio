@@ -46,7 +46,7 @@ test('articles carousel switches slides with prev/next and dot controls', async 
   ).toBeVisible();
 });
 
-test('GitHub section reveals real contribution history on request', async ({
+test('GitHub section displays the avatar and contribution history immediately', async ({
   page,
 }) => {
   await mockPortfolioApis(page);
@@ -61,11 +61,20 @@ test('GitHub section reveals real contribution history on request', async ({
   const contributionHeading = githubSection.getByRole('heading', {
     name: /contributions in the last/i,
   });
-  await expect(contributionHeading).not.toBeVisible();
-  await githubSection
-    .getByText('View contribution history', { exact: true })
-    .click();
   await expect(contributionHeading).toBeVisible();
+  const day = githubSection.locator('.contribution-day').first();
+  await expect
+    .poll(async () => (await day.boundingBox())?.width ?? 0)
+    .toBeLessThanOrEqual(24);
+  await expect(githubSection.locator('details')).toHaveCount(0);
+  await expect(githubSection.getByText(/Explore source code/)).toHaveCount(0);
+  const avatar = githubSection.locator('.github-profile-link img');
+  await expect(avatar).toBeVisible();
+  await expect
+    .poll(() =>
+      avatar.evaluate((image: HTMLImageElement) => image.naturalWidth)
+    )
+    .toBeGreaterThan(0);
   await expect(
     githubSection.getByText('Followers', { exact: true })
   ).toHaveCount(0);

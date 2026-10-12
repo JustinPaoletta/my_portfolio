@@ -142,11 +142,11 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
     page.getByRole('heading', { name: /Justin Paoletta/i })
   ).toBeVisible();
   await expect(
-    page.getByRole('link', { name: 'Download Resume PDF' })
-  ).toHaveAttribute('href', '/resume/Justin-Paoletta_Software-Engineer.pdf');
-  await expect(
-    page.getByRole('heading', { name: /Selected Work/i })
-  ).toBeVisible();
+    page
+      .locator('.hero-cta')
+      .getByRole('link', { name: 'Contact', exact: true })
+  ).toHaveAttribute('href', '#contact');
+  await expect(page.getByRole('heading', { name: /Work/i })).toBeVisible();
 
   const experienceSection = await revealDeferredSection(page, 'experience');
   const aboutSection = await revealDeferredSection(page, 'about');
@@ -155,13 +155,13 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
   const contactSection = await revealDeferredSection(page, 'contact');
 
   await expect(
-    experienceSection.getByRole('heading', { name: /Professional Experience/i })
+    experienceSection.getByRole('heading', { name: /Experience/i })
   ).toBeVisible();
   await expect(
-    aboutSection.getByRole('heading', { name: 'How I Work' })
+    aboutSection.getByRole('heading', { name: 'About' })
   ).toBeVisible();
   await expect(
-    articlesSection.getByRole('heading', { name: /LinkedIn Articles/i })
+    articlesSection.getByRole('heading', { name: /Writing/i })
   ).toBeVisible();
   await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
   await expect(
@@ -173,7 +173,7 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
     githubSection.getByRole('heading', { name: /GitHub Activity/i })
   ).toBeVisible();
   await expect(
-    contactSection.getByRole('heading', { name: /Get In Touch/i })
+    contactSection.getByRole('heading', { name: /Contact/i })
   ).toBeVisible();
   await expect(page.getByRole('contentinfo')).toBeVisible();
 });
@@ -399,9 +399,9 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
     )
     .toBe(true);
 
-  await expect(
-    page.getByRole('heading', { name: /Get In Touch/i })
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('heading', { name: /Contact/i })).toBeVisible({
+    timeout: 10_000,
+  });
   await expectSectionInViewport(page, 'contact');
   await expect(page.locator('section#contact')).toBeFocused();
   await expect(page).toHaveURL(/#contact$/);

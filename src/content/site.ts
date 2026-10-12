@@ -1,3 +1,11 @@
+export const SECTION_NAMES = {
+  projects: 'Work',
+  experience: 'Experience',
+  about: 'About',
+  articles: 'Writing',
+  contact: 'Contact',
+} as const;
+
 export const HERO_TAGLINE =
   'I modernize frontend applications and build the tooling that helps teams ship reliably—from AngularJS migrations and micro-frontends to CI/CD automation.';
 

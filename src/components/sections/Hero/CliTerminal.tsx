@@ -17,6 +17,8 @@ import { useBreakpoint } from '@/hooks/useBreakpoint';
 import { useGitHub } from '@/hooks/useGitHub';
 import { usePetDogs } from '@/hooks/usePetDogs';
 import { useTheme } from '@/hooks/useTheme';
+import { useReducedMotion } from '@/hooks/useReducedMotion';
+import { isVisualTestMode } from '@/utils/visualTest';
 import '@/components/sections/Hero/CliTerminal.css';
 
 type LineKind = 'system' | 'output' | 'input' | 'hint' | 'error' | 'success';
@@ -65,6 +67,8 @@ interface DogData {
 
 type InitialLine = Omit<TerminalLine, 'id'>;
 
+const STARTUP_INSTRUCTIONS =
+  'Type ls to list directories, cd <directory> to enter, and cd .. to go back. Use help for commands, theme or mode for appearance, and exit to return to the portfolio.';
 const MAX_SCROLLBACK_LINES = 300;
 const MAX_COMMAND_HISTORY = 100;
 const COMMANDS = [
@@ -86,6 +90,7 @@ const COMMANDS = [
   'menu',
   'pwd',
   'ls',
+  'cd',
   'clear',
   'theme',
   'mode',
@@ -111,48 +116,49 @@ const NO_ARGUMENT_COMMANDS = new Set([
   'back',
   'menu',
   'pwd',
-  'ls',
   'clear',
   'cls',
   'exit',
   'quit',
 ]);
+const ROOT_DIRECTORIES = [
+  'about',
+  'projects',
+  'experience',
+  'skills',
+  'github',
+  'contact',
+  'resume',
+  'dogs',
+];
 const MAIN_MENU_LINES: InitialLine[] = [
-  { kind: 'output', text: '[COMMANDS]' },
-  { kind: 'output', text: 'about       Background and engineering approach' },
-  {
-    kind: 'output',
-    text: 'projects    Project details, source, and release limits',
-  },
-  { kind: 'output', text: 'experience  Work history and education' },
-  { kind: 'output', text: 'skills      Technologies with examples' },
-  { kind: 'output', text: 'github      GitHub profile and available activity' },
-  { kind: 'output', text: 'contact     Email and professional profiles' },
-  { kind: 'output', text: 'resume      Download the PDF resume' },
-  { kind: 'output', text: 'dogs        Meet Nala, Rosie, and Tito' },
+  { kind: 'output', text: '[DIRECTORIES]' },
+  ...ROOT_DIRECTORIES.map(
+    (directory): InitialLine => ({ kind: 'output', text: `${directory}/` })
+  ),
   {
     kind: 'hint',
-    text: 'Try project 1 or exp 1. Type help for all commands; exit returns to the visual portfolio.',
+    text: 'Use cd <directory> to explore, for example cd projects. Type help for commands; exit returns to the visual portfolio.',
   },
 ];
 
 const HELP_TOPICS: Record<string, string[]> = {
   projects: [
-    'projects — list the projects.',
-    'project <number> — read the description, stack, source links, and release limits.',
-    'Example: project 1. Numbers also work after projects. Type back to return to the list.',
+    'cd /projects — enter the projects directory. ls lists its entries.',
+    'cd <number> — enter a project to read its description, stack, source links, and release limits.',
+    'Example: cd /projects/1. Use cd .. to return to the project list.',
   ],
   skills: [
-    'skills — list skill categories.',
-    'skill <number> — see technologies and concrete examples. Example: skill 1.',
+    'cd /skills — enter the skills directory. ls lists its categories.',
+    'cd <number> — see technologies and examples. Try cd /skills/1.',
   ],
   experience: [
-    'experience — list work history and education.',
-    'exp <number> — read a timeline entry. Example: exp 1.',
+    'cd /experience — enter work history and education. ls lists its entries.',
+    'cd <number> — read a timeline entry. Try cd /experience/1.',
   ],
   dogs: [
-    'dogs — list the dogs and current counts.',
-    'dog <number> — read a profile.',
+    'cd /dogs — enter the dogs directory. ls lists the dogs and current counts.',
+    'cd <number> — read a profile. Try cd /dogs/1.',
     'dog <number> treat | dog <number> scritch — give a treat or scritches.',
     'Example: dog 1 treat. Counts are shared with the portfolio pet section.',
   ],
@@ -172,9 +178,9 @@ const HELP_TOPICS: Record<string, string[]> = {
     'Example: mode light. System follows your device preference.',
   ],
   navigation: [
-    'back — return from a detail to its list, or from a list to the command menu.',
-    'menu — show the main commands. ls lists the current portfolio section.',
-    'pwd — show the current portfolio context. This is a portfolio guide, not an operating-system shell.',
+    'cd <path> — navigate to a portfolio directory. cd .. goes up; cd / or cd returns home.',
+    'ls [path] — list the current directory or inspect another directory without moving.',
+    'Paths can be relative (cd 1, cd ../skills) or absolute (cd /projects/1, cd ~/contact). pwd shows your current directory.',
     'history — show up to 100 commands from this session. clear — clear output, keeping command history.',
     'exit — return to the minimal visual theme.',
   ],
@@ -184,17 +190,17 @@ const HELP_TOPICS: Record<string, string[]> = {
     'Other aliases: h, gh, cv, education, pets, doggos, cls, quit.',
   ],
   about: [
-    'about — read my background and approach to modernizing frontend systems.',
+    'cd /about — read my background and approach to modernizing frontend systems.',
   ],
   github: [
-    'github — show available profile data. Loading, unavailable, and partial data are labeled; run github again to refresh the output.',
+    'cd /github — show available profile data. Loading, unavailable, and partial data are labeled; run ls again to refresh the output.',
   ],
   contact: [
-    'contact — get email, LinkedIn, and GitHub links.',
+    'cd /contact — get email, LinkedIn, and GitHub links.',
     'Type exit to use the visual portfolio contact form.',
   ],
   resume: [
-    'resume — show the PDF download link. Follow the link with your pointer or keyboard.',
+    'cd /resume — show the PDF download link. Follow the link with your pointer or keyboard.',
   ],
 };
 
@@ -359,9 +365,23 @@ function getCliExperienceOptionLabel(item: CliExperience): string {
 function CliTerminal(): React.ReactElement {
   const { setTheme, setColorMode, colorMode } = useTheme();
   const breakpoint = useBreakpoint();
+  const reducedMotion = useReducedMotion();
+  const [showStartupInstructions, setShowStartupInstructions] = useState(
+    () => reducedMotion || isVisualTestMode()
+  );
+
+  useEffect(() => {
+    if (reducedMotion || isVisualTestMode()) return;
+    const timer = window.setTimeout(
+      () => setShowStartupInstructions(true),
+      500
+    );
+    return () => window.clearTimeout(timer);
+  }, [reducedMotion]);
   const [context, setContext] = useState<Context>('main');
   const [inputValue, setInputValue] = useState('');
   const [isDetailView, setIsDetailView] = useState(false);
+  const [directoryPath, setDirectoryPath] = useState<string[]>([]);
   const [lines, setLines] = useState<TerminalLine[]>([]);
   const [commandHistory, setCommandHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number | null>(null);
@@ -432,12 +452,14 @@ function CliTerminal(): React.ReactElement {
   };
 
   const printMainMenu = (): void => {
+    setDirectoryPath([]);
     setContext('main');
     setIsDetailView(false);
     appendLines(MAIN_MENU_LINES);
   };
 
   const resetTerminal = (): void => {
+    setDirectoryPath([]);
     scrollRequestedRef.current = true;
     setContext('main');
     setIsDetailView(false);
@@ -448,6 +470,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showAbout = (): void => {
+    setDirectoryPath(['about']);
     setContext('main');
     setIsDetailView(false);
     appendLines([
@@ -466,6 +489,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showProjectsMenu = (): void => {
+    setDirectoryPath(['projects']);
     setContext('projects');
     setIsDetailView(false);
     appendLines([
@@ -475,14 +499,14 @@ function CliTerminal(): React.ReactElement {
           ? ` (${PROJECT_STATUS_LABELS[project.status]})`
           : '';
         const privatePart = project.private ? ' (Private)' : '';
-        const text = `${index + 1}. ${project.title}${statusPart}${privatePart}`;
+        const text = `${index + 1}/ ${project.title}${statusPart}${privatePart}`;
         return project.githubUrl
           ? { kind: 'output' as const, text, url: project.githubUrl }
           : { kind: 'output' as const, text };
       }),
       {
         kind: 'hint',
-        text: 'Read details with project <number>, for example project 1. Type back for the command menu.',
+        text: 'Use cd <number> for details, for example cd 1. Use cd .. to return home.',
       },
     ]);
   };
@@ -499,6 +523,7 @@ function CliTerminal(): React.ReactElement {
 
     setContext('projects');
     setIsDetailView(true);
+    setDirectoryPath(['projects', String(selection)]);
     const repoLine = project.private
       ? { kind: 'output' as const, text: 'Repository: Private' }
       : project.githubUrl
@@ -528,27 +553,28 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `Stack: ${project.techStack.join(', ')}` },
       {
         kind: 'hint',
-        text: 'Try project <number> for another project, back for the list, or help projects.',
+        text: 'Use cd .. for the list, then cd <number> for another project. Type help projects for guidance.',
       },
     ]);
   };
 
   const showSkillsMenu = (): void => {
+    setDirectoryPath(['skills']);
     setContext('skills');
     setIsDetailView(false);
     appendLines([
       { kind: 'output', text: '[SKILLS]' },
       ...SKILL_CATEGORIES.map((category, index) => ({
         kind: 'output' as const,
-        text: `${index + 1}. ${category.name} (${category.skills.length})`,
+        text: `${index + 1}/ ${category.name} (${category.skills.length})`,
       })),
       {
         kind: 'output',
-        text: `5. Supporting practices (${ADDITIONAL_SKILLS.length})`,
+        text: `5/ Supporting practices (${ADDITIONAL_SKILLS.length})`,
       },
       {
         kind: 'hint',
-        text: 'Try skill 1 for an example. Type back for the command menu.',
+        text: 'Use cd <number> for examples, for example cd 1. Use cd .. to return home.',
       },
     ]);
   };
@@ -557,6 +583,7 @@ function CliTerminal(): React.ReactElement {
     if (selection === 5) {
       setContext('skills');
       setIsDetailView(true);
+      setDirectoryPath(['skills', String(selection)]);
       appendLines([
         {
           kind: 'output',
@@ -572,7 +599,7 @@ function CliTerminal(): React.ReactElement {
         },
         {
           kind: 'hint',
-          text: 'Try skill <number> for another category, or back for the list.',
+          text: 'Use cd .. for the category list, then cd <number> to explore.',
         },
       ]);
       return;
@@ -589,6 +616,7 @@ function CliTerminal(): React.ReactElement {
 
     setContext('skills');
     setIsDetailView(true);
+    setDirectoryPath(['skills', String(selection)]);
     appendLines([
       {
         kind: 'output',
@@ -601,23 +629,24 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: category.example },
       {
         kind: 'hint',
-        text: 'Try skill <number> for another category, or back for the list.',
+        text: 'Use cd .. for the category list, then cd <number> to explore.',
       },
     ]);
   };
 
   const showExperienceMenu = (): void => {
+    setDirectoryPath(['experience']);
     setContext('experience');
     setIsDetailView(false);
     appendLines([
       { kind: 'output', text: '[EXPERIENCE & EDUCATION]' },
       ...EXPERIENCES.map((item, index) => ({
         kind: 'output' as const,
-        text: `${index + 1}. ${getCliExperienceOptionLabel(item)} @ ${item.organization} (${item.period})`,
+        text: `${index + 1}/ ${getCliExperienceOptionLabel(item)} @ ${item.organization} (${item.period})`,
       })),
       {
         kind: 'hint',
-        text: 'Read a role with exp <number>, for example exp 1. Type back for the command menu.',
+        text: 'Use cd <number> to read an entry, for example cd 1. Use cd .. to return home.',
       },
     ]);
   };
@@ -634,6 +663,7 @@ function CliTerminal(): React.ReactElement {
 
     setContext('experience');
     setIsDetailView(true);
+    setDirectoryPath(['experience', String(selection)]);
     appendLines([
       { kind: 'output', text: `[TIMELINE ${selection}] ${item.title}` },
       { kind: 'output', text: `${item.organization} | ${item.location}` },
@@ -647,12 +677,13 @@ function CliTerminal(): React.ReactElement {
       })),
       {
         kind: 'hint',
-        text: 'Try exp <number> for another entry, or back for the timeline.',
+        text: 'Use cd .. for the timeline, then cd <number> for another entry.',
       },
     ]);
   };
 
   const showGitHub = (): void => {
+    setDirectoryPath(['github']);
     setContext('main');
     setIsDetailView(false);
     if (githubError) {
@@ -674,7 +705,7 @@ function CliTerminal(): React.ReactElement {
         { kind: 'system', text: 'Fetching live GitHub stats...' },
         {
           kind: 'hint',
-          text: 'Run github again in a few seconds, or type contact for profile links.',
+          text: 'Run ls again in a few seconds, or cd /contact for profile links.',
         },
       ]);
       return;
@@ -732,6 +763,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showContact = (): void => {
+    setDirectoryPath(['contact']);
     setContext('main');
     setIsDetailView(false);
     appendLines([
@@ -763,17 +795,18 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showDogsMenu = (): void => {
+    setDirectoryPath(['dogs']);
     setContext('dogs');
     setIsDetailView(false);
     appendLines([
       { kind: 'output', text: '[PET DOGS]' },
       ...dogs.map((dog, index) => ({
         kind: 'output' as const,
-        text: `${index + 1}. ${dog.name}${dog.badge ? ` (${dog.badge})` : ''} | Treats: ${dog.stats.treats} | Scritches: ${dog.stats.scritches}`,
+        text: `${index + 1}/ ${dog.name}${dog.badge ? ` (${dog.badge})` : ''} | Treats: ${dog.stats.treats} | Scritches: ${dog.stats.scritches}`,
       })),
       {
         kind: 'hint',
-        text: 'Try dog 1, dog 1 treat, or dog 1 scritch. Type help dogs for more.',
+        text: 'Use cd <number> for a profile, for example cd 1. Type help dogs for treats and scritches.',
       },
     ]);
   };
@@ -790,6 +823,7 @@ function CliTerminal(): React.ReactElement {
 
     setContext('dogs');
     setIsDetailView(true);
+    setDirectoryPath(['dogs', String(selection)]);
     appendLines([
       {
         kind: 'output',
@@ -826,6 +860,7 @@ function CliTerminal(): React.ReactElement {
 
     setContext('dogs');
     setIsDetailView(true);
+    setDirectoryPath(['dogs', String(selection)]);
 
     if (action === 'treat' || action === 'treats') {
       updateDogStats(dog.name, 'treats');
@@ -851,6 +886,7 @@ function CliTerminal(): React.ReactElement {
   };
 
   const showResume = (): void => {
+    setDirectoryPath(['resume']);
     setContext('main');
     setIsDetailView(false);
     appendLines([
@@ -863,7 +899,7 @@ function CliTerminal(): React.ReactElement {
       },
       {
         kind: 'hint',
-        text: 'Follow the download link above. Type contact to get in touch, or exit for the visual portfolio.',
+        text: 'Follow the download link above. Use cd /contact to get in touch, or exit for the visual portfolio.',
       },
     ]);
   };
@@ -878,6 +914,7 @@ function CliTerminal(): React.ReactElement {
       back: 'navigation',
       pwd: 'navigation',
       ls: 'navigation',
+      cd: 'navigation',
       clear: 'navigation',
       menu: 'navigation',
       exit: 'navigation',
@@ -918,11 +955,11 @@ function CliTerminal(): React.ReactElement {
       ...MAIN_MENU_LINES.slice(1, -1),
       {
         kind: 'output',
-        text: 'Details: project <n>, skill <n>, exp <n>, dog <n> [treat|scritch]',
+        text: 'Explore: ls, cd projects, cd 1, cd .., cd /contact.',
       },
       {
         kind: 'output',
-        text: 'Navigate: back, menu, pwd, ls. Session: history, clear.',
+        text: 'Navigate: ls [path], cd [path], pwd. Session: history, clear.',
       },
       {
         kind: 'output',
@@ -1009,6 +1046,59 @@ function CliTerminal(): React.ReactElement {
     else printMainMenu();
   };
 
+  const directoryLimits: Record<string, number> = {
+    projects: PROJECTS.length,
+    skills: 5,
+    experience: EXPERIENCES.length,
+    dogs: dogs.length,
+  };
+  const resolveDirectory = (target: string): string[] | null => {
+    const absolute =
+      target.startsWith('/') || target === '~' || target.startsWith('~/');
+    const path = absolute ? [] : [...directoryPath];
+    for (const part of target.replace(/^~(?=\/|$)/, '').split('/')) {
+      if (!part || part === '.') continue;
+      if (part === '..') {
+        path.pop();
+        continue;
+      }
+      path.push(part);
+      if (!ROOT_DIRECTORIES.includes(path[0]) || path.length > 2) return null;
+      if (path.length === 2) {
+        const limit = directoryLimits[path[0]] ?? 0;
+        if (!/^[1-9]\d*$/.test(part) || Number(part) > limit) return null;
+      }
+    }
+    return path;
+  };
+  const showDirectory = (path: string[]): void => {
+    const [directory, entry] = path;
+    if (!directory) {
+      printMainMenu();
+      return;
+    }
+    if (entry) {
+      const selection = Number(entry);
+      if (directory === 'projects') showProjectDetail(selection);
+      else if (directory === 'skills') showSkillDetail(selection);
+      else if (directory === 'experience') showExperienceDetail(selection);
+      else if (directory === 'dogs') showDogDetail(selection);
+      return;
+    }
+    const directories: Record<string, () => void> = {
+      about: showAbout,
+      projects: showProjectsMenu,
+      skills: showSkillsMenu,
+      experience: showExperienceMenu,
+      github: showGitHub,
+      contact: showContact,
+      resume: showResume,
+      dogs: showDogsMenu,
+    };
+    if (Object.prototype.hasOwnProperty.call(directories, directory))
+      directories[directory]();
+  };
+
   const goBack = (): void => {
     if (isDetailView && context !== 'main') showCurrentList();
     else printMainMenu();
@@ -1019,6 +1109,11 @@ function CliTerminal(): React.ReactElement {
     if (!url.searchParams.has(key)) return;
     url.searchParams.delete(key);
     window.history.replaceState(window.history.state, '', url);
+  };
+
+  const exitTerminal = (): void => {
+    clearQueryOverride('theme');
+    setTheme(defaultTheme);
   };
 
   const executeCommand = (raw: string, sessionHistory: string[]): void => {
@@ -1050,8 +1145,7 @@ function CliTerminal(): React.ReactElement {
       return;
     }
     if (command === 'exit' || command === 'quit') {
-      clearQueryOverride('theme');
-      setTheme(defaultTheme);
+      exitTerminal();
       return;
     }
     if (command === 'theme') {
@@ -1109,19 +1203,47 @@ function CliTerminal(): React.ReactElement {
       printMainMenu();
       return;
     }
-    if (command === 'ls') {
-      showCurrentList();
+    if (command === 'ls' || command === 'cd') {
+      if (tokens.length > 2) {
+        appendLines([{ kind: 'error', text: `Usage: ${command} [path]` }]);
+        return;
+      }
+      const path = resolveDirectory(arg1 ?? (command === 'cd' ? '~' : '.'));
+      if (!path) {
+        appendLines([
+          { kind: 'error', text: `${command}: no such directory: ${arg1}` },
+          {
+            kind: 'hint',
+            text: 'Use ls to see available entries, or cd / to return home.',
+          },
+        ]);
+        return;
+      }
+      showDirectory(path);
+      if (command === 'ls') {
+        setDirectoryPath(directoryPath);
+        setContext(context);
+        setIsDetailView(isDetailView);
+        if (path.join('/') !== directoryPath.join('/')) {
+          appendLines([
+            {
+              kind: 'hint',
+              text: `Your directory is still portfolio:/${directoryPath.join('/')}. Use cd /${path.join('/')} to enter this listing.`,
+            },
+          ]);
+        }
+      }
       return;
     }
     if (command === 'pwd') {
       appendLines([
         {
           kind: 'output',
-          text: context === 'main' ? 'portfolio:/' : `portfolio:/${context}`,
+          text: `portfolio:/${directoryPath.join('/')}`,
         },
         {
           kind: 'hint',
-          text: 'This is your portfolio context. Type ls to list it, or back to return.',
+          text: 'Use ls to list this directory, cd .. to go up, or cd / to return home.',
         },
       ]);
       return;
@@ -1263,7 +1385,23 @@ function CliTerminal(): React.ReactElement {
     if (parts.length === 1) candidates = COMMANDS;
     else if (parts.length === 2) {
       prefix = `${parts[0]} `;
-      if (parts[0] === 'theme') candidates = THEME_NAMES;
+      if (parts[0] === 'cd' || parts[0] === 'ls') {
+        const target = parts[1];
+        const slash = target.lastIndexOf('/');
+        const parent = slash >= 0 ? target.slice(0, slash + 1) : '';
+        const path = resolveDirectory(parent || '.');
+        const entries = !path
+          ? []
+          : path.length === 0
+            ? ROOT_DIRECTORIES
+            : path.length === 1
+              ? Array.from(
+                  { length: directoryLimits[path[0]] ?? 0 },
+                  (_, index) => String(index + 1)
+                )
+              : [];
+        candidates = entries.map((entry) => `${parent}${entry}`);
+      } else if (parts[0] === 'theme') candidates = THEME_NAMES;
       else if (parts[0] === 'mode') candidates = MODE_NAMES;
       else if (parts[0] === 'help') candidates = Object.keys(HELP_TOPICS);
       else {
@@ -1361,16 +1499,48 @@ function CliTerminal(): React.ReactElement {
   }, [lines]);
 
   const contextHint =
-    context === 'main'
-      ? 'help for commands · exit for the visual portfolio'
-      : `help ${context} for commands · back to return · exit for the visual portfolio`;
+    directoryPath.length === 0
+      ? 'ls to explore · cd <directory> to enter · help for commands'
+      : 'ls to explore · cd .. to go up · cd / to return home · help for commands';
 
   return (
     <section className="cli-terminal-shell" aria-label="Portfolio terminal">
       <div className="cli-terminal-toolbar">
-        <span className="cli-terminal-title">
-          portfolio / interactive guide
-        </span>
+        <div className="cli-terminal-heading">
+          <div className="cli-window-controls">
+            <button
+              type="button"
+              className="cli-window-close"
+              aria-label="Exit terminal"
+              title="Exit terminal"
+              onClick={exitTerminal}
+            >
+              <span
+                className="cli-window-dot cli-window-dot--red"
+                aria-hidden="true"
+              >
+                <span className="cli-window-close-icon">×</span>
+              </span>
+            </button>
+            <span
+              className="cli-window-dot cli-window-dot--yellow"
+              aria-hidden="true"
+            />
+            <span
+              className="cli-window-dot cli-window-dot--green"
+              aria-hidden="true"
+            />
+          </div>
+          <div className="cli-terminal-identity">
+            <h1 id="hero-heading" className="cli-terminal-name">
+              Justin Paoletta
+            </h1>
+            <span className="cli-terminal-role">Software Engineer</span>
+            <span className="cli-terminal-technologies">
+              Angular · React · TypeScript
+            </span>
+          </div>
+        </div>
         <span className="cli-terminal-mode">{colorMode ?? 'system'}</span>
       </div>
       {/* The scrollable transcript needs a tab stop for keyboard scrolling. */}
@@ -1384,50 +1554,12 @@ function CliTerminal(): React.ReactElement {
       >
         <div className="cli-session-content">
           <div className="cli-intro">
-            <p className="cli-line cli-line--system">
-              Welcome to my portfolio.
-            </p>
-            <h1 id="hero-heading" className="cli-identity">
-              Justin Paoletta
-            </h1>
-            <p className="cli-role">Software Engineer</p>
-            <p className="cli-line">Angular · React · TypeScript</p>
-            <p className="cli-line cli-intro-summary">
-              I modernize frontend applications and build release tooling that
-              helps teams ship reliably.
-            </p>
-            <p className="cli-line">
-              An interactive guide to my work. Type a command, then press Enter.
-            </p>
-            <dl className="cli-command-guide">
-              <div>
-                <dt>projects</dt>
-                <dd>Explore the work</dd>
-              </div>
-              <div>
-                <dt>experience</dt>
-                <dd>Read my work history</dd>
-              </div>
-              <div>
-                <dt>about / skills</dt>
-                <dd>Background and approach</dd>
-              </div>
-              <div>
-                <dt>contact / resume</dt>
-                <dd>Get in touch or get the PDF</dd>
-              </div>
-              <div>
-                <dt>github / dogs</dt>
-                <dd>Activity and a little personality</dd>
-              </div>
-            </dl>
-            <p className="cli-line cli-line--hint">
-              Start with projects, or try project 1. Type help for all commands.
-            </p>
-            <p className="cli-line cli-line--hint">
-              Type exit to return to the visual portfolio. Change appearance
-              with theme or mode.
-            </p>
+            <p className="cli-line cli-line--system">Welcome to JP-CLI</p>
+            {(showStartupInstructions ||
+              reducedMotion ||
+              isVisualTestMode()) && (
+              <p className="cli-line cli-line--hint">{STARTUP_INSTRUCTIONS}</p>
+            )}
           </div>
           <div className="cli-history">
             {lines.map((line) => (
@@ -1479,7 +1611,10 @@ function CliTerminal(): React.ReactElement {
                   Terminal command input
                 </label>
                 <span className="cli-prompt-prefix" aria-hidden="true">
-                  {context === 'main' ? '~' : `~/${context}`} $
+                  {directoryPath.length === 0
+                    ? '~'
+                    : `~/${directoryPath.join('/')}`}{' '}
+                  $
                 </span>
                 <input
                   ref={inputRef}

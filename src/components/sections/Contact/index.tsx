@@ -1,3 +1,4 @@
+import { SECTION_NAMES } from '@/content/site';
 /**
  * Contact Section
  * Contact form and social links
@@ -160,7 +161,7 @@ function Contact(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            Get In Touch
+            {SECTION_NAMES.contact}
           </Reveal>
         </Reveal>
 

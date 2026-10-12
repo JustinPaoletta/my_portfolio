@@ -12,7 +12,7 @@ describe('Contact section', () => {
     render(<Contact />);
 
     expect(
-      screen.getByRole('heading', { name: 'Get In Touch' })
+      screen.getByRole('heading', { name: 'Contact' })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /let's connect/i })

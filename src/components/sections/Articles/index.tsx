@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons';
 import { env } from '@/config/env';
-import { LINKEDIN_ARTICLES } from '@/content/site';
+import { LINKEDIN_ARTICLES, SECTION_NAMES } from '@/content/site';
 import './Articles.css';
 
 function ArticleCard({
@@ -143,7 +143,7 @@ export default function Articles(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            LinkedIn Articles
+            {SECTION_NAMES.articles}
           </Reveal>
           <Reveal
             as="p"

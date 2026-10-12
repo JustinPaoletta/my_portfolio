@@ -258,13 +258,6 @@
   transition: transform 0.15s ease;
 }
 
-.cta-file-type {
-  font-family: var(--font-mono);
-  font-size: 0.65em;
-  letter-spacing: 0.04em;
-  opacity: 0.75;
-}
-
 .cta-primary:hover .cta-icon {
   transform: translate(4px, -2px);
 }

@@ -6,9 +6,7 @@ describe('Projects section', () => {
   it('renders featured and other projects with status/private branches', () => {
     render(<Projects />);
 
-    expect(
-      screen.getByRole('heading', { name: 'Selected Work' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Work' })).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'More Projects' })
     ).toBeInTheDocument();
@@ -42,9 +40,7 @@ describe('Projects section', () => {
   it('renders project content consistently', () => {
     render(<Projects />);
 
-    expect(
-      screen.getByRole('heading', { name: 'Selected Work' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Work' })).toBeInTheDocument();
     expect(screen.getByText('BitStockerz')).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'wild-apricot-exports' })

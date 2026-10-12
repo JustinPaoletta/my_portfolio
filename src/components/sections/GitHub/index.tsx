@@ -66,10 +66,6 @@ function GitHub(): React.ReactElement {
           </Reveal>
         )}
 
-        <Reveal as="p" className="github-intro" delay={160} visible={isVisible}>
-          Explore source code and implementation details for my public projects.
-        </Reveal>
-
         {user && (
           <Reveal
             as="div"
@@ -84,22 +80,30 @@ function GitHub(): React.ReactElement {
               rel="noopener noreferrer"
               className="github-profile-link"
             >
-              <span className="github-name">{user.name || user.login}</span>
-              <span className="github-username">@{user.login}</span>
+              <img
+                className="github-avatar"
+                src={user.avatar_url}
+                alt=""
+                width={56}
+                height={56}
+                loading="lazy"
+                decoding="async"
+              />
+              <span className="github-profile-identity">
+                <span className="github-name">{user.name || user.login}</span>
+                <span className="github-username">@{user.login}</span>
+              </span>
             </a>
           </Reveal>
         )}
 
         {contributions && (
           <Reveal as="div" delay={240} visible={isVisible}>
-            <details className="github-history">
-              <summary>View contribution history</summary>
-              <ContributionGraph
-                contributions={contributions}
-                loading={loading}
-                isVisible={isVisible}
-              />
-            </details>
+            <ContributionGraph
+              contributions={contributions}
+              loading={loading}
+              isVisible={isVisible}
+            />
           </Reveal>
         )}
 

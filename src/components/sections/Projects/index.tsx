@@ -1,3 +1,4 @@
+import { SECTION_NAMES } from '@/content/site';
 /**
  * Projects Section
  * Showcase of best work with descriptions, tech stack, and links
@@ -206,7 +207,7 @@ function Projects(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            Selected Work
+            {SECTION_NAMES.projects}
           </Reveal>
         </Reveal>
 

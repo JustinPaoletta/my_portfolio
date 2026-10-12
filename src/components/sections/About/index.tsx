@@ -1,3 +1,4 @@
+import { SECTION_NAMES } from '@/content/site';
 /** Background and a concrete engineering approach. */
 
 import { useRef } from 'react';
@@ -55,7 +56,7 @@ function About(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            How I Work
+            {SECTION_NAMES.about}
           </Reveal>
         </Reveal>
 

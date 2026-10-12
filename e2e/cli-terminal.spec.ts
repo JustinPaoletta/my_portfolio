@@ -9,6 +9,7 @@ async function openTerminal(page: Page, mode = 'dark'): Promise<void> {
     page.getByRole('region', { name: 'Portfolio terminal', exact: true })
   ).toBeVisible();
   await expect(page.getByLabel('Terminal command input')).toBeVisible();
+  await expect(page.getByText(/^Type ls to list directories/)).toBeVisible();
 }
 
 async function runCommand(page: Page, command: string): Promise<void> {
@@ -17,6 +18,52 @@ async function runCommand(page: Page, command: string): Promise<void> {
   await prompt.press('Enter');
   await expect(prompt).toHaveValue('');
 }
+
+test('terminal uses ls and cd and restores the macOS close control', async ({
+  page,
+}) => {
+  await openTerminal(page);
+  const toolbar = page.locator('.cli-terminal-toolbar');
+  await expect(
+    toolbar.getByRole('heading', { name: 'Justin Paoletta' })
+  ).toBeVisible();
+  await expect(toolbar.getByText('Software Engineer')).toBeVisible();
+  await expect(toolbar.getByText('Angular · React · TypeScript')).toBeVisible();
+  await runCommand(page, 'ls');
+  await expect(page.getByText('projects/', { exact: true })).toBeVisible();
+  await runCommand(page, 'cd projects');
+  await runCommand(page, 'cd 2');
+  await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/projects/2 $');
+  await runCommand(page, 'ls /experience');
+  await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/projects/2 $');
+  await runCommand(page, 'cd ..');
+  await runCommand(page, 'cd ../contact');
+  await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/contact $');
+  await runCommand(page, 'cd /not-a-directory');
+  await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/contact $');
+  await runCommand(page, 'cd /');
+  for (const color of ['yellow', 'green']) {
+    const dot = toolbar.locator(`.cli-window-dot--${color}`);
+    await expect(dot).not.toHaveAttribute('tabindex');
+    await dot.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'cli');
+  }
+  const close = toolbar.getByRole('button', { name: 'Exit terminal' });
+  await page.mouse.move(1000, 700);
+  await expect(close.locator('.cli-window-close-icon')).toHaveCSS(
+    'opacity',
+    '0'
+  );
+  await close.hover();
+  await expect(close.locator('.cli-window-close-icon')).toHaveCSS(
+    'opacity',
+    '1'
+  );
+  await close.click();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'minimal');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'minimal');
+});
 
 test('terminal prompt follows the output and scrolls with the transcript', async ({
   page,
@@ -101,7 +148,10 @@ test('terminal keyboard editing, completion and history preserve the draft', asy
     exact: true,
   });
   const prompt = page.getByLabel('Terminal command input');
-  await expect(terminal.getByRole('button')).toHaveCount(0);
+  await expect(terminal.getByRole('button')).toHaveCount(1);
+  await expect(
+    terminal.getByRole('button', { name: 'Exit terminal' })
+  ).toBeVisible();
   await expect(
     page.getByRole('button', { name: /toggle theme switcher/i })
   ).toHaveCount(0);
@@ -186,6 +236,12 @@ for (const width of [320, 390]) {
     await openTerminal(page);
     const prompt = page.getByLabel('Terminal command input');
     await expect(prompt).not.toBeFocused();
+    const toolbar = page.locator('.cli-terminal-toolbar');
+    await expect(
+      toolbar.getByRole('heading', { name: 'Justin Paoletta' })
+    ).toBeInViewport({ ratio: 1 });
+    await expect(toolbar.locator('.cli-terminal-role')).toBeHidden();
+    await expect(toolbar.locator('.cli-terminal-technologies')).toBeHidden();
     await runCommand(page, 'help');
     await runCommand(page, 'exp 1');
     await page.setViewportSize({ width, height: 440 });

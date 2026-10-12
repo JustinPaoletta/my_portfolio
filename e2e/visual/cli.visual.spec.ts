@@ -24,7 +24,7 @@ test.describe('@visual CLI terminal', () => {
       viewport: DESKTOP_HERO_VIEWPORT,
     });
     const prompt = page.getByLabel('Terminal command input');
-    for (const command of ['projects', 'project 2']) {
+    for (const command of ['ls', 'cd projects', 'cd 2']) {
       await prompt.fill(command);
       await prompt.press('Enter');
     }

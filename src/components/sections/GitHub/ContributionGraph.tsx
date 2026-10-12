@@ -89,10 +89,11 @@ function ContributionGraph({
       // Each gap is 2px, and there are (totalWeeks - 1) gaps
       const totalGapWidth = (totalWeeks - 1) * 2;
       const availableWidth = containerWidth - totalGapWidth;
-      const calculatedWeekWidth = availableWidth / totalWeeks;
+      const calculatedWeekWidth =
+        totalWeeks > 0 ? availableWidth / totalWeeks : 11;
 
-      // Ensure minimum width (at least 11px for the day square)
-      setWeekWidth(Math.max(calculatedWeekWidth, 11));
+      // Keep short histories compact while fitting the available viewport.
+      setWeekWidth(Math.min(24, Math.max(calculatedWeekWidth, 8)));
     };
 
     updateWeekWidth();

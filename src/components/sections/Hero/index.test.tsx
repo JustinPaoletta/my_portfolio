@@ -419,12 +419,13 @@ describe('Hero section', () => {
     expect(
       screen.getByText('Angular · React · TypeScript')
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: 'Download Resume PDF' })
-    ).toHaveAttribute('href', '/resume/Justin-Paoletta_Software-Engineer.pdf');
-    expect(
-      screen.getByRole('link', { name: 'Download Resume PDF' })
-    ).toHaveAttribute('download', 'Justin_Paoletta_Resume.pdf');
+    expect(screen.getByRole('link', { name: 'Contact' })).toHaveAttribute(
+      'href',
+      '#contact'
+    );
+    expect(screen.getByRole('link', { name: 'Contact' })).not.toHaveAttribute(
+      'download'
+    );
     expect(screen.queryByTestId('cli-terminal')).not.toBeInTheDocument();
     expect(minimal.container.querySelector('.hero-cosmic-video')).toBeNull();
     expect(minimal.container.querySelector('.hero-engineer-visual')).toBeNull();

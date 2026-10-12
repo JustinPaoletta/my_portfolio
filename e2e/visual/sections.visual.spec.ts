@@ -56,6 +56,31 @@ test.describe('@visual section states', () => {
     });
   });
 
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures skill icons on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, { theme: 'cosmic', mode: 'dark', viewport });
+      const skills = page.locator('section#skills');
+      await waitForSectionToSettle(page, skills);
+      const icons = skills.locator('.skill-icon img');
+      await expect(icons).toHaveCount(13);
+      const loaded = await icons.evaluateAll((images) =>
+        images.every(
+          (image) =>
+            image instanceof HTMLImageElement &&
+            image.complete &&
+            image.naturalWidth > 0
+        )
+      );
+      expect(loaded).toBe(true);
+      await expect(skills).toHaveScreenshot(`skills-${label}.png`, {
+        caret: 'hide',
+      });
+    });
+  }
+
   test('captures github section', async ({ page }) => {
     await gotoVisualState(page, {
       theme: 'minimal',

@@ -9,7 +9,7 @@ describe('Articles section', () => {
     render(<Articles />);
 
     expect(
-      screen.getByRole('heading', { name: 'LinkedIn Articles' })
+      screen.getByRole('heading', { name: 'Writing' })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', {

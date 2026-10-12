@@ -1,81 +1,73 @@
-# JP_CLI terminal guide
+# JP-CLI terminal guide
 
-The CLI theme presents the portfolio as one terminal session. The introduction,
-command guide, output, and prompt live in the same scrollable surface. There is
-no option sidebar, window-control toolbar, or floating theme menu.
-The prompt follows the last output in normal document flow and scrolls with the
-transcript. Submitting a command scrolls its new output and prompt into view;
-scrolling up lets you read earlier output without a fixed input covering it.
+The top row shows the macOS window dots and Justin Paoletta's name, Software
+Engineer title, and Angular / React / TypeScript stack. Narrow screens retain
+the name. The red dot shows an × on hover or keyboard focus; activating it has
+the same result as `exit`. Yellow and green are decorative and do not respond.
 
-This is a portfolio command interface. It does not execute operating-system
-commands or provide access to a filesystem.
+The terminal opens with `Welcome to JP-CLI`, then displays the command
+instructions 500ms later. Reduced-motion preference shows both immediately.
+The prompt follows the latest output and scrolls with the transcript.
+Submitting or clearing brings it into view; scrolling up lets you read history.
+This is a portfolio command interface, with no access to your filesystem.
 
-## Start exploring
-
-Type a command at the prompt and press Enter:
+## Explore with ls and cd
 
 ```text
-projects
-project 1
-experience
-exp 1
-resume
-contact
+ls
+cd projects
+ls
+cd 1
+cd ..
+cd /experience/1
+cd ~/contact
+cd /resume
+cd /
 ```
 
-`help` lists the available commands. `help <topic>` explains a command. After
-list and detail commands, the output explains useful next steps. Source,
-profile, email, and résumé links remain ordinary keyboard-accessible links.
+`ls` lists the current directory. `cd <path>` enters a directory and displays
+its content. Projects, skills, experience, and dogs contain numbered directories
+shown by `ls`; entering one displays its details and real links.
+
+Paths support `/`, `~`, `.`, and `..`. `cd` without a path returns home.
+`ls <path>` inspects another directory without changing the current location.
+Invalid paths produce guidance and leave the current directory unchanged.
+The prompt and `pwd` show your current location.
 
 ## Commands
 
-| Command                                  | Result                                                      |
-| ---------------------------------------- | ----------------------------------------------------------- |
-| `about`                                  | Background and engineering approach                         |
-| `projects` / `project <n>`               | Project list or one project's evidence and links            |
-| `skills` / `skill <n>`                   | Skills and supporting work                                  |
-| `experience` / `exp <n>`                 | Employment and education list or details                    |
-| `github`                                 | GitHub data with honest loading and unavailable states      |
-| `contact`                                | Email and professional profile links                        |
-| `resume`                                 | Link to the existing downloadable PDF                       |
-| `dogs` / `dog <n>`                       | Optional pet section and details                            |
-| `dog <n> treat` / `dog <n> scritch`      | Record the corresponding pet interaction                    |
-| `help` / `help <topic>`                  | General or contextual command guidance                      |
-| `history`                                | Commands entered during this session                        |
-| `back`                                   | Return from a detail to its list, then to the command guide |
-| `menu`                                   | Return to the command guide                                 |
-| `ls`                                     | List items in the current portfolio context                 |
-| `pwd`                                    | Show the current portfolio context                          |
-| `clear` / `cls`                          | Clear output while keeping the introduction and guidance    |
-| `theme <minimal\|engineer\|cosmic\|cli>` | Change the portfolio theme                                  |
-| `mode <light\|dark\|system>`             | Change the color mode                                       |
-| `exit` / `quit`                          | Return to the Minimal website theme                         |
+| Command                                  | Result                                                           |
+| ---------------------------------------- | ---------------------------------------------------------------- |
+| `ls [path]`                              | List the current or specified directory                          |
+| `cd [path]`                              | Enter a relative or absolute directory; no argument returns home |
+| `pwd`                                    | Show the current directory                                       |
+| `help` / `help <topic>`                  | Command guidance and examples                                    |
+| `theme <minimal\|engineer\|cosmic\|cli>` | Change the portfolio theme                                       |
+| `mode <light\|dark\|system>`             | Change the color preference                                      |
+| `exit` / `quit`                          | Return to the Minimal visual portfolio                           |
+| `history`                                | Show commands from this session                                  |
+| `clear` / `cls`                          | Clear output and restore the welcome at home                     |
+| `dog <n> treat` / `dog <n> scritch`      | Record the corresponding pet interaction                         |
 
-The numeric aliases remain available: `1` About, `2` Projects, `3` Skills,
-`4` Experience, `5` GitHub, `6` Contact, `7` Dogs, `8` Résumé, `9` Help, and
-`0` Clear. Within a list, a number selects an item. Use named commands to jump
-directly between sections regardless of the current list.
+Root directories are `about`, `projects`, `experience`, `skills`, `github`,
+`contact`, `resume`, and `dogs`. Source, email, professional profile, and PDF
+links remain keyboard-accessible. `help dogs` explains pet interactions.
 
-Other retained aliases include `education`, `gh`, `doggos`, `pets`, `cv`, and
-`h`. Appearance commands preserve the chosen setting on reload, including
-when the session started with theme or mode query parameters.
+Earlier named commands and numeric shortcuts remain compatibility aliases;
+the opening guide and directory output use `ls` and `cd`. Appearance changes
+persist on reload, including sessions opened with theme/mode URL overrides.
 
 ## Keyboard and touch
 
-- Enter executes the typed command. Empty Enter does nothing.
-- Up/Down recall command history and restore an unfinished draft after the newest entry.
-- Left/Right retain normal text editing.
-- Ctrl+Space completes a command or shows matching possibilities.
-- Ctrl+L clears output.
-- Ctrl+C cancels the current draft when no text is selected. Selected text can still be copied normally.
-- Tab and Shift+Tab move through links and the prompt; they do not trap focus in the terminal.
+- Enter executes a command. Empty Enter does nothing.
+- Up/Down recall history and restore an unfinished draft after the newest entry.
+- Left/Right edit text normally.
+- Ctrl+Space completes commands and directory paths, or shows matches.
+- Ctrl+L clears output. Ctrl+C cancels the draft when no text is selected.
+- Selected text can be copied normally; Tab and Shift+Tab move focus without a trap.
 
-On mobile, tap the prompt and use the keyboard's submit key. The input does
-not automatically open the mobile keyboard. Text wraps at narrow widths and
-the transcript scrolls within the viewport.
-
-Output is a normal readable region rather than a live region that repeats
-the entire transcript. A concise status message announces command results.
-The session retains up to 300 output lines and 100 commands; it is not saved
-across reloads. Human screen-reader and physical mobile-keyboard acceptance
+Mobile input does not open the keyboard automatically. Tap the prompt and use
+the keyboard's submit key. Text wraps and the transcript scrolls within the
+viewport. The session retains up to 300 output lines and 100 commands, and is
+not saved across reloads. Screen-reader and physical mobile-keyboard acceptance
 remain separate from automated checks.

@@ -87,7 +87,7 @@ vi.mock('@/components/Reveal', async () => {
 });
 
 describe('GitHub section', () => {
-  it('renders the profile and optional contribution history without vanity counters', () => {
+  it('renders the avatar and contribution history directly beside the profile', () => {
     isInView = true;
     githubState = {
       user: {
@@ -117,8 +117,14 @@ describe('GitHub section', () => {
     expect(screen.queryByText('Following')).not.toBeInTheDocument();
     expect(screen.queryByText('Repos')).not.toBeInTheDocument();
     expect(
-      screen.getByText('View contribution history').closest('details')
-    ).not.toHaveAttribute('open');
+      screen.queryByText('View contribution history')
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Explore source code/)).not.toBeInTheDocument();
+    expect(document.querySelector('#github details')).toBeNull();
+    expect(document.querySelector('.github-profile-link img')).toHaveAttribute(
+      'src',
+      'https://example.com/avatar.png'
+    );
     expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
       'data-total',
       '123'

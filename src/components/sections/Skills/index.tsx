@@ -5,6 +5,21 @@ import { Reveal, useRevealInView } from '@/components/Reveal';
 import { BITSTOCKERZ_PROJECT } from '@/content/projects';
 import './Skills.css';
 
+const skillIcons: Record<string, string[]> = {
+  Angular: ['/icons/angular.svg'],
+  React: ['/icons/react.svg'],
+  TypeScript: ['/icons/typescript.svg'],
+  RxJS: ['/icons/rxjs.svg'],
+  SCSS: ['/icons/sass.svg'],
+  Playwright: ['/icons/playwright.webp'],
+  'GitHub Actions': ['/icons/githubactions.svg'],
+  Jenkins: ['/icons/jenkins.svg'],
+  'Node.js': ['/icons/nodejs.svg'],
+  NestJS: ['/icons/nestjs.svg'],
+  Prisma: ['/icons/prisma.svg'],
+  'MySQL/MariaDB': ['/icons/mysql.svg', '/icons/mariadb.svg'],
+};
+
 const skillAreas = [
   {
     title: 'Frontend systems',
@@ -84,7 +99,21 @@ function Skills(): React.ReactElement {
                 aria-label={`${area.title} technologies`}
               >
                 {area.technologies.map((technology) => (
-                  <li key={technology}>{technology}</li>
+                  <li key={technology}>
+                    {skillIcons[technology]?.map((icon) => (
+                      <span key={icon} className="skill-icon">
+                        <img
+                          src={icon}
+                          alt=""
+                          width={16}
+                          height={16}
+                          loading="lazy"
+                          decoding="async"
+                        />
+                      </span>
+                    ))}
+                    <span>{technology}</span>
+                  </li>
                 ))}
               </ul>
               <p>{area.description}</p>

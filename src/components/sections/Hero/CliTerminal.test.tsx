@@ -1,4 +1,5 @@
 import {
+  act,
   createEvent,
   fireEvent,
   render,
@@ -130,6 +131,90 @@ describe('CliTerminal', () => {
       loading: false,
       error: null,
     };
+  });
+
+  it('reveals the opening instructions half a second after the welcome', () => {
+    vi.useFakeTimers();
+    try {
+      renderTerminal();
+      expect(
+        terminalTranscript().getByText('Welcome to JP-CLI')
+      ).toBeInTheDocument();
+      expect(
+        terminalTranscript().queryByText(/^Type ls to list directories/)
+      ).not.toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(499);
+      });
+      expect(
+        terminalTranscript().queryByText(/^Type ls to list directories/)
+      ).not.toBeInTheDocument();
+      act(() => {
+        vi.advanceTimersByTime(1);
+      });
+      expect(
+        terminalTranscript().getByText(/^Type ls to list directories/)
+      ).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('navigates relative and absolute directories and lists paths without moving', () => {
+    renderTerminal();
+    const cwd = () => document.querySelector('.cli-prompt-prefix')?.textContent;
+    runCommand('ls');
+    expect(terminalTranscript().getByText('projects/')).toBeInTheDocument();
+    runCommand('cd projects/2');
+    expect(cwd()).toBe('~/projects/2 $');
+    expect(
+      terminalTranscript().getByText('[PROJECT 2] @jp-design-system')
+    ).toBeInTheDocument();
+    runCommand('ls ..');
+    expect(cwd()).toBe('~/projects/2 $');
+    runCommand('cd ..');
+    expect(cwd()).toBe('~/projects $');
+    runCommand('cd ../skills/5');
+    expect(cwd()).toBe('~/skills/5 $');
+    runCommand('cd /contact');
+    expect(cwd()).toBe('~/contact $');
+    expect(terminalTranscript().getByText('[CONTACT]')).toBeInTheDocument();
+    runCommand('cd ~/resume');
+    expect(cwd()).toBe('~/resume $');
+    for (const command of [
+      'cd missing',
+      'cd /projects/99',
+      'cd /missing/../projects',
+      'cd /projects/1/child',
+      'cd /projects extra',
+      'ls /missing',
+    ]) {
+      runCommand(command);
+      expect(cwd()).toBe('~/resume $');
+    }
+    runCommand('cd');
+    expect(cwd()).toBe('~ $');
+    runCommand('cd ../../');
+    expect(cwd()).toBe('~ $');
+  });
+
+  it('completes directory paths and closes through the same saved-theme exit', () => {
+    renderTerminal();
+    const input = screen.getByLabelText('Terminal command input');
+    fireEvent.change(input, { target: { value: 'cd /pro' } });
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(input).toHaveValue('cd /projects ');
+    runCommand('cd projects');
+    fireEvent.change(input, { target: { value: 'cd ../ski' } });
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(input).toHaveValue('cd ../skills ');
+    const originalUrl = window.location.href;
+    window.history.replaceState({}, '', '?theme=cli&mode=dark');
+    fireEvent.click(screen.getByRole('button', { name: 'Exit terminal' }));
+    expect(setThemeMock).toHaveBeenCalledWith(defaultTheme);
+    expect(new URL(window.location.href).searchParams.has('theme')).toBe(false);
+    expect(new URL(window.location.href).searchParams.get('mode')).toBe('dark');
+    window.history.replaceState({}, '', originalUrl);
   });
 
   it('covers menu numerics, aliases, help, clear, unknown and exit', () => {
@@ -341,7 +426,10 @@ describe('CliTerminal', () => {
     });
     const input = screen.getByLabelText('Terminal command input');
 
-    expect(within(terminal).queryByRole('button')).not.toBeInTheDocument();
+    expect(
+      within(terminal).getByRole('button', { name: 'Exit terminal' })
+    ).toBeInTheDocument();
+    expect(within(terminal).getAllByRole('button')).toHaveLength(1);
     expect(screen.queryByRole('log')).not.toBeInTheDocument();
     expect(transcript).not.toHaveAttribute('aria-live');
     const initialOutput = transcript.textContent;
@@ -723,7 +811,7 @@ describe('CliTerminal', () => {
       renderTerminal();
       runCommand('projects');
       expect(
-        terminalTranscript().getByText(`${selection}. ${title} (${status})`)
+        terminalTranscript().getByText(`${selection}/ ${title} (${status})`)
       ).toHaveAttribute('href', sourceUrl);
       runCommand(`project ${selection}`);
       expect(terminalTranscript().getByText(description)).toBeInTheDocument();
@@ -815,10 +903,10 @@ describe('CliTerminal', () => {
 
     runCommand('dogs');
     expect(
-      terminalTranscript().getByText('2. Rosie | Treats: 0 | Scritches: 0')
+      terminalTranscript().getByText('2/ Rosie | Treats: 0 | Scritches: 0')
     ).toBeInTheDocument();
     expect(
-      terminalTranscript().getByText('3. Tito | Treats: 0 | Scritches: 0')
+      terminalTranscript().getByText('3/ Tito | Treats: 0 | Scritches: 0')
     ).toBeInTheDocument();
   });
 });

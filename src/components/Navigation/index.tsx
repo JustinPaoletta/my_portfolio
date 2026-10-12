@@ -6,6 +6,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import JPLogo from '@/components/Brand/JPLogo';
+import { SECTION_NAMES } from '@/content/site';
 import { useTheme } from '@/hooks/useTheme';
 import { isVisualTestMode } from '@/utils/visualTest';
 import {
@@ -94,11 +95,11 @@ function lockPageScroll(): (restoreScrollPosition?: boolean) => void {
 }
 
 const navItems: NavItem[] = [
-  { id: 'projects', label: 'Work', href: '#projects' },
-  { id: 'experience', label: 'Experience', href: '#experience' },
-  { id: 'about', label: 'About', href: '#about' },
-  { id: 'articles', label: 'Writing', href: '#articles' },
-  { id: 'contact', label: 'Contact', href: '#contact' },
+  { id: 'projects', label: SECTION_NAMES.projects, href: '#projects' },
+  { id: 'experience', label: SECTION_NAMES.experience, href: '#experience' },
+  { id: 'about', label: SECTION_NAMES.about, href: '#about' },
+  { id: 'articles', label: SECTION_NAMES.articles, href: '#articles' },
+  { id: 'contact', label: SECTION_NAMES.contact, href: '#contact' },
 ];
 
 function Navigation({

@@ -1,3 +1,4 @@
+import { SECTION_NAMES } from '@/content/site';
 /**
  * Experience Section
  * Work history with supporting education credentials
@@ -158,7 +159,7 @@ function Experience(): React.ReactElement {
             delay={120}
             visible={isVisible}
           >
-            Professional Experience
+            {SECTION_NAMES.experience}
           </Reveal>
         </Reveal>
 

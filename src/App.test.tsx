@@ -363,7 +363,7 @@ describe('App', () => {
       render(<App />);
     });
 
-    await screen.findByRole('heading', { name: /Selected Work/i });
+    await screen.findByRole('heading', { name: /^Work$/i });
 
     expect(document.getElementById('github')).not.toBeInTheDocument();
     expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
@@ -387,7 +387,7 @@ describe('App', () => {
       render(<App />);
     });
 
-    await screen.findByRole('heading', { name: /Selected Work/i });
+    await screen.findByRole('heading', { name: /^Work$/i });
 
     await waitFor(() => {
       expect(

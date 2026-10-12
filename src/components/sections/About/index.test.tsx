@@ -6,9 +6,7 @@ describe('About section', () => {
   it('connects the engineering approach to professional experience', () => {
     render(<About />);
 
-    expect(
-      screen.getByRole('heading', { name: 'How I Work' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: 'Read my professional experience' })
     ).toHaveAttribute('href', '#experience');

@@ -6,7 +6,7 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { env } from '@/config/env';
-import { HERO_TAGLINE } from '@/content/site';
+import { HERO_TAGLINE, SECTION_NAMES } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useTheme } from '@/hooks/useTheme';
@@ -508,13 +508,8 @@ function Hero(): React.ReactElement {
                   />
                 </svg>
               </a>
-              <a
-                href="/resume/Justin-Paoletta_Software-Engineer.pdf"
-                download="Justin_Paoletta_Resume.pdf"
-                className="cta-secondary"
-              >
-                <span>Download Resume</span>{' '}
-                <span className="cta-file-type">PDF</span>
+              <a href="#contact" className="cta-secondary">
+                <span>{SECTION_NAMES.contact}</span>
               </a>
             </div>
 

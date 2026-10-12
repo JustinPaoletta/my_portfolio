@@ -3,11 +3,11 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 
 const hiringDestinations = [
-  { label: 'Work', heading: 'Selected Work' },
-  { label: 'Experience', heading: 'Professional Experience' },
-  { label: 'About', heading: 'How I Work' },
-  { label: 'Writing', heading: 'LinkedIn Articles' },
-  { label: 'Contact', heading: 'Get In Touch' },
+  { label: 'Work', heading: 'Work' },
+  { label: 'Experience', heading: 'Experience' },
+  { label: 'About', heading: 'About' },
+  { label: 'Writing', heading: 'Writing' },
+  { label: 'Contact', heading: 'Contact' },
 ] as const;
 
 async function expectNoHorizontalOverflow(page: Page): Promise<void> {
@@ -151,11 +151,26 @@ for (const width of [320, 390, 768]) {
   });
 }
 
-for (const entry of [
-  'hero',
-  'desktop navigation',
-  'mobile navigation',
-] as const) {
+for (const width of [390, 1280]) {
+  test(`hero Contact reaches the matching section at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.goto('/');
+    await page
+      .locator('.hero-cta')
+      .getByRole('link', { name: 'Contact', exact: true })
+      .click();
+    await expectSettledHeading(
+      page,
+      page.getByRole('heading', { name: 'Contact', exact: true })
+    );
+    await expect(page).toHaveURL(/#contact$/);
+    await expectNoHorizontalOverflow(page);
+  });
+}
+
+for (const entry of ['desktop navigation', 'mobile navigation'] as const) {
   test(`resume downloads a real PDF from ${entry}`, async ({ page }) => {
     await page.setViewportSize({
       width: entry === 'mobile navigation' ? 390 : 1280,
@@ -164,12 +179,7 @@ for (const entry of [
     await page.goto('/');
 
     let resumeLink: Locator;
-    if (entry === 'hero') {
-      resumeLink = page.getByRole('link', {
-        name: 'Download Resume PDF',
-        exact: true,
-      });
-    } else if (entry === 'mobile navigation') {
+    if (entry === 'mobile navigation') {
       await page.getByRole('button', { name: 'Open menu' }).click();
       resumeLink = page
         .getByRole('dialog', { name: 'Main menu' })
@@ -216,21 +226,21 @@ test.describe('production portfolio without JavaScript', () => {
     );
 
     const work = page.getByRole('region', {
-      name: 'Selected Work',
+      name: 'Work',
       exact: true,
     });
     await expectReadable(
       work.getByRole('heading', { name: 'BitStockerz', exact: true })
     );
     const experience = page.getByRole('region', {
-      name: 'Professional Experience',
+      name: 'Experience',
       exact: true,
     });
     await expectReadable(
       experience.getByRole('link', { name: 'accesso', exact: true })
     );
     const contact = page.getByRole('region', {
-      name: 'Get In Touch',
+      name: 'Contact',
       exact: true,
     });
     const emailLink = contact.getByRole('link', { name: /^Email / });
@@ -238,7 +248,10 @@ test.describe('production portfolio without JavaScript', () => {
     await expect(emailLink).toHaveAttribute('href', /^mailto:[^\s@]+@[^\s@]+$/);
     await expectPdfDownload(
       page,
-      page.getByRole('link', { name: 'Download Resume PDF', exact: true })
+      experience.getByRole('link', {
+        name: 'Download resume as PDF',
+        exact: true,
+      })
     );
   });
 });
