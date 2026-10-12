@@ -1,6 +1,14 @@
 # Professional portfolio plan
 
-Updated 2026-10-11. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
+Updated 2026-10-12. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
+
+## Remaining work in this PR — owner request, 2026-10-12
+
+These tasks are deferred for later work in PR #298; they are not implemented or approved by this checklist.
+
+- [ ] **Change the OG image.** Refine the professional sharing image without the groundhog, get owner approval, and verify the final image and social metadata. The draft saved on the Desktop is a starting point; keep the existing image until its replacement is approved.
+- [ ] **Change the favicon.** Create and approve a recognizable portfolio icon, update the applicable browser and app icon assets, and verify its appearance at small sizes.
+- [ ] **Show better project demos.** Improve the Projects section with actual interface captures, short walkthroughs, or working demos that show what each project does and Justin's contribution. Clearly label previews and work in progress, verify every demo link, and check the presentation on desktop and mobile.
 
 ## Outcome and revised priorities
 
