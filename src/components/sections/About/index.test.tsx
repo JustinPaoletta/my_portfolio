@@ -8,11 +8,11 @@ describe('About section', () => {
 
     expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'Read my professional experience' })
+      screen.getByRole('link', { name: 'View my experience' })
     ).toHaveAttribute('href', '#experience');
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(
-      screen.getByText(/deterministic checks and human review/)
+      screen.getByText(/automated checks, browser testing, and human review/)
     ).toBeInTheDocument();
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });

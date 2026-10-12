@@ -7,19 +7,19 @@ import './About.css';
 
 const approachSteps = [
   {
-    title: 'Clarify the requirements',
+    title: 'Establish the context',
     description:
-      'Start with the user flow, constraints, and acceptance criteria before choosing an implementation.',
+      'Connect Jira requirements, design references, application constraints, and acceptance criteria.',
   },
   {
-    title: 'Check the implementation',
+    title: 'Use AI with judgment',
     description:
-      'Use type checks, linting, and focused unit and browser tests to catch repeatable failures.',
+      'Explore approaches and draft changes, checking assumptions and taking responsibility for the implementation.',
   },
   {
-    title: 'Inspect the result',
+    title: 'Verify and document',
     description:
-      'Review the code and the interface, then document the behavior and remaining QA checks.',
+      'Review the code and interface, run focused checks, and record useful QA notes and remaining limitations.',
   },
 ];
 
@@ -69,22 +69,24 @@ function About(): React.ReactElement {
             visible={isVisible}
           >
             <p className="about-intro">
-              I work on the practical challenges of modernizing frontend
-              systems: keeping existing products running while making them
-              easier to build on.
+              At accesso, I help modernize the frontend platform behind accesso
+              Passport, bringing Angular and React micro-frontends into an
+              established AngularJS application.
             </p>
             <p>
-              At accesso, that means integrating Angular and React
-              micro-frontends into a legacy AngularJS platform, isolating
-              framework lifecycles and styles, and improving release tooling.
+              My work includes integrating frameworks, isolating styles and
+              application lifecycles, and improving release tooling. These
+              changes support ongoing modernization while keeping existing
+              functionality dependable.
             </p>
             <p>
-              My personal projects give me room to explore reusable components,
-              full-stack applications, and developer tools. I document their
-              current capabilities and what still needs work.
+              I also incorporate AI into planning, implementation, and
+              documentation. I review its suggestions against the requirements
+              and existing code, then verify the resulting changes through
+              automated checks, browser testing, and human review.
             </p>
             <a className="about-work-link" href="#experience">
-              Read my professional experience <span aria-hidden="true">→</span>
+              View my experience <span aria-hidden="true">→</span>
             </a>
           </Reveal>
 
@@ -95,7 +97,7 @@ function About(): React.ReactElement {
             delay={180}
             visible={isVisible}
           >
-            <h3>From requirement to verified change</h3>
+            <h3>From requirement to reviewed change</h3>
             <ol className="approach-steps">
               {approachSteps.map((step) => (
                 <li key={step.title}>
@@ -105,10 +107,8 @@ function About(): React.ReactElement {
               ))}
             </ol>
             <p className="approach-example">
-              For UI work, I connect Jira requirements, Figma comparisons,
-              Playwright checks, and QA notes. AI helps draft plans and
-              implementations; deterministic checks and human review determine
-              whether the change is ready.
+              I’ve also built an AI-assisted PR review bot that flags potential
+              issues for developer review.
             </p>
           </Reveal>
         </div>
