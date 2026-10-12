@@ -492,7 +492,7 @@ function Hero(): React.ReactElement {
 
             <div className="hero-cta">
               <a href="#projects" className="cta-primary">
-                <span>View My Work</span>
+                <span>View My Projects</span>
                 <svg
                   className="cta-icon"
                   viewBox="0 0 24 24"

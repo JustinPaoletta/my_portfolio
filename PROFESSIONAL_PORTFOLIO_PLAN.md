@@ -12,8 +12,8 @@ The implementation is ready for review with stated content assumptions. Existing
 
 - [x] **1, 2, 3, 4, 13, 21 — Prior credibility work.** Preserve the professional experience layout, visible project actions, truthful GitHub failure states, audited project claims, verified GitHub profile destination, and responsive logos. See the PR history and `docs/PROJECT_CLAIMS.md` for the earlier evidence.
 - [x] **5 — Recognizable role.** Lead with Software Engineer and Angular / React / TypeScript, followed by a concrete modernization and delivery-tooling description. Avoid guessed tenure or additional achievement claims.
-- [x] **6 — Résumé access.** Keep visible PDF actions in desktop/mobile navigation, Experience, and CLI. The hero pairs View My Work with Contact, as requested in review.
-- [x] **7 — Evidence-first order.** Present Work, Experience, About, Skills, Writing, and Contact before optional GitHub activity and pets. Limit the main menu to the hiring journey and résumé.
+- [x] **6 — Résumé access.** Keep visible PDF actions in desktop/mobile navigation, Experience, and CLI. The hero pairs View My Projects with Contact, as requested in review.
+- [x] **7 — Evidence-first order.** Present Projects, Experience, About, Skills, Writing, and Contact before optional GitHub activity and pets. Limit the main menu to the hiring journey and résumé.
 - [x] **10 — Honest project visuals.** Replace featured promotional images with a captured Angular showcase and labeled implementation workflow diagrams. Captions explain exactly what is shown and preserve release/provider limitations.
 - [x] **11 — Curate inspectable work.** Feature BitStockerz, the design system, and the published Wild Apricot CLI with visible source/package actions. Private projects remain smaller supporting cards. Richer personal-ownership narratives belong with the evidence work below.
 - [x] **14 — One engineering approach.** Lead About with accesso Passport modernization work and the approved responsible-AI workflow: context, reviewed implementation, and verification. Include the AI-assisted PR review bot as a concrete example and link to Experience.
@@ -93,8 +93,8 @@ screenshots from review workflow `38178442391` were inspected and accepted.
       Reduced motion displays them immediately. Keep the prompt in transcript flow.
 - [x] Remove the GitHub introduction, restore the API profile avatar, and show
       contribution history without an expand/collapse control.
-- [x] Share the Work, Experience, About, Writing, and Contact labels between
-      navigation and the section headings. Pair View My Work with Contact in the hero.
+- [x] Share the Projects, Experience, About, Writing, and Contact labels between
+      navigation and the section headings. Pair View My Projects with Contact in the hero.
 - [x] Restore tiny local technology logos beside every displayed skill label,
       grouped in the three applied-skills cards.
 - [x] Record final browser and accessibility evidence in the PR. The exact source

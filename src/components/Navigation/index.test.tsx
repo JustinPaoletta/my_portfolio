@@ -180,7 +180,7 @@ describe('Navigation', () => {
       );
     });
 
-    const projectsLink = screen.getAllByRole('link', { name: 'Work' })[0];
+    const projectsLink = screen.getAllByRole('link', { name: 'Projects' })[0];
     fireEvent.click(projectsLink);
 
     expect(window.scrollTo).toHaveBeenCalledWith({
@@ -320,7 +320,7 @@ describe('Navigation', () => {
     dialog.style.transform = 'translateX(0)';
 
     const projectsLink = within(dialog).getByRole('link', {
-      name: 'Work',
+      name: 'Projects',
     });
     fireEvent.click(projectsLink);
 

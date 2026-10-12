@@ -415,7 +415,7 @@ describe('Hero section', () => {
     themeName = 'minimal';
     const minimal = render(<Hero />);
     expect(screen.getByText("Hello, I'm")).toBeInTheDocument();
-    expect(screen.getByText('View My Work')).toBeInTheDocument();
+    expect(screen.getByText('View My Projects')).toBeInTheDocument();
     expect(
       screen.getByText('Angular · React · TypeScript')
     ).toBeInTheDocument();
@@ -433,7 +433,7 @@ describe('Hero section', () => {
     themeName = 'cli';
     minimal.rerender(<Hero />);
     expect(await screen.findByTestId('cli-terminal')).toBeInTheDocument();
-    expect(screen.queryByText('View My Work')).not.toBeInTheDocument();
+    expect(screen.queryByText('View My Projects')).not.toBeInTheDocument();
   });
 
   it('handles engineer chip visual profile and viewport activation', async () => {

@@ -66,7 +66,7 @@ test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
   await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused();
 
   for (const label of [
-    'Work',
+    'Projects',
     'Experience',
     'About',
     'Writing',

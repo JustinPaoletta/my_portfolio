@@ -1,5 +1,5 @@
 export const SECTION_NAMES = {
-  projects: 'Work',
+  projects: 'Projects',
   experience: 'Experience',
   about: 'About',
   articles: 'Writing',

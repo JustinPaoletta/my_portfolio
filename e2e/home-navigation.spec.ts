@@ -146,7 +146,7 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
       .locator('.hero-cta')
       .getByRole('link', { name: 'Contact', exact: true })
   ).toHaveAttribute('href', '#contact');
-  await expect(page.getByRole('heading', { name: /Work/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /Projects/i })).toBeVisible();
 
   const experienceSection = await revealDeferredSection(page, 'experience');
   const aboutSection = await revealDeferredSection(page, 'about');

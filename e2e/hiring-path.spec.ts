@@ -3,7 +3,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 
 const hiringDestinations = [
-  { label: 'Work', heading: 'Work' },
+  { label: 'Projects', heading: 'Projects' },
   { label: 'Experience', heading: 'Experience' },
   { label: 'About', heading: 'About' },
   { label: 'Writing', heading: 'Writing' },
@@ -226,7 +226,7 @@ test.describe('production portfolio without JavaScript', () => {
     );
 
     const work = page.getByRole('region', {
-      name: 'Work',
+      name: 'Projects',
       exact: true,
     });
     await expectReadable(
