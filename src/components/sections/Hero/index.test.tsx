@@ -530,7 +530,10 @@ describe('Hero section', () => {
       );
     });
     await waitFor(() => {
-      expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-scene',
+        'still'
+      );
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
 
@@ -583,7 +586,7 @@ describe('Hero section', () => {
     });
   });
 
-  it('keeps the engineer SVG fallback for slow data connections', async () => {
+  it('keeps the engineer room poster fallback for slow data connections', async () => {
     installEngineerMatchMediaMock();
     Object.defineProperty(navigator, 'connection', {
       configurable: true,
@@ -598,15 +601,15 @@ describe('Hero section', () => {
       expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'still');
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
   it('keeps the engineer static poster state for reduced motion and visual tests', async () => {
@@ -622,12 +625,12 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(reducedVisual).toHaveAttribute(
         'data-engineer-circuit-scene',
-        'svg'
+        'still'
       );
     });
     expect(
       reducedMotionView.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
 
@@ -644,17 +647,17 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(visualTestVisual).toHaveAttribute(
         'data-engineer-circuit-scene',
-        'svg'
+        'still'
       );
     });
     expect(
       visualTestView.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
   });
 
-  it('keeps the engineer SVG fallback if the 3D scene fails to load', async () => {
+  it('keeps the engineer room poster fallback if the 3D scene fails to load', async () => {
     installEngineerMatchMediaMock();
     themeName = 'engineer';
     engineerCircuit3DShouldThrow = true;
@@ -666,15 +669,15 @@ describe('Hero section', () => {
     const visual = view.container.querySelector('.hero-engineer-visual');
 
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'still');
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
 
     consoleError.mockRestore();
   });

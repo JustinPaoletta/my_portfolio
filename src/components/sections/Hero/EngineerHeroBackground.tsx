@@ -6,7 +6,6 @@ import {
   type ErrorInfo,
   type ReactNode,
 } from 'react';
-import EngineerCircuitBoard from '@/components/sections/Hero/EngineerCircuitBoard/EngineerCircuitBoard';
 import HeroStillImage from '@/components/sections/Hero/HeroStillImage';
 import { useSequentialSceneReveal } from '@/components/sections/Hero/useSequentialSceneReveal';
 
@@ -140,11 +139,11 @@ function EngineerHeroBackground({
   const [hasSceneError, setHasSceneError] = useState(false);
   const showInteractiveScene =
     shouldLoadScene && !isVisualTest && !reducedMotion && !hasSceneError;
-  const svgFallback = (
-    <EngineerCircuitBoard
-      isActive={isActive}
-      frozen={reducedMotion || isVisualTest}
-      calmMotion={calmMotion}
+  const stillFallback = (
+    <HeroStillImage
+      theme="engineer"
+      mode={mode}
+      className="hero-engineer-still"
     />
   );
 
@@ -155,7 +154,7 @@ function EngineerHeroBackground({
         reducedMotion={reducedMotion}
         calmMotion={calmMotion}
         mode={mode}
-        fallback={svgFallback}
+        fallback={stillFallback}
         onSceneError={() => setHasSceneError(true)}
       />
     );
@@ -167,10 +166,10 @@ function EngineerHeroBackground({
       aria-hidden="true"
       data-engineer-circuit-active={isActive ? 'true' : 'false'}
       data-engineer-circuit-motion={calmMotion ? 'calm' : 'normal'}
-      data-engineer-circuit-scene="svg"
-      data-engineer-circuit-poster="hidden"
+      data-engineer-circuit-scene="still"
+      data-engineer-circuit-poster="visible"
     >
-      <div className="hero-engineer-stage">{svgFallback}</div>
+      <div className="hero-engineer-stage">{stillFallback}</div>
     </div>
   );
 }

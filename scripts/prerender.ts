@@ -134,7 +134,10 @@ async function prerenderHomepage(): Promise<boolean> {
     let browser: Browser | undefined;
 
     try {
-      browser = await chromium.launch({ headless: true });
+      browser = await chromium.launch({
+        headless: true,
+        channel: process.env.PLAYWRIGHT_CHROMIUM_CHANNEL,
+      });
     } catch (error) {
       const message = getErrorMessage(error);
 
