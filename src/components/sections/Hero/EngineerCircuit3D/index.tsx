@@ -3,6 +3,7 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { isPosterCaptureMode } from '@/utils/heroPoster';
 import PosterFrameSync from '@/components/sections/Hero/PosterFrameSync';
 import { createEngineerRoom, ROOM_CAMERA, type RoomMode } from './roomGeometry';
+import { usesSoftwareRasterizer } from './rendererPolicy';
 import './EngineerCircuit3D.css';
 
 function useDocumentVisible(): boolean {
@@ -94,11 +95,16 @@ function EngineerCircuit3D({
   syncPoster = false,
 }: EngineerCircuit3DProps): React.ReactElement {
   const visible = useDocumentVisible();
-  const active = isActive && visible && !reducedMotion;
+  const [softwareRenderer, setSoftwareRenderer] = useState(false);
+  const active = isActive && visible && !reducedMotion && !softwareRenderer;
   const speed = active ? (calmMotion ? 0.45 : 1) : 0;
   const capture = isPosterCaptureMode();
   return (
-    <div className="engineer-circuit3d-stage" aria-hidden="true">
+    <div
+      className="engineer-circuit3d-stage"
+      aria-hidden="true"
+      data-room-renderer={softwareRenderer ? 'software' : 'gpu'}
+    >
       <Canvas
         className="engineer-circuit3d-canvas"
         dpr={[1, 1.5]}
@@ -114,7 +120,12 @@ function EngineerCircuit3D({
           powerPreference: 'low-power',
           preserveDrawingBuffer: capture || syncPoster,
         }}
-        frameloop={visible && (active || syncPoster) ? 'always' : 'demand'}
+        onCreated={({ gl }) =>
+          setSoftwareRenderer(usesSoftwareRasterizer(gl.getContext()))
+        }
+        frameloop={
+          visible && ((active && !capture) || syncPoster) ? 'always' : 'demand'
+        }
       >
         <color
           attach="background"

@@ -511,3 +511,54 @@ test('CLI commands control appearance and return to the main site', async ({
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'engineer');
 });
+
+test('software graphics keeps a rendered room without continuously redrawing', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.addInitScript(() => {
+    const target = window as typeof window & { roomRenderCount: number };
+    target.roomRenderCount = 0;
+    for (const prototype of [
+      WebGLRenderingContext.prototype,
+      WebGL2RenderingContext.prototype,
+    ]) {
+      const getParameter = prototype.getParameter;
+      prototype.getParameter = function (parameter: number) {
+        return parameter === 0x9246
+          ? 'ANGLE (Google, SwiftShader Device)'
+          : getParameter.call(this, parameter);
+      };
+      const clear = prototype.clear;
+      prototype.clear = function (mask: number) {
+        target.roomRenderCount += 1;
+        return clear.call(this, mask);
+      };
+    }
+  });
+  await page.goto('/?theme=engineer&mode=dark', {
+    waitUntil: 'domcontentloaded',
+  });
+  await expect(page.locator('.engineer-circuit3d-stage')).toHaveAttribute(
+    'data-room-renderer',
+    'software'
+  );
+  await expect(page.locator('.hero-engineer-visual')).toHaveAttribute(
+    'data-engineer-circuit-poster',
+    'hidden',
+    { timeout: 20000 }
+  );
+  await expect(page.locator('.engineer-circuit3d-stage canvas')).toHaveCount(1);
+  const countFrames = () =>
+    page.evaluate(
+      () =>
+        (window as typeof window & { roomRenderCount: number }).roomRenderCount
+    );
+  await page.waitForTimeout(100);
+  const frames = await countFrames();
+  expect(frames).toBeGreaterThan(0);
+  await page.waitForTimeout(350);
+  expect(await countFrames()).toBe(frames);
+  await page.setViewportSize({ width: 900, height: 700 });
+  await expect.poll(countFrames).toBeGreaterThan(frames);
+});
