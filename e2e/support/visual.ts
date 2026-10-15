@@ -90,6 +90,16 @@ export async function waitForSectionToSettle(
 ): Promise<void> {
   await enableSectionCaptureMode(page);
   await revealSectionIfDeferred(page, locator);
+  const viewport = page.viewportSize();
+  const bounds = await locator.boundingBox();
+  if (viewport && bounds && bounds.height > viewport.height) {
+    // Resize before settling. Locator screenshots otherwise resize a tall crop
+    // after alignment, moving preceding viewport-sized sections during capture.
+    await page.setViewportSize({
+      width: viewport.width,
+      height: Math.ceil(bounds.height) + 2,
+    });
+  }
   await locator.scrollIntoViewIfNeeded();
   await page.waitForLoadState('networkidle');
   await waitForImages(locator);

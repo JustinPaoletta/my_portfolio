@@ -161,8 +161,15 @@ acceptance and public deployment of either demo application remain separate work
       two unchanged original files, and a second run with zero new downloads.
 - [x] Provide a complete sample ZIP with CSV/JSON, originals, manifest, and full
       log. Retain fixtures, generation tools, source revision, and output hashes.
-- [ ] Verify gallery/download behavior, keyboard access, responsive layouts,
-      accessibility, and refreshed visual baselines before completing this revision.
+- [x] Verify gallery/download behavior, keyboard access, responsive layouts,
+      accessibility, and existing project actions in 18 focused browser checks.
+      The production build, Chrome prerender, and 222 unit tests pass. The live
+      preview serves all four views and the complete ZIP without phone overflow.
+- [x] Set the test viewport before settling tall section crops. Two independent
+      mobile Experience captures are byte-identical; all ten local section
+      comparisons pass after reviewing its one-pixel crop correction. No product
+      styling or comparison tolerance changed.
+- [ ] Inspect and accept Linux baselines generated with the stable capture helper.
 
 No owner credentials are needed for these public samples. A hosted interactive
 design-system application and a real-account Wild Apricot acceptance run remain
