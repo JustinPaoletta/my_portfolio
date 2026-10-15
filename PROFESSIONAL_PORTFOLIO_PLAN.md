@@ -213,3 +213,8 @@ separate work.
       ESLint, TypeScript, contrast/bundle checks, and Chrome build/prerender pass.
 - [x] Review and update the 17 affected macOS section, desktop navigation, and
       hamburger-menu references. Preserve the existing comparison tolerances.
+- [x] Verify all 28 local visual comparisons without updating snapshots. Inspect
+      and accept the corresponding 17 Linux references from review workflow
+      `38789135329`. Verify the fresh Vercel preview's desktop About link, mobile
+      menu labels, and Articles destination; retain review captures. Final hosted
+      checks are recorded in the PR.
