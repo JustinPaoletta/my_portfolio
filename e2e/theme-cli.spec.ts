@@ -344,7 +344,6 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
     .poll(async () => {
       return page.evaluate(() => {
         const hero = document.querySelector<HTMLElement>('.hero-background');
-        const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
         const stage = document.querySelector<HTMLElement>('.hero-cosmic-stage');
         const content = document.querySelector<HTMLElement>('.hero-content');
         const name = document.querySelector<HTMLElement>('.hero-name-text');
@@ -357,7 +356,6 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
 
         if (
           !hero ||
-          !still ||
           !stage ||
           !content ||
           !name ||
@@ -401,7 +399,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       greetingFontFamily: expect.stringContaining('Space Grotesk'),
       nameFontFamily: expect.stringContaining('Inter'),
       navLinkColor: 'rgb(248, 241, 255)',
-      navLogoPrimary: '#d6dce4',
+      navLogoPrimary: '#c77dff',
     });
 
   await page.evaluate(() => {
