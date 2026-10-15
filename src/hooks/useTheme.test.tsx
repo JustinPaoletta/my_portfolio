@@ -15,7 +15,7 @@ import {
   pickOnColor,
   useTheme,
 } from './useTheme';
-import { defaultMode, defaultTheme, themes } from '@/config/themes';
+import { defaultMode, defaultTheme } from '@/config/themes';
 
 type ChangeListener = (event: MediaQueryListEvent) => void;
 
@@ -102,6 +102,9 @@ function ThemeProbe(): ReactElement {
       <button type="button" onClick={() => setTheme('engineer')}>
         set-engineer
       </button>
+      <button type="button" onClick={() => setTheme('cosmic')}>
+        set-cosmic
+      </button>
       <button
         type="button"
         onClick={() => setTheme('not-a-theme' as unknown as 'engineer')}
@@ -110,6 +113,9 @@ function ThemeProbe(): ReactElement {
       </button>
       <button type="button" onClick={() => setColorMode('light')}>
         set-light
+      </button>
+      <button type="button" onClick={() => setColorMode('dark')}>
+        set-dark
       </button>
       <button
         type="button"
@@ -205,21 +211,12 @@ describe('useTheme', () => {
     );
   });
 
-  it('applies CSS variables, meta colors, and themed favicon', async () => {
-    const fetchSpy = vi
-      .spyOn(window, 'fetch')
-      .mockResolvedValue(
-        new Response(
-          '<svg><path fill="#7ed957"/><path fill="#ffffff"/></svg>',
-          { status: 200 }
-        )
-      );
-
+  it('applies theme colors without replacing the shared brand favicon', async () => {
     document.head.innerHTML = `
       <meta name="theme-color" content="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
-      <link rel="icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg" />
-      <link rel="shortcut icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg" />
+      <link rel="icon" type="image/svg+xml" href="/favicons/jp-monogram.svg" />
+      <link rel="shortcut icon" type="image/svg+xml" href="/favicons/jp-monogram.svg" />
     `;
 
     vi.resetModules();
@@ -265,10 +262,8 @@ describe('useTheme', () => {
       const icon = document.querySelector(
         'link[rel="icon"][type="image/svg+xml"]'
       );
-      expect(icon?.getAttribute('href')).toContain('data:image/svg+xml');
+      expect(icon?.getAttribute('href')).toBe('/favicons/jp-monogram.svg');
     });
-
-    expect(fetchSpy).toHaveBeenCalledWith('/branding/JP-no-cursor.svg');
   });
 
   it('updates bootstrap background styles when switching to minimal light mode', async () => {
@@ -375,41 +370,20 @@ describe('useTheme', () => {
     });
   });
 
-  it('covers favicon update branch for dark mode', async () => {
-    document.head.innerHTML = `
-      <meta name="theme-color" content="#000000" />
-      <meta name="msapplication-TileColor" content="#000000" />
-      <link rel="icon" type="image/svg+xml" href="/branding/JP-no-cursor.svg" />
-    `;
-    localStorage.setItem('portfolio-color-mode', 'dark');
-
-    const fetchSpy = vi.spyOn(window, 'fetch').mockResolvedValue(
-      new Response('<svg><path fill="#7ed957"/><path fill="#ffffff"/></svg>', {
-        status: 200,
-      })
-    );
-
-    vi.resetModules();
-    const themeModule = await import('./useTheme');
-
-    function DarkModeProbe(): ReactElement {
-      const { resolvedMode } = themeModule.useTheme();
-      return <p data-testid="resolved-dark">{resolvedMode}</p>;
-    }
-
-    render(
-      <themeModule.ThemeProvider>
-        <DarkModeProbe />
-      </themeModule.ThemeProvider>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('resolved-dark')).toHaveTextContent('dark');
+  it('preserves the brand favicon when changing themes and color modes', () => {
+    document.head.innerHTML =
+      '<link rel="icon" type="image/svg+xml" href="/favicons/jp-monogram.svg" />';
+    renderWithThemeProvider();
+    for (const name of [
+      'set-engineer',
+      'set-dark',
+      'set-cosmic',
+      'set-light',
+    ]) {
+      fireEvent.click(screen.getByRole('button', { name }));
       expect(
         document.querySelector('link[rel="icon"][type="image/svg+xml"]')
-      ).toHaveAttribute('href', expect.stringContaining('data:image/svg+xml'));
-    });
-    expect(fetchSpy).toHaveBeenCalled();
-    expect(themes.minimal.colors.primary).toBeTruthy();
+      ).toHaveAttribute('href', '/favicons/jp-monogram.svg');
+    }
   });
 });

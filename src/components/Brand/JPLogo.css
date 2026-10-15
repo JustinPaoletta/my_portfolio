@@ -1,0 +1,17 @@
+/* The same neutral identity in every theme; reverse it for light surfaces. */
+.jp-logo-svg {
+  --jp-logo-primary: #8e99a8;
+  --jp-logo-cursor: #f5f7fa;
+}
+
+:root[data-color-mode='light'] .jp-logo-svg {
+  --jp-logo-primary: #596574;
+  --jp-logo-cursor: #101216;
+}
+
+:root[data-color-mode='light'][data-theme='cosmic']
+  .navigation:not(.scrolled)
+  .jp-logo-svg {
+  --jp-logo-primary: #d6dce4;
+  --jp-logo-cursor: #f5f7fa;
+}

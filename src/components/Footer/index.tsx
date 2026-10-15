@@ -14,7 +14,7 @@ function Footer(): React.ReactElement {
       <div className="footer-container">
         <div className="footer-brand">
           <a href="#hero" className="footer-logo">
-            <JPLogo className="logo-image" hideCursor />
+            <JPLogo className="logo-image" />
             <span className="visually-hidden">- Go to top</span>
           </a>
           <p className="footer-tagline">

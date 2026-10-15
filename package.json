@@ -10,6 +10,8 @@
     "clean:cache": "rm -rf dist coverage .vite .lighthouseci playwright-report test-results",
     "contrast:check": "tsx scripts/contrast-check.ts",
     "generate:icons": "node scripts/generate-icons.mjs",
+    "generate:og": "node scripts/generate-og-image.mjs",
+    "generate:branding": "npm run generate:icons && npm run generate:og",
     "optimize:project-logos": "node scripts/optimize-project-logos.mjs",
     "lighthouse": "npx @lhci/cli autorun",
     "lint": "npm run lint:ci",

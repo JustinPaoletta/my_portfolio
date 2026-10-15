@@ -1,13 +1,13 @@
 # Professional portfolio plan
 
-Updated 2026-10-12. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
+Updated 2026-10-14. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
 
 ## Remaining work in this PR — owner request, 2026-10-12
 
-These tasks are deferred for later work in PR #298; they are not implemented or approved by this checklist.
+Project demos remain deferred. The OG image and favicon were implemented for owner review on 2026-10-14; their final visual approval remains open.
 
-- [ ] **Change the OG image.** Refine the professional sharing image without the groundhog, get owner approval, and verify the final image and social metadata. The draft saved on the Desktop is a starting point; keep the existing image until its replacement is approved.
-- [ ] **Change the favicon.** Create and approve a recognizable portfolio icon, update the applicable browser and app icon assets, and verify its appearance at small sizes.
+- [ ] **Approve the revised OG image.** The new charcoal sharing card uses the owner’s JP-and-cursor reference, clean vector geometry, local Inter typography, and matching social metadata. Review the 1200 × 630 export in `public/og/jp-engineering.png` before merging.
+- [ ] **Approve the revised favicon.** The same master mark now produces SVG, ICO, PNG, Apple touch, and dedicated maskable icons. Navigation and footer use matching geometry and neutral colors; theme switching preserves the favicon. Review the final small-size appearance before merging.
 - [ ] **Show better project demos.** Improve the Projects section with actual interface captures, short walkthroughs, or working demos that show what each project does and Justin's contribution. Clearly label previews and work in progress, verify every demo link, and check the presentation on desktop and mobile.
 
 ## Outcome and revised priorities
@@ -26,7 +26,7 @@ The implementation is ready for review with stated content assumptions. Existing
 - [x] **11 — Curate inspectable work.** Feature BitStockerz, the design system, and the published Wild Apricot CLI with visible source/package actions. Private projects remain smaller supporting cards. Richer personal-ownership narratives belong with the evidence work below.
 - [x] **14 — One engineering approach.** Lead About with accesso Passport modernization work and the approved responsible-AI workflow: context, reviewed implementation, and verification. Include the AI-assisted PR review bot as a concrete example and link to Experience.
 - [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters, restore the GitHub avatar next to the profile, and show contribution history directly; preserve honest unavailable states.
-- [x] **16 — Identity cleanup.** Omit the stylized portrait and remove its Person structured-data reference. The OG image redesign is deferred at the owner’s request; retain the existing image in this PR.
+- [x] **16 — Identity cleanup.** Omit the stylized portrait and remove its Person structured-data reference. The OG redesign was initially deferred; the owner resumed it on 2026-10-14 with the JP-and-cursor reference. The revised shared identity is now ready for visual approval.
 - [x] **17 — Presentation.** Reduce crowded hero labels, hover-dependent content, oversized project shadows, and repeated skills/prose. Keep theme-aware focus and wrapping controls.
 - [x] **18 — Contact wording.** Address recruiters directly and invite the opportunity, team, and job details, with email prominent. Restore the original freelance/full-time availability badge at the owner’s request. Do not invent location or working-arrangement preferences.
 - [x] **24 — Focus defect.** Cancel deferred navigation after new visitor interaction or another jump; preserve Contact validation focus and complete slow-loading section navigation within a bounded 12-second window.
@@ -111,3 +111,20 @@ screenshots from review workflow `38178442391` were inspected and accepted.
       Live preview captures confirm the Contact action, skill icons, GitHub API
       avatar/always-visible history, and terminal header/prompt. All 28 Linux states were generated in workflow `38188195420`, inspected,
       and accepted. Final-head CI results are recorded in the PR.
+
+## Matching identity revision — 2026-10-14
+
+- [x] Build the OG image and favicon from the owner's JP-and-cursor reference,
+      with clean vector geometry, charcoal/slate/white colors, and local Inter type.
+- [x] Use the same master for navigation, footer, SVG/ICO/PNG favicons, Apple touch,
+      and PWA icons. Keep the favicon stable when themes or color modes change.
+- [x] Update crawler-facing OG/Twitter metadata and the shared SEO image path.
+      Retain the historical OG URL as an export of the new image.
+- [x] Verify the 1200 × 630 opaque OG export, three real ICO frames, all declared
+      manifest sizes, and the dedicated maskable mark's central safe circle.
+      All icon requests returned their image types. Desktop and 390px layouts
+      were reviewed; 222 unit tests, 15 existing homepage visual comparisons,
+      three theme browser regressions, lint/type checks, build, and actual
+      Chrome prerendering passed locally.
+- [ ] Owner visual approval of the matching pair before merge. External social
+      cache refresh and native home-screen icon acceptance remain unverified.

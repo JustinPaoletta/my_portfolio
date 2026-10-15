@@ -200,10 +200,6 @@ html[data-visual-test='true'] :focus-visible {
   box-shadow: none !important;
 }
 
-html[data-visual-test='true'] .nav-logo .jp-logo-cursor {
-  display: none !important;
-}
-
 ::selection {
   background: rgba(var(--color-primary-rgb), 0.3);
   color: inherit;
