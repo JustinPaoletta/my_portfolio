@@ -454,7 +454,7 @@
   .project-image {
     display: block;
     height: auto;
-    aspect-ratio: 1280 / 851;
+    aspect-ratio: auto;
     object-fit: contain;
   }
 
@@ -464,12 +464,74 @@
 }
 
 .project-image-wrapper figcaption,
+.project-demo figcaption,
 .project-workflow figcaption {
   padding: 1rem 1.25rem;
   background: var(--bg-card);
   color: var(--text-secondary);
   font-size: 0.8125rem;
   line-height: 1.6;
+}
+
+.project-demo {
+  margin: 0;
+  min-width: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-main);
+
+  video {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    background: #10150c;
+  }
+
+  video:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: -3px;
+  }
+
+  figcaption p {
+    margin: 0;
+  }
+
+  details {
+    margin-top: 0.75rem;
+  }
+
+  summary {
+    width: fit-content;
+    min-height: 44px;
+    align-content: center;
+    cursor: pointer;
+    color: var(--text-primary);
+  }
+
+  summary:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 3px;
+  }
+
+  details p {
+    margin-top: 0.5rem;
+  }
+}
+
+.project-capture-link {
+  display: block;
+  width: fit-content;
+  min-height: 44px;
+  align-content: center;
+  margin-top: 0.5rem;
+  color: var(--text-primary);
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 3px;
+  }
 }
 
 .project-workflow {

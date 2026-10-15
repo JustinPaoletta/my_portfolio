@@ -76,7 +76,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByAltText(/JP Design System showcase/)
+      screen.getByAltText(/Current JP Design System dashboard/)
     ).toBeInTheDocument();
   });
 });

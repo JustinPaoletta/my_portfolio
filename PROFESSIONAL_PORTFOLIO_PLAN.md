@@ -1,14 +1,14 @@
 # Professional portfolio plan
 
-Updated 2026-10-14. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
+Updated 2026-10-15. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
 
 ## Remaining work in this PR — owner request, 2026-10-12
 
-Project demos remain deferred. The OG image and favicon were implemented for owner review on 2026-10-14; their final visual approval remains open.
+The owner approved the matching OG image and favicon on 2026-10-15. The requested featured-project demo revision is implemented for review.
 
-- [ ] **Approve the revised OG image.** The new charcoal sharing card uses the owner’s JP-and-cursor reference, clean vector geometry, local Inter typography, and matching social metadata. Review the 1200 × 630 export in `public/og/jp-engineering.png` before merging.
-- [ ] **Approve the revised favicon.** The same master mark now produces SVG, ICO, PNG, Apple touch, and dedicated maskable icons. Navigation and footer use matching geometry and neutral colors; theme switching preserves the favicon. Review the final small-size appearance before merging.
-- [ ] **Show better project demos.** Improve the Projects section with actual interface captures, short walkthroughs, or working demos that show what each project does and Justin's contribution. Clearly label previews and work in progress, verify every demo link, and check the presentation on desktop and mobile.
+- [x] **Approve the revised OG image.** The new charcoal sharing card uses the owner’s JP-and-cursor reference, clean vector geometry, local Inter typography, and matching social metadata. Review the 1200 × 630 export in `public/og/jp-engineering.png` before merging.
+- [x] **Approve the revised favicon.** The same master mark now produces SVG, ICO, PNG, Apple touch, and dedicated maskable icons. Navigation and footer use matching geometry and neutral colors; theme switching preserves the favicon. Review the final small-size appearance before merging.
+- [x] **Show better featured-project demos.** The design system is first with a current dashboard capture and full-size image link. BitStockerz is second with a real 15.6-second browser walkthrough, poster, timed captions and transcript. The recording edits rules, runs a backtest and inspects charts using synthetic local data. Playback is opt-in; no public app deployment is claimed.
 
 ## Outcome and revised priorities
 
@@ -126,5 +126,25 @@ screenshots from review workflow `38178442391` were inspected and accepted.
       were reviewed; 222 unit tests, 15 existing homepage visual comparisons,
       three theme browser regressions, lint/type checks, build, and actual
       Chrome prerendering passed locally.
-- [ ] Owner visual approval of the matching pair before merge. External social
+- [x] Owner visual approval of the matching pair received on 2026-10-15. External social
       cache refresh and native home-screen icon acceptance remain unverified.
+
+## Featured project demos — 2026-10-15
+
+- [x] Feature the current design system first and BitStockerz second in the
+      visual page and CLI. Keep the published CLI tool as the third featured card.
+- [x] Replace the older design-system capture with the current Storybook dashboard
+      and provide a full-size image action.
+- [x] Replace BitStockerz's workflow diagram with a real 15.6-second browser
+      recording: rule editing, validation, simulation settings, and chart results.
+      Use a disposable seed account, synthetic prices and no live-provider or AI calls.
+- [x] Add native opt-in playback, timed descriptions and a readable transcript.
+      Keep playback paused and the recording unloaded until requested. Include
+      source captures, hashes and reproducible WebP/MP4 export instructions.
+- [x] Verify 222 unit tests and 17 focused browser journeys, including real video
+      decode/seeking, keyboard access, touch source links, CLI ordering and no
+      overflow at 390px. Review desktop/mobile captures and regenerate affected
+      visual baselines. Final hosted results are recorded in the PR.
+
+The owner approved the OG image and favicon before this revision. Native device
+acceptance and public deployment of either demo application remain separate work.

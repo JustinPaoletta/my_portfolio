@@ -19,6 +19,8 @@ interface Project extends ProjectSummary {
   id: string;
   image: string;
   imageCaption?: string;
+  demo?: { src: string; webm: string; captions: string; transcript: string };
+  fullSizeCapture?: string;
   workflow?: { label: string; steps: string[]; caption: string };
   imageSrcSet?: string;
   imageSizes?: string;
@@ -78,31 +80,34 @@ const sideQuestImageSizes = [
 
 const projects: Project[] = [
   {
-    ...BITSTOCKERZ_PROJECT,
-    id: 'project-1',
-    image: '/images/projects/bitstockerz.webp',
-    workflow: {
-      label: 'Strategy research workflow',
-      steps: [
-        'Build a strategy',
-        'Run a historical backtest',
-        'Compare results',
-        'Paper trade with stored bars',
-      ],
-      caption:
-        'Implemented workflow diagram. Paper fills use stored bars; live-provider verification is pending.',
-    },
-  },
-  {
     ...JP_DESIGN_SYSTEM_PROJECT,
     id: 'project-2',
-    image: '/images/projects/design-system-showcase.webp',
+    image: '/images/projects/design-system-dashboard-960.webp',
+    imageSrcSet: logoSrcSet('design-system-dashboard', [640, 960, 1440]),
+    imageSizes: '(max-width: 1024px) calc(100vw - 4rem), 630px',
     imageAlt:
-      'JP Design System showcase with Angular form controls and buttons',
-    imageWidth: 1280,
-    imageHeight: 851,
+      'Current JP Design System dashboard with navigation, score metrics, a chart, activity, and insights',
+    imageWidth: 1440,
+    imageHeight: 960,
+    fullSizeCapture: '/images/projects/design-system-dashboard-1440.webp',
     imageCaption:
-      'Actual local Angular showcase. Components and tokens are pre-release; a public package release is still pending.',
+      'Current Angular dashboard composition, captured in Storybook. Built with shared navigation, layout, chart, and semantic-token components. Pre-release.',
+  },
+  {
+    ...BITSTOCKERZ_PROJECT,
+    id: 'project-1',
+    image: '/images/projects/bitstockerz-research-1440.webp',
+    imageWidth: 1440,
+    imageHeight: 960,
+    imageCaption:
+      '16-second local app walkthrough: strategy rules → simulation settings → backtest results. Synthetic demo data; no live trading.',
+    demo: {
+      src: '/media/bitstockerz-demo.mp4',
+      webm: '/media/bitstockerz-demo.webm',
+      captions: '/media/bitstockerz-demo.vtt',
+      transcript:
+        'In a disposable local account, change the moving-average period and risk exit, then validate and save the strategy. Configure a backtest with 75% allocation, 5 basis points of commission and 5 basis points of slippage. Run the simulation and inspect its benchmark comparison and equity curve. Prices and results are synthetic demo data.',
+    },
   },
   {
     id: 'project-3',
@@ -221,7 +226,37 @@ function Projects(): React.ReactElement {
               delay={140 + index * 90}
               visible={isVisible}
             >
-              {project.workflow ? (
+              {project.demo ? (
+                <figure className="project-demo">
+                  <video
+                    controls
+                    playsInline
+                    preload="none"
+                    poster={project.image}
+                    width={project.imageWidth}
+                    height={project.imageHeight}
+                    aria-label={`${project.title} product walkthrough with synthetic demo data`}
+                  >
+                    <source src={project.demo.webm} type="video/webm" />
+                    <source src={project.demo.src} type="video/mp4" />
+                    <track
+                      kind="captions"
+                      src={project.demo.captions}
+                      srcLang="en"
+                      label="English walkthrough"
+                      default
+                    />
+                    <a href={project.demo.src}>Download the walkthrough</a>
+                  </video>
+                  <figcaption>
+                    <p>{project.imageCaption}</p>
+                    <details>
+                      <summary>Read the walkthrough</summary>
+                      <p>{project.demo.transcript}</p>
+                    </details>
+                  </figcaption>
+                </figure>
+              ) : project.workflow ? (
                 <figure className="project-workflow">
                   <p className="workflow-label">{project.workflow.label}</p>
                   <ol>
@@ -260,7 +295,20 @@ function Projects(): React.ReactElement {
                     height={project.imageHeight ?? 600}
                   />
                   {project.imageCaption && (
-                    <figcaption>{project.imageCaption}</figcaption>
+                    <figcaption>
+                      {project.imageCaption}
+                      {project.fullSizeCapture && (
+                        <a
+                          className="project-capture-link"
+                          href={project.fullSizeCapture}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Open ${project.title} full-size screenshot`}
+                        >
+                          View full-size screenshot ↗
+                        </a>
+                      )}
+                    </figcaption>
                   )}
                 </figure>
               )}

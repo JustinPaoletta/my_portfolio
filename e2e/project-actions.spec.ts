@@ -1,4 +1,5 @@
 import { expect, test, type Locator } from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
 import { mockPortfolioApis } from './support/mocks';
 import { revealDeferredSection } from './support/sections';
 
@@ -33,7 +34,7 @@ for (const theme of ['minimal', 'engineer', 'cosmic']) {
 
       const projects = await revealDeferredSection(page, 'projects');
       const source = projects.getByRole('link', {
-        name: 'View BitStockerz source code',
+        name: 'View @jp-design-system source code',
       });
 
       await source.scrollIntoViewIfNeeded();
@@ -60,11 +61,19 @@ for (const theme of ['minimal', 'engineer', 'cosmic']) {
         .toBe(true);
 
       await page.keyboard.press('Tab');
-      const designSystemSource = projects.getByRole('link', {
-        name: 'View @jp-design-system source code',
+      const nextSource = projects.getByRole('link', {
+        name: 'View BitStockerz source code',
       });
-      await expect(designSystemSource).toBeFocused();
-      await expectPaintedAction(designSystemSource);
+      // Native video controls and the transcript are reachable before the next source link.
+      for (let step = 0; step < 16; step += 1) {
+        if (
+          await nextSource.evaluate((link) => document.activeElement === link)
+        )
+          break;
+        await page.keyboard.press('Tab');
+      }
+      await expect(nextSource).toBeFocused();
+      await expectPaintedAction(nextSource);
       await expectPaintedAction(
         projects.getByLabel('SideQuest: Pittsburgh repository is private')
       );
@@ -119,3 +128,64 @@ test.describe('touch project actions', () => {
     });
   }
 });
+
+for (const width of [390, 1440]) {
+  test(`featured demos load on demand and play at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await mockPortfolioApis(page);
+    const mediaRequests: string[] = [];
+    page.on('request', (request) => {
+      if (/\/media\/bitstockerz-demo\.(mp4|webm)/.test(request.url())) {
+        mediaRequests.push(request.url());
+      }
+    });
+    await page.goto('/?theme=minimal&mode=light');
+    const projects = await revealDeferredSection(page, 'projects');
+    const headings = projects.locator('.featured-project h3');
+    await expect(headings.nth(0)).toHaveText('@jp-design-system');
+    await expect(headings.nth(1)).toHaveText('BitStockerz');
+    const video = projects.locator('video');
+    await video.scrollIntoViewIfNeeded();
+    const accessibility = await new AxeBuilder({ page })
+      .include('#projects')
+      .analyze();
+    expect(accessibility.violations).toEqual([]);
+    expect(mediaRequests).toHaveLength(0);
+    expect(
+      await video.evaluate((element: HTMLVideoElement) => element.paused)
+    ).toBe(true);
+    await video.evaluate((element: HTMLVideoElement) => element.play());
+    await expect
+      .poll(() =>
+        video.evaluate((element: HTMLVideoElement) => element.currentTime)
+      )
+      .toBeGreaterThan(0.2);
+    expect(mediaRequests.length).toBeGreaterThan(0);
+    expect(
+      await video.evaluate((element: HTMLVideoElement) => element.videoWidth)
+    ).toBe(1440);
+    await video.evaluate((element: HTMLVideoElement) => {
+      element.pause();
+      element.currentTime = element.duration - 0.5;
+    });
+    await video.evaluate((element: HTMLVideoElement) => element.play());
+    await expect
+      .poll(() => video.evaluate((element: HTMLVideoElement) => element.ended))
+      .toBe(true);
+    const transcript = projects.getByText('Read the walkthrough', {
+      exact: true,
+    });
+    await transcript.click();
+    await expect(
+      projects.getByText(/In a disposable local account/)
+    ).toBeVisible();
+    expect(
+      await page.evaluate(
+        () => document.documentElement.scrollWidth <= innerWidth
+      )
+    ).toBe(true);
+  });
+}

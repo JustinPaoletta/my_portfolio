@@ -120,3 +120,16 @@ and Plexarr keep their 60/120/180px lossless icon variants.
 
 The existing Open Graph image is retained unchanged from the PR base. The
 replacement design is deferred at the owner’s request.
+
+## Featured browser demos (2026-10-15)
+
+The design-system dashboard and BitStockerz research stills are real Chrome
+captures. Their PNG masters, raw walkthrough and capture manifest live in
+`assets/source/project-demos/`. Run `npm run optimize:project-demos` to rebuild
+640/960/1440px WebPs; no image is enlarged.
+
+The BitStockerz player uses local synthetic data, not a live trading account.
+It offers WebM and H.264 playback, a poster, timed descriptions and an HTML
+transcript. `preload="none"` keeps the recording unloaded until playback is
+requested. See the [capture notes](../assets/source/project-demos/README.md)
+for the workflow, source boundaries and MP4 encoding command.

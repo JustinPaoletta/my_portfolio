@@ -158,7 +158,7 @@ test('terminal keyboard editing, completion and history preserve the draft', asy
   await runCommand(page, 'projects');
   await runCommand(page, 'project 1');
   await expect(
-    page.getByText('[PROJECT 1] BitStockerz', { exact: true })
+    page.getByText('[PROJECT 1] @jp-design-system', { exact: true })
   ).toBeVisible();
   await prompt.fill('unfinished draft');
   await prompt.press('ArrowUp');

@@ -29,7 +29,7 @@ test.describe('@visual CLI terminal', () => {
       await prompt.press('Enter');
     }
     await expect(
-      page.getByText('[PROJECT 2] @jp-design-system', { exact: true })
+      page.getByText('[PROJECT 2] BitStockerz', { exact: true })
     ).toBeVisible();
     await prompt.blur();
     await expect(page).toHaveScreenshot('cli-project-session-desktop.png');

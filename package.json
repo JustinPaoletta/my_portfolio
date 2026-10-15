@@ -38,7 +38,8 @@
     "test:visual:update:linux": "./scripts/run-visual-linux.sh --update-snapshots=all",
     "type-check": "tsc -b --noEmit && tsc -p tsconfig.server.json",
     "type-check:watch": "tsc -b --noEmit --watch",
-    "prerender": "tsx scripts/prerender.ts"
+    "prerender": "tsx scripts/prerender.ts",
+    "optimize:project-demos": "node scripts/optimize-project-demos.mjs"
   },
   "dependencies": {
     "@newrelic/browser-agent": "^1.312.1",

@@ -1,0 +1,27 @@
+{
+  "captured": "2026-10-15",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "designSystem": {
+    "sourceRevision": "69a33edea3cf7d3dfbd2f5b7b7e8606bcf0f9a88",
+    "story": "compositions-app-shell-dashboard--dashboard",
+    "accent": "gold"
+  },
+  "bitstockerz": {
+    "sourceRevision": "44584e441c39969e7ab3f17b7053c93b4dae8e56",
+    "mode": "Disposable local seed API; current Angular development server; existing compiled API. No database, live provider, or AI calls.",
+    "runId": "04a19027-f084-45e9-853c-d793541f706e",
+    "durationSeconds": 15.6,
+    "encoding": "VP9 WebM and H.264 MP4, 1440x960, 15fps, no audio"
+  },
+  "sha256": {
+    "assets/source/project-demos/design-system-dashboard.png": "ecd30aa4bb59d3fff91c7d9bc9db9c106c28bca7002c88fb16e611a15e94853d",
+    "assets/source/project-demos/bitstockerz-walkthrough.webm": "a2d4511dd702561e763c9c9093e8bace3ac2a5e5f31cc5397138d5691257cf07",
+    "assets/source/project-demos/bitstockerz-research.png": "cf6721ed3181d78903dbb2906ac582996542b49e9698e94d58712e1276ba4822",
+    "public/media/bitstockerz-demo.mp4": "9cbb62e7271e2c7bc3b12f4c94ba4997eb66b61564731aec025c9dcd5ceadb84",
+    "public/media/bitstockerz-demo.vtt": "117b93835f58dc83e501b9692c7d25d468226f93c0ca29479fd5357087f51939",
+    "public/media/bitstockerz-demo.webm": "dacf3977864967786caae300c2bb67ff3e9fbca4505fdac19ba9a199f60f8f01"
+  }
+}

@@ -223,8 +223,8 @@ const APPROACH_EXAMPLE =
 const githubProfileUrl = env.social.github.replace(/\/+$/, '');
 
 const PROJECTS: ProjectSummary[] = [
-  BITSTOCKERZ_PROJECT,
   JP_DESIGN_SYSTEM_PROJECT,
+  BITSTOCKERZ_PROJECT,
   {
     title: 'Godot Playground',
     description:

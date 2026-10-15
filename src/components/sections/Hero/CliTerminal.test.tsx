@@ -168,7 +168,7 @@ describe('CliTerminal', () => {
     runCommand('cd projects/2');
     expect(cwd()).toBe('~/projects/2 $');
     expect(
-      terminalTranscript().getByText('[PROJECT 2] @jp-design-system')
+      terminalTranscript().getByText('[PROJECT 2] BitStockerz')
     ).toBeInTheDocument();
     runCommand('ls ..');
     expect(cwd()).toBe('~/projects/2 $');
@@ -714,7 +714,7 @@ describe('CliTerminal', () => {
     expect(terminalTranscript().getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
     expect(
       terminalTranscript().getByText(
-        'Stack: Angular, TypeScript, NestJS, Prisma, MySQL/MariaDB'
+        'Stack: Angular, TypeScript, RxJS, SCSS, Storybook'
       )
     ).toBeInTheDocument();
     runCommand('back');
@@ -759,7 +759,7 @@ describe('CliTerminal', () => {
   it.each([
     {
       title: 'BitStockerz',
-      selection: 1,
+      selection: 2,
       status: 'In Development',
       requiredClaims: [
         /recent stored bar closes/,
@@ -771,7 +771,7 @@ describe('CliTerminal', () => {
     },
     {
       title: '@jp-design-system',
-      selection: 2,
+      selection: 1,
       status: 'Pre-release',
       requiredClaims: [
         /automated interaction and accessibility checks/,

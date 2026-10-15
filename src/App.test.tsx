@@ -475,7 +475,7 @@ describe('App', () => {
     });
   });
 
-  it('Cosmic theme never renders a legacy video element', async () => {
+  it('Cosmic hero never renders a legacy video element', async () => {
     localStorage.setItem('portfolio-theme', 'cosmic');
 
     await act(async () => {
@@ -487,6 +487,6 @@ describe('App', () => {
     });
 
     expect(document.querySelector('.hero-cosmic-video')).toBeNull();
-    expect(document.querySelector('video')).toBeNull();
+    expect(document.querySelector('#hero video')).toBeNull();
   });
 });
