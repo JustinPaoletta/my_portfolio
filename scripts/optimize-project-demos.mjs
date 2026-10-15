@@ -10,6 +10,7 @@ const captures = [
   'design-system-data',
   'design-system-assistant',
   'bitstockerz-research',
+  'plexarr-discover',
 ];
 let count = 0;
 for (const name of captures) {

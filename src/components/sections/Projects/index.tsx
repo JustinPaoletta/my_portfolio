@@ -153,11 +153,22 @@ const projects: Project[] = [
     cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
     description:
-      'A self-hosted media request system built for managing my at-home Plex server. Users authenticate via passkeys (WebAuthn), search for content, and submit requests through a private dashboard. API keys stay entirely server-side, with real-time service health monitoring, per-user quality profile defaults, and an activity audit log.',
-    image: '/images/projects/plexarr-icon-180.webp',
-    techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
+      'A self-hosted app for discovering and requesting media for my at-home Plex server. Built with Next.js and React, it brings title discovery, quality selection, request confirmation, and an activity log into one flow. Passkeys protect access, and service credentials stay server-side.',
+    image: '/images/projects/plexarr-discover-1440.webp',
+    imageWidth: 1440,
+    imageHeight: 960,
+    imageCaption:
+      '17-second local app walkthrough: discover a title → choose quality → confirm → view Activity. Actual Plexarr UI with a fictional catalog and simulated services.',
+    demo: {
+      src: '/media/plexarr-demo.mp4',
+      webm: '/media/plexarr-demo.webm',
+      captions: '/media/plexarr-demo.vtt',
+      transcript:
+        'In an isolated local session, browse a fictional movie catalog and open Glass Harbor. Review its details, request the title, and choose the Ultra-HD quality profile. Confirm the selection, then open Activity to see the added entry. This is the actual Plexarr interface with fixed sample responses; no real media server request or download occurs. Sign-in is preconfigured for the recording, so passkey authentication is not demonstrated.',
+    },
+    techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
     private: true,
-    featured: false,
+    featured: true,
   },
 ];
 
@@ -224,7 +235,7 @@ function Projects(): React.ReactElement {
                     poster={project.image}
                     width={project.imageWidth}
                     height={project.imageHeight}
-                    aria-label={`${project.title} product walkthrough with synthetic demo data`}
+                    aria-label={`${project.title} product walkthrough with demo data`}
                   >
                     <source src={project.demo.webm} type="video/webm" />
                     <source src={project.demo.src} type="video/mp4" />

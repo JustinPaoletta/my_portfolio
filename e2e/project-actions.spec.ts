@@ -138,7 +138,9 @@ for (const width of [390, 1440]) {
     await mockPortfolioApis(page);
     const mediaRequests: string[] = [];
     page.on('request', (request) => {
-      if (/\/media\/bitstockerz-demo\.(mp4|webm)/.test(request.url())) {
+      if (
+        /\/media\/(bitstockerz|plexarr)-demo\.(mp4|webm)/.test(request.url())
+      ) {
         mediaRequests.push(request.url());
       }
     });
@@ -147,41 +149,52 @@ for (const width of [390, 1440]) {
     const headings = projects.locator('.featured-project h3');
     await expect(headings.nth(0)).toHaveText('@jp-design-system');
     await expect(headings.nth(1)).toHaveText('BitStockerz');
-    const video = projects.locator('video');
-    await video.scrollIntoViewIfNeeded();
+    await expect(headings.nth(2)).toHaveText('wild-apricot-exports');
+    await expect(headings.nth(3)).toHaveText('Plexarr');
+    await expect(
+      projects.getByLabel('Plexarr repository is private')
+    ).toBeVisible();
+    await projects.locator('video').first().scrollIntoViewIfNeeded();
     const accessibility = await new AxeBuilder({ page })
       .include('#projects')
       .analyze();
     expect(accessibility.violations).toEqual([]);
     expect(mediaRequests).toHaveLength(0);
-    expect(
-      await video.evaluate((element: HTMLVideoElement) => element.paused)
-    ).toBe(true);
-    await video.evaluate((element: HTMLVideoElement) => element.play());
-    await expect
-      .poll(() =>
-        video.evaluate((element: HTMLVideoElement) => element.currentTime)
-      )
-      .toBeGreaterThan(0.2);
-    expect(mediaRequests.length).toBeGreaterThan(0);
-    expect(
-      await video.evaluate((element: HTMLVideoElement) => element.videoWidth)
-    ).toBe(1440);
-    await video.evaluate((element: HTMLVideoElement) => {
-      element.pause();
-      element.currentTime = element.duration - 0.5;
-    });
-    await video.evaluate((element: HTMLVideoElement) => element.play());
-    await expect
-      .poll(() => video.evaluate((element: HTMLVideoElement) => element.ended))
-      .toBe(true);
-    const transcript = projects.getByText('Read the walkthrough', {
-      exact: true,
-    });
-    await transcript.click();
-    await expect(
-      projects.getByText(/In a disposable local account/)
-    ).toBeVisible();
+    for (const [title, transcript] of [
+      ['BitStockerz', /In a disposable local account/],
+      ['Plexarr', /In an isolated local session/],
+    ] as const) {
+      const article = projects.locator('article.featured-project').filter({
+        has: page.getByRole('heading', { name: title, exact: true }),
+      });
+      const video = article.locator('video');
+      await video.scrollIntoViewIfNeeded();
+      expect(
+        await video.evaluate((element: HTMLVideoElement) => element.paused)
+      ).toBe(true);
+      await video.evaluate((element: HTMLVideoElement) => element.play());
+      await expect
+        .poll(() =>
+          video.evaluate((element: HTMLVideoElement) => element.currentTime)
+        )
+        .toBeGreaterThan(0.2);
+      expect(mediaRequests.length).toBeGreaterThan(0);
+      expect(
+        await video.evaluate((element: HTMLVideoElement) => element.videoWidth)
+      ).toBe(1440);
+      await video.evaluate((element: HTMLVideoElement) => {
+        element.pause();
+        element.currentTime = element.duration - 0.5;
+      });
+      await video.evaluate((element: HTMLVideoElement) => element.play());
+      await expect
+        .poll(() =>
+          video.evaluate((element: HTMLVideoElement) => element.ended)
+        )
+        .toBe(true);
+      await article.getByText('Read the walkthrough', { exact: true }).click();
+      await expect(article.getByText(transcript)).toBeVisible();
+    }
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth

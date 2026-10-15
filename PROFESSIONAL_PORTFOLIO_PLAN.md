@@ -177,3 +177,22 @@ acceptance and public deployment of either demo application remain separate work
 No owner credentials are needed for these public samples. A hosted interactive
 design-system application and a real-account Wild Apricot acceptance run remain
 separate work.
+
+## Plexarr demo and skill icons — 2026-10-15
+
+- [x] Add Plexarr as the fourth featured project, after the design system,
+      BitStockerz, and Wild Apricot. Record discovery, details, quality selection,
+      confirmation, and Activity in the actual local interface. Use a fictional
+      catalog and intercepted service responses; keep private access and server
+      credentials out of the public portfolio.
+- [x] Provide a 17-second opt-in WebM/MP4 player, poster, timed descriptions,
+      transcript, source recording, hashes, and captured request evidence. State
+      that passkey authentication and real service requests are not demonstrated.
+- [x] Enlarge the Skills & Technologies artwork from 16px to 32px within 40px
+      frames. Keep all 13 icons with their appropriate technology labels and
+      allow the chips to wrap on small screens.
+- [x] Verify 222 unit tests, the production build and Chrome prerender, contrast
+      and bundle checks, 18 focused project browser journeys, and all ten local
+      section comparisons. Inspect desktop and phone captures; all 13 icons load
+      at 32px with no chip or page overflow at 320px and 390px. Hosted results and
+      reviewed Linux references are recorded in the PR.

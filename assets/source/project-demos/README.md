@@ -81,3 +81,34 @@ Run `npm run optimize:project-demos` to regenerate 640/960/1440px WebP stills
 from the PNG masters, up to each capture's original width. The generator does not
 enlarge them. Review refreshed
 captures before replacing these assets and update the manifest hashes.
+
+## Plexarr
+
+The 17-second recording shows the actual Next.js/React interface: browse the
+fictional catalog, open Glass Harbor, review its details, choose Ultra-HD,
+confirm the request, and inspect the added Activity entry. The PNG poster is
+another browser capture from the same session. Film names and SVG posters are
+fictional demo content, not scraped media or real account data.
+
+The existing compiled production UI was copied to a disposable local runtime
+with its own database path and a fresh environment. No `.env` files or service
+credentials were loaded. The manifest records the checkout revision and existing
+build ID; this is not evidence of a fresh Plexarr build. Browser routing installed
+by `scripts/project-demos/plexarr-fixtures.mjs` supplies every API response,
+rejects unknown API routes, and blocks external origins. The existing home server
+was not used. `plexarr-evidence.json` records the intercepted request with movie
+9002 and quality profile 11, followed by the Activity fetch.
+
+For another capture, serve an isolated copy of the compiled private app, install
+`installPlexarrDemo(page, origin)` before navigation, and record the flow in Chrome
+at 1440 × 960 and 15fps. Keep a disposable browser context and block service
+workers. Do not supply real account or provider credentials. The fixture responses
+demonstrate the UI only: no request reaches Radarr, no download starts, and the
+sample recommendations do not demonstrate a live ranking service. Sign-in is
+preconfigured, so the recording does not demonstrate passkey authentication.
+
+`plexarr-walkthrough.webm` retains the original 23.134 seconds outside `public/`.
+The public MP4 and VP9 WebM retain its first 17 seconds, removing trailing idle
+time. Both have no audio and use opt-in playback with timed descriptions and a
+transcript. Use the BitStockerz encoding command above with the Plexarr filenames
+and add `-t 17` to reproduce the MP4 trim.

@@ -1,0 +1,106 @@
+{
+  "calls": [
+    {
+      "method": "GET",
+      "path": "/api/recommendations/preferences"
+    },
+    {
+      "method": "GET",
+      "path": "/api/me"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health/servarr"
+    },
+    {
+      "method": "GET",
+      "path": "/api/recommendations"
+    },
+    {
+      "method": "GET",
+      "path": "/api/discovery"
+    },
+    {
+      "method": "POST",
+      "path": "/api/recommendations/events"
+    },
+    {
+      "method": "POST",
+      "path": "/api/recommendations/events"
+    },
+    {
+      "method": "POST",
+      "path": "/api/recommendations/events"
+    },
+    {
+      "method": "POST",
+      "path": "/api/discovery/enrich"
+    },
+    {
+      "method": "GET",
+      "path": "/api/discovery/trailer"
+    },
+    {
+      "method": "GET",
+      "path": "/api/quality-profiles"
+    },
+    {
+      "method": "POST",
+      "path": "/api/discovery/enrich"
+    },
+    {
+      "method": "GET",
+      "path": "/api/discovery/trailer"
+    },
+    {
+      "method": "GET",
+      "path": "/api/quality-profiles"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add"
+    },
+    {
+      "method": "POST",
+      "path": "/api/recommendations/events"
+    },
+    {
+      "method": "GET",
+      "path": "/api/auth/login-users"
+    },
+    {
+      "method": "GET",
+      "path": "/api/activity"
+    }
+  ],
+  "adds": [
+    {
+      "type": "movie",
+      "selection": {
+        "type": "movie",
+        "source": "radarr",
+        "title": "Glass Harbor",
+        "year": 2026,
+        "tmdbId": 9002,
+        "tvdbId": null,
+        "imdbId": null,
+        "originalTitle": "Glass Harbor",
+        "overview": "Glass Harbor is a fictional mystery film used to demonstrate Plexarr. A small team follows an unexpected discovery and must decide what to do next."
+      },
+      "options": {
+        "monitored": true,
+        "qualityProfileId": 11
+      }
+    }
+  ],
+  "titles": [
+    "Orbit Nine",
+    "Glass Harbor",
+    "Signal Lost",
+    "Midnight Atlas",
+    "Paper Satellites",
+    "After the Tide",
+    "Northbound",
+    "Wild Light"
+  ]
+}

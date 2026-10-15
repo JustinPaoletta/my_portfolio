@@ -81,7 +81,16 @@
     "public/images/projects/design-system-forms-640.webp": "3e9a5334d085c85c573d01e12e9201cb559d948340d49a1cbd3a54d4f9d35db2",
     "public/images/projects/design-system-forms-960.webp": "bc8aa8ef20a8dbc5e138e89de8627785e433c0c7270742e38d9fd2cb42e8e4a0",
     "public/images/projects/design-system-showcase.webp": "b55fa64d5b40a64de19ebcc498ffaaf725d95b720f552ceec30eba3070277fd7",
-    "src/content/generated/wild-apricot-demo.json": "522f8f36e3f8d587ec7f7354849fb0080d0e785b89ee58e8c60195ce5ba462df"
+    "src/content/generated/wild-apricot-demo.json": "522f8f36e3f8d587ec7f7354849fb0080d0e785b89ee58e8c60195ce5ba462df",
+    "assets/source/project-demos/plexarr-evidence.json": "8131efb4c414bd10d0bc22b53d9e48d6ae12885a47a75e09a38c2f4c998e1ff1",
+    "assets/source/project-demos/plexarr-walkthrough.webm": "7da17b5c3a3600ed0d1a8ef4d8ed316c0fc73d2ca11325223b69f70cf05c063c",
+    "assets/source/project-demos/plexarr-discover.png": "375bda665547d71eb15d371d1ec645e4f83bc968777591b9f32332b216c6a6c2",
+    "public/media/plexarr-demo.vtt": "ed032b663cce80a95878ec600b9ecb1062e8441577d4bd7a363d1f342162c3a8",
+    "public/media/plexarr-demo.mp4": "9b2b435f11f01bf16a1abb393780051ef93152156e4cfafd8d50d383a326b4da",
+    "public/media/plexarr-demo.webm": "32dbe909d298f50f0fdb5520990ed852c41ffc27c54c4c214a581c4604a0ee2f",
+    "public/images/projects/plexarr-discover-640.webp": "25f9c8e7f019c9728de110008f87a35bc0ea637c92f80f7f99ddded89240c377",
+    "public/images/projects/plexarr-discover-1440.webp": "34b43b0ec512171dc3a286720c0b250157b6bd48302eb6d986c683e12da1a61a",
+    "public/images/projects/plexarr-discover-960.webp": "f4131247256af6feae90f74060e9eab6a07cedb8eb0d92e7a0a313be6ca16cf5"
   },
   "wildApricot": {
     "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
@@ -93,5 +102,14 @@
       "originalFiles": 2
     },
     "resume": "Two cached files skipped; zero additional GET requests."
+  },
+  "plexarr": {
+    "sourceRevision": "14e1f0c0eccd15f6d52e95f5d7fc62e2300fce6f",
+    "existingBuildId": "vfqIGL4NCJjjVxmc1t1gV",
+    "mode": "Existing compiled production UI in a disposable loopback runtime. Fictional catalog and browser-intercepted API responses; no real credentials, service requests, downloads, or passkey ceremony.",
+    "durationSeconds": 17,
+    "encoding": "VP9 WebM and H.264 MP4, 1440x960, 15fps, no audio",
+    "captureTrim": "First 17 seconds of original 23.134-second recording; trailing idle Activity view removed.",
+    "evidence": "plexarr-evidence.json"
   }
 }
