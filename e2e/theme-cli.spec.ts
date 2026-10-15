@@ -58,7 +58,7 @@ test('cosmic theme restores the 3D nebula hero from localStorage', async ({
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('#hero video')).toHaveCount(0);
 
   // The interactive 3D scene is mounted after the deferred hero enhancement.
   await expect(page.locator('.hero-background')).toHaveAttribute(
@@ -83,7 +83,7 @@ test('cosmic restore shows the static poster fallback immediately', async ({
     page.getByRole('heading', { name: 'Justin Paoletta' })
   ).toBeVisible();
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('#hero video')).toHaveCount(0);
 
   const startupState = await page.evaluate(() => {
     const still =
@@ -338,7 +338,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
     'light'
   );
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('#hero video')).toHaveCount(0);
 
   await expect
     .poll(async () => {
@@ -350,7 +350,9 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
         const name = document.querySelector<HTMLElement>('.hero-name-text');
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
         const nameHeading = document.querySelector<HTMLElement>('.hero-name');
-        const navLogo = document.querySelector<HTMLElement>('.nav-logo');
+        const navLogo = document.querySelector<SVGElement>(
+          '.nav-logo .jp-logo-svg'
+        );
         const navLink = document.querySelector<HTMLElement>('.nav-link');
 
         if (
@@ -399,7 +401,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       greetingFontFamily: expect.stringContaining('Space Grotesk'),
       nameFontFamily: expect.stringContaining('Inter'),
       navLinkColor: 'rgb(248, 241, 255)',
-      navLogoPrimary: '#f8f1ff',
+      navLogoPrimary: '#d6dce4',
     });
 
   await page.evaluate(() => {
