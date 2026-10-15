@@ -237,3 +237,8 @@ separate work.
       accessibility unit tests, and 25 focused navigation/accessibility/section
       browser checks. Review the two updated macOS Skills references; the other
       eight section comparisons pass unchanged.
+- [x] Inspect and accept only the two Skills Linux references from review
+      workflow `38799467572`, without changing comparison tolerances. Verify the
+      deployed light-theme section: all logos load, the revised copy and small
+      name lists render, and the bottom links are absent. Final hosted checks
+      are recorded in the PR.
