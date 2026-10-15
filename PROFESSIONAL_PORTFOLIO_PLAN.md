@@ -100,7 +100,8 @@ screenshots from review workflow `38178442391` were inspected and accepted.
 - [x] Open with “Welcome to JP-CLI,” then reveal instructions 500ms later.
       Reduced motion displays them immediately. Keep the prompt in transcript flow.
 - [x] Remove the GitHub introduction, restore the API profile avatar, and show
-      contribution history without an expand/collapse control.
+      contribution history without an expand/collapse control. Keep the full year
+      available on all devices with horizontal calendar scrolling when needed.
 - [x] Share the Projects, Experience, About, Articles, and Contact labels between
       navigation and the section headings. Pair View My Projects with Contact in the hero.
 - [x] Restore tiny local technology logos beside every displayed skill label,

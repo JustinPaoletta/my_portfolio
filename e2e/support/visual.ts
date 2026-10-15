@@ -16,6 +16,7 @@ export async function gotoVisualState(
     theme: VisualTheme;
     mode: VisualMode;
     viewport: { width: number; height: number };
+    githubContributionWeeks?: number;
   }
 ): Promise<void> {
   await page.setViewportSize(options.viewport);
@@ -60,7 +61,9 @@ export async function gotoVisualState(
     }
   });
 
-  await mockPortfolioApis(page);
+  await mockPortfolioApis(page, {
+    githubContributionWeeks: options.githubContributionWeeks,
+  });
   await page.goto(
     `/?theme=${options.theme}&mode=${options.mode}&visual-test=1`,
     {

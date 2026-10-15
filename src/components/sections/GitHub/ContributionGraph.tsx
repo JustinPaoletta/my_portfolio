@@ -1,14 +1,13 @@
 /**
  * ContributionGraph Component
  * Visual representation of GitHub contributions
- * Responsive: shows different number of weeks based on viewport size
+ * Shows the complete contribution year, scrolling within narrow viewports.
  */
 
 import { useRef, useEffect, useState, useMemo } from 'react';
 import type { ContributionCalendar } from '@/types/github';
 import {
   useBreakpoint,
-  CONTRIBUTION_WEEKS_CONFIG,
   SHOW_DAY_LABELS,
   SHOW_FULL_DAY_LABELS,
 } from '@/hooks/useBreakpoint';
@@ -46,24 +45,16 @@ function ContributionGraph({
   isVisible,
 }: ContributionGraphProps): React.ReactElement {
   const graphContentRef = useRef<HTMLDivElement>(null);
-  const [weekWidth, setWeekWidth] = useState<number>(13); // Default 13px (11px + 2px gap)
+  const [weekWidth, setWeekWidth] = useState<number>(11);
   const breakpoint = useBreakpoint();
 
-  // Get visible weeks based on breakpoint (slice from end to show most recent)
-  const visibleWeeksCount = CONTRIBUTION_WEEKS_CONFIG[breakpoint];
-  const visibleWeeks = useMemo(() => {
-    const startIndex = Math.max(
-      0,
-      contributions.weeks.length - visibleWeeksCount
-    );
-    return contributions.weeks.slice(startIndex);
-  }, [contributions.weeks, visibleWeeksCount]);
+  const calendarWeeks = contributions.weeks;
+  const totalWeeks = calendarWeeks.length;
+  const [isScrollable, setIsScrollable] = useState(false);
 
-  const totalWeeks = visibleWeeks.length;
-
-  // Calculate contributions for visible period only
-  const visibleContributions = useMemo(() => {
-    return visibleWeeks.reduce((total, week) => {
+  // Include every day returned for the contribution year on every device.
+  const yearContributions = useMemo(() => {
+    return calendarWeeks.reduce((total, week) => {
       return (
         total +
         week.contributionDays.reduce(
@@ -72,7 +63,7 @@ function ContributionGraph({
         )
       );
     }, 0);
-  }, [visibleWeeks]);
+  }, [calendarWeeks]);
 
   // Determine which day labels to use
   const showDayLabels = SHOW_DAY_LABELS[breakpoint];
@@ -93,7 +84,8 @@ function ContributionGraph({
         totalWeeks > 0 ? availableWidth / totalWeeks : 11;
 
       // Keep short histories compact while fitting the available viewport.
-      setWeekWidth(Math.min(24, Math.max(calculatedWeekWidth, 8)));
+      setWeekWidth(Math.min(24, Math.max(calculatedWeekWidth, 11)));
+      setIsScrollable(totalWeeks * 11 + totalGapWidth > containerWidth);
     };
 
     updateWeekWidth();
@@ -113,11 +105,11 @@ function ContributionGraph({
     return DAY_LABEL_INDICES.map((targetDayIndex) => {
       // Find which row (dayIndex within week) corresponds to this day of week
       // We need to check the first week to see the mapping
-      const firstWeek = visibleWeeks[0];
+      const firstWeek = calendarWeeks[0];
       if (!firstWeek) return null;
 
       const rowIndex = firstWeek.contributionDays.findIndex(
-        (day) => new Date(day.date).getDay() === targetDayIndex
+        (day) => new Date(day.date).getUTCDay() === targetDayIndex
       );
 
       if (rowIndex === -1) return null;
@@ -126,30 +118,30 @@ function ContributionGraph({
     }).filter(
       (item): item is { day: string; rowIndex: number } => item !== null
     );
-  }, [visibleWeeks, DAYS]);
+  }, [calendarWeeks, DAYS]);
 
-  // Get unique months with accurate positioning for visible weeks
+  // Get unique months with accurate positioning for the full calendar
   const monthLabels = useMemo(() => {
     const labels: { month: string; weekIndex: number }[] = [];
     let lastMonth = -1;
 
-    visibleWeeks.forEach((week, weekIndex) => {
+    calendarWeeks.forEach((week, weekIndex) => {
       // Check if this week contains the 1st of a new month
       const hasFirstOfMonth = week.contributionDays.some((day) => {
         const date = new Date(day.date);
-        return date.getDate() === 1;
+        return date.getUTCDate() === 1;
       });
 
       if (hasFirstOfMonth) {
         // Find the first day of the month in this week
         const firstDayOfMonth = week.contributionDays.find((day) => {
           const date = new Date(day.date);
-          return date.getDate() === 1;
+          return date.getUTCDate() === 1;
         });
 
         if (firstDayOfMonth) {
           const date = new Date(firstDayOfMonth.date);
-          const month = date.getMonth();
+          const month = date.getUTCMonth();
           if (month !== lastMonth) {
             labels.push({
               month: MONTHS[month],
@@ -162,31 +154,31 @@ function ContributionGraph({
     });
 
     return labels;
-  }, [visibleWeeks]);
+  }, [calendarWeeks]);
 
   // Generate time period description for accessibility
   const timePeriodDescription = useMemo(() => {
-    if (visibleWeeks.length === 0) return 'no data';
+    if (calendarWeeks.length === 0) return 'no data';
 
-    const firstDay = visibleWeeks[0]?.contributionDays[0];
-    const lastWeek = visibleWeeks[visibleWeeks.length - 1];
+    const firstDay = calendarWeeks[0]?.contributionDays[0];
+    const lastWeek = calendarWeeks[calendarWeeks.length - 1];
     const lastDay =
       lastWeek?.contributionDays[lastWeek.contributionDays.length - 1];
 
     if (!firstDay || !lastDay) return 'recent activity';
 
-    const months = Math.round(visibleWeeks.length / 4.33);
+    const months = Math.round(calendarWeeks.length / 4.33);
     return `the last ${months} month${months !== 1 ? 's' : ''}`;
-  }, [visibleWeeks]);
+  }, [calendarWeeks]);
 
   return (
     <div
       className={`contribution-graph ${isVisible ? 'visible' : ''} ${loading ? 'loading' : ''}`}
-      aria-label={`GitHub contribution graph showing ${visibleContributions.toLocaleString()} contributions in ${timePeriodDescription}`}
+      aria-label={`GitHub contribution graph showing ${yearContributions.toLocaleString()} contributions in ${timePeriodDescription}`}
     >
       <div className="graph-header">
         <h3 className="graph-title">
-          {visibleContributions.toLocaleString()} contributions in{' '}
+          {yearContributions.toLocaleString()} contributions in{' '}
           {timePeriodDescription}
         </h3>
       </div>
@@ -215,7 +207,19 @@ function ContributionGraph({
           </div>
         )}
 
-        <div className="graph-content" ref={graphContentRef}>
+        <div
+          className="graph-content"
+          ref={graphContentRef}
+          role="region"
+          aria-label="GitHub contribution calendar"
+          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Native overflow regions need focus for keyboard scrolling.
+          tabIndex={isScrollable ? 0 : undefined}
+          style={
+            {
+              '--calendar-width': `${totalWeeks * (weekWidth + 2) - (totalWeeks > 0 ? 2 : 0)}px`,
+            } as React.CSSProperties
+          }
+        >
           {/* Month labels */}
           <div className="month-labels" aria-hidden="true">
             {monthLabels.map(({ month, weekIndex }) => {
@@ -243,7 +247,7 @@ function ContributionGraph({
               } as React.CSSProperties
             }
           >
-            {visibleWeeks.map((week, weekIndex) => (
+            {calendarWeeks.map((week, weekIndex) => (
               <div key={weekIndex} className="contribution-week">
                 {week.contributionDays.map((day, dayIndex) => (
                   <div
@@ -264,6 +268,12 @@ function ContributionGraph({
           </div>
         </div>
       </div>
+
+      {isScrollable && (
+        <p className="graph-scroll-hint">
+          Scroll horizontally to see the full year.
+        </p>
+      )}
 
       {/* Legend */}
       <div className="graph-legend" aria-hidden="true">
@@ -299,6 +309,7 @@ function getLevelClass(level: string): number {
 function formatDate(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString('en-US', {
+    timeZone: 'UTC',
     weekday: 'long',
     year: 'numeric',
     month: 'long',

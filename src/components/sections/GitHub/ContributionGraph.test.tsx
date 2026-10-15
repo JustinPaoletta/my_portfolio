@@ -7,13 +7,6 @@ let breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
 
 vi.mock('@/hooks/useBreakpoint', () => ({
   useBreakpoint: () => breakpoint,
-  CONTRIBUTION_WEEKS_CONFIG: {
-    xs: 2,
-    sm: 4,
-    md: 6,
-    lg: 8,
-    xl: 10,
-  },
   SHOW_DAY_LABELS: {
     xs: false,
     sm: true,
@@ -82,6 +75,29 @@ describe('ContributionGraph', () => {
       document.querySelector('.contribution-graph.visible')
     ).toBeInTheDocument();
   });
+
+  it.each(['xs', 'sm', 'md', 'lg', 'xl'] as const)(
+    'keeps the full contribution year at the %s breakpoint',
+    (size) => {
+      breakpoint = size;
+      render(
+        <ContributionGraph
+          contributions={{ totalContributions: 1484, weeks: createWeeks(53) }}
+          loading={false}
+          isVisible
+        />
+      );
+      expect(screen.getAllByRole('img')).toHaveLength(371);
+      expect(screen.getByRole('heading')).toHaveTextContent(
+        '1,484 contributions in the last 12 months'
+      );
+      expect(
+        screen.getByRole('img', {
+          name: /1 contributions on Sunday, January 25, 2026/,
+        })
+      ).toBeInTheDocument();
+    }
+  );
 
   it('hides day labels for xs breakpoint and uses no-data description for empty weeks', () => {
     breakpoint = 'xs';

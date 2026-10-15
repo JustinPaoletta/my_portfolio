@@ -54,12 +54,27 @@
 
 .graph-content {
   flex: 1;
-  overflow: visible;
+  overflow-x: auto;
+  padding: 2px 0 6px;
+  overscroll-behavior-x: contain;
   min-width: 0;
   isolation: isolate;
 }
 
+.graph-content:focus-visible {
+  outline: 2px solid var(--color-primary-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.graph-scroll-hint {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 0.5rem 0 0;
+}
+
 .month-labels {
+  width: var(--calendar-width);
   display: flex;
   gap: 2px;
   height: 18px;
@@ -77,8 +92,7 @@
 .contribution-grid {
   display: flex;
   gap: 2px;
-  width: max-content;
-  max-width: 100%;
+  width: var(--calendar-width);
   overflow: visible;
   contain: layout;
   background: var(--contrib-grid-bg, var(--bg-card));

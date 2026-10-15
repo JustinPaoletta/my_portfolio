@@ -86,20 +86,25 @@ test.describe('@visual section states', () => {
     });
   }
 
-  test('captures github section', async ({ page }) => {
-    await gotoVisualState(page, {
-      theme: 'minimal',
-      mode: 'light',
-      viewport: DESKTOP_SECTION_VIEWPORT,
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures github section on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, {
+        theme: 'minimal',
+        mode: 'light',
+        viewport,
+        githubContributionWeeks: 53,
+      });
+      const github = page.locator('section#github');
+      await waitForSectionToSettle(page, github);
+      await expect(github).toHaveScreenshot(
+        label === 'desktop' ? 'github-section.png' : 'github-mobile.png',
+        { caret: 'hide' }
+      );
     });
-
-    const github = page.locator('section#github');
-    await waitForSectionToSettle(page, github);
-
-    await expect(github).toHaveScreenshot('github-section.png', {
-      caret: 'hide',
-    });
-  });
+  }
 
   for (const [label, viewport] of [
     ['desktop', DESKTOP_SECTION_VIEWPORT],

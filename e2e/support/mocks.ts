@@ -40,6 +40,7 @@ interface ContributionCalendar {
 interface MockPortfolioApisOptions {
   githubRestError?: boolean;
   githubProxyError?: boolean;
+  githubContributionWeeks?: number;
   contactError?: boolean;
   petDogsStats?: Record<'Nala' | 'Rosie' | 'Tito', DogStats>;
   onContactRequest?: (payload: ContactPayload) => void;
@@ -185,7 +186,9 @@ export async function mockPortfolioApis(
   options: MockPortfolioApisOptions = {}
 ): Promise<void> {
   const stats = cloneDogStats(options.petDogsStats ?? DEFAULT_PET_DOG_STATS);
-  const contributions = buildContributionCalendar();
+  const contributions = buildContributionCalendar(
+    options.githubContributionWeeks
+  );
 
   await page.route('https://api.github.com/users/**', async (route) => {
     if (options.githubRestError) {
