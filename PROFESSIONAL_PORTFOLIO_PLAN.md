@@ -169,7 +169,10 @@ acceptance and public deployment of either demo application remain separate work
       mobile Experience captures are byte-identical; all ten local section
       comparisons pass after reviewing its one-pixel crop correction. No product
       styling or comparison tolerance changed.
-- [ ] Inspect and accept Linux baselines generated with the stable capture helper.
+- [x] Inspect and accept the Linux Projects and mobile Experience baselines from
+      workflow `38687571205`, generated with the stable capture helper. The latter
+      retains all content with settled monospace labels wrapping more compactly.
+      The other 26 hosted visual comparisons passed before these two updates.
 
 No owner credentials are needed for these public samples. A hosted interactive
 design-system application and a real-account Wild Apricot acceptance run remain
