@@ -25,7 +25,7 @@ The implementation is ready for review with stated content assumptions. Existing
 - [x] **10 — Honest project visuals.** Replace featured promotional images with a captured Angular showcase and labeled implementation workflow diagrams. Captions explain exactly what is shown and preserve release/provider limitations.
 - [x] **11 — Curate inspectable work.** Feature BitStockerz, the design system, and the published Wild Apricot CLI with visible source/package actions. Private projects remain smaller supporting cards. Richer personal-ownership narratives belong with the evidence work below.
 - [x] **14 — One engineering approach.** Lead About with accesso Passport modernization work and the approved responsible-AI workflow: context, reviewed implementation, and verification. Include the AI-assisted PR review bot as a concrete example and link to Experience.
-- [x] **15 — Skills and activity.** Replace the logo wall with three compact groups linked to supporting work. Remove popularity counters, restore the GitHub avatar next to the profile, and show contribution history directly; preserve honest unavailable states.
+- [x] **15 — Skills and activity.** Use three focused groups with larger icons, smaller technology labels, and capability summaries. Remove popularity counters, restore the GitHub avatar next to the profile, and show contribution history directly; preserve honest unavailable states.
 - [x] **16 — Identity cleanup.** Omit the stylized portrait and remove its Person structured-data reference. The OG redesign was initially deferred; the owner resumed it on 2026-10-14 with the JP-and-cursor reference. The revised shared identity is now ready for visual approval.
 - [x] **17 — Presentation.** Reduce crowded hero labels, hover-dependent content, oversized project shadows, and repeated skills/prose. Keep theme-aware focus and wrapping controls.
 - [x] **18 — Contact wording.** Address recruiters directly and invite the opportunity, team, and job details, with email prominent. Restore the original freelance/full-time availability badge at the owner’s request. Do not invent location or working-arrangement preferences.
@@ -218,3 +218,22 @@ separate work.
       `38789135329`. Verify the fresh Vercel preview's desktop About link, mobile
       menu labels, and Articles destination; retain review captures. Final hosted
       checks are recorded in the PR.
+
+## Approved skills layout and copy — 2026-10-15
+
+- [x] Implement the approved mockup's grouped icons with a smaller technology
+      list below each group. Preserve all 13 existing local logos and readable
+      names, with decorative icons excluded from the accessibility tree.
+- [x] Rewrite the three summaries around frontend modernization, repeatable
+      testing and release automation, and API/data design. Add context without
+      repeating the technology names. Remove all three bottom links.
+- [x] Keep equal desktop cards, natural phone stacking, and responsive icon
+      sizes: 48px at desktop, 40px at 390px, and 32px at 320px. Captions remain
+      13px beneath each complete group; summary text is 15px.
+- [x] Compare the implementation with the approved mockup in combined full-view
+      and icon-detail images. Inspect 1440px, 390px, and 320px layouts with no
+      card or page overflow. Record the comparison in `design-qa.md`.
+- [x] Verify the production build and Chrome prerender, 222 unit tests, 10
+      accessibility unit tests, and 25 focused navigation/accessibility/section
+      browser checks. Review the two updated macOS Skills references; the other
+      eight section comparisons pass unchanged.

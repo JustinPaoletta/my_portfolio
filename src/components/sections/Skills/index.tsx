@@ -2,7 +2,6 @@
 
 import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
-import { BITSTOCKERZ_PROJECT } from '@/content/projects';
 import './Skills.css';
 
 const skillIcons: Record<string, string[]> = {
@@ -25,25 +24,19 @@ const skillAreas = [
     title: 'Frontend systems',
     technologies: ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS'],
     description:
-      'Angular and React micro-frontends inside an AngularJS host, with attention to framework lifecycles and style isolation.',
-    link: '#experience',
-    linkLabel: 'See the modernization work',
+      'I modernize established frontend applications while keeping existing features dependable. My work spans reusable components, micro-frontend integration, and clear boundaries between frameworks and styles.',
   },
   {
     title: 'Testing & delivery',
     technologies: ['Playwright', 'GitHub Actions', 'Jenkins'],
     description:
-      'Browser checks for UI behavior, continuous integration, and release automation across four applications.',
-    link: '#experience',
-    linkLabel: 'See the delivery work',
+      'I turn critical user journeys into repeatable browser checks and automate build and release workflows, giving teams faster feedback and reducing manual release work.',
   },
   {
     title: 'APIs & data',
     technologies: ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB'],
     description:
-      'BitStockerz pairs an Angular client with a NestJS API for strategy research, historical backtests, and paper trading. The project is in development.',
-    link: BITSTOCKERZ_PROJECT.githubUrl,
-    linkLabel: 'Inspect the BitStockerz source',
+      'I build typed APIs and relational data models that connect application features to persistent storage, using clear service boundaries and consistent database access.',
   },
 ];
 
@@ -86,40 +79,38 @@ function Skills(): React.ReactElement {
               visible={isVisible}
             >
               <h3>{area.title}</h3>
+              <div className="skill-icons" aria-hidden="true">
+                {area.technologies.flatMap((technology) =>
+                  skillIcons[technology]?.map((icon) => (
+                    <span key={icon} className="skill-icon">
+                      <img
+                        src={icon}
+                        alt=""
+                        width={48}
+                        height={48}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                  ))
+                )}
+              </div>
               <ul
                 className="skill-stack"
                 aria-label={`${area.title} technologies`}
               >
-                {area.technologies.map((technology) => (
+                {area.technologies.map((technology, technologyIndex) => (
                   <li key={technology}>
-                    {skillIcons[technology]?.map((icon) => (
-                      <span key={icon} className="skill-icon">
-                        <img
-                          src={icon}
-                          alt=""
-                          width={32}
-                          height={32}
-                          loading="lazy"
-                          decoding="async"
-                        />
-                      </span>
-                    ))}
                     <span>{technology}</span>
+                    {technologyIndex < area.technologies.length - 1 && (
+                      <span aria-hidden="true" className="skill-separator">
+                        ·
+                      </span>
+                    )}
                   </li>
                 ))}
               </ul>
-              <p>{area.description}</p>
-              <a
-                href={area.link}
-                target={area.link?.startsWith('https:') ? '_blank' : undefined}
-                rel={
-                  area.link?.startsWith('https:')
-                    ? 'noopener noreferrer'
-                    : undefined
-                }
-              >
-                {area.linkLabel} <span aria-hidden="true">→</span>
-              </a>
+              <p className="skill-summary">{area.description}</p>
             </Reveal>
           ))}
         </div>
