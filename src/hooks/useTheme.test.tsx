@@ -15,7 +15,7 @@ import {
   pickOnColor,
   useTheme,
 } from './useTheme';
-import { defaultMode, defaultTheme } from '@/config/themes';
+import { defaultMode, defaultTheme, themes } from '@/config/themes';
 
 type ChangeListener = (event: MediaQueryListEvent) => void;
 
@@ -104,6 +104,9 @@ function ThemeProbe(): ReactElement {
       </button>
       <button type="button" onClick={() => setTheme('cosmic')}>
         set-cosmic
+      </button>
+      <button type="button" onClick={() => setTheme('minimal')}>
+        set-minimal
       </button>
       <button
         type="button"
@@ -211,7 +214,7 @@ describe('useTheme', () => {
     );
   });
 
-  it('applies theme colors without replacing the shared brand favicon', async () => {
+  it('applies theme colors and the neutral Minimal favicon', async () => {
     document.head.innerHTML = `
       <meta name="theme-color" content="#000000" />
       <meta name="msapplication-TileColor" content="#000000" />
@@ -262,7 +265,9 @@ describe('useTheme', () => {
       const icon = document.querySelector(
         'link[rel="icon"][type="image/svg+xml"]'
       );
-      expect(icon?.getAttribute('href')).toBe('/favicons/jp-monogram.svg');
+      expect(icon?.getAttribute('href')).toBe(
+        '/favicons/jp-monogram.svg?v=jp-1'
+      );
     });
   });
 
@@ -370,20 +375,33 @@ describe('useTheme', () => {
     });
   });
 
-  it('preserves the brand favicon when changing themes and color modes', () => {
-    document.head.innerHTML =
-      '<link rel="icon" type="image/svg+xml" href="/favicons/jp-monogram.svg" />';
+  it('updates both favicon links when switching themes and restores Minimal', () => {
+    document.head.innerHTML = `
+      <link rel="icon" type="image/svg+xml" href="/favicons/jp-monogram.svg" />
+      <link rel="shortcut icon" type="image/svg+xml" href="/favicons/jp-monogram.svg" />
+    `;
     renderWithThemeProvider();
-    for (const name of [
-      'set-engineer',
-      'set-dark',
-      'set-cosmic',
-      'set-light',
-    ]) {
-      fireEvent.click(screen.getByRole('button', { name }));
-      expect(
-        document.querySelector('link[rel="icon"][type="image/svg+xml"]')
-      ).toHaveAttribute('href', '/favicons/jp-monogram.svg');
+    for (const theme of ['engineer', 'cosmic'] as const) {
+      fireEvent.click(screen.getByRole('button', { name: `set-${theme}` }));
+      for (const mode of ['dark', 'light']) {
+        fireEvent.click(screen.getByRole('button', { name: `set-${mode}` }));
+        for (const link of document.querySelectorAll(
+          'link[type="image/svg+xml"]'
+        )) {
+          const href = link.getAttribute('href') ?? '';
+          expect(href).toMatch(/^data:image\/svg\+xml,/);
+          const svg = decodeURIComponent(href.split(',')[1]);
+          expect(svg).toContain(`fill="${themes[theme].colors.primary}"`);
+          expect(svg).toContain('fill="#101216"');
+          expect(svg).not.toContain('#8e99a8');
+        }
+      }
+    }
+    fireEvent.click(screen.getByRole('button', { name: 'set-minimal' }));
+    for (const link of document.querySelectorAll(
+      'link[type="image/svg+xml"]'
+    )) {
+      expect(link).toHaveAttribute('href', '/favicons/jp-monogram.svg?v=jp-1');
     }
   });
 });

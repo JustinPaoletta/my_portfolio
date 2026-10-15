@@ -7,8 +7,11 @@ curves; the upright cursor is part of the mark and stays visible.
 - `jp-mark.svg` is the master geometry for the website, favicon and sharing card.
 - `og-image.html` is the editable 1200 × 630 sharing-card layout. It uses the
   repository's local Inter variable font and the master SVG, with no remote assets.
-- The website reverses the neutral mark on light surfaces for legibility. Its
-  geometry stays the same across themes; favicon and sharing-card colors stay fixed.
+- Minimal uses the neutral mark, reversed on light surfaces. Engineer uses cyan
+  and Cosmic uses purple in the header and footer, with contrast-safe light-mode
+  variants. The browser favicon also follows the active theme, using its bright
+  accent on the dark icon tile. Returning to Minimal restores the neutral favicon.
+  All themes share the same geometry; the sharing card retains its neutral palette.
 
 Run `npm run generate:branding` from the repository root after changing a source.
 The icon generator uses Sharp. The sharing-card generator uses Playwright's

@@ -18,6 +18,7 @@ import {
   type ColorMode,
   type ModeColors,
 } from '@/config/themes';
+import faviconSvg from '@/assets/jp-favicon.svg?raw';
 
 const THEME_STORAGE_KEY = 'portfolio-theme';
 const MODE_STORAGE_KEY = 'portfolio-color-mode';
@@ -178,6 +179,25 @@ function setThemeMetaColor(color: string): void {
   }
 }
 
+function updateFavicon(theme: Theme): void {
+  // The icon has its own dark tile, so use the bright accent in both page modes.
+  const href =
+    theme.name === 'minimal'
+      ? '/favicons/jp-monogram.svg?v=jp-1'
+      : `data:image/svg+xml,${encodeURIComponent(
+          faviconSvg.replaceAll('#8e99a8', theme.colors.primary)
+        )}`;
+  document
+    .querySelectorAll<HTMLLinkElement>(
+      'link[rel="icon"][type="image/svg+xml"], link[rel="shortcut icon"][type="image/svg+xml"]'
+    )
+    .forEach((link) => {
+      if (link.getAttribute('href') !== href) {
+        link.setAttribute('href', href);
+      }
+    });
+}
+
 /**
  * Apply theme colors to CSS custom properties on :root
  */
@@ -280,6 +300,7 @@ function applyThemeToDocument(
   root.dataset.colorMode = resolvedMode;
 
   setThemeMetaColor(modeColors.bgMain);
+  updateFavicon(theme);
 }
 
 /**

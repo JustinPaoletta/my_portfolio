@@ -7,7 +7,7 @@ Updated 2026-10-15. Implementation is on draft [PR #298](https://github.com/Just
 The owner approved the matching OG image and favicon on 2026-10-15. The requested featured-project demo revision is implemented for review.
 
 - [x] **Approve the revised OG image.** The new charcoal sharing card uses the owner’s JP-and-cursor reference, clean vector geometry, local Inter typography, and matching social metadata. Review the 1200 × 630 export in `public/og/jp-engineering.png` before merging.
-- [x] **Approve the revised favicon.** The same master mark now produces SVG, ICO, PNG, Apple touch, and dedicated maskable icons. Navigation and footer use matching geometry and neutral colors; theme switching preserves the favicon. Review the final small-size appearance before merging.
+- [x] **Approve the revised favicon.** The same master mark now produces SVG, ICO, PNG, Apple touch, and dedicated maskable icons. Navigation and footer use matching geometry with neutral Minimal, cyan Engineer, and purple Cosmic colors; the browser favicon follows the selected theme. Review the final small-size appearance before merging.
 - [x] **Show better featured-project demos.** The design system is first with a current dashboard capture and full-size image link. BitStockerz is second with a real 15.6-second browser walkthrough, poster, timed captions and transcript. The recording edits rules, runs a backtest and inspects charts using synthetic local data. Playback is opt-in; no public app deployment is claimed.
 
 ## Outcome and revised priorities
@@ -117,7 +117,7 @@ screenshots from review workflow `38178442391` were inspected and accepted.
 - [x] Build the OG image and favicon from the owner's JP-and-cursor reference,
       with clean vector geometry, charcoal/slate/white colors, and local Inter type.
 - [x] Use the same master for navigation, footer, SVG/ICO/PNG favicons, Apple touch,
-      and PWA icons. Keep the favicon stable when themes or color modes change.
+      and PWA icons. Preserve theme-specific logo and favicon colors while keeping the shared geometry.
 - [x] Update crawler-facing OG/Twitter metadata and the shared SEO image path.
       Retain the historical OG URL as an export of the new image.
 - [x] Verify the 1200 × 630 opaque OG export, three real ICO frames, all declared

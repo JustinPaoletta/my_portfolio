@@ -18,6 +18,8 @@ const icon = (maskable = false) =>
 const out = path.join(root, 'public/favicons');
 await mkdir(out, { recursive: true });
 await writeFile(path.join(out, 'jp-monogram.svg'), icon());
+// The theme hook recolors this exact favicon synchronously, without a fetch race.
+await writeFile(path.join(root, 'src/assets/jp-favicon.svg'), icon());
 
 // Keep historical logo URLs and the React import in sync; no redrawing of the mark.
 for (const folder of ['public/branding', 'src/assets']) {
