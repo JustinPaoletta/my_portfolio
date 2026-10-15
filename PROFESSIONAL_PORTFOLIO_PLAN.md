@@ -148,3 +148,22 @@ screenshots from review workflow `38178442391` were inspected and accepted.
 
 The owner approved the OG image and favicon before this revision. Native device
 acceptance and public deployment of either demo application remain separate work.
+
+## Expanded project evidence — 2026-10-15
+
+- [x] Expand the design-system card into four current Storybook captures:
+      dashboard, form controls, data display, and the assistant panel. Retain
+      full-size images, fictional content labels, and the pre-release status.
+      Identify the assistant reply as a fixed sample.
+- [x] Replace Wild Apricot's diagram with actual CLI output, a CSV preview,
+      nested JSON, and the generated file list. Run the unmodified CLI against
+      isolated fictional REST/WebDAV fixtures. Verify three contacts, two events,
+      two unchanged original files, and a second run with zero new downloads.
+- [x] Provide a complete sample ZIP with CSV/JSON, originals, manifest, and full
+      log. Retain fixtures, generation tools, source revision, and output hashes.
+- [ ] Verify gallery/download behavior, keyboard access, responsive layouts,
+      accessibility, and refreshed visual baselines before completing this revision.
+
+No owner credentials are needed for these public samples. A hosted interactive
+design-system application and a real-account Wild Apricot acceptance run remain
+separate work.

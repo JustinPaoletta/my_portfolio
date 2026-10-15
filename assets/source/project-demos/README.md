@@ -1,14 +1,53 @@
 # Project browser captures
 
-Captured on 2026-10-15 at 1440 × 960 in Chrome. These are actual local interfaces,
-not illustrative mockups. The manifest records source revisions and asset hashes.
+Captured on 2026-10-15 in Chrome. These are actual local interfaces, not
+illustrative mockups. The manifest records source revisions, dimensions, and
+asset hashes.
 
 ## Design system
 
-The running Storybook at port 4400 displayed
-`compositions-app-shell-dashboard--dashboard` with `accent:gold`.
-The capture shows the current navigation, metrics, chart, activity and insights.
-It uses sample baseball content; the library remains pre-release.
+The running Storybook at port 4400 displayed four stories with `accent:gold`:
+
+| View      | Story                                         | Viewport   |
+| --------- | --------------------------------------------- | ---------- |
+| Dashboard | `compositions-app-shell-dashboard--dashboard` | 1440 × 960 |
+| Forms     | `compositions-controls-form--default`         | 960 × 640  |
+| Data      | `compositions-data-display--default`          | 960 × 640  |
+| Assistant | `compositions-assistant-system--default`      | 960 × 640  |
+
+The form contains a fictional coach email and notes, with Coach selected. The
+roster shows three sample players. The assistant shows a submitted question and
+the story's fixed response; it makes no model or provider call. These are
+captured states, not interactive Angular components embedded in the portfolio.
+The gallery offers keyboard selection and full-size images. Inactive captures
+are not requested. The library remains pre-release.
+
+## Wild Apricot exports
+
+`wild-apricot/` contains fictional REST fixtures, complete CLI output, and files
+produced by the unmodified CLI. The generator compiles the clean sibling checkout
+in a temporary folder. It intercepts REST requests with fixed responses and uses
+a loopback WebDAV fixture. It runs events, contacts, and files, then repeats the
+file export. Assertions verify the serialized contacts, byte-for-byte original
+files, and zero additional downloads on the second run.
+
+Regenerate from the portfolio root:
+
+```sh
+node scripts/project-demos/generate-wae-demo.mjs ../wild-apricot-exports
+npx prettier --write src/content/generated/wild-apricot-demo.json
+```
+
+The source checkout must be clean and have its dependencies installed. The script
+does not load its `.env` or inherit account credentials. Unknown REST requests
+fail. The WebDAV fixture is local and does not verify real account authentication.
+This demonstrates local exports and cached-file handling, not live service
+acceptance, large-account performance, or recovery from changed remote files.
+
+The portfolio displays verbatim log excerpts, the first JSON record, six of the
+24 CSV columns, and the actual output file list. The ZIP includes complete CSV
+and JSON, original fictional files, the manifest, a README, and the full log.
+Only the temporary folder and loopback port are normalized in that log.
 
 ## BitStockerz
 
@@ -39,5 +78,6 @@ ffmpeg -i assets/source/project-demos/bitstockerz-walkthrough.webm \
 ```
 
 Run `npm run optimize:project-demos` to regenerate 640/960/1440px WebP stills
-from the PNG masters. The generator does not enlarge them. Review refreshed
+from the PNG masters, up to each capture's original width. The generator does not
+enlarge them. Review refreshed
 captures before replacing these assets and update the manifest hashes.

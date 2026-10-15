@@ -464,8 +464,7 @@
 }
 
 .project-image-wrapper figcaption,
-.project-demo figcaption,
-.project-workflow figcaption {
+.project-demo figcaption {
   padding: 1rem 1.25rem;
   background: var(--bg-card);
   color: var(--text-secondary);
@@ -534,43 +533,187 @@
   }
 }
 
-.project-workflow {
-  margin: 0;
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  overflow: hidden;
-  background: var(--bg-card);
-}
-
-.workflow-label {
-  margin: 0;
-  padding: 1.5rem 1.5rem 0;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
-.project-workflow ol {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1.25rem 1.5rem 1.25rem 3.25rem;
-  margin: 0;
-  color: var(--text-primary);
-  line-height: 1.5;
-}
-
-.project-workflow li {
-  padding: 0.5rem;
-}
-
-.project-workflow li::marker {
-  color: var(--color-primary-ink);
-  font-family: var(--font-mono);
-}
-
 .project-content > .folder-icon--image {
   margin-bottom: 0.75rem;
 }
 
 .project-card:hover {
   transform: none;
+}
+
+.project-showcase,
+.export-showcase {
+  min-width: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--bg-main);
+}
+
+.demo-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+
+  button {
+    min-width: 0;
+    min-height: 44px;
+    padding: 0.625rem 0.25rem;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 0.8125rem;
+    cursor: pointer;
+  }
+
+  button[aria-selected='true'] {
+    color: var(--text-primary);
+    border-bottom-color: var(--color-primary-ink);
+    background: var(--bg-card-hover);
+    font-weight: 600;
+  }
+}
+
+.project-showcase :is(button, [role='tabpanel']):focus-visible,
+.export-table-scroll:focus-visible,
+.export-output:focus-visible {
+  outline: 2px solid var(--color-primary-ink);
+  outline-offset: -3px;
+}
+
+.design-system-capture {
+  margin: 0;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 3 / 2;
+    object-fit: contain;
+    background: #0b1217;
+  }
+
+  figcaption {
+    min-height: 166px;
+    padding: 1rem 1.25rem;
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.demo-context {
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.export-showcase .project-showcase {
+  border: 0;
+  border-radius: 0;
+}
+
+.export-output {
+  height: 420px;
+  overflow: auto;
+  padding: 1rem 1.25rem;
+  color: var(--text-primary);
+  scrollbar-gutter: stable;
+
+  pre {
+    margin: 0;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.75;
+  }
+}
+
+.export-output-label {
+  margin: 0 0 0.75rem;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+.export-command {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.export-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.8125rem;
+    text-align: left;
+  }
+
+  caption {
+    margin-bottom: 0.75rem;
+    color: var(--text-secondary);
+    text-align: left;
+  }
+
+  th,
+  td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--border-subtle);
+    white-space: nowrap;
+  }
+
+  th {
+    background: var(--bg-card);
+    font-family: var(--font-mono);
+    font-size: 0.6875rem;
+  }
+}
+
+.export-files {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  overflow-wrap: anywhere;
+}
+
+.export-note {
+  margin: 1rem 0 0;
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+}
+
+.export-demo-caption {
+  border-top: 1px solid var(--border-subtle);
+  padding: 1rem 1.25rem;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  line-height: 1.6;
+
+  p {
+    margin: 0;
+  }
+  strong {
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+}
+
+.export-demo-caption .project-capture-link {
+  color: var(--text-primary);
 }

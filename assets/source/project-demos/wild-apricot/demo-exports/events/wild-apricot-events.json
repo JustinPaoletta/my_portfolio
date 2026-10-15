@@ -1,0 +1,22 @@
+[
+  {
+    "Id": 2001,
+    "Name": "Autumn volunteer day",
+    "StartDate": "2026-10-24T09:00:00",
+    "EndDate": "2026-10-24T12:00:00",
+    "Location": "Northside Community Hall",
+    "RegistrationEnabled": true,
+    "RegistrationLimit": 40,
+    "RegisteredCount": 18
+  },
+  {
+    "Id": 2002,
+    "Name": "Community planning night",
+    "StartDate": "2026-11-05T18:00:00",
+    "EndDate": "2026-11-05T20:00:00",
+    "Location": "Northside Community Hall",
+    "RegistrationEnabled": true,
+    "RegistrationLimit": 60,
+    "RegisteredCount": 24
+  }
+]

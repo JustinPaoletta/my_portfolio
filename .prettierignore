@@ -9,3 +9,6 @@ public
 
 output/playwright/professional-review
 .playwright-mcp
+
+# Preserve the actual CLI output and original file bytes used as demo evidence.
+assets/source/project-demos/wild-apricot/demo-exports

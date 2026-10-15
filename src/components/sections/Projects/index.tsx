@@ -14,14 +14,16 @@ import {
   type ProjectSummary,
 } from '@/content/projects';
 import './Projects.css';
+import { DesignSystemShowcase } from './DesignSystemShowcase';
+import { ExportShowcase } from './ExportShowcase';
 
 interface Project extends ProjectSummary {
   id: string;
+  showcase?: 'design-system' | 'exports';
   image: string;
   imageCaption?: string;
   demo?: { src: string; webm: string; captions: string; transcript: string };
   fullSizeCapture?: string;
-  workflow?: { label: string; steps: string[]; caption: string };
   imageSrcSet?: string;
   imageSizes?: string;
   imageAlt?: string;
@@ -82,16 +84,8 @@ const projects: Project[] = [
   {
     ...JP_DESIGN_SYSTEM_PROJECT,
     id: 'project-2',
+    showcase: 'design-system',
     image: '/images/projects/design-system-dashboard-960.webp',
-    imageSrcSet: logoSrcSet('design-system-dashboard', [640, 960, 1440]),
-    imageSizes: '(max-width: 1024px) calc(100vw - 4rem), 630px',
-    imageAlt:
-      'Current JP Design System dashboard with navigation, score metrics, a chart, activity, and insights',
-    imageWidth: 1440,
-    imageHeight: 960,
-    fullSizeCapture: '/images/projects/design-system-dashboard-1440.webp',
-    imageCaption:
-      'Current Angular dashboard composition, captured in Storybook. Built with shared navigation, layout, chart, and semantic-token components. Pre-release.',
   },
   {
     ...BITSTOCKERZ_PROJECT,
@@ -123,6 +117,7 @@ const projects: Project[] = [
   },
   {
     id: 'project-4',
+    showcase: 'exports',
     title: 'wild-apricot-exports',
     description:
       'A published Node CLI and library for exporting and backing up Wild Apricot data without relying on the admin UI. It pulls contacts, events, registrations, invoices, payments, donations, audit logs, configuration, and uploaded files through the public REST API and WebDAV, then writes everything locally as JSON, CSV, and original files.',
@@ -133,16 +128,6 @@ const projects: Project[] = [
     githubUrl: `${githubProfileUrl}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
     featured: true,
-    workflow: {
-      label: 'Portable account backups',
-      steps: [
-        'Wild Apricot REST API + WebDAV',
-        'Node.js export CLI',
-        'Local JSON, CSV, and original files',
-      ],
-      caption:
-        'Export flow based on the published CLI. Inspect the source and package below.',
-    },
   },
   {
     id: 'project-5',
@@ -226,7 +211,11 @@ function Projects(): React.ReactElement {
               delay={140 + index * 90}
               visible={isVisible}
             >
-              {project.demo ? (
+              {project.showcase === 'design-system' ? (
+                <DesignSystemShowcase />
+              ) : project.showcase === 'exports' ? (
+                <ExportShowcase />
+              ) : project.demo ? (
                 <figure className="project-demo">
                   <video
                     controls
@@ -255,16 +244,6 @@ function Projects(): React.ReactElement {
                       <p>{project.demo.transcript}</p>
                     </details>
                   </figcaption>
-                </figure>
-              ) : project.workflow ? (
-                <figure className="project-workflow">
-                  <p className="workflow-label">{project.workflow.label}</p>
-                  <ol>
-                    {project.workflow.steps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ol>
-                  <figcaption>{project.workflow.caption}</figcaption>
                 </figure>
               ) : (
                 <figure

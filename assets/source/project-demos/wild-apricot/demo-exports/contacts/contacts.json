@@ -1,0 +1,74 @@
+[
+  {
+    "Id": 1001,
+    "FirstName": "Alex",
+    "LastName": "Morgan",
+    "Email": "alex@example.com",
+    "DisplayName": "Alex Morgan",
+    "Organization": "Northside Community Club",
+    "MembershipEnabled": true,
+    "MembershipLevel": {
+      "Id": 1,
+      "Name": "Community"
+    },
+    "Status": "Active",
+    "FieldValues": [
+      {
+        "FieldName": "Member since",
+        "Value": "2025-10-01"
+      },
+      {
+        "FieldName": "Renewal due",
+        "Value": "2026-10-31"
+      }
+    ]
+  },
+  {
+    "Id": 1002,
+    "FirstName": "Maya",
+    "LastName": "Chen",
+    "Email": "maya@example.com",
+    "DisplayName": "Maya Chen",
+    "Organization": "Northside Community Club",
+    "MembershipEnabled": true,
+    "MembershipLevel": {
+      "Id": 2,
+      "Name": "Volunteer"
+    },
+    "Status": "Active",
+    "FieldValues": [
+      {
+        "FieldName": "Member since",
+        "Value": "2026-02-01"
+      },
+      {
+        "FieldName": "Renewal due",
+        "Value": "2027-02-01"
+      }
+    ]
+  },
+  {
+    "Id": 1003,
+    "FirstName": "Jordan",
+    "LastName": "Davis",
+    "Email": "jordan@example.com",
+    "DisplayName": "Jordan Davis",
+    "Organization": "Northside Community Club",
+    "MembershipEnabled": true,
+    "MembershipLevel": {
+      "Id": 1,
+      "Name": "Community"
+    },
+    "Status": "PendingRenewal",
+    "FieldValues": [
+      {
+        "FieldName": "Member since",
+        "Value": "2024-10-01"
+      },
+      {
+        "FieldName": "Renewal due",
+        "Value": "2026-10-01"
+      }
+    ]
+  }
+]

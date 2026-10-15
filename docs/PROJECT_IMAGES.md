@@ -133,3 +133,14 @@ It offers WebM and H.264 playback, a poster, timed descriptions and an HTML
 transcript. `preload="none"` keeps the recording unloaded until playback is
 requested. See the [capture notes](../assets/source/project-demos/README.md)
 for the workflow, source boundaries and MP4 encoding command.
+
+The design-system card also offers fresh form, roster-table, and assistant-panel
+captures at 960 × 640. The assistant uses the Storybook example's fixed reply.
+The gallery requests only its selected image and links to the original-size
+WebP. No public Storybook deployment is implied.
+
+Wild Apricot's diagram is replaced by inspectable output from its actual CLI:
+events and contacts in CSV/JSON, original files, and a cached re-run. All data
+comes from fictional local fixtures. The downloadable ZIP and the generator's
+checks are documented in the same capture notes. The portfolio does not request
+account credentials or execute exports in visitors' browsers.
