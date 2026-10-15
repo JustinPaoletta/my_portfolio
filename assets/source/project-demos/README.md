@@ -84,31 +84,41 @@ captures before replacing these assets and update the manifest hashes.
 
 ## Plexarr
 
-The 17-second recording shows the actual Next.js/React interface: browse the
-fictional catalog, open Glass Harbor, review its details, choose Ultra-HD,
-confirm the request, and inspect the added Activity entry. The PNG poster is
-another browser capture from the same session. Film names and SVG posters are
-fictional demo content, not scraped media or real account data.
+The 18-second edited recording comes directly from the owner's authenticated live
+Plexarr deployment in Chrome. Movie posters, recommendations, availability and
+quality profiles are real app responses. There is no API interception, fictional
+catalog, seeded Activity entry or authentication bypass. The owner completed the
+normal passkey sign-in before capture. No credentials, sign-in ceremony or other
+users' Activity are included.
 
-The existing compiled production UI was copied to a disposable local runtime
-with its own database path and a fresh environment. No `.env` files or service
-credentials were loaded. The manifest records the checkout revision and existing
-build ID; this is not evidence of a fresh Plexarr build. Browser routing installed
-by `scripts/project-demos/plexarr-fixtures.mjs` supplies every API response,
-rejects unknown API routes, and blocks external origins. The existing home server
-was not used. `plexarr-evidence.json` records the intercepted request with movie
-9002 and quality profile 11, followed by the Activity fetch.
+The flow browses the movie grid, opens Avengers: Infinity War (2018), reviews its
+metadata and availability, inspects the request form with HD-1080p selected, and
+cancels back to Discover. Confirm was never clicked. The recording does not claim
+a successful add or download. The selection change occurs between the retained
+segments; the clip shows the selected profile, not an uninterrupted selection
+interaction. It has no audio or trailer playback.
 
-For another capture, serve an isolated copy of the compiled private app, install
-`installPlexarrDemo(page, origin)` before navigation, and record the flow in Chrome
-at 1440 × 960 and 15fps. Keep a disposable browser context and block service
-workers. Do not supply real account or provider credentials. The fixture responses
-demonstrate the UI only: no request reaches Radarr, no download starts, and the
-sample recommendations do not demonstrate a live ranking service. Sign-in is
-preconfigured, so the recording does not demonstrate passkey authentication.
+Native window capture excludes other desktop overlays. The two retained source
+MP4s are cropped to the app's 1440 × 808 content area, excluding browser toolbars,
+bookmarks and the address bar. They preserve the captured UI at 15fps. The PNG
+poster comes from the same live movie grid. The manifest records the crop and
+edit ranges; the deployed app revision was not independently verified. No private
+source, environment values or operational runbooks are copied into this repo.
 
-`plexarr-walkthrough.webm` retains the original 23.134 seconds outside `public/`.
-The public MP4 and VP9 WebM retain its first 17 seconds, removing trailing idle
-time. Both have no audio and use opt-in playback with timed descriptions and a
-transcript. Use the BitStockerz encoding command above with the Plexarr filenames
-and add `-t 17` to reproduce the MP4 trim.
+The public edit joins seconds 17–26 of `plexarr-live-catalog-capture.mp4` to seconds
+2–11 of `plexarr-live-request-capture.mp4`. This removes idle capture time and the
+gap between recordings without changing the UI content. Reproduce it with:
+
+```sh
+ffmpeg -i assets/source/project-demos/plexarr-live-catalog-capture.mp4 \
+  -i assets/source/project-demos/plexarr-live-request-capture.mp4 \
+  -filter_complex '[0:v]trim=start=17:end=26,setpts=PTS-STARTPTS[a];[1:v]trim=start=2:end=11,setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1:a=0[v]' \
+  -map '[v]' -an -map_metadata -1 -c:v libx264 -preset slow -crf 21 \
+  -pix_fmt yuv420p -movflags +faststart public/media/plexarr-live-demo.mp4
+```
+
+The WebM uses the same edit with VP9, CRF 30, zero target bitrate, and encoder
+speed 3. Both formats load only on playback and include timed descriptions plus
+an HTML transcript. New `plexarr-live-*` URLs prevent the previous sample clip
+from being reused by the browser's media or image cache. The fictional capture,
+fixture tool, and public media are removed from the current branch.

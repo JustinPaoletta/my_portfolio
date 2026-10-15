@@ -145,9 +145,11 @@ comes from fictional local fixtures. The downloadable ZIP and the generator's
 checks are documented in the same capture notes. The portfolio does not request
 account credentials or execute exports in visitors' browsers.
 
-Plexarr is now the fourth featured project with a 17-second browser recording
-and a real catalog poster. Its local session uses fictional film artwork and
-fixed service responses. The private repository badge remains; there is no public
-app or source link. Both video formats, captions, transcript, original capture,
-and request evidence are documented in the capture notes. Its 60px header logo
-retains the existing lossless variants.
+Plexarr is the fourth featured project with an 18-second recording from the
+owner-authenticated live app and a real movie-grid poster. It shows real catalog
+artwork, availability and quality profiles, then cancels the request review.
+There is no API interception or submitted request. The private repository badge
+remains; there is no public app or source link. The capture notes retain the two
+cropped source recordings, edit ranges, output hashes, and reproduction command.
+New `plexarr-live-*` image and media URLs avoid cached versions of the removed
+fictional demo. Its 60px header logo retains the existing lossless variants.

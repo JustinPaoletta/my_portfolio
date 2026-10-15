@@ -139,7 +139,9 @@ for (const width of [390, 1440]) {
     const mediaRequests: string[] = [];
     page.on('request', (request) => {
       if (
-        /\/media\/(bitstockerz|plexarr)-demo\.(mp4|webm)/.test(request.url())
+        /\/media\/(bitstockerz-demo|plexarr-live-demo)\.(mp4|webm)/.test(
+          request.url()
+        )
       ) {
         mediaRequests.push(request.url());
       }
@@ -160,9 +162,9 @@ for (const width of [390, 1440]) {
       .analyze();
     expect(accessibility.violations).toEqual([]);
     expect(mediaRequests).toHaveLength(0);
-    for (const [title, transcript] of [
-      ['BitStockerz', /In a disposable local account/],
-      ['Plexarr', /In an isolated local session/],
+    for (const [title, transcript, height] of [
+      ['BitStockerz', /In a disposable local account/, 960],
+      ['Plexarr', /Recorded from the live Plexarr app/, 808],
     ] as const) {
       const article = projects.locator('article.featured-project').filter({
         has: page.getByRole('heading', { name: title, exact: true }),
@@ -182,6 +184,11 @@ for (const width of [390, 1440]) {
       expect(
         await video.evaluate((element: HTMLVideoElement) => element.videoWidth)
       ).toBe(1440);
+      expect(
+        await video.evaluate((element: HTMLVideoElement) => element.videoHeight)
+      ).toBe(height);
+      const bounds = await video.boundingBox();
+      expect(bounds!.width / bounds!.height).toBeCloseTo(1440 / height, 2);
       await video.evaluate((element: HTMLVideoElement) => {
         element.pause();
         element.currentTime = element.duration - 0.5;

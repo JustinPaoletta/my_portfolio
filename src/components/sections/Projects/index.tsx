@@ -154,17 +154,17 @@ const projects: Project[] = [
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
     description:
       'A self-hosted app for discovering and requesting media for my at-home Plex server. Built with Next.js and React, it brings title discovery, quality selection, request confirmation, and an activity log into one flow. Passkeys protect access, and service credentials stay server-side.',
-    image: '/images/projects/plexarr-discover-1440.webp',
+    image: '/images/projects/plexarr-live-discover-1440.webp',
     imageWidth: 1440,
-    imageHeight: 960,
+    imageHeight: 808,
     imageCaption:
-      '17-second local app walkthrough: discover a title → choose quality → confirm → view Activity. Actual Plexarr UI with a fictional catalog and simulated services.',
+      '18-second live app walkthrough: browse the real catalog → review a title → inspect request options. Cancelled before submission.',
     demo: {
-      src: '/media/plexarr-demo.mp4',
-      webm: '/media/plexarr-demo.webm',
-      captions: '/media/plexarr-demo.vtt',
+      src: '/media/plexarr-live-demo.mp4',
+      webm: '/media/plexarr-live-demo.webm',
+      captions: '/media/plexarr-live-demo.vtt',
       transcript:
-        'In an isolated local session, browse a fictional movie catalog and open Glass Harbor. Review its details, request the title, and choose the Ultra-HD quality profile. Confirm the selection, then open Activity to see the added entry. This is the actual Plexarr interface with fixed sample responses; no real media server request or download occurs. Sign-in is preconfigured for the recording, so passkey authentication is not demonstrated.',
+        'Recorded from the live Plexarr app after passkey sign-in. Browse real movie posters and availability badges, then open Avengers: Infinity War to review its overview, genres, rating, and current availability. Open the request review and inspect the HD-1080p quality selection, then cancel and return to Discover. This edited recording uses real catalog and service responses, with no mock data or API interception. No request was submitted, and sign-in is outside the recording.',
     },
     techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
     private: true,
@@ -235,7 +235,10 @@ function Projects(): React.ReactElement {
                     poster={project.image}
                     width={project.imageWidth}
                     height={project.imageHeight}
-                    aria-label={`${project.title} product walkthrough with demo data`}
+                    style={{
+                      aspectRatio: `${project.imageWidth ?? 1440} / ${project.imageHeight ?? 960}`,
+                    }}
+                    aria-label={`${project.title} product walkthrough`}
                   >
                     <source src={project.demo.webm} type="video/webm" />
                     <source src={project.demo.src} type="video/mp4" />

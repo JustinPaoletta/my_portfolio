@@ -181,13 +181,14 @@ separate work.
 ## Plexarr demo and skill icons — 2026-10-15
 
 - [x] Add Plexarr as the fourth featured project, after the design system,
-      BitStockerz, and Wild Apricot. Record discovery, details, quality selection,
-      confirmation, and Activity in the actual local interface. Use a fictional
-      catalog and intercepted service responses; keep private access and server
-      credentials out of the public portfolio.
-- [x] Provide a 17-second opt-in WebM/MP4 player, poster, timed descriptions,
-      transcript, source recording, hashes, and captured request evidence. State
-      that passkey authentication and real service requests are not demonstrated.
+      BitStockerz, and Wild Apricot. Capture the real authenticated app: movie
+      catalog, title details and availability, quality review, then cancellation.
+      No API interception, fictional entries or new media requests.
+- [x] Provide an 18-second opt-in WebM/MP4 player, real poster, timed descriptions,
+      transcript, cropped source recordings, hashes, and reproducible edit ranges.
+      Keep passkey sign-in outside the recording and cancel before submission.
+      Remove the fictional clip and fixtures; use new asset URLs to avoid old
+      media-cache entries.
 - [x] Enlarge the Skills & Technologies artwork from 16px to 32px within 40px
       frames. Keep all 13 icons with their appropriate technology labels and
       allow the chips to wrap on small screens.

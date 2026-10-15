@@ -82,15 +82,15 @@
     "public/images/projects/design-system-forms-960.webp": "bc8aa8ef20a8dbc5e138e89de8627785e433c0c7270742e38d9fd2cb42e8e4a0",
     "public/images/projects/design-system-showcase.webp": "b55fa64d5b40a64de19ebcc498ffaaf725d95b720f552ceec30eba3070277fd7",
     "src/content/generated/wild-apricot-demo.json": "522f8f36e3f8d587ec7f7354849fb0080d0e785b89ee58e8c60195ce5ba462df",
-    "assets/source/project-demos/plexarr-evidence.json": "8131efb4c414bd10d0bc22b53d9e48d6ae12885a47a75e09a38c2f4c998e1ff1",
-    "assets/source/project-demos/plexarr-walkthrough.webm": "7da17b5c3a3600ed0d1a8ef4d8ed316c0fc73d2ca11325223b69f70cf05c063c",
-    "assets/source/project-demos/plexarr-discover.png": "375bda665547d71eb15d371d1ec645e4f83bc968777591b9f32332b216c6a6c2",
-    "public/media/plexarr-demo.vtt": "ed032b663cce80a95878ec600b9ecb1062e8441577d4bd7a363d1f342162c3a8",
-    "public/media/plexarr-demo.mp4": "9b2b435f11f01bf16a1abb393780051ef93152156e4cfafd8d50d383a326b4da",
-    "public/media/plexarr-demo.webm": "32dbe909d298f50f0fdb5520990ed852c41ffc27c54c4c214a581c4604a0ee2f",
-    "public/images/projects/plexarr-discover-640.webp": "25f9c8e7f019c9728de110008f87a35bc0ea637c92f80f7f99ddded89240c377",
-    "public/images/projects/plexarr-discover-1440.webp": "34b43b0ec512171dc3a286720c0b250157b6bd48302eb6d986c683e12da1a61a",
-    "public/images/projects/plexarr-discover-960.webp": "f4131247256af6feae90f74060e9eab6a07cedb8eb0d92e7a0a313be6ca16cf5"
+    "assets/source/project-demos/plexarr-live-request-capture.mp4": "59a5483fc716c109d49602ed34e56844246aeee58b15d1480453ce72508e8f69",
+    "assets/source/project-demos/plexarr-live-catalog-capture.mp4": "46a9593babcddb48efec487f962378699422ea480eb1d1bcedf21b4ffb3b0c84",
+    "assets/source/project-demos/plexarr-live-discover.png": "dcdf32a4e0ded0c8e3a9db9ac3e95ec00b865113d1d4f0cbdff7354bea078740",
+    "public/media/plexarr-live-demo.vtt": "7609e9d8868a8489dc5a8321d6078f1f8cba0d9f2d349e38dea76686bf0f0f28",
+    "public/media/plexarr-live-demo.webm": "79143fad8bae61fd80730d8c5e3a4fbc43349e12807d881f7001dfcfeaae0b93",
+    "public/media/plexarr-live-demo.mp4": "05b10a06a3917c81a7fb3e0d8c798b7301d9756fb54f0159af1038645590f4ed",
+    "public/images/projects/plexarr-live-discover-960.webp": "9646c82919bf8d5d3c17327e7d82752d45ed40d8b89fcb86c6e8cb11884d80a8",
+    "public/images/projects/plexarr-live-discover-1440.webp": "e3722fd9d50cbfe9397f0c286c913c37a8abfac39c9f76dfa197cf9d0826d689",
+    "public/images/projects/plexarr-live-discover-640.webp": "4a66a8690b555d1b2b433620e31774bc865dfdcb0dfac54af5236f825a2b2681"
   },
   "wildApricot": {
     "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
@@ -104,12 +104,43 @@
     "resume": "Two cached files skipped; zero additional GET requests."
   },
   "plexarr": {
-    "sourceRevision": "14e1f0c0eccd15f6d52e95f5d7fc62e2300fce6f",
-    "existingBuildId": "vfqIGL4NCJjjVxmc1t1gV",
-    "mode": "Existing compiled production UI in a disposable loopback runtime. Fictional catalog and browser-intercepted API responses; no real credentials, service requests, downloads, or passkey ceremony.",
-    "durationSeconds": 17,
-    "encoding": "VP9 WebM and H.264 MP4, 1440x960, 15fps, no audio",
-    "captureTrim": "First 17 seconds of original 23.134-second recording; trailing idle Activity view removed.",
-    "evidence": "plexarr-evidence.json"
+    "captured": "2026-10-15",
+    "deployedRevision": "Not independently verified from the browser.",
+    "mode": "Owner-authenticated live app in Chrome after normal passkey sign-in. Real catalog, recommendation, availability, and quality-profile responses. No interception, seed data, auth bypass, submitted request, or download.",
+    "sourceViewport": {
+      "width": 1777,
+      "height": 810
+    },
+    "nativeWindowRecording": {
+      "width": 1778,
+      "height": 988
+    },
+    "crop": {
+      "x": 168,
+      "y": 178,
+      "width": 1440,
+      "height": 808
+    },
+    "durationSeconds": 18,
+    "encoding": "VP9 WebM and H.264 MP4, 1440x808, 15fps, no audio",
+    "edit": [
+      {
+        "source": "plexarr-live-catalog-capture.mp4",
+        "startSeconds": 17,
+        "endSeconds": 26
+      },
+      {
+        "source": "plexarr-live-request-capture.mp4",
+        "startSeconds": 2,
+        "endSeconds": 11
+      }
+    ],
+    "workflow": [
+      "Real Discover movie grid",
+      "Avengers: Infinity War (2018) details and availability",
+      "Request review with HD-1080p selected",
+      "Cancel before submission; return to Discover"
+    ],
+    "boundaries": "Selection change occurs between the retained segments. No claim of uninterrupted recording, passkey ceremony, request submission, successful add, or download."
   }
 }
