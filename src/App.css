@@ -136,16 +136,6 @@ h6 {
   margin-bottom: 4rem;
 }
 
-.section-label {
-  display: inline-block;
-  font-family: var(--font-mono);
-  font-size: 0.85rem;
-  color: var(--color-primary-ink);
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-
 .section-title {
   font-family: var(--font-sans);
   font-size: clamp(2rem, 5vw, 3rem);

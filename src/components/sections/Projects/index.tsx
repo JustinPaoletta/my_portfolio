@@ -194,14 +194,6 @@ function Projects(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Software & tools
-          </Reveal>
-          <Reveal
             as="h2"
             id="projects-heading"
             className="section-title"

@@ -31,14 +31,6 @@ function GitHub(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Source & Activity
-          </Reveal>
-          <Reveal
             as="h2"
             id="github-heading"
             className="section-title"

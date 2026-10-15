@@ -147,14 +147,6 @@ function Contact(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Contact
-          </Reveal>
-          <Reveal
             as="h2"
             id="contact-heading"
             className="section-title"

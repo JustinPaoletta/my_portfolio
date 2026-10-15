@@ -2,7 +2,7 @@ export const SECTION_NAMES = {
   projects: 'Projects',
   experience: 'Experience',
   about: 'About',
-  articles: 'Writing',
+  articles: 'Articles',
   contact: 'Contact',
 } as const;
 

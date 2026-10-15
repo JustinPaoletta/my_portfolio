@@ -69,7 +69,7 @@ test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
     'Projects',
     'Experience',
     'About',
-    'Writing',
+    'Articles',
     'Contact',
     'Resume PDF',
   ]) {

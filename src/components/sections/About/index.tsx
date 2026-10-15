@@ -42,14 +42,6 @@ function About(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            About
-          </Reveal>
-          <Reveal
             as="h2"
             id="about-heading"
             className="section-title"

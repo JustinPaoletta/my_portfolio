@@ -129,14 +129,6 @@ export default function Articles(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Writing
-          </Reveal>
-          <Reveal
             as="h2"
             id="articles-heading"
             className="section-title"

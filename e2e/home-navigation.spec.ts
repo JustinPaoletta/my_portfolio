@@ -163,7 +163,7 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
     aboutSection.getByRole('heading', { name: 'About' })
   ).toBeVisible();
   await expect(
-    articlesSection.getByRole('heading', { name: /Writing/i })
+    articlesSection.getByRole('heading', { name: 'Articles', exact: true })
   ).toBeVisible();
   await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
   await expect(

@@ -145,14 +145,6 @@ function Experience(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Career
-          </Reveal>
-          <Reveal
             as="h2"
             id="experience-heading"
             className="section-title"

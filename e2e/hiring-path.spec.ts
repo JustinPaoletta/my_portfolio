@@ -3,11 +3,11 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 
 const hiringDestinations = [
-  { label: 'Projects', heading: 'Projects' },
-  { label: 'Experience', heading: 'Experience' },
-  { label: 'About', heading: 'About' },
-  { label: 'Writing', heading: 'Writing' },
-  { label: 'Contact', heading: 'Contact' },
+  'Projects',
+  'Experience',
+  'About',
+  'Articles',
+  'Contact',
 ] as const;
 
 async function expectNoHorizontalOverflow(page: Page): Promise<void> {
@@ -121,7 +121,7 @@ test.beforeEach(async ({ page, baseURL }) => {
   await mockPortfolioApis(page);
 });
 
-for (const width of [320, 390, 768]) {
+for (const width of [320, 390, 768, 1280]) {
   test(`hiring navigation stays usable at ${width}px`, async ({ page }) => {
     test.setTimeout(60_000);
     await page.setViewportSize({ width, height: 844 });
@@ -129,22 +129,39 @@ for (const width of [320, 390, 768]) {
     await expectNoHorizontalOverflow(page);
 
     for (const destination of hiringDestinations) {
-      await page.getByRole('button', { name: 'Open menu' }).click();
-      const dialog = page.getByRole('dialog', { name: 'Main menu' });
-      await expect(dialog).toBeVisible();
-      const link = dialog.getByRole('link', {
-        name: destination.label,
+      const isMobile = width <= 980;
+      const menu = isMobile
+        ? page.getByRole('dialog', { name: 'Main menu' })
+        : page.getByRole('navigation', {
+            name: 'Main navigation',
+            exact: true,
+          });
+
+      if (isMobile) {
+        await page.getByRole('button', { name: 'Open menu' }).click();
+      }
+      await expect(menu).toBeVisible();
+      const link = menu.getByRole('link', {
+        name: destination,
         exact: true,
       });
       const href = await link.getAttribute('href');
       expect(href).toMatch(/^#[a-z-]+$/);
       await link.click();
 
-      await expect(dialog).not.toBeVisible();
+      if (isMobile) {
+        await expect(menu).not.toBeVisible();
+      }
       await expect(page).toHaveURL(new URL(href!, page.url()).href);
+      const section = page.locator(`section${href}`);
+      await expect(section).toBeFocused();
       await expectSettledHeading(
         page,
-        page.getByRole('heading', { name: destination.heading, exact: true })
+        section.getByRole('heading', {
+          level: 2,
+          name: destination,
+          exact: true,
+        })
       );
       await expectNoHorizontalOverflow(page);
     }

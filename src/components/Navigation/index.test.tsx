@@ -145,7 +145,7 @@ describe('Navigation', () => {
     expect(
       screen.getByRole('navigation', { name: 'Main navigation' })
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'Writing' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Articles' })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: 'Resume PDF' })).toHaveAttribute(
       'download',
       'Justin_Paoletta_Resume.pdf'

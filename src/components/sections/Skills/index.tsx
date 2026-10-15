@@ -66,14 +66,6 @@ function Skills(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Applied Skills
-          </Reveal>
-          <Reveal
             as="h2"
             id="skills-heading"
             className="section-title"

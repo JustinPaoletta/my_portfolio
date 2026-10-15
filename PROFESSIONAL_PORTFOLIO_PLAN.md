@@ -21,7 +21,7 @@ The implementation is ready for review with stated content assumptions. Existing
 - [x] **1, 2, 3, 4, 13, 21 — Prior credibility work.** Preserve the professional experience layout, visible project actions, truthful GitHub failure states, audited project claims, verified GitHub profile destination, and responsive logos. See the PR history and `docs/PROJECT_CLAIMS.md` for the earlier evidence.
 - [x] **5 — Recognizable role.** Lead with Software Engineer and Angular / React / TypeScript, followed by a concrete modernization and delivery-tooling description. Avoid guessed tenure or additional achievement claims.
 - [x] **6 — Résumé access.** Keep visible PDF actions in desktop/mobile navigation, Experience, and CLI. The hero pairs View My Projects with Contact, as requested in review.
-- [x] **7 — Evidence-first order.** Present Projects, Experience, About, Skills, Writing, and Contact before optional GitHub activity and pets. Limit the main menu to the hiring journey and résumé.
+- [x] **7 — Evidence-first order.** Present Projects, Experience, About, Skills, Articles, and Contact before optional GitHub activity and pets. Limit the main menu to the hiring journey and résumé.
 - [x] **10 — Honest project visuals.** Replace featured promotional images with a captured Angular showcase and labeled implementation workflow diagrams. Captions explain exactly what is shown and preserve release/provider limitations.
 - [x] **11 — Curate inspectable work.** Feature BitStockerz, the design system, and the published Wild Apricot CLI with visible source/package actions. Private projects remain smaller supporting cards. Richer personal-ownership narratives belong with the evidence work below.
 - [x] **14 — One engineering approach.** Lead About with accesso Passport modernization work and the approved responsible-AI workflow: context, reviewed implementation, and verification. Include the AI-assisted PR review bot as a concrete example and link to Experience.
@@ -101,7 +101,7 @@ screenshots from review workflow `38178442391` were inspected and accepted.
       Reduced motion displays them immediately. Keep the prompt in transcript flow.
 - [x] Remove the GitHub introduction, restore the API profile avatar, and show
       contribution history without an expand/collapse control.
-- [x] Share the Projects, Experience, About, Writing, and Contact labels between
+- [x] Share the Projects, Experience, About, Articles, and Contact labels between
       navigation and the section headings. Pair View My Projects with Contact in the hero.
 - [x] Restore tiny local technology logos beside every displayed skill label,
       grouped in the three applied-skills cards.
@@ -197,3 +197,19 @@ separate work.
       section comparisons. Inspect desktop and phone captures; all 13 icons load
       at 32px with no chip or page overflow at 320px and 390px. Hosted results and
       reviewed Linux references are recorded in the PR.
+
+## Navigation and section names — 2026-10-15
+
+- [x] Use Projects, Experience, About, Articles, and Contact in both desktop and
+      mobile navigation and in the matching section headings. Keep the existing
+      section anchors, including `#articles`, so saved links still work.
+- [x] Remove the extra labels above all seven professional section headings,
+      including repeated About/Contact and alternate names such as Career,
+      Applied Skills, and Source & Activity. Each section has one clear title.
+- [x] Extend the existing hiring-path browser check to desktop. Verify every
+      menu destination at 320, 390, 768, and 1280 pixels: matching heading, URL,
+      section focus, settled scroll position, mobile dismissal, and no overflow.
+      All 22 focused navigation/accessibility browser checks, 222 unit tests,
+      ESLint, TypeScript, contrast/bundle checks, and Chrome build/prerender pass.
+- [x] Review and update the 17 affected macOS section, desktop navigation, and
+      hamburger-menu references. Preserve the existing comparison tolerances.
