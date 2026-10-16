@@ -77,9 +77,6 @@ function About(): React.ReactElement {
               and existing code, then verify the resulting changes through
               automated checks, browser testing, and human review.
             </p>
-            <a className="about-work-link" href="#experience">
-              View my experience <span aria-hidden="true">→</span>
-            </a>
           </Reveal>
 
           <Reveal

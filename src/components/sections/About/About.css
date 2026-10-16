@@ -28,21 +28,6 @@
   }
 }
 
-.about-work-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  min-height: 44px;
-  color: var(--color-primary-ink);
-  text-underline-offset: 0.25em;
-
-  &:focus-visible {
-    outline: 2px solid var(--color-primary-ink);
-    outline-offset: 4px;
-    border-radius: 2px;
-  }
-}
-
 .about-approach {
   padding: 1.75rem;
   border: 1px solid var(--border-subtle);

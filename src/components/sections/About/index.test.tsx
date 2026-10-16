@@ -7,9 +7,6 @@ describe('About section', () => {
     render(<About />);
 
     expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument();
-    expect(
-      screen.getByRole('link', { name: 'View my experience' })
-    ).toHaveAttribute('href', '#experience');
     expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(
       screen.getByText(/automated checks, browser testing, and human review/)
