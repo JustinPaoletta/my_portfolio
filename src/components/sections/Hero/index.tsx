@@ -457,9 +457,6 @@ function Hero(): React.ReactElement {
                     <li className="hero-title-list-item">
                       Angular · React · TypeScript
                     </li>
-                    <li className="hero-title-list-item">
-                      Web Applications &amp; Developer Tools
-                    </li>
                   </ul>
                 ) : (
                   <p className="hero-title">
@@ -509,8 +506,13 @@ function Hero(): React.ReactElement {
             </div>
 
             {isCosmicTheme && (
-              <div className="hero-tagline">
-                <p>{HERO_TAGLINE}</p>
+              <div className="hero-message">
+                <p className="hero-specialty">
+                  Web Applications &amp; Developer Tools
+                </p>
+                <div className="hero-tagline">
+                  <p>{HERO_TAGLINE}</p>
+                </div>
               </div>
             )}
 
