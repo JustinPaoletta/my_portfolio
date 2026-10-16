@@ -71,13 +71,6 @@
   flex-wrap: wrap;
 }
 
-.footer-tagline-icon {
-  width: 0.95rem;
-  height: 0.95rem;
-  color: var(--color-primary-ink);
-  flex-shrink: 0;
-}
-
 .copyright {
   font-size: 0.85rem;
   color: var(--text-muted);
