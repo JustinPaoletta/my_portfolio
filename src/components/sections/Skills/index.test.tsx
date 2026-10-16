@@ -10,6 +10,7 @@ describe('Skills section', () => {
       ['Frontend systems', ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS']],
       ['Testing & delivery', ['Playwright', 'GitHub Actions', 'Jenkins']],
       ['APIs & data', ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB']],
+      ['AI-assisted development', ['Claude Code', 'Codex', 'Cursor (IDE)']],
     ] as const) {
       const group = screen.getByRole('list', {
         name: `${category} technologies`,

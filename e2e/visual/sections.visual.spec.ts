@@ -70,7 +70,7 @@ test.describe('@visual section states', () => {
       const skills = page.locator('section#skills');
       await waitForSectionToSettle(page, skills);
       const icons = skills.locator('.skill-icon img');
-      await expect(icons).toHaveCount(13);
+      await expect(icons).toHaveCount(16);
       const loaded = await icons.evaluateAll((images) =>
         images.every(
           (image) =>

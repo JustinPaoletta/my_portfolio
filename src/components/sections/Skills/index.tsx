@@ -5,6 +5,9 @@ import { Reveal, useRevealInView } from '@/components/Reveal';
 import './Skills.css';
 
 const skillIcons: Record<string, string[]> = {
+  'Claude Code': ['/icons/claude.webp'],
+  Codex: ['/icons/codex.webp'],
+  'Cursor (IDE)': ['/icons/cursor.webp'],
   Angular: ['/icons/angular.svg'],
   React: ['/icons/react.svg'],
   TypeScript: ['/icons/typescript.svg'],
@@ -37,6 +40,12 @@ const skillAreas = [
     technologies: ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB'],
     description:
       'I build typed APIs and relational data models that connect application features to persistent storage, using clear service boundaries and consistent database access.',
+  },
+  {
+    title: 'AI-assisted development',
+    technologies: ['Claude Code', 'Codex', 'Cursor (IDE)'],
+    description:
+      'I use AI tools to explore approaches, draft implementations, and review code. I verify changes with tests and manual review, and remain responsible for the code I ship.',
   },
 ];
 
