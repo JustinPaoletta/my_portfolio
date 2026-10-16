@@ -46,7 +46,7 @@ Visual specs always navigate with `?visual-test=1`. The app treats that as a det
 - global CSS animations and transitions
 - hero parallax and motion-driven transforms
 - the interactive 3D hero scenes (the cosmic poster and engineer SVG fallbacks render instead) and SVG motion in the hero variants
-- the JP_CLI boot sequence timers
+- transient terminal caret/focus styles during captures; CLI startup has no boot delay
 - transient focus, caret, and hover residue during capture
 
 The visual helper also freezes time to `2026-03-01T12:00:00.000Z`, waits for fonts and visible images to finish loading, and applies mocked portfolio APIs before each capture.
@@ -61,9 +61,10 @@ Committed baselines live next to each visual spec:
 Current coverage includes:
 
 - desktop hero viewports for all four themes in light and dark mode
+- CLI command guides on mobile in both modes and a desktop project session
 - minimal light mobile home and open mobile navigation
 - a minimal light tall-viewport smoke capture
-- section-level captures for Projects, GitHub, Contact, and expanded Pet Dogs
+- section-level captures for Projects, both Writing slides, desktop/mobile Experience, GitHub, Contact, and expanded Pet Dogs
 
 The repo currently keeps both `*-darwin.png` and `*-linux.png` snapshots. Treat Linux as the review baseline because that is what CI executes.
 
@@ -98,3 +99,13 @@ Preferred patterns:
 ## CI Behavior
 
 The visual regression job runs from `.github/workflows/e2e.yml` as a separate Chromium-only job. A visual mismatch fails the job and uploads the Playwright report and diff artifacts for PR review.
+
+## Review Linux baselines through GitHub Actions
+
+Run **Update Visual Snapshots** on the PR branch with `commit_snapshots` left
+false. Download the `linux-visual-snapshots` artifact, inspect the images, then
+copy accepted files into the corresponding `e2e/visual/*-snapshots/` directories
+and commit them. The artifact contains only Linux PNG baselines and expires
+after three days. Newly created baselines are included in change detection.
+Automatic commit/push is available only when `commit_snapshots` is explicitly
+selected; use the review-artifact path for a design change.

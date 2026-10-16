@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>JP Engineering — sharing image source</title>
+    <style>
+      @font-face {
+        font-family: Inter;
+        src: url('../../public/fonts/inter-latin.woff2') format('woff2');
+        font-weight: 400 800;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 1200px;
+        height: 630px;
+        overflow: hidden;
+      }
+      body {
+        background: #101216;
+        color: #f5f7fa;
+        font-family: Inter, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      .card {
+        position: relative;
+        width: 1200px;
+        height: 630px;
+        padding: 64px 72px;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        height: 48px;
+        gap: 24px;
+      }
+      header img {
+        width: 72px;
+        height: 46px;
+      }
+      .wordmark {
+        font-size: 16px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        color: #d6dce4;
+      }
+      .label {
+        margin-left: auto;
+        color: #8e99a8;
+        font-size: 13px;
+        font-weight: 500;
+        letter-spacing: 3px;
+      }
+      main {
+        position: absolute;
+        left: 72px;
+        top: 205px;
+      }
+      h1 {
+        margin: 0;
+        font-size: 72px;
+        line-height: 1.1;
+        font-weight: 650;
+        letter-spacing: -3.5px;
+      }
+      .role {
+        margin: 20px 0 0;
+        font-size: 32px;
+        line-height: 1.25;
+        font-weight: 450;
+        letter-spacing: -0.6px;
+        color: #d6dce4;
+      }
+      .focus {
+        margin: 32px 0 0;
+        max-width: 650px;
+        text-wrap: balance;
+        font-size: 22px;
+        line-height: 1.5;
+        font-weight: 400;
+        letter-spacing: -0.2px;
+        color: #9ba6b5;
+      }
+      .hero-mark {
+        position: absolute;
+        left: 828px;
+        top: 237px;
+        width: 300px;
+        height: 191px;
+      }
+      .brand-tagline {
+        position: absolute;
+        left: 828px;
+        top: 451px;
+        width: 300px;
+        margin: 0;
+        color: #d6dce4;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 1.5;
+        text-align: center;
+        white-space: nowrap;
+      }
+      .separator {
+        position: absolute;
+        top: 212px;
+        left: 783px;
+        width: 1px;
+        height: 260px;
+        background: #292e36;
+      }
+      footer {
+        position: absolute;
+        left: 72px;
+        right: 72px;
+        bottom: 54px;
+        border-top: 1px solid #292e36;
+        padding-top: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .domain {
+        font-size: 20px;
+        font-weight: 500;
+        letter-spacing: -0.2px;
+        color: #d6dce4;
+      }
+      .stack {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        color: #9ba6b5;
+        font-size: 18px;
+        font-weight: 400;
+      }
+      .stack span + span::before {
+        content: '·';
+        padding-right: 16px;
+        color: #596574;
+      }
+    </style>
+  </head>
+  <body>
+    <article
+      class="card"
+      aria-label="Justin Paoletta, Software Engineer, JP Engineering"
+    >
+      <header>
+        <img src="jp-mark.svg" alt="JP monogram with terminal cursor" />
+        <span class="wordmark">JP ENGINEERING</span>
+        <span class="label">PORTFOLIO</span>
+      </header>
+      <main>
+        <h1>Justin Paoletta</h1>
+        <p class="role">Software Engineer</p>
+        <p class="focus">
+          I build intuitive web applications, modernize existing systems, and
+          create tools that help teams test and release software with
+          confidence.
+        </p>
+      </main>
+      <div class="separator"></div>
+      <p class="brand-tagline">Design - Develop - Deliver</p>
+      <img class="hero-mark" src="jp-mark.svg" alt="" />
+      <footer>
+        <span class="domain">jpengineering.dev</span>
+        <div class="stack">
+          <span>Angular</span><span>React</span><span>TypeScript</span>
+        </div>
+      </footer>
+    </article>
+  </body>
+</html>

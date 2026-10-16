@@ -54,12 +54,97 @@
 
 .graph-content {
   flex: 1;
-  overflow: visible;
+  overflow-x: auto;
+  padding: 2px 0 6px;
+  overscroll-behavior-x: contain;
   min-width: 0;
   isolation: isolate;
 }
 
+.graph-content:focus-visible {
+  outline: 2px solid var(--color-primary-ink);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.graph-scroll-shell {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.graph-scroll-cue {
+  position: absolute;
+  top: 22px;
+  bottom: 6px;
+  width: 52px;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  z-index: 2;
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.graph-scroll-cue--earlier {
+  left: 0;
+  justify-content: flex-start;
+  background: linear-gradient(to right, var(--bg-card), transparent);
+}
+
+.graph-scroll-cue--later {
+  right: 0;
+  justify-content: flex-end;
+  background: linear-gradient(to left, var(--bg-card), transparent);
+}
+
+.graph-scroll-cue .graph-scroll-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-primary);
+  pointer-events: auto;
+  -webkit-tap-highlight-color: transparent;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1px solid var(--border-subtle);
+    border-radius: inherit;
+    background: var(--bg-card);
+  }
+
+  svg {
+    position: relative;
+    width: 16px;
+    height: 16px;
+  }
+
+  &:hover::before {
+    border-color: var(--color-primary-ink);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: -2px;
+  }
+}
+
 .month-labels {
+  width: var(--calendar-width);
   display: flex;
   gap: 2px;
   height: 18px;
@@ -77,7 +162,7 @@
 .contribution-grid {
   display: flex;
   gap: 2px;
-  width: 100%;
+  width: var(--calendar-width);
   overflow: visible;
   contain: layout;
   background: var(--contrib-grid-bg, var(--bg-card));
@@ -87,7 +172,8 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  flex: 1 1 0;
+  flex: 0 0 var(--week-width, 11px);
+  width: var(--week-width, 11px);
   min-width: 0;
   overflow: visible;
 }

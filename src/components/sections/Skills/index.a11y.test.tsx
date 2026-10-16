@@ -1,21 +1,11 @@
-import { fireEvent, render, screen } from '@/test/test-utils';
+import { render } from '@/test/test-utils';
 import { axe } from 'jest-axe';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import Skills from '.';
 
-const resolvedMode: 'dark' | 'light' = 'light';
-
-vi.mock('@/hooks/useTheme', () => ({
-  useTheme: () => ({
-    resolvedMode,
-  }),
-}));
-
 describe('Skills accessibility', () => {
-  it('has no violations for the tabbed skills UI', async () => {
+  it('has no violations for the applied skill groups', async () => {
     const { container } = render(<Skills />);
-
-    fireEvent.click(screen.getByRole('tab', { name: 'Tooling' }));
 
     expect(await axe(container)).toHaveNoViolations();
   });

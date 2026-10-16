@@ -71,6 +71,12 @@
   opacity: 1;
 }
 
+@media (min-height: 521px) {
+  .hero-greeting {
+    margin-top: 1.5rem;
+  }
+}
+
 .hero-name {
   font-family: 'Inter', var(--font-sans);
   font-size: clamp(2.5rem, 8vw, 5rem);
@@ -126,9 +132,10 @@
 
 .hero-title {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 0.45rem;
   flex-wrap: wrap;
   margin: 0 0 1.5rem;
   opacity: 1;
@@ -138,6 +145,24 @@
   font-size: clamp(1.08rem, 3.25vw, 1.35rem);
   color: var(--text-secondary);
   font-weight: 600;
+}
+
+.hero-role {
+  color: var(--text-primary);
+  font-size: clamp(1.3rem, 3vw, 1.65rem);
+  font-weight: 650;
+}
+
+.hero-stack {
+  font-family: var(--font-mono);
+  font-size: clamp(0.9rem, 2vw, 1.05rem);
+  font-weight: 500;
+}
+
+@media (min-height: 521px) {
+  .hero-stack {
+    margin-top: 0.5rem;
+  }
 }
 
 .title-divider {
@@ -170,7 +195,6 @@
   gap: 1rem;
   flex-wrap: wrap;
   justify-content: center;
-  margin-bottom: 2.5rem;
   opacity: 1;
 }
 
@@ -298,6 +322,7 @@
 }
 
 .hero-social {
+  margin-bottom: 1.25rem;
   display: flex;
   gap: 1rem;
   opacity: 1;
@@ -590,7 +615,6 @@
     width: auto;
     max-width: none;
     gap: 0.5rem;
-    margin-bottom: 0.5rem;
   }
 
   .cta-primary,
@@ -601,6 +625,7 @@
   }
 
   .hero-social {
+    margin-bottom: 0.5rem;
     gap: 0.6rem;
   }
 
@@ -639,10 +664,6 @@
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
     overflow: hidden;
-  }
-
-  .hero-cta {
-    margin-bottom: 0.35rem;
   }
 
   .cta-primary,

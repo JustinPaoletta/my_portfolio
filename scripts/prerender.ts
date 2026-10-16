@@ -134,7 +134,10 @@ async function prerenderHomepage(): Promise<boolean> {
     let browser: Browser | undefined;
 
     try {
-      browser = await chromium.launch({ headless: true });
+      browser = await chromium.launch({
+        headless: true,
+        channel: process.env.PLAYWRIGHT_CHROMIUM_CHANNEL,
+      });
     } catch (error) {
       const message = getErrorMessage(error);
 
@@ -212,6 +215,15 @@ async function prerenderHomepage(): Promise<boolean> {
           heroContent.style.removeProperty('--hero-parallax-y');
           heroContent.style.removeProperty('--hero-parallax-opacity');
         }
+
+        // Captured content must remain readable when JavaScript is disabled.
+        // Deferred sections can mount before their reveal observer fires.
+        document.querySelectorAll('.reveal').forEach((element) => {
+          element.classList.add('reveal--visible');
+        });
+
+        // The full captured page replaces the source-only no-script summary.
+        document.querySelector('body > noscript')?.remove();
       });
 
       const prerenderedHtml = await page.evaluate(() => {

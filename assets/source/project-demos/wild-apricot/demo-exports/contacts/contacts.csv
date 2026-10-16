@@ -1,0 +1,4 @@
+id,firstName,lastName,email,displayName,organization,membershipEnabled,membershipLevelName,membershipLevelId,status,isAccountAdministrator,isSuspendedMember,membershipStartDate,renewalDueDate,lastLogin,createdDate,profileLastUpdated,phone,mobile,address,city,state,zip,country
+1001,Alex,Morgan,alex@example.com,Alex Morgan,Northside Community Club,true,Community,1,Active,,,2025-10-01,2026-10-31,,,,,,,,,,
+1002,Maya,Chen,maya@example.com,Maya Chen,Northside Community Club,true,Volunteer,2,Active,,,2026-02-01,2027-02-01,,,,,,,,,,
+1003,Jordan,Davis,jordan@example.com,Jordan Davis,Northside Community Club,true,Community,1,PendingRenewal,,,2024-10-01,2026-10-01,,,,,,,,,,

@@ -1,0 +1,121 @@
+{
+  "version": "1.0.1",
+  "revision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
+  "command": "wa-export all --include events,contacts,files --out-dir demo-exports",
+  "resumeCommand": "wa-export files --out-dir demo-exports",
+  "logExcerpt": "Got 3 contacts.\n  [DOWN] /Documents/member-guide.txt\n  [DOWN] /Pictures/club-mark.svg\nDownloaded        : 2\nFailed            : 0\n  ✓ events\n  ✓ contacts\n  ✓ files",
+  "resumeExcerpt": "  [SKIP] /Documents/member-guide.txt\n  [SKIP] /Pictures/club-mark.svg\nDownloaded        : 0\nSkipped (cached)  : 2\nFailed            : 0",
+  "contacts": [
+    {
+      "Id": 1001,
+      "FirstName": "Alex",
+      "LastName": "Morgan",
+      "Email": "alex@example.com",
+      "DisplayName": "Alex Morgan",
+      "Organization": "Northside Community Club",
+      "MembershipEnabled": true,
+      "MembershipLevel": {
+        "Id": 1,
+        "Name": "Community"
+      },
+      "Status": "Active",
+      "FieldValues": [
+        {
+          "FieldName": "Member since",
+          "Value": "2025-10-01"
+        },
+        {
+          "FieldName": "Renewal due",
+          "Value": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "Id": 1002,
+      "FirstName": "Maya",
+      "LastName": "Chen",
+      "Email": "maya@example.com",
+      "DisplayName": "Maya Chen",
+      "Organization": "Northside Community Club",
+      "MembershipEnabled": true,
+      "MembershipLevel": {
+        "Id": 2,
+        "Name": "Volunteer"
+      },
+      "Status": "Active",
+      "FieldValues": [
+        {
+          "FieldName": "Member since",
+          "Value": "2026-02-01"
+        },
+        {
+          "FieldName": "Renewal due",
+          "Value": "2027-02-01"
+        }
+      ]
+    },
+    {
+      "Id": 1003,
+      "FirstName": "Jordan",
+      "LastName": "Davis",
+      "Email": "jordan@example.com",
+      "DisplayName": "Jordan Davis",
+      "Organization": "Northside Community Club",
+      "MembershipEnabled": true,
+      "MembershipLevel": {
+        "Id": 1,
+        "Name": "Community"
+      },
+      "Status": "PendingRenewal",
+      "FieldValues": [
+        {
+          "FieldName": "Member since",
+          "Value": "2024-10-01"
+        },
+        {
+          "FieldName": "Renewal due",
+          "Value": "2026-10-01"
+        }
+      ]
+    }
+  ],
+  "csvPreview": {
+    "columns": [
+      "id",
+      "firstName",
+      "lastName",
+      "membershipLevelName",
+      "status",
+      "renewalDueDate"
+    ],
+    "rows": [
+      ["1001", "Alex", "Morgan", "Community", "Active", "2026-10-31"],
+      ["1002", "Maya", "Chen", "Volunteer", "Active", "2027-02-01"],
+      ["1003", "Jordan", "Davis", "Community", "PendingRenewal", "2026-10-01"]
+    ],
+    "totalColumns": 24
+  },
+  "files": [
+    "contacts/contacts.csv",
+    "contacts/contacts.json",
+    "events/wild-apricot-events.csv",
+    "events/wild-apricot-events.json",
+    "files/Documents/member-guide.txt",
+    "files/Pictures/club-mark.svg",
+    "files/_manifest.json"
+  ],
+  "counts": {
+    "contacts": 3,
+    "events": 2,
+    "originalFiles": 2
+  },
+  "hashes": {
+    "contacts/contacts.csv": "4933fb38131a3dd60e4788accbedf83a2adfa71f436a02065bc969c74e098c60",
+    "contacts/contacts.json": "45023369bbc8198c05e32f06cfbfb2033616811e764ef4a1dad3869f2b757033",
+    "events/wild-apricot-events.csv": "54bbea8257d9284401d5560ff8f3282327ee4c50dfc768b45354a853f5c02fc8",
+    "events/wild-apricot-events.json": "27fbd38390dae6e1188bef7f2eb1cd39df6ad5b37a1c118dc9326ebd8f8543c1",
+    "files/Documents/member-guide.txt": "daec9a651223389937cad0a7afd709321ac026c9c3cdad51a53374523e8c848c",
+    "files/Pictures/club-mark.svg": "112fd8c991965207db1b4e979ab25a528701fba8a8477729a4e3c64a6f62d4ff",
+    "files/_manifest.json": "b7c022b582020aea54028f6eef71660a02ac1c5d240c87c2dac736f2f2a811eb"
+  }
+}

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" rx="88" fill="#101216"/><g transform="translate(77 140) scale(1.1)">
+  <g fill="#8e99a8">
+    <path d="M39 21H134L108 153C102 184 83 200 54 200C22 200 7 182 13 152L18 126H58L53 152C51 164 55 170 64 170C73 170 79 163 81 151L100 54H33Z"/>
+    <path fill-rule="evenodd" d="M151 21H198C232 21 248 40 241 73L239 84C233 112 216 126 186 126H172L157 199H116ZM185 54L177 93H188C199 93 204 87 206 77L208 69C210 59 205 54 195 54Z"/>
+  </g>
+  <rect class="jp-logo-cursor" x="268" y="21" width="58" height="178" fill="#f5f7fa"/>
+
+</g></svg>

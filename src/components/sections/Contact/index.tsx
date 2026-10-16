@@ -1,3 +1,4 @@
+import { SECTION_NAMES } from '@/content/site';
 /**
  * Contact Section
  * Contact form and social links
@@ -146,21 +147,13 @@ function Contact(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Contact
-          </Reveal>
-          <Reveal
             as="h2"
             id="contact-heading"
             className="section-title"
             delay={120}
             visible={isVisible}
           >
-            Get In Touch
+            {SECTION_NAMES.contact}
           </Reveal>
         </Reveal>
 
@@ -174,9 +167,8 @@ function Contact(): React.ReactElement {
             visible={isVisible}
           >
             <p className="contact-intro">
-              I&apos;m always open to discussing new projects, creative ideas,
-              or opportunities to be part of your vision. Feel free to reach out
-              through any of these channels.
+              Recruiting for a software engineering role? Share the opportunity,
+              team, and job details below, or contact me directly by email.
             </p>
 
             <div className="contact-methods">
@@ -330,7 +322,7 @@ function Contact(): React.ReactElement {
                 onChange={handleChange}
                 rows={5}
                 className="form-input form-textarea"
-                placeholder="Tell me about your project..."
+                placeholder="Tell me about the role, team, or engineering challenge..."
                 aria-invalid={Boolean(fieldErrors.message)}
                 aria-describedby={
                   fieldErrors.message ? 'message-error' : undefined

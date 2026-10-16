@@ -1,5 +1,5 @@
-import { render, screen } from '@/test/test-utils';
-import { describe, expect, it, vi } from 'vitest';
+import { act, fireEvent, render, screen } from '@/test/test-utils';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import ContributionGraph from './ContributionGraph';
 import type { ContributionCalendar, ContributionDay } from '@/types/github';
 
@@ -7,13 +7,6 @@ let breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
 
 vi.mock('@/hooks/useBreakpoint', () => ({
   useBreakpoint: () => breakpoint,
-  CONTRIBUTION_WEEKS_CONFIG: {
-    xs: 2,
-    sm: 4,
-    md: 6,
-    lg: 8,
-    xl: 10,
-  },
   SHOW_DAY_LABELS: {
     xs: false,
     sm: true,
@@ -55,6 +48,115 @@ function createWeeks(count: number): ContributionCalendar['weeks'] {
 }
 
 describe('ContributionGraph', () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it.each([false, true])(
+    'scrolls both ways, restores focus at an end, and respects reduced motion (%s)',
+    (reducedMotion) => {
+      breakpoint = 'xs';
+      let width = 280;
+      const observers: ResizeObserverCallback[] = [];
+      vi.stubGlobal(
+        'ResizeObserver',
+        class {
+          constructor(callback: ResizeObserverCallback) {
+            observers.push(callback);
+          }
+          observe() {}
+          disconnect() {}
+        }
+      );
+      vi.spyOn(HTMLElement.prototype, 'offsetWidth', 'get').mockImplementation(
+        () => width
+      );
+      vi.spyOn(HTMLElement.prototype, 'clientWidth', 'get').mockImplementation(
+        () => width
+      );
+      vi.spyOn(HTMLElement.prototype, 'scrollWidth', 'get').mockImplementation(
+        () => Math.max(width, 687)
+      );
+      const matchMedia = window.matchMedia;
+      vi.spyOn(window, 'matchMedia').mockImplementation((query) => ({
+        ...matchMedia(query),
+        matches: reducedMotion,
+      }));
+      render(
+        <ContributionGraph
+          contributions={{ totalContributions: 1484, weeks: createWeeks(53) }}
+          loading={false}
+          isVisible
+        />
+      );
+      const calendar = screen.getByRole('region', {
+        name: 'GitHub contribution calendar',
+      });
+      const scrollBy = vi.fn(({ left }: { left: number }) => {
+        calendar.scrollLeft = Math.max(
+          0,
+          Math.min(687 - width, calendar.scrollLeft + left)
+        );
+        fireEvent.scroll(calendar);
+      });
+      Object.defineProperty(calendar, 'scrollBy', {
+        configurable: true,
+        value: scrollBy,
+      });
+      const later = screen.getByRole('button', {
+        name: 'Scroll to later contributions',
+      });
+      expect(
+        screen.queryByRole('button', {
+          name: 'Scroll to earlier contributions',
+        })
+      ).not.toBeInTheDocument();
+      fireEvent.click(later);
+      expect(scrollBy).toHaveBeenLastCalledWith({
+        left: 210,
+        behavior: reducedMotion ? 'instant' : 'smooth',
+      });
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Scroll to earlier contributions' })
+      );
+      expect(calendar.scrollLeft).toBe(0);
+      for (const key of ['ArrowRight', 'ArrowLeft'])
+        fireEvent.keyDown(calendar, { key });
+      expect(calendar.scrollLeft).toBe(0);
+      const calls = scrollBy.mock.calls.length;
+      for (const modifiers of [
+        { altKey: true },
+        { ctrlKey: true },
+        { metaKey: true },
+        { shiftKey: true },
+      ])
+        fireEvent.keyDown(calendar, { key: 'ArrowRight', ...modifiers });
+      fireEvent.keyDown(calendar, { key: 'Escape' });
+      expect(scrollBy).toHaveBeenCalledTimes(calls);
+      later.focus();
+      calendar.scrollLeft = 407;
+      fireEvent.scroll(calendar);
+      expect(calendar).toHaveFocus();
+      expect(later).not.toBeVisible();
+      const earlier = screen.getByRole('button', {
+        name: 'Scroll to earlier contributions',
+      });
+      earlier.focus();
+      calendar.scrollLeft = 0;
+      fireEvent.scroll(calendar);
+      expect(calendar).toHaveFocus();
+      width = 1440;
+      act(() =>
+        observers.forEach((callback) => callback([], {} as ResizeObserver))
+      );
+      expect(calendar).not.toHaveAttribute('tabindex');
+      const callsAfterFit = scrollBy.mock.calls.length;
+      fireEvent.keyDown(calendar, { key: 'ArrowRight' });
+      expect(scrollBy).toHaveBeenCalledTimes(callsAfterFit);
+      expect(
+        screen.queryByRole('button', { name: /Scroll to/ })
+      ).not.toBeInTheDocument();
+    }
+  );
+
   it('renders visible weeks, month labels, day labels and level classes', () => {
     breakpoint = 'md';
     const contributions: ContributionCalendar = {
@@ -82,6 +184,29 @@ describe('ContributionGraph', () => {
       document.querySelector('.contribution-graph.visible')
     ).toBeInTheDocument();
   });
+
+  it.each(['xs', 'sm', 'md', 'lg', 'xl'] as const)(
+    'keeps the full contribution year at the %s breakpoint',
+    (size) => {
+      breakpoint = size;
+      render(
+        <ContributionGraph
+          contributions={{ totalContributions: 1484, weeks: createWeeks(53) }}
+          loading={false}
+          isVisible
+        />
+      );
+      expect(screen.getAllByRole('img')).toHaveLength(371);
+      expect(screen.getByRole('heading')).toHaveTextContent(
+        '1,484 contributions in the last 12 months'
+      );
+      expect(
+        screen.getByRole('img', {
+          name: /1 contributions on Sunday, January 25, 2026/,
+        })
+      ).toBeInTheDocument();
+    }
+  );
 
   it('hides day labels for xs breakpoint and uses no-data description for empty weeks', () => {
     breakpoint = 'xs';

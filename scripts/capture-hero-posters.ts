@@ -126,9 +126,15 @@ async function preparePage(page: Page): Promise<void> {
   );
 }
 
-const browser = await chromium.launch();
+const browser = await chromium.launch({
+  channel: process.env.PLAYWRIGHT_CHROMIUM_CHANNEL,
+});
 
-for (const capture of captures) {
+for (const capture of captures.filter(
+  (capture) =>
+    !process.env.HERO_CAPTURE_THEME ||
+    capture.theme === process.env.HERO_CAPTURE_THEME
+)) {
   const viewport = viewports[capture.variant];
   const page = await browser.newPage({
     viewport: viewport.css,
@@ -159,13 +165,8 @@ for (const capture of captures) {
     await document.fonts.ready;
   });
 
-  // Read the WebGL drawing buffer directly (preserveDrawingBuffer is enabled
-  // in capture mode) instead of screenshotting the element. The canvas bleeds
-  // 8% past the viewport (`.hero-engineer-visual { inset: -8% }`), and element
-  // screenshots cannot capture pixels at negative page coordinates, which
-  // previously produced posters that were cropped and padded with white.
-  // The buffer also keeps its transparent background, so the poster composites
-  // over the hero gradient exactly like the live canvas does.
+  // Capture the drawing buffer directly so posters exactly match the scene,
+  // including any theme-specific canvas overflow or transparent background.
   const dataUrl = await page
     .locator(canvasSelector(capture.theme))
     .evaluate((element) => (element as HTMLCanvasElement).toDataURL());

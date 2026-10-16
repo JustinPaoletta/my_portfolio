@@ -1,6 +1,7 @@
-import { act, render, screen, waitFor } from '@/test/test-utils';
+import { act, fireEvent, render, screen, waitFor } from '@/test/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Hero from '.';
+import { renderToString } from 'react-dom/server';
 
 type ThemeName = 'minimal' | 'engineer' | 'cosmic' | 'cli';
 
@@ -411,11 +412,142 @@ describe('Hero section', () => {
     expect(heroContent).toHaveAttribute('data-parallax-enabled', 'true');
   });
 
+  it('renders the initial hero safely without browser globals during prerendering', () => {
+    vi.stubGlobal('window', undefined);
+    vi.stubGlobal('document', undefined);
+    let markup = '';
+    try {
+      markup = renderToString(<Hero />);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    expect(markup).toContain('Justin Paoletta');
+    expect(markup).toContain('Software Engineer');
+  });
+
+  it('keeps a readable cosmic poster if the animation asset fails', async () => {
+    installEngineerMatchMediaMock();
+    themeName = 'cosmic';
+    const view = render(<Hero />);
+    await waitFor(() =>
+      expect(view.container.querySelector('.hero-astronaut')).toHaveAttribute(
+        'src',
+        expect.stringContaining('astronaut-wave')
+      )
+    );
+    fireEvent.error(view.container.querySelector('.hero-astronaut')!);
+    fireEvent.error(view.container.querySelector('.hero-astronaut')!);
+    expect(view.container.querySelector('.hero-astronaut')).toHaveAttribute(
+      'src',
+      expect.stringContaining('astronaut-asteroid')
+    );
+  });
+
+  it('updates parallax through scroll boundaries without scheduling duplicate frames', async () => {
+    installEngineerMatchMediaMock();
+    const view = render(<Hero />);
+    const content = view.container.querySelector(
+      '.hero-content'
+    )! as HTMLElement;
+    await waitFor(() =>
+      expect(content).toHaveAttribute('data-parallax-enabled', 'true')
+    );
+    const section = view.container.querySelector('section')!;
+    const box = vi.spyOn(section, 'getBoundingClientRect');
+    for (const top of [0, -50, -95, -100]) {
+      box.mockReturnValue({ top, height: 100 } as DOMRect);
+      fireEvent.scroll(window);
+      fireEvent.resize(window);
+      await waitFor(() =>
+        expect(content.style.getPropertyValue('--hero-parallax-y')).toBe(
+          `${(Math.min(-top, 100) * 1.25).toFixed(2)}px`
+        )
+      );
+    }
+    expect(content.style.getPropertyValue('--hero-parallax-opacity')).toBe('0');
+    fireEvent.scroll(window);
+    view.unmount();
+  });
+
+  it('cancels a queued idle enhancement when the hero unmounts', () => {
+    installEngineerMatchMediaMock();
+    vi.useFakeTimers();
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: 'Chrome',
+    });
+    let callback: IdleRequestCallback | undefined;
+    const cancel = vi.fn();
+    vi.stubGlobal('requestIdleCallback', (next: IdleRequestCallback) => {
+      callback = next;
+      return 17;
+    });
+    vi.stubGlobal('cancelIdleCallback', cancel);
+    const view = render(<Hero />);
+    act(() => vi.advanceTimersByTime(40));
+    expect(callback).toBeDefined();
+    view.unmount();
+    expect(cancel).toHaveBeenCalledWith(17);
+    act(() => callback!({} as IdleDeadline));
+    expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the hero readable when speculative scene preloading fails', async () => {
+    installEngineerMatchMediaMock();
+    themeName = 'engineer';
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    preloadRichHeroSceneMock.mockRejectedValueOnce(
+      new Error('Preload unavailable')
+    );
+    const view = render(<Hero />);
+    await waitFor(() => expect(warning).toHaveBeenCalled());
+    expect(
+      screen.getByRole('heading', { name: 'Justin Paoletta' })
+    ).toBeInTheDocument();
+    expect(
+      view.container.querySelector('.hero-engineer-visual')
+    ).toBeInTheDocument();
+    view.unmount();
+    warning.mockRestore();
+  });
+
+  it('updates calm motion through legacy media query listeners', async () => {
+    const media = installEngineerMatchMediaMock();
+    const original = window.matchMedia;
+    window.matchMedia = (query) =>
+      ({
+        ...original(query),
+        addEventListener: undefined,
+        removeEventListener: undefined,
+      }) as unknown as MediaQueryList;
+    themeName = 'engineer';
+    const view = render(<Hero />);
+    await screen.findByTestId('engineer-circuit-3d');
+    expect(
+      view.container.querySelector('.hero-engineer-visual')
+    ).toHaveAttribute('data-engineer-circuit-motion', 'normal');
+    act(() => media.setCompact(true));
+    expect(
+      view.container.querySelector('.hero-engineer-visual')
+    ).toHaveAttribute('data-engineer-circuit-motion', 'calm');
+    view.unmount();
+  });
+
   it('renders non-CLI copy for minimal theme and CLI terminal for CLI theme', async () => {
     themeName = 'minimal';
     const minimal = render(<Hero />);
     expect(screen.getByText("Hello, I'm")).toBeInTheDocument();
-    expect(screen.getByText('View My Work')).toBeInTheDocument();
+    expect(screen.getByText('View My Projects')).toBeInTheDocument();
+    expect(
+      screen.getByText('Angular · React · TypeScript')
+    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Contact' })).toHaveAttribute(
+      'href',
+      '#contact'
+    );
+    expect(screen.getByRole('link', { name: 'Contact' })).not.toHaveAttribute(
+      'download'
+    );
     expect(screen.queryByTestId('cli-terminal')).not.toBeInTheDocument();
     expect(minimal.container.querySelector('.hero-cosmic-video')).toBeNull();
     expect(minimal.container.querySelector('.hero-engineer-visual')).toBeNull();
@@ -423,7 +555,7 @@ describe('Hero section', () => {
     themeName = 'cli';
     minimal.rerender(<Hero />);
     expect(await screen.findByTestId('cli-terminal')).toBeInTheDocument();
-    expect(screen.queryByText('View My Work')).not.toBeInTheDocument();
+    expect(screen.queryByText('View My Projects')).not.toBeInTheDocument();
   });
 
   it('handles engineer chip visual profile and viewport activation', async () => {
@@ -520,7 +652,10 @@ describe('Hero section', () => {
       );
     });
     await waitFor(() => {
-      expect(getVisual()).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(getVisual()).toHaveAttribute(
+        'data-engineer-circuit-scene',
+        'still'
+      );
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
 
@@ -573,7 +708,7 @@ describe('Hero section', () => {
     });
   });
 
-  it('keeps the engineer SVG fallback for slow data connections', async () => {
+  it('keeps the engineer room poster fallback for slow data connections', async () => {
     installEngineerMatchMediaMock();
     Object.defineProperty(navigator, 'connection', {
       configurable: true,
@@ -588,15 +723,15 @@ describe('Hero section', () => {
       expect(visual).toHaveAttribute('data-engineer-circuit-motion', 'calm');
     });
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'still');
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
   });
 
   it('keeps the engineer static poster state for reduced motion and visual tests', async () => {
@@ -612,12 +747,12 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(reducedVisual).toHaveAttribute(
         'data-engineer-circuit-scene',
-        'svg'
+        'still'
       );
     });
     expect(
       reducedMotionView.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
 
@@ -634,17 +769,17 @@ describe('Hero section', () => {
     await waitFor(() => {
       expect(visualTestVisual).toHaveAttribute(
         'data-engineer-circuit-scene',
-        'svg'
+        'still'
       );
     });
     expect(
       visualTestView.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
   });
 
-  it('keeps the engineer SVG fallback if the 3D scene fails to load', async () => {
+  it('keeps the engineer room poster fallback if the 3D scene fails to load', async () => {
     installEngineerMatchMediaMock();
     themeName = 'engineer';
     engineerCircuit3DShouldThrow = true;
@@ -655,16 +790,17 @@ describe('Hero section', () => {
     const view = render(<Hero />);
     const visual = view.container.querySelector('.hero-engineer-visual');
 
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
     await waitFor(() => {
-      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'svg');
+      expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'still');
     });
     expect(screen.queryByTestId('engineer-circuit-3d')).not.toBeInTheDocument();
     expect(
       view.container.querySelector('.hero-engineer-still')
-    ).not.toBeInTheDocument();
+    ).toBeInTheDocument();
     expect(
       view.container.querySelector('.engineer-circuit')
-    ).toBeInTheDocument();
+    ).not.toBeInTheDocument();
 
     consoleError.mockRestore();
   });

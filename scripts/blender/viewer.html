@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cosmic astronaut asset review</title>
+    <style>
+      body {
+        margin: 0;
+        background: #21172a;
+        color: #eee;
+        font: 14px system-ui;
+      }
+      canvas {
+        display: block;
+      }
+      nav {
+        position: fixed;
+        left: 20px;
+        top: 20px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      input {
+        width: 260px;
+      }
+      button {
+        font: inherit;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <button id="play">Play once</button
+      ><label
+        >Time
+        <input
+          id="time"
+          type="range"
+          min="0"
+          max="4.8"
+          step="0.05"
+          value="0" /></label
+      ><span id="status">Loading…</span>
+    </nav>
+    <script type="module" src="./viewer.mjs"></script>
+  </body>
+</html>

@@ -2,7 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import { ChevronLeftIcon, ChevronRightIcon } from '@/components/icons';
 import { env } from '@/config/env';
-import { LINKEDIN_ARTICLES } from '@/content/site';
+import { LINKEDIN_ARTICLES, SECTION_NAMES } from '@/content/site';
 import './Articles.css';
 
 function ArticleCard({
@@ -129,21 +129,13 @@ export default function Articles(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Writing
-          </Reveal>
-          <Reveal
             as="h2"
             id="articles-heading"
             className="section-title"
             delay={120}
             visible={isVisible}
           >
-            LinkedIn Articles
+            {SECTION_NAMES.articles}
           </Reveal>
           <Reveal
             as="p"
@@ -151,8 +143,9 @@ export default function Articles(): React.ReactElement {
             delay={200}
             visible={isVisible}
           >
-            Long-form notes on AI-assisted development, engineering rigor, and
-            the trade-offs behind building software that lasts.
+            My approach to Software Engineering &amp; AI-assisted development:
+            choosing the right tools, automating predictable work, and keeping
+            code understandable and maintainable.
           </Reveal>
         </Reveal>
 
@@ -248,15 +241,23 @@ export default function Articles(): React.ReactElement {
         </Reveal>
 
         <Reveal
-          as="a"
-          href={env.social.linkedin}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="articles-profile-link"
+          as="div"
+          className="articles-profile"
           delay={280}
           visible={isVisible}
         >
-          View more on LinkedIn
+          <span>See more on</span>
+          <a
+            href={env.social.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="articles-profile-link"
+            aria-label="See more on LinkedIn"
+          >
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.124 2.062 2.062 0 0 1 0 4.124zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0z" />
+            </svg>
+          </a>
         </Reveal>
       </div>
     </section>

@@ -7,14 +7,14 @@ describe('Projects section', () => {
     render(<Projects />);
 
     expect(
-      screen.getByRole('heading', { name: 'My Projects' })
+      screen.getByRole('heading', { name: 'Projects' })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: 'Other Projects' })
+      screen.getByRole('heading', { name: 'More Projects' })
     ).toBeInTheDocument();
 
     expect(screen.getAllByLabelText('Project in development').length).toBe(1);
-    expect(screen.getByLabelText('Project planning')).toBeInTheDocument();
+    expect(screen.getByLabelText('Project pre-release')).toBeInTheDocument();
 
     expect(
       screen.getByLabelText('SideQuest: Pittsburgh repository is private')
@@ -31,7 +31,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', {
-        name: 'View wild-apricot-exports on GitHub',
+        name: 'View wild-apricot-exports source code',
       })
     ).toBeInTheDocument();
     expect(
@@ -43,7 +43,7 @@ describe('Projects section', () => {
     render(<Projects />);
 
     expect(
-      screen.getByRole('heading', { name: 'My Projects' })
+      screen.getByRole('heading', { name: 'Projects' })
     ).toBeInTheDocument();
     expect(screen.getByText('BitStockerz')).toBeInTheDocument();
     expect(
@@ -60,6 +60,12 @@ describe('Projects section', () => {
     }
     expect(within(bitStockerzCard).getByText('Angular')).toBeInTheDocument();
     expect(
+      within(bitStockerzCard).getByText('MySQL/MariaDB')
+    ).toBeInTheDocument();
+    expect(
+      within(bitStockerzCard).queryByText('PostgreSQL')
+    ).not.toBeInTheDocument();
+    expect(
       within(bitStockerzCard).queryByText('React')
     ).not.toBeInTheDocument();
 
@@ -69,8 +75,8 @@ describe('Projects section', () => {
       )
     ).toBeInTheDocument();
 
-    expect(screen.getByAltText('SideQuest: Pittsburgh screenshot')).toHaveClass(
-      'project-image--contain'
-    );
+    expect(
+      screen.getByAltText(/Current JP Design System dashboard/)
+    ).toBeInTheDocument();
   });
 });

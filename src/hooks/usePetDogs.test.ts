@@ -14,6 +14,29 @@ describe('usePetDogs', () => {
     vi.restoreAllMocks();
   });
 
+  it('keeps dog interactions working when local storage is full', async () => {
+    vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+      throw new DOMException('Full', 'QuotaExceededError');
+    });
+    const error = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValue(
+          new Response(
+            JSON.stringify({ stats: { Nala: { treats: 9, scritches: 1 } } }),
+            { status: 200 }
+          )
+        )
+    );
+    const hook = renderHook(() => usePetDogs(initialDogs));
+    await waitFor(() => expect(hook.result.current[0][0].stats.treats).toBe(9));
+    act(() => hook.result.current[1]('Nala', 'treats'));
+    expect(hook.result.current[0][0].stats.treats).toBe(10);
+    expect(error).toHaveBeenCalled();
+  });
+
   it('loads initial stats from localStorage', () => {
     localStorage.setItem(
       'pet-dogs-stats',

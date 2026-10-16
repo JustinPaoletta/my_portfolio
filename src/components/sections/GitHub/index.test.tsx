@@ -1,6 +1,6 @@
 import { render, screen } from '@/test/test-utils';
 import { describe, expect, it, vi } from 'vitest';
-import GitHub from '.';
+import GitHub from '@/components/sections/GitHub';
 
 let isInView = true;
 interface GitHubSectionState {
@@ -43,10 +43,15 @@ vi.mock('@/hooks/useGitHub', () => ({
   useGitHub: () => githubState,
 }));
 
-vi.mock('./ContributionGraph', () => ({
-  default: (props: { loading: boolean; isVisible: boolean }) => (
+vi.mock('@/components/sections/GitHub/ContributionGraph', () => ({
+  default: (props: {
+    loading: boolean;
+    isVisible: boolean;
+    contributions: { totalContributions: number };
+  }) => (
     <div
       data-testid="contribution-graph"
+      data-total={props.contributions.totalContributions}
       data-loading={props.loading ? 'true' : 'false'}
       data-visible={props.isVisible ? 'true' : 'false'}
     />
@@ -82,7 +87,7 @@ vi.mock('@/components/Reveal', async () => {
 });
 
 describe('GitHub section', () => {
-  it('renders profile stats, contribution graph, and CTA', () => {
+  it('renders the avatar and contribution history directly beside the profile', () => {
     isInView = true;
     githubState = {
       user: {
@@ -108,7 +113,22 @@ describe('GitHub section', () => {
     ).toBeInTheDocument();
     expect(screen.getByText('Justin')).toBeInTheDocument();
     expect(screen.getByText('@justin')).toBeInTheDocument();
-    expect(screen.getByText('123')).toBeInTheDocument();
+    expect(screen.queryByText('Followers')).not.toBeInTheDocument();
+    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+    expect(screen.queryByText('Repos')).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('View contribution history')
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Explore source code/)).not.toBeInTheDocument();
+    expect(document.querySelector('#github details')).toBeNull();
+    expect(document.querySelector('.github-profile-link img')).toHaveAttribute(
+      'src',
+      'https://example.com/avatar.png'
+    );
+    expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
+      'data-total',
+      '123'
+    );
     expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
       'data-visible',
       'true'
@@ -154,7 +174,40 @@ describe('GitHub section', () => {
     render(<GitHub />);
 
     expect(screen.getByText('justin')).toBeInTheDocument();
-    expect(screen.getByAltText("justin's avatar")).toBeInTheDocument();
     expect(screen.queryByText('Contributions')).not.toBeInTheDocument();
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Contribution history is temporarily unavailable.'
+    );
+    expect(screen.queryByTestId('contribution-graph')).not.toBeInTheDocument();
+    expect(
+      screen.getByRole('link', { name: 'View Full Profile on GitHub' })
+    ).toHaveAttribute('href', 'https://github.com/justin');
+  });
+
+  it('renders a real zero count without an unavailable message', () => {
+    githubState = {
+      user: {
+        login: 'justin',
+        name: 'Justin',
+        avatar_url: 'https://example.com/avatar.png',
+        html_url: 'https://github.com/justin',
+        public_repos: 10,
+        followers: 1,
+        following: 1,
+      },
+      contributions: { totalContributions: 0, weeks: [] },
+      loading: false,
+      error: null,
+    };
+    render(<GitHub />);
+
+    expect(screen.getByTestId('contribution-graph')).toHaveAttribute(
+      'data-total',
+      '0'
+    );
+    expect(screen.getByTestId('contribution-graph')).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Contribution history is temporarily unavailable/)
+    ).not.toBeInTheDocument();
   });
 });

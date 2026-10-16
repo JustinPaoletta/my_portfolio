@@ -1,0 +1,22 @@
+/* Minimal keeps the neutral identity; other themes retain their own accents. */
+.jp-logo-svg {
+  --jp-logo-primary: #8e99a8;
+  --jp-logo-cursor: #f5f7fa;
+}
+
+:root[data-color-mode='light'] .jp-logo-svg {
+  --jp-logo-primary: #596574;
+  --jp-logo-cursor: #101216;
+}
+
+:root:is([data-theme='engineer'], [data-theme='cosmic']) .jp-logo-svg {
+  --jp-logo-primary: var(--color-primary-ink);
+  --jp-logo-cursor: var(--text-primary);
+}
+
+:root[data-color-mode='light'][data-theme='cosmic']
+  .navigation:not(.scrolled)
+  .jp-logo-svg {
+  --jp-logo-primary: var(--color-primary);
+  --jp-logo-cursor: #f5f7fa;
+}

@@ -1,5 +1,6 @@
 import { act, fireEvent, render, screen } from '@/test/test-utils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { revealAndNavigate } from '@/utils/deferredNavigation';
 import Contact from '.';
 
 describe('Contact section', () => {
@@ -7,11 +8,50 @@ describe('Contact section', () => {
     vi.restoreAllMocks();
   });
 
+  it('retains a rejected message, shows server field errors, and clears an error when corrected', async () => {
+    vi.useFakeTimers();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          fieldErrors: { email: 'Use your recruiting email' },
+        }),
+        { status: 422 }
+      )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    render(<Contact />);
+    for (const [label, value] of [
+      ['Your Name', 'Recruiter'],
+      ['Email Address', 'recruiter@example.com'],
+      ['Message', 'A software engineering opportunity.'],
+    ])
+      fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    fireEvent.submit(
+      screen.getByRole('button', { name: /send message/i }).closest('form')!
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(500);
+    });
+    expect(screen.getByLabelText('Email Address')).toHaveFocus();
+    expect(screen.getByText('Use your recruiting email')).toBeInTheDocument();
+    expect(screen.getByLabelText('Message')).toHaveValue(
+      'A software engineering opportunity.'
+    );
+    fireEvent.change(screen.getByLabelText('Email Address'), {
+      target: { value: 'corrected@example.com' },
+    });
+    expect(
+      screen.queryByText('Use your recruiting email')
+    ).not.toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it('renders contact methods and form fields', () => {
     render(<Contact />);
 
     expect(
-      screen.getByRole('heading', { name: 'Get In Touch' })
+      screen.getByRole('heading', { name: 'Contact' })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('link', { name: /let's connect/i })
@@ -192,5 +232,33 @@ describe('Contact section', () => {
       'aria-invalid',
       'true'
     );
+  });
+
+  it('keeps validation focus when submitted before deferred navigation settles', async () => {
+    vi.useFakeTimers();
+    try {
+      revealAndNavigate('contact');
+      render(<Contact />);
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(1);
+      });
+
+      const form = screen
+        .getByRole('button', { name: /send message/i })
+        .closest('form');
+      if (!form) throw new Error('missing contact form');
+      fireEvent.submit(form);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(500);
+      });
+
+      expect(screen.getByLabelText('Your Name')).toHaveFocus();
+      expect(screen.getByLabelText('Your Name')).toHaveAccessibleDescription(
+        'Enter a name with at least 2 characters.'
+      );
+    } finally {
+      vi.useRealTimers();
+    }
   });
 });

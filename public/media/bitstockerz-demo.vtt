@@ -1,0 +1,13 @@
+WEBVTT
+
+00:00.000 --> 00:05.500
+Edit the moving-average period and risk exit.
+Validate and save the strategy.
+
+00:05.500 --> 00:09.000
+Configure allocation, commission, and slippage.
+Run the backtest using synthetic local prices.
+
+00:09.000 --> 00:15.600
+Inspect the benchmark comparison and equity curve.
+Synthetic demo results; no live trading.

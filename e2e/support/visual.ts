@@ -16,6 +16,7 @@ export async function gotoVisualState(
     theme: VisualTheme;
     mode: VisualMode;
     viewport: { width: number; height: number };
+    githubContributionWeeks?: number;
   }
 ): Promise<void> {
   await page.setViewportSize(options.viewport);
@@ -60,7 +61,9 @@ export async function gotoVisualState(
     }
   });
 
-  await mockPortfolioApis(page);
+  await mockPortfolioApis(page, {
+    githubContributionWeeks: options.githubContributionWeeks,
+  });
   await page.goto(
     `/?theme=${options.theme}&mode=${options.mode}&visual-test=1`,
     {
@@ -90,11 +93,40 @@ export async function waitForSectionToSettle(
 ): Promise<void> {
   await enableSectionCaptureMode(page);
   await revealSectionIfDeferred(page, locator);
+  const viewport = page.viewportSize();
+  const bounds = await locator.boundingBox();
+  if (viewport && bounds && bounds.height > viewport.height) {
+    // Resize before settling. Locator screenshots otherwise resize a tall crop
+    // after alignment, moving preceding viewport-sized sections during capture.
+    await page.setViewportSize({
+      width: viewport.width,
+      height: Math.ceil(bounds.height) + 2,
+    });
+  }
   await locator.scrollIntoViewIfNeeded();
   await page.waitForLoadState('networkidle');
   await waitForImages(locator);
   await resetTransientInteractionState(page);
   await page.waitForTimeout(500);
+  await locator.evaluate((section) => {
+    // Component screenshots use a stable viewport origin. Their normal-flow
+    // placement is covered by responsive journey tests; unrelated copy above
+    // must not alter glyph rasterization in this component's baseline.
+    section.style.height = 'auto';
+    const bounds = section.getBoundingClientRect();
+    const background = getComputedStyle(section).backgroundColor;
+    section.style.position = 'fixed';
+    section.style.top = '0px';
+    section.style.left = '0px';
+    section.style.width = `${bounds.width}px`;
+    section.style.height = `${Math.ceil(bounds.height)}px`;
+    section.style.zIndex = '1000';
+    if (background === 'rgba(0, 0, 0, 0)' || background === 'transparent') {
+      section.style.backgroundColor = getComputedStyle(
+        document.body
+      ).backgroundColor;
+    }
+  });
 }
 
 async function revealSectionIfDeferred(
@@ -134,7 +166,9 @@ async function enableSectionCaptureMode(page: Page): Promise<void> {
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
-      .navigation {
+      html { overflow-anchor: none; }
+      .navigation,
+      .skip-link {
         opacity: 0 !important;
         visibility: hidden !important;
       }

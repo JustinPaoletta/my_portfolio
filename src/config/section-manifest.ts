@@ -19,19 +19,9 @@ interface SectionManifestItem {
 
 export const SECTION_MANIFEST: SectionManifestItem[] = [
   {
-    id: 'about',
-    activation: 'idle',
-    Component: lazy(() => import('@/components/sections/About')),
-  },
-  {
     id: 'projects',
     activation: 'idle',
     Component: lazy(() => import('@/components/sections/Projects')),
-  },
-  {
-    id: 'articles',
-    activation: 'deferred',
-    Component: lazy(() => import('@/components/sections/Articles')),
   },
   {
     id: 'experience',
@@ -39,19 +29,29 @@ export const SECTION_MANIFEST: SectionManifestItem[] = [
     Component: lazy(() => import('@/components/sections/Experience')),
   },
   {
+    id: 'about',
+    activation: 'deferred',
+    Component: lazy(() => import('@/components/sections/About')),
+  },
+  {
     id: 'skills',
     activation: 'deferred',
     Component: lazy(() => import('@/components/sections/Skills')),
   },
   {
-    id: 'github',
+    id: 'articles',
     activation: 'deferred',
-    Component: lazy(() => import('@/components/sections/GitHub')),
+    Component: lazy(() => import('@/components/sections/Articles')),
   },
   {
     id: 'contact',
     activation: 'deferred',
     Component: lazy(() => import('@/components/sections/Contact')),
+  },
+  {
+    id: 'github',
+    activation: 'deferred',
+    Component: lazy(() => import('@/components/sections/GitHub')),
   },
   {
     id: 'pet-dogs',

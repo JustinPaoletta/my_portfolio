@@ -1,4 +1,4 @@
-import { render, screen } from '@/test/test-utils';
+import { fireEvent, render, screen } from '@/test/test-utils';
 import { axe } from 'jest-axe';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ThemeProvider } from '@/hooks/useTheme';
@@ -6,7 +6,6 @@ import CliTerminal from './CliTerminal';
 
 const updateDogStatsMock = vi.fn();
 
-let breakpoint: 'xs' | 'sm' | 'md' | 'lg' | 'xl' = 'md';
 let dogsState = [
   { name: 'Nala', stats: { treats: 1, scritches: 2 } },
   { name: 'Rosie', stats: { treats: 3, scritches: 4 } },
@@ -28,10 +27,6 @@ let githubState = {
   error: null as string | null,
 };
 
-vi.mock('@/hooks/useBreakpoint', () => ({
-  useBreakpoint: () => breakpoint,
-}));
-
 vi.mock('@/hooks/usePetDogs', () => ({
   usePetDogs: () => [dogsState, updateDogStatsMock],
 }));
@@ -42,7 +37,6 @@ vi.mock('@/hooks/useGitHub', () => ({
 
 describe('CLI terminal accessibility', () => {
   beforeEach(() => {
-    breakpoint = 'md';
     dogsState = [
       { name: 'Nala', stats: { treats: 1, scritches: 2 } },
       { name: 'Rosie', stats: { treats: 3, scritches: 4 } },
@@ -62,16 +56,6 @@ describe('CLI terminal accessibility', () => {
       loading: false,
       error: null,
     };
-
-    vi.spyOn(window, 'setTimeout').mockImplementation(((
-      callback: TimerHandler
-    ) => {
-      if (typeof callback === 'function') {
-        callback();
-      }
-      return 1 as unknown as number;
-    }) as typeof window.setTimeout);
-    vi.spyOn(window, 'clearTimeout').mockImplementation(() => {});
   });
 
   it('has no violations for the interactive terminal shell', async () => {
@@ -82,8 +66,22 @@ describe('CLI terminal accessibility', () => {
     );
 
     expect(
-      screen.getByText(/Use panel options or type a number\/command./i)
+      screen.getByRole('heading', { name: 'Justin Paoletta', level: 1 })
     ).toBeInTheDocument();
+    const transcript = screen.getByRole('region', {
+      name: 'Terminal transcript',
+    });
+    expect(transcript).not.toHaveAttribute('aria-live');
+    expect(screen.queryByRole('log')).not.toBeInTheDocument();
+    expect(await axe(container)).toHaveNoViolations();
+
+    const input = screen.getByLabelText('Terminal command input');
+    fireEvent.change(input, { target: { value: 'resume' } });
+    fireEvent.submit(input.closest('form')!);
+    expect(
+      screen.getByRole('link', { name: 'Download resume as PDF' })
+    ).toBeInTheDocument();
+    expect(screen.getByRole('status')).not.toBeEmptyDOMElement();
     expect(await axe(container)).toHaveNoViolations();
   });
 });

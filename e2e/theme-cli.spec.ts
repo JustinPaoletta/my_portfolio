@@ -16,9 +16,10 @@ async function closeThemeSwitcher(page: Page): Promise<void> {
 }
 
 async function waitForCliBootComplete(page: Page): Promise<void> {
-  await expect(page.locator('.cli-history .cli-line').first()).toHaveText(
-    /Use panel options or type a number\/command\./i
-  );
+  await expect(
+    page.getByRole('heading', { name: 'Justin Paoletta', exact: true })
+  ).toBeVisible();
+  await expect(page.getByLabel('Terminal command input')).toBeVisible();
 }
 
 function delay(ms: number): Promise<void> {
@@ -57,7 +58,7 @@ test('cosmic theme restores the 3D nebula hero from localStorage', async ({
 
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('#hero video')).toHaveCount(0);
 
   // The interactive 3D scene is mounted after the deferred hero enhancement.
   await expect(page.locator('.hero-background')).toHaveAttribute(
@@ -82,7 +83,7 @@ test('cosmic restore shows the static poster fallback immediately', async ({
     page.getByRole('heading', { name: 'Justin Paoletta' })
   ).toBeVisible();
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('#hero video')).toHaveCount(0);
 
   const startupState = await page.evaluate(() => {
     const still =
@@ -239,8 +240,10 @@ test('reduced motion and Save-Data skip hero GLB requests', async ({
   });
   await expect(page.locator('.hero-engineer-visual')).toHaveAttribute(
     'data-engineer-circuit-scene',
-    'svg'
+    'still'
   );
+  await expect(page.locator('.hero-engineer-still')).toBeVisible();
+  await expect(page.locator('.engineer-circuit3d-stage canvas')).toHaveCount(0);
   await page.waitForTimeout(1_000);
   expect(glbRequests).toBe(0);
 
@@ -318,7 +321,7 @@ test('query params apply theme and mode overrides', async ({ page }) => {
     'light'
   );
   await expect(
-    page.locator('section[aria-label="Interactive portfolio terminal"]')
+    page.locator('section[aria-label="Portfolio terminal"]')
   ).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
@@ -335,24 +338,24 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
     'light'
   );
   await expect(page.locator('.hero-cosmic-still')).toHaveCount(1);
-  await expect(page.locator('video')).toHaveCount(0);
+  await expect(page.locator('#hero video')).toHaveCount(0);
 
   await expect
     .poll(async () => {
       return page.evaluate(() => {
         const hero = document.querySelector<HTMLElement>('.hero-background');
-        const still = document.querySelector<HTMLElement>('.hero-cosmic-still');
         const stage = document.querySelector<HTMLElement>('.hero-cosmic-stage');
         const content = document.querySelector<HTMLElement>('.hero-content');
         const name = document.querySelector<HTMLElement>('.hero-name-text');
         const greeting = document.querySelector<HTMLElement>('.hero-greeting');
         const nameHeading = document.querySelector<HTMLElement>('.hero-name');
-        const navLogo = document.querySelector<HTMLElement>('.nav-logo');
+        const navLogo = document.querySelector<SVGElement>(
+          '.nav-logo .jp-logo-svg'
+        );
         const navLink = document.querySelector<HTMLElement>('.nav-link');
 
         if (
           !hero ||
-          !still ||
           !stage ||
           !content ||
           !name ||
@@ -396,7 +399,7 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       greetingFontFamily: expect.stringContaining('Space Grotesk'),
       nameFontFamily: expect.stringContaining('Inter'),
       navLinkColor: 'rgb(248, 241, 255)',
-      navLogoPrimary: '#f8f1ff',
+      navLogoPrimary: '#c77dff',
     });
 
   await page.evaluate(() => {
@@ -430,17 +433,21 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
     .getByRole('dialog', { name: /theme settings/i })
     .getByRole('radio', { name: 'CLI' })
     .click();
-  await closeThemeSwitcher(page);
+  await expect(
+    page.getByRole('dialog', { name: /theme settings/i })
+  ).toHaveCount(0);
 
   await expect(
-    page.locator('section[aria-label="Interactive portfolio terminal"]')
+    page.locator('section[aria-label="Portfolio terminal"]')
   ).toBeVisible();
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
   ).toHaveCount(0);
   await waitForCliBootComplete(page);
+  await expect(page.locator('main')).not.toHaveAttribute('inert', '');
 
   const commandInput = page.getByLabel(/terminal command input/i);
+  await expect(commandInput).toBeFocused();
   await commandInput.fill('9');
   await commandInput.press('Enter');
   await expect(page.getByText('[HELP]')).toBeVisible();
@@ -457,27 +464,101 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
     page.getByRole('navigation', { name: /main navigation/i })
   ).toBeVisible();
   await expect(
-    page.locator('section[aria-label="Interactive portfolio terminal"]')
+    page.locator('section[aria-label="Portfolio terminal"]')
   ).toHaveCount(0);
 });
 
-test('CLI close control switches back to default theme', async ({ page }) => {
+test('CLI commands control appearance and return to the main site', async ({
+  page,
+}) => {
   await mockPortfolioApis(page);
-  await page.goto('/');
+  await page.goto('/?theme=cli&mode=dark');
+  await waitForCliBootComplete(page);
+  const commandInput = page.getByLabel('Terminal command input');
+  await expect(
+    page.getByRole('button', { name: /toggle theme switcher/i })
+  ).toHaveCount(0);
 
-  await openThemeSwitcher(page);
-  await page
-    .getByRole('dialog', { name: /theme settings/i })
-    .getByRole('radio', { name: 'CLI' })
-    .click();
-  await closeThemeSwitcher(page);
+  await commandInput.fill('mode light');
+  await commandInput.press('Enter');
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-color-mode',
+    'light'
+  );
+  await expect
+    .poll(() =>
+      page.evaluate(() => localStorage.getItem('portfolio-color-mode'))
+    )
+    .toBe('light');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute(
+    'data-color-mode',
+    'light'
+  );
 
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'cli');
-  await page
-    .getByRole('button', { name: /exit cli and switch to minimal theme/i })
-    .click();
-  await expect(page.locator('html')).toHaveAttribute('data-theme', 'minimal');
+  await commandInput.fill('theme engineer');
+  await commandInput.press('Enter');
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'engineer');
   await expect(
     page.getByRole('navigation', { name: /main navigation/i })
   ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: /toggle theme switcher/i })
+  ).toBeVisible();
+  await expect
+    .poll(() => page.evaluate(() => localStorage.getItem('portfolio-theme')))
+    .toBe('engineer');
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-theme', 'engineer');
+});
+
+test('software graphics keeps a rendered room without continuously redrawing', async ({
+  page,
+}) => {
+  await mockPortfolioApis(page);
+  await page.addInitScript(() => {
+    const target = window as typeof window & { roomRenderCount: number };
+    target.roomRenderCount = 0;
+    for (const prototype of [
+      WebGLRenderingContext.prototype,
+      WebGL2RenderingContext.prototype,
+    ]) {
+      const getParameter = prototype.getParameter;
+      prototype.getParameter = function (parameter: number) {
+        return parameter === 0x9246 || parameter === this.RENDERER
+          ? 'ANGLE (Google, SwiftShader Device)'
+          : getParameter.call(this, parameter);
+      };
+      const clear = prototype.clear;
+      prototype.clear = function (mask: number) {
+        target.roomRenderCount += 1;
+        return clear.call(this, mask);
+      };
+    }
+  });
+  await page.goto('/?theme=engineer&mode=dark', {
+    waitUntil: 'domcontentloaded',
+  });
+  await expect(page.locator('.engineer-circuit3d-stage')).toHaveAttribute(
+    'data-room-renderer',
+    'software'
+  );
+  await expect(page.locator('.hero-engineer-visual')).toHaveAttribute(
+    'data-engineer-circuit-poster',
+    'hidden',
+    { timeout: 20000 }
+  );
+  await expect(page.locator('.engineer-circuit3d-stage canvas')).toHaveCount(1);
+  const countFrames = () =>
+    page.evaluate(
+      () =>
+        (window as typeof window & { roomRenderCount: number }).roomRenderCount
+    );
+  await page.waitForTimeout(100);
+  const frames = await countFrames();
+  expect(frames).toBeGreaterThan(0);
+  await page.waitForTimeout(350);
+  expect(await countFrames()).toBe(frames);
+  await page.setViewportSize({ width: 900, height: 700 });
+  await expect.poll(countFrames).toBeGreaterThan(frames);
 });
