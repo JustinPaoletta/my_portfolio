@@ -26,8 +26,8 @@
 
 .articles-carousel__controls {
   display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start;
   gap: 1rem;
 }
 
@@ -38,6 +38,11 @@
 }
 
 .articles-carousel__counter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.75rem;
+  text-align: center;
   margin: 0;
   font-family: var(--font-mono);
   font-size: 0.82rem;
@@ -361,28 +366,6 @@
 @media (max-width: 768px) {
   .articles-section {
     padding: 5rem 1.25rem;
-  }
-
-  .articles-carousel__controls {
-    grid-template-columns: auto auto;
-    grid-template-areas:
-      'status status'
-      'previous next';
-    justify-content: center;
-  }
-
-  .articles-carousel__status {
-    grid-area: status;
-  }
-
-  .articles-carousel__controls > .articles-carousel__nav:first-child {
-    grid-area: previous;
-    justify-self: end;
-  }
-
-  .articles-carousel__controls > .articles-carousel__nav:last-child {
-    grid-area: next;
-    justify-self: start;
   }
 
   .article-card {
