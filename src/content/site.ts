@@ -7,7 +7,7 @@ export const SECTION_NAMES = {
 } as const;
 
 export const HERO_TAGLINE =
-  'I modernize frontend applications and build the tooling that helps teams ship reliably—from AngularJS migrations and micro-frontends to CI/CD automation.';
+  'I build intuitive web applications, modernize existing systems, and create tools that help teams test and release software with confidence.';
 
 export const SEO_DESCRIPTION =
   'Justin Paoletta is a software engineer focused on frontend platform architecture, AngularJS modernization, micro-frontends, and CI/CD automation.';

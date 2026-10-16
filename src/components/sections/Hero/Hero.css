@@ -71,6 +71,12 @@
   opacity: 1;
 }
 
+@media (min-height: 521px) {
+  .hero-greeting {
+    margin-top: 1.5rem;
+  }
+}
+
 .hero-name {
   font-family: 'Inter', var(--font-sans);
   font-size: clamp(2.5rem, 8vw, 5rem);

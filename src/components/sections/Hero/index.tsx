@@ -458,7 +458,7 @@ function Hero(): React.ReactElement {
                       Angular · React · TypeScript
                     </li>
                     <li className="hero-title-list-item">
-                      Modernization &amp; Release Tooling
+                      Web Applications &amp; Developer Tools
                     </li>
                   </ul>
                 ) : (

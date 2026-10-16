@@ -71,6 +71,10 @@
   color: var(--color-primary-light);
 }
 
+:root[data-theme='cosmic'] .hero-title-list-item:last-child {
+  text-wrap: balance;
+}
+
 :root[data-theme='cosmic'] .hero-subtext-copy .hero-tagline {
   margin: 0;
   max-width: 56ch;
