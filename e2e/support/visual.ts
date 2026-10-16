@@ -109,22 +109,23 @@ export async function waitForSectionToSettle(
   await resetTransientInteractionState(page);
   await page.waitForTimeout(500);
   await locator.evaluate((section) => {
-    if (section.dataset.visualPixelAligned === 'true') return;
-    // Keep component crops independent of fractional offsets from preceding
-    // sections, including Playwright's temporary viewport resize for tall crops.
-    const align = (): void => {
-      section.style.translate = 'none';
-      const rect = section.getBoundingClientRect();
-      const scale = window.devicePixelRatio || 1;
-      const x = Math.round(rect.x * scale) / scale - rect.x;
-      const y = Math.round(rect.y * scale) / scale - rect.y;
-      section.style.translate = `${x}px ${y}px`;
-    };
-    align();
-    window.addEventListener('resize', align);
-    const observer = new ResizeObserver(align);
-    observer.observe(section);
-    section.dataset.visualPixelAligned = 'true';
+    // Component screenshots use a stable viewport origin. Their normal-flow
+    // placement is covered by responsive journey tests; unrelated copy above
+    // must not alter glyph rasterization in this component's baseline.
+    section.style.height = 'auto';
+    const bounds = section.getBoundingClientRect();
+    const background = getComputedStyle(section).backgroundColor;
+    section.style.position = 'fixed';
+    section.style.top = '0px';
+    section.style.left = '0px';
+    section.style.width = `${bounds.width}px`;
+    section.style.height = `${Math.ceil(bounds.height)}px`;
+    section.style.zIndex = '1000';
+    if (background === 'rgba(0, 0, 0, 0)' || background === 'transparent') {
+      section.style.backgroundColor = getComputedStyle(
+        document.body
+      ).backgroundColor;
+    }
   });
 }
 
@@ -165,6 +166,7 @@ async function enableSectionCaptureMode(page: Page): Promise<void> {
     const style = document.createElement('style');
     style.id = styleId;
     style.textContent = `
+      html { overflow-anchor: none; }
       .navigation,
       .skip-link {
         opacity: 0 !important;

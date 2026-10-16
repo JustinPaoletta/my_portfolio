@@ -11,7 +11,15 @@ permissions:
 
 jobs:
   playwright-functional:
-    name: Playwright Functional (Chromium)
+    name: Playwright Functional (${{ matrix.label }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: chromium
+            label: Chromium
+          - project: mobile-chromium
+            label: Mobile Chromium
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -56,13 +64,13 @@ jobs:
         run: npm run test:a11y:unit
 
       - name: Run e2e tests
-        run: npm run test:e2e -- --project=chromium
+        run: npm run test:e2e -- --project=${{ matrix.project }}
 
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: playwright-report-functional
+          name: playwright-report-functional-${{ matrix.project }}
           path: |
             playwright-report
             test-results

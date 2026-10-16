@@ -8,6 +8,45 @@ describe('Contact section', () => {
     vi.restoreAllMocks();
   });
 
+  it('retains a rejected message, shows server field errors, and clears an error when corrected', async () => {
+    vi.useFakeTimers();
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          fieldErrors: { email: 'Use your recruiting email' },
+        }),
+        { status: 422 }
+      )
+    );
+    vi.stubGlobal('fetch', fetchMock);
+    render(<Contact />);
+    for (const [label, value] of [
+      ['Your Name', 'Recruiter'],
+      ['Email Address', 'recruiter@example.com'],
+      ['Message', 'A software engineering opportunity.'],
+    ])
+      fireEvent.change(screen.getByLabelText(label), { target: { value } });
+    fireEvent.submit(
+      screen.getByRole('button', { name: /send message/i }).closest('form')!
+    );
+    await act(async () => {
+      await vi.advanceTimersByTimeAsync(500);
+    });
+    expect(screen.getByLabelText('Email Address')).toHaveFocus();
+    expect(screen.getByText('Use your recruiting email')).toBeInTheDocument();
+    expect(screen.getByLabelText('Message')).toHaveValue(
+      'A software engineering opportunity.'
+    );
+    fireEvent.change(screen.getByLabelText('Email Address'), {
+      target: { value: 'corrected@example.com' },
+    });
+    expect(
+      screen.queryByText('Use your recruiting email')
+    ).not.toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it('renders contact methods and form fields', () => {
     render(<Contact />);
 

@@ -250,6 +250,21 @@ describe('useGitHub', () => {
     expect(localStorage.getItem('github_stats_cache')).toContain('"version":2');
   });
 
+  it('handles non-Error failures and cancels work before the first request starts', async () => {
+    fetchGitHubUserMock.mockRejectedValue('unavailable');
+    const first = renderHook(() => useGitHub());
+    await waitFor(() => expect(first.result.current.loading).toBe(false));
+    expect(first.result.current.error).toBe('Failed to fetch GitHub data');
+    first.unmount();
+    fetchGitHubUserMock.mockClear();
+    const next = renderHook(() => useGitHub());
+    next.unmount();
+    await act(async () => {
+      await Promise.resolve();
+    });
+    expect(fetchGitHubUserMock).not.toHaveBeenCalled();
+  });
+
   it('sets error state when REST fetch fails', async () => {
     fetchGitHubUserMock.mockRejectedValue(new Error('REST unavailable'));
 

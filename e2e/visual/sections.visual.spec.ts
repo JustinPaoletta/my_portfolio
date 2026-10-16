@@ -1,3 +1,4 @@
+import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import {
   DESKTOP_SECTION_VIEWPORT,
@@ -8,6 +9,58 @@ import {
 
 test.describe('@visual section states', () => {
   test.describe.configure({ mode: 'parallel' });
+
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures About on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, { theme: 'minimal', mode: 'dark', viewport });
+      const about = page.locator('section#about');
+      await waitForSectionToSettle(page, about);
+      await expect(about).toHaveScreenshot(`about-${label}.png`, {
+        caret: 'hide',
+      });
+    });
+  }
+
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', { width: 390, height: 1600 }],
+  ] as const) {
+    test(`section captures are independent of fractional preceding layout on ${label}`, async ({
+      page,
+    }, testInfo) => {
+      await gotoVisualState(page, {
+        theme: 'minimal',
+        mode: 'light',
+        viewport,
+      });
+      const skills = page.locator('#skills');
+      await waitForSectionToSettle(page, skills);
+      const original = await skills.screenshot({ animations: 'disabled' });
+      // A copy edit earlier in the document can move this section by a fraction
+      // of a pixel without changing any of its own content or layout.
+      await page.locator('#about').evaluate((section) => {
+        section.style.marginBottom = '0.375px';
+      });
+      await waitForSectionToSettle(page, skills);
+      const after = await skills.screenshot({ animations: 'disabled' });
+      if (!after.equals(original)) {
+        await writeFile(testInfo.outputPath('before.png'), original);
+        await writeFile(testInfo.outputPath('after.png'), after);
+        await testInfo.attach('before', {
+          body: original,
+          contentType: 'image/png',
+        });
+        await testInfo.attach('after', {
+          body: after,
+          contentType: 'image/png',
+        });
+      }
+      expect(after.equals(original)).toBe(true);
+    });
+  }
 
   test('captures projects section', async ({ page }) => {
     await gotoVisualState(page, {

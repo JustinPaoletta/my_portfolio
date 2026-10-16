@@ -31,6 +31,34 @@ class TestIntersectionObserver implements IntersectionObserver {
 }
 
 describe('useIntersectionObserver', () => {
+  it('debounces resize/orientation reconnects and cancels pending work on unmount', () => {
+    vi.useFakeTimers();
+    vi.stubGlobal('IntersectionObserver', TestIntersectionObserver);
+    observerInstances.length = 0;
+    const ref = { current: document.createElement('div') };
+    const hook = renderHook(() => useIntersectionObserver(ref));
+    const send = (name: string) =>
+      act(() => window.dispatchEvent(new Event(name)));
+    send('resize');
+    send('resize');
+    send('orientationchange');
+    send('orientationchange');
+    act(() => vi.advanceTimersByTime(149));
+    expect(observerInstances).toHaveLength(1);
+    act(() => vi.advanceTimersByTime(1));
+    expect(observerInstances).toHaveLength(2);
+    act(() => vi.advanceTimersByTime(150));
+    expect(observerInstances).toHaveLength(3);
+    expect(observerInstances[0].disconnect).toHaveBeenCalled();
+    expect(observerInstances[2].observe).toHaveBeenCalledWith(ref.current);
+    send('resize');
+    send('orientationchange');
+    hook.unmount();
+    act(() => vi.runAllTimers());
+    expect(observerInstances).toHaveLength(3);
+    vi.useRealTimers();
+  });
+
   it('returns false when ref has no current element', () => {
     vi.stubGlobal('IntersectionObserver', TestIntersectionObserver);
     observerInstances.length = 0;

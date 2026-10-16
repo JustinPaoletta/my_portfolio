@@ -335,7 +335,6 @@ const DOGS: CliDogMetadata[] = [
   {
     name: 'Nala',
     breed: 'Australian Cattle Dog / Australian Shepherd / German Shepherd mix',
-    badge: 'Foster',
   },
   { name: 'Rosie', breed: 'Bloodhound / Beagle mix' },
   { name: 'Tito', breed: 'Chihuahua / Pomeranian / Dachshund mix' },

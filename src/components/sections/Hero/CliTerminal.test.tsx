@@ -133,6 +133,24 @@ describe('CliTerminal', () => {
     };
   });
 
+  it('shows startup guidance immediately when reduced motion is requested', () => {
+    const original = window.matchMedia;
+    const media = vi
+      .spyOn(window, 'matchMedia')
+      .mockImplementation((query) => ({
+        ...original(query),
+        matches: query === '(prefers-reduced-motion: reduce)',
+      }));
+    try {
+      renderTerminal();
+      expect(
+        terminalTranscript().getByText(/^Type ls to list directories/)
+      ).toBeInTheDocument();
+    } finally {
+      media.mockRestore();
+    }
+  });
+
   it('reveals the opening instructions half a second after the welcome', () => {
     vi.useFakeTimers();
     try {
@@ -343,9 +361,7 @@ describe('CliTerminal', () => {
     ).toBeInTheDocument();
 
     runCommand('dog 1');
-    expect(
-      terminalTranscript().getByText('[DOG 1] Nala (Foster)')
-    ).toBeInTheDocument();
+    expect(terminalTranscript().getByText('[DOG 1] Nala')).toBeInTheDocument();
 
     runCommand('dog 1 treat');
     expect(updateDogStatsMock).toHaveBeenCalledWith('Nala', 'treats');
@@ -499,6 +515,124 @@ describe('CliTerminal', () => {
     expect(input).toHaveValue('project 4');
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     expect(input).toHaveValue('project 4');
+  });
+
+  it.each([
+    ['cd pro', 'cd projects '],
+    ['ls /pro', 'ls /projects '],
+    ['cd projects/1', 'cd projects/1 '],
+    ['theme cos', 'theme cosmic '],
+    ['mode sys', 'mode system '],
+    ['help key', 'help keyboard '],
+    ['project 2', 'project 2 '],
+    ['skill 5', 'skill 5 '],
+    ['exp 1', 'exp 1 '],
+    ['dog 2 scr', 'dog 2 scritch '],
+  ])('completes %s to %s', (draft, completed) => {
+    renderTerminal();
+    const input = screen.getByLabelText(
+      'Terminal command input'
+    ) as HTMLInputElement;
+    input.focus();
+    fireEvent.change(input, { target: { value: draft } });
+    input.setSelectionRange(draft.length, draft.length);
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(input).toHaveValue(completed);
+  });
+
+  it.each([
+    'cd nowhere/',
+    'cd projects/1/nope',
+    'mode nothing',
+    'unknown argument',
+    'too many words here',
+  ])('leaves unmatched completion %s unchanged', (draft) => {
+    renderTerminal();
+    const input = screen.getByLabelText(
+      'Terminal command input'
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: draft } });
+    input.setSelectionRange(draft.length, draft.length);
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(input).toHaveValue(draft);
+    expect(screen.getByRole('status')).toHaveTextContent('No completion found');
+  });
+
+  it('shows ambiguous completions without changing the draft and requires the cursor at the end', () => {
+    renderTerminal();
+    const input = screen.getByLabelText(
+      'Terminal command input'
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'cd projects/' } });
+    input.setSelectionRange(input.value.length, input.value.length);
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(
+      terminalTranscript().getByText(/^Matches: projects\/1/)
+    ).toBeInTheDocument();
+    fireEvent.change(input, { target: { value: 'help' } });
+    input.setSelectionRange(0, 2);
+    fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
+    expect(screen.getByRole('status')).toHaveTextContent(
+      'Move the cursor to the end'
+    );
+    expect(input).toHaveValue('help');
+  });
+
+  it('opens every directory detail and education entry through shell navigation', () => {
+    renderTerminal();
+    for (const [path, heading] of [
+      ['/skills/1', '[SKILL CATEGORY 1]'],
+      ['/experience/3', '[TIMELINE 3]'],
+      ['/experience/4', '[TIMELINE 4]'],
+      ['/dogs/1', '[DOG 1]'],
+    ]) {
+      runCommand(`cd ${path}`);
+      expect(
+        terminalTranscript().getByText((text) => text.startsWith(heading))
+      ).toBeInTheDocument();
+    }
+    runCommand('cd /');
+    runCommand('back');
+    expect(
+      terminalTranscript().getAllByText('[DIRECTORIES]').length
+    ).toBeGreaterThan(0);
+    runCommand('help dog');
+    expect(terminalTranscript().getByText('[HELP: dogs]')).toBeInTheDocument();
+    runCommand('help __proto__');
+    expect(
+      terminalTranscript().getByText('No help topic: __proto__')
+    ).toBeInTheDocument();
+    runCommand('help too many');
+    expect(
+      terminalTranscript().getByText('Usage: help [topic]')
+    ).toBeInTheDocument();
+    runCommand('pwd extra');
+    expect(terminalTranscript().getByText('Usage: pwd')).toBeInTheDocument();
+  });
+
+  it('does not submit an IME composition or intercept modified history keys', () => {
+    renderTerminal();
+    const input = screen.getByLabelText(
+      'Terminal command input'
+    ) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'about' } });
+    fireEvent.compositionStart(input);
+    fireEvent.submit(input.closest('form')!);
+    expect(terminalTranscript().queryByText('[ABOUT]')).not.toBeInTheDocument();
+    fireEvent.keyDown(input, { key: 'a', isComposing: true });
+    fireEvent.compositionEnd(input);
+    fireEvent.submit(input.closest('form')!);
+    expect(terminalTranscript().getByText('[ABOUT]')).toBeInTheDocument();
+    fireEvent.change(input, { target: { value: 'draft' } });
+    for (const modifiers of [
+      { ctrlKey: true },
+      { metaKey: true },
+      { altKey: true },
+      { shiftKey: true },
+    ]) {
+      fireEvent.keyDown(input, { key: 'ArrowUp', ...modifiers });
+      expect(input).toHaveValue('draft');
+    }
   });
 
   it('completes commands without intercepting tab navigation to output links', async () => {

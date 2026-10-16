@@ -1,6 +1,7 @@
-import { act, render, screen, waitFor } from '@/test/test-utils';
+import { act, fireEvent, render, screen, waitFor } from '@/test/test-utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import Hero from '.';
+import { renderToString } from 'react-dom/server';
 
 type ThemeName = 'minimal' | 'engineer' | 'cosmic' | 'cli';
 
@@ -411,6 +412,85 @@ describe('Hero section', () => {
     expect(heroContent).toHaveAttribute('data-parallax-enabled', 'true');
   });
 
+  it('renders the initial hero safely without browser globals during prerendering', () => {
+    vi.stubGlobal('window', undefined);
+    vi.stubGlobal('document', undefined);
+    let markup = '';
+    try {
+      markup = renderToString(<Hero />);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    expect(markup).toContain('Justin Paoletta');
+    expect(markup).toContain('Software Engineer');
+  });
+
+  it('keeps a readable cosmic poster if the animation asset fails', async () => {
+    installEngineerMatchMediaMock();
+    themeName = 'cosmic';
+    const view = render(<Hero />);
+    await waitFor(() =>
+      expect(view.container.querySelector('.hero-astronaut')).toHaveAttribute(
+        'src',
+        expect.stringContaining('astronaut-wave')
+      )
+    );
+    fireEvent.error(view.container.querySelector('.hero-astronaut')!);
+    expect(view.container.querySelector('.hero-astronaut')).toHaveAttribute(
+      'src',
+      expect.stringContaining('astronaut-asteroid')
+    );
+  });
+
+  it('updates parallax through scroll boundaries without scheduling duplicate frames', async () => {
+    installEngineerMatchMediaMock();
+    const view = render(<Hero />);
+    const content = view.container.querySelector(
+      '.hero-content'
+    )! as HTMLElement;
+    await waitFor(() =>
+      expect(content).toHaveAttribute('data-parallax-enabled', 'true')
+    );
+    const section = view.container.querySelector('section')!;
+    const box = vi.spyOn(section, 'getBoundingClientRect');
+    for (const top of [0, -50, -95, -100]) {
+      box.mockReturnValue({ top, height: 100 } as DOMRect);
+      fireEvent.scroll(window);
+      fireEvent.resize(window);
+      await waitFor(() =>
+        expect(content.style.getPropertyValue('--hero-parallax-y')).toBe(
+          `${(Math.min(-top, 100) * 1.25).toFixed(2)}px`
+        )
+      );
+    }
+    expect(content.style.getPropertyValue('--hero-parallax-opacity')).toBe('0');
+    fireEvent.scroll(window);
+    view.unmount();
+  });
+
+  it('cancels a queued idle enhancement when the hero unmounts', () => {
+    installEngineerMatchMediaMock();
+    vi.useFakeTimers();
+    Object.defineProperty(navigator, 'userAgent', {
+      configurable: true,
+      value: 'Chrome',
+    });
+    let callback: IdleRequestCallback | undefined;
+    const cancel = vi.fn();
+    vi.stubGlobal('requestIdleCallback', (next: IdleRequestCallback) => {
+      callback = next;
+      return 17;
+    });
+    vi.stubGlobal('cancelIdleCallback', cancel);
+    const view = render(<Hero />);
+    act(() => vi.advanceTimersByTime(40));
+    expect(callback).toBeDefined();
+    view.unmount();
+    expect(cancel).toHaveBeenCalledWith(17);
+    act(() => callback!({} as IdleDeadline));
+    expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
+  });
+
   it('renders non-CLI copy for minimal theme and CLI terminal for CLI theme', async () => {
     themeName = 'minimal';
     const minimal = render(<Hero />);
@@ -668,6 +748,7 @@ describe('Hero section', () => {
     const view = render(<Hero />);
     const visual = view.container.querySelector('.hero-engineer-visual');
 
+    await waitFor(() => expect(consoleError).toHaveBeenCalled());
     await waitFor(() => {
       expect(visual).toHaveAttribute('data-engineer-circuit-scene', 'still');
     });

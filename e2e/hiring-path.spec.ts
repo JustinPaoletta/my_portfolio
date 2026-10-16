@@ -272,3 +272,39 @@ test.describe('production portfolio without JavaScript', () => {
     );
   });
 });
+
+for (const width of [320, 390, 1280]) {
+  test(`About copy, emphasis, and viewable resume remain usable at ${width}px`, async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width, height: 844 });
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.goto('/?theme=minimal&mode=dark#about');
+    const about = page.getByRole('region', { name: 'About', exact: true });
+    await expect(about).toBeVisible();
+    await expect(about.locator('.about-text > p')).toHaveCount(3);
+    await expect(about.locator('strong')).toHaveText([
+      'frontend architecture',
+      'full-stack development',
+      '3–4 hour process to about 25 minutes.',
+      'mentor engineers',
+    ]);
+    const resume = about.getByRole('link', {
+      name: 'View résumé',
+      exact: true,
+    });
+    await resume.scrollIntoViewIfNeeded();
+    await expectReadable(resume);
+    await expect(resume).toHaveAttribute('target', '_blank');
+    await expect(resume).toHaveAttribute('rel', /noopener/);
+    const box = await resume.boundingBox();
+    expect(box!.height).toBeGreaterThanOrEqual(44);
+    const response = await page.request.get(
+      (await resume.getAttribute('href'))!
+    );
+    expect(response.status()).toBe(200);
+    expect(response.headers()['content-type']).toMatch(/^application\/pdf/);
+    expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
+    await expectNoHorizontalOverflow(page);
+  });
+}
