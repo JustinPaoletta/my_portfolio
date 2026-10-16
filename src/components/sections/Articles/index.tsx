@@ -143,8 +143,9 @@ export default function Articles(): React.ReactElement {
             delay={200}
             visible={isVisible}
           >
-            Long-form notes on AI-assisted development, engineering rigor, and
-            the trade-offs behind building software that lasts.
+            My approach to Software Engineering &amp; AI-assisted development:
+            choosing the right tools, automating predictable work, and keeping
+            code understandable and maintainable.
           </Reveal>
         </Reveal>
 
