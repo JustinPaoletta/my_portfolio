@@ -3,97 +3,82 @@
   border-top: 1px solid var(--border-subtle);
 }
 
+.about-section .section-header {
+  margin-bottom: 2.5rem;
+}
+
 .about-content {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: start;
-  max-width: 1050px;
+  max-width: 720px;
   margin: 0 auto;
 }
 
 .about-text {
   min-width: 0;
+  font-size: 1.0625rem;
 
   p {
-    margin: 0 0 1.25rem;
+    margin: 0 0 1.5rem;
     color: var(--text-secondary);
-    line-height: 1.75;
+    line-height: 1.5;
   }
 
   .about-intro {
-    font-size: 1.25rem;
-    line-height: 1.6;
-    color: var(--text-primary);
-  }
-}
-
-.about-approach {
-  padding: 1.75rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 16px;
-  background: var(--bg-card);
-
-  h3 {
-    margin: 0 0 1.5rem;
     font-size: 1.125rem;
-    line-height: 1.5;
-    font-weight: 600;
     color: var(--text-primary);
+  }
+
+  strong {
+    color: var(--text-primary);
+    font-weight: 600;
   }
 }
 
-.approach-steps {
-  list-style: decimal-leading-zero;
-  padding-left: 1.75rem;
-  margin: 0;
-
-  li {
-    padding-left: 0.5rem;
-    margin-bottom: 1.25rem;
-
-    &::marker {
-      color: var(--color-primary-ink);
-      font-family: var(--font-mono);
-      font-size: 0.875rem;
-    }
-  }
-
-  h4 {
-    margin: 0 0 0.375rem;
-    color: var(--text-primary);
-    font-size: 1rem;
-    font-weight: 600;
-  }
-
-  p {
-    margin: 0;
-    color: var(--text-secondary);
-    font-size: 0.9375rem;
-    line-height: 1.65;
-  }
-}
-
-.approach-example {
-  margin: 1.5rem 0 0;
-  padding-top: 1.25rem;
+.about-resume {
+  padding-top: 0.75rem;
   border-top: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
+}
+
+.about-resume-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.625rem 1.375rem;
+  border: 1px solid var(--text-muted);
+  border-radius: 9px;
+  color: var(--text-primary);
   font-size: 0.9375rem;
-  line-height: 1.7;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  &:hover {
+    border-color: var(--text-primary);
+    background: var(--bg-card);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 4px;
+  }
 }
 
 @media (max-width: 768px) {
   .about-section {
-    padding: 4rem 1.5rem;
+    padding: 1rem 1.5rem 3rem;
   }
 
-  .about-content {
-    grid-template-columns: 1fr;
-    gap: 2rem;
+  .about-section .section-header {
+    margin-bottom: 1.25rem;
   }
 
-  .about-approach {
-    padding: 1.5rem;
+  .about-text {
+    font-size: 0.90625rem;
+
+    .about-intro {
+      font-size: 1rem;
+    }
   }
 }

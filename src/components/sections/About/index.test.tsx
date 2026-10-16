@@ -3,14 +3,19 @@ import { describe, expect, it } from 'vitest';
 import About from '.';
 
 describe('About section', () => {
-  it('connects the engineering approach to professional experience', () => {
+  it('presents professional background and a viewable résumé', () => {
     render(<About />);
 
     expect(screen.getByRole('heading', { name: 'About' })).toBeInTheDocument();
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getByText('frontend architecture')).toBeInTheDocument();
     expect(
-      screen.getByText(/automated checks, browser testing, and human review/)
+      screen.getByText('3–4 hour process to about 25 minutes.')
     ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'View résumé' })).toHaveAttribute(
+      'href',
+      '/resume/Justin-Paoletta_Software-Engineer.pdf'
+    );
+    expect(screen.queryByRole('list')).not.toBeInTheDocument();
     expect(screen.queryByRole('img')).not.toBeInTheDocument();
   });
 });

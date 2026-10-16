@@ -1,27 +1,9 @@
 import { SECTION_NAMES } from '@/content/site';
-/** Background and a concrete engineering approach. */
+/** Professional background and résumé. */
 
 import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import './About.css';
-
-const approachSteps = [
-  {
-    title: 'Establish the context',
-    description:
-      'Connect Jira requirements, design references, application constraints, and acceptance criteria.',
-  },
-  {
-    title: 'Use AI with judgment',
-    description:
-      'Explore approaches and draft changes, checking assumptions and taking responsibility for the implementation.',
-  },
-  {
-    title: 'Verify and document',
-    description:
-      'Review the code and interface, run focused checks, and record useful QA notes and remaining limitations.',
-  },
-];
 
 function About(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
@@ -61,44 +43,36 @@ function About(): React.ReactElement {
             visible={isVisible}
           >
             <p className="about-intro">
-              At accesso, I help modernize the frontend platform behind accesso
-              Passport, bringing Angular and React micro-frontends into an
-              established AngularJS application.
+              I’m a software engineer with more than five years of experience
+              building and modernizing production applications. My work combines{' '}
+              <strong>frontend architecture</strong>,{' '}
+              <strong>full-stack development</strong>, and ownership from
+              requirements through release.
             </p>
             <p>
-              My work includes integrating frameworks, isolating styles and
-              application lifecycles, and improving release tooling. These
-              changes support ongoing modernization while keeping existing
-              functionality dependable.
+              At accesso, I lead frontend modernization for a platform used by
+              hundreds of venues worldwide. I’ve integrated Angular and React
+              into an established application, delivered backend and database
+              changes, and automated releases across four production
+              applications, cutting a{' '}
+              <strong>3–4 hour process to about 25 minutes.</strong>
             </p>
             <p>
-              I also incorporate AI into planning, implementation, and
-              documentation. I review its suggestions against the requirements
-              and existing code, then verify the resulting changes through
-              automated checks, browser testing, and human review.
+              I also <strong>mentor engineers</strong> and improve the tools and
+              processes the team relies on. I care about understanding the
+              business problem, making sound technical decisions, and building
+              software that other engineers can maintain and improve.
             </p>
-          </Reveal>
-
-          <Reveal
-            as="div"
-            className="about-approach"
-            effect="fade-up"
-            delay={180}
-            visible={isVisible}
-          >
-            <h3>From requirement to reviewed change</h3>
-            <ol className="approach-steps">
-              {approachSteps.map((step) => (
-                <li key={step.title}>
-                  <h4>{step.title}</h4>
-                  <p>{step.description}</p>
-                </li>
-              ))}
-            </ol>
-            <p className="approach-example">
-              I’ve also built an AI-assisted PR review bot that flags potential
-              issues for developer review.
-            </p>
+            <div className="about-resume">
+              <a
+                className="about-resume-link"
+                href="/resume/Justin-Paoletta_Software-Engineer.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View résumé
+              </a>
+            </div>
           </Reveal>
         </div>
       </div>
