@@ -14,7 +14,7 @@
 
 .experience-work-header {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
@@ -268,6 +268,9 @@
 }
 
 .resume-button {
+  flex-shrink: 0;
+  white-space: nowrap;
+  min-height: 44px;
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -329,6 +332,16 @@
 @media (max-width: 640px) {
   .experience-section {
     padding: 4rem 1.5rem;
+  }
+
+  .experience-work-header {
+    gap: 0.75rem;
+  }
+
+  .resume-button {
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    font-size: 0.8125rem;
   }
 
   .timeline {

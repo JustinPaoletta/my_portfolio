@@ -9,9 +9,7 @@ describe('Experience section', () => {
     expect(
       screen.getByRole('heading', { name: 'Experience' })
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole('heading', { name: 'Work History' })
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Work' })).toBeInTheDocument();
     expect(
       screen.getByRole('heading', { name: 'Education' })
     ).toBeInTheDocument();

@@ -165,7 +165,7 @@ function Experience(): React.ReactElement {
             visible={isVisible}
           >
             <div className="experience-work-header">
-              <h3 className="work-history-title">Work History</h3>
+              <h3 className="work-history-title">Work</h3>
               <a
                 href="/resume/Justin-Paoletta_Software-Engineer.pdf"
                 download="Justin_Paoletta_Resume.pdf"
