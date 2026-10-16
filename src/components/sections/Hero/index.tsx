@@ -516,29 +516,6 @@ function Hero(): React.ReactElement {
               </div>
             )}
 
-            <div className="hero-cta">
-              <a href="#projects" className="cta-primary">
-                <span>View My Projects</span>
-                <svg
-                  className="cta-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M5 12h14M12 5l7 7-7 7"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </a>
-              <a href="#contact" className="cta-secondary">
-                <span>{SECTION_NAMES.contact}</span>
-              </a>
-            </div>
-
             <div className="hero-social">
               <a
                 href={env.social.github}
@@ -570,6 +547,29 @@ function Hero(): React.ReactElement {
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
                 </svg>
+              </a>
+            </div>
+
+            <div className="hero-cta">
+              <a href="#projects" className="cta-primary">
+                <span>View My Projects</span>
+                <svg
+                  className="cta-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 12h14M12 5l7 7-7 7"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a href="#contact" className="cta-secondary">
+                <span>{SECTION_NAMES.contact}</span>
               </a>
             </div>
           </>
