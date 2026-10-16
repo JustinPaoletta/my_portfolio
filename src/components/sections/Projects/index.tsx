@@ -214,89 +214,6 @@ function Projects(): React.ReactElement {
               delay={140 + index * 90}
               visible={isVisible}
             >
-              {project.showcase === 'design-system' ? (
-                <DesignSystemShowcase />
-              ) : project.showcase === 'exports' ? (
-                <ExportShowcase />
-              ) : project.demo ? (
-                <figure className="project-demo">
-                  <video
-                    controls
-                    playsInline
-                    preload="none"
-                    poster={project.image}
-                    width={project.imageWidth}
-                    height={project.imageHeight}
-                    style={{
-                      aspectRatio: `${project.imageWidth ?? 1440} / ${project.imageHeight ?? 960}`,
-                    }}
-                    aria-label={`${project.title} product walkthrough`}
-                  >
-                    <source src={project.demo.webm} type="video/webm" />
-                    <source src={project.demo.src} type="video/mp4" />
-                    <track
-                      kind="captions"
-                      src={project.demo.captions}
-                      srcLang="en"
-                      label="English walkthrough"
-                      default
-                    />
-                    <a href={project.demo.src}>Download the walkthrough</a>
-                  </video>
-                  <figcaption>
-                    <p>{project.imageCaption}</p>
-                    <details>
-                      <summary>Read the walkthrough</summary>
-                      <p>{project.demo.transcript}</p>
-                    </details>
-                  </figcaption>
-                </figure>
-              ) : (
-                <figure
-                  className={`project-image-wrapper${
-                    project.imageFit === 'contain'
-                      ? ' project-image-wrapper--contain'
-                      : ''
-                  }`}
-                >
-                  <img
-                    src={project.image}
-                    srcSet={project.imageSrcSet}
-                    sizes={project.imageSizes}
-                    alt={project.imageAlt ?? `${project.title} artwork`}
-                    className={`project-image${
-                      project.imageFit === 'contain'
-                        ? ' project-image--contain'
-                        : ''
-                    }`}
-                    style={
-                      project.imagePosition
-                        ? { objectPosition: project.imagePosition }
-                        : undefined
-                    }
-                    loading="lazy"
-                    decoding="async"
-                    width={project.imageWidth ?? 800}
-                    height={project.imageHeight ?? 600}
-                  />
-                  {project.imageCaption && (
-                    <figcaption>
-                      {project.imageCaption}
-                      {project.fullSizeCapture && (
-                        <a
-                          className="project-capture-link"
-                          href={project.fullSizeCapture}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          aria-label={`Open ${project.title} full-size screenshot`}
-                        >
-                          View full-size screenshot ↗
-                        </a>
-                      )}
-                    </figcaption>
-                  )}
-                </figure>
-              )}
               <div className="project-content">
                 {project.cardHeaderIcon && (
                   <img
@@ -464,6 +381,89 @@ function Projects(): React.ReactElement {
                   )}
                 </div>
               </div>
+              {project.showcase === 'design-system' ? (
+                <DesignSystemShowcase />
+              ) : project.showcase === 'exports' ? (
+                <ExportShowcase />
+              ) : project.demo ? (
+                <figure className="project-demo">
+                  <video
+                    controls
+                    playsInline
+                    preload="none"
+                    poster={project.image}
+                    width={project.imageWidth}
+                    height={project.imageHeight}
+                    style={{
+                      aspectRatio: `${project.imageWidth ?? 1440} / ${project.imageHeight ?? 960}`,
+                    }}
+                    aria-label={`${project.title} product walkthrough`}
+                  >
+                    <source src={project.demo.webm} type="video/webm" />
+                    <source src={project.demo.src} type="video/mp4" />
+                    <track
+                      kind="captions"
+                      src={project.demo.captions}
+                      srcLang="en"
+                      label="English walkthrough"
+                      default
+                    />
+                    <a href={project.demo.src}>Download the walkthrough</a>
+                  </video>
+                  <figcaption>
+                    <p>{project.imageCaption}</p>
+                    <details>
+                      <summary>Read the walkthrough</summary>
+                      <p>{project.demo.transcript}</p>
+                    </details>
+                  </figcaption>
+                </figure>
+              ) : (
+                <figure
+                  className={`project-image-wrapper${
+                    project.imageFit === 'contain'
+                      ? ' project-image-wrapper--contain'
+                      : ''
+                  }`}
+                >
+                  <img
+                    src={project.image}
+                    srcSet={project.imageSrcSet}
+                    sizes={project.imageSizes}
+                    alt={project.imageAlt ?? `${project.title} artwork`}
+                    className={`project-image${
+                      project.imageFit === 'contain'
+                        ? ' project-image--contain'
+                        : ''
+                    }`}
+                    style={
+                      project.imagePosition
+                        ? { objectPosition: project.imagePosition }
+                        : undefined
+                    }
+                    loading="lazy"
+                    decoding="async"
+                    width={project.imageWidth ?? 800}
+                    height={project.imageHeight ?? 600}
+                  />
+                  {project.imageCaption && (
+                    <figcaption>
+                      {project.imageCaption}
+                      {project.fullSizeCapture && (
+                        <a
+                          className="project-capture-link"
+                          href={project.fullSizeCapture}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={`Open ${project.title} full-size screenshot`}
+                        >
+                          View full-size screenshot ↗
+                        </a>
+                      )}
+                    </figcaption>
+                  )}
+                </figure>
+              )}
             </Reveal>
           ))}
         </div>

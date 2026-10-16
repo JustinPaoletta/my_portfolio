@@ -13,16 +13,18 @@
 .featured-project {
   display: grid;
   grid-template-columns: 1.2fr 1fr;
+  grid-template-areas: 'demo info';
   gap: 3rem;
   align-items: center;
 
   &:nth-child(even) {
-    direction: rtl;
-
-    > * {
-      direction: ltr;
-    }
+    grid-template-columns: 1fr 1.2fr;
+    grid-template-areas: 'info demo';
   }
+}
+
+.featured-project > :not(.project-content) {
+  grid-area: demo;
 }
 
 .project-image-wrapper {
@@ -118,6 +120,7 @@
 }
 
 .project-content {
+  grid-area: info;
   padding: 1rem 0;
   min-width: 0;
 }
@@ -415,8 +418,12 @@
     grid-template-columns: 1fr;
     gap: 2rem;
 
+    &,
     &:nth-child(even) {
-      direction: ltr;
+      grid-template-columns: 1fr;
+      grid-template-areas:
+        'info'
+        'demo';
     }
   }
 
@@ -561,12 +568,21 @@
     min-height: 44px;
     padding: 0.625rem 0.25rem;
     border: 0;
+    border-radius: 0;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
     border-bottom: 2px solid transparent;
     background: transparent;
     color: var(--text-secondary);
     font: inherit;
     font-size: 0.8125rem;
     cursor: pointer;
+  }
+
+  button:focus-visible {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 0.25em;
   }
 
   button[aria-selected='true'] {
@@ -577,7 +593,7 @@
   }
 }
 
-.project-showcase :is(button, [role='tabpanel']):focus-visible,
+.project-showcase [role='tabpanel']:focus-visible,
 .export-table-scroll:focus-visible,
 .export-output:focus-visible {
   outline: 2px solid var(--color-primary-ink);
