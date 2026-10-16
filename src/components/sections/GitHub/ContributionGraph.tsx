@@ -4,7 +4,7 @@
  * Shows the complete contribution year, scrolling within narrow viewports.
  */
 
-import { useRef, useEffect, useState, useMemo } from 'react';
+import { useRef, useEffect, useState, useMemo, useId } from 'react';
 import type { ContributionCalendar } from '@/types/github';
 import {
   useBreakpoint,
@@ -45,12 +45,19 @@ function ContributionGraph({
   isVisible,
 }: ContributionGraphProps): React.ReactElement {
   const graphContentRef = useRef<HTMLDivElement>(null);
+  const earlierButtonRef = useRef<HTMLButtonElement>(null);
+  const laterButtonRef = useRef<HTMLButtonElement>(null);
+  const calendarId = useId();
   const [weekWidth, setWeekWidth] = useState<number>(11);
   const breakpoint = useBreakpoint();
 
   const calendarWeeks = contributions.weeks;
   const totalWeeks = calendarWeeks.length;
-  const [isScrollable, setIsScrollable] = useState(false);
+  const [scrollEdges, setScrollEdges] = useState({
+    earlier: false,
+    later: false,
+  });
+  const isScrollable = scrollEdges.earlier || scrollEdges.later;
 
   // Include every day returned for the contribution year on every device.
   const yearContributions = useMemo(() => {
@@ -85,7 +92,6 @@ function ContributionGraph({
 
       // Keep short histories compact while fitting the available viewport.
       setWeekWidth(Math.min(24, Math.max(calculatedWeekWidth, 11)));
-      setIsScrollable(totalWeeks * 11 + totalGapWidth > containerWidth);
     };
 
     updateWeekWidth();
@@ -99,6 +105,48 @@ function ContributionGraph({
       resizeObserver.disconnect();
     };
   }, [totalWeeks, isVisible]);
+
+  // Read actual overflow after column widths settle, and follow native scrolling.
+  useEffect(() => {
+    const content = graphContentRef.current;
+    if (!content) return;
+    const updateEdges = (): void => {
+      const earlier = content.scrollLeft > 1;
+      const later =
+        content.scrollWidth - content.clientWidth - content.scrollLeft > 1;
+      // Keep keyboard focus in the calendar if its focused arrow reaches an end.
+      if (
+        (!earlier && document.activeElement === earlierButtonRef.current) ||
+        (!later && document.activeElement === laterButtonRef.current)
+      ) {
+        content.focus({ preventScroll: true });
+      }
+      setScrollEdges((previous) =>
+        previous.earlier === earlier && previous.later === later
+          ? previous
+          : { earlier, later }
+      );
+    };
+    updateEdges();
+    content.addEventListener('scroll', updateEdges, { passive: true });
+    const observer = new ResizeObserver(updateEdges);
+    observer.observe(content);
+    return () => {
+      content.removeEventListener('scroll', updateEdges);
+      observer.disconnect();
+    };
+  }, [weekWidth, totalWeeks]);
+
+  const scrollCalendar = (direction: number): void => {
+    const content = graphContentRef.current;
+    if (!content) return;
+    content.scrollBy({
+      left: direction * content.clientWidth * 0.75,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'instant'
+        : 'smooth',
+    });
+  };
 
   // Calculate which day labels to show and their row positions
   const dayLabelsWithPosition = useMemo(() => {
@@ -207,73 +255,100 @@ function ContributionGraph({
           </div>
         )}
 
-        <div
-          className="graph-content"
-          ref={graphContentRef}
-          role="region"
-          aria-label="GitHub contribution calendar"
-          // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Native overflow regions need focus for keyboard scrolling.
-          tabIndex={isScrollable ? 0 : undefined}
-          style={
-            {
-              '--calendar-width': `${totalWeeks * (weekWidth + 2) - (totalWeeks > 0 ? 2 : 0)}px`,
-            } as React.CSSProperties
-          }
-        >
-          {/* Month labels */}
-          <div className="month-labels" aria-hidden="true">
-            {monthLabels.map(({ month, weekIndex }) => {
-              // Calculate left position: each week column width + gap
-              // Position at the start of the week where the month begins
-              const leftPosition = weekIndex * (weekWidth + 2); // weekWidth + 2px gap
-              return (
-                <span
-                  key={`${month}-${weekIndex}`}
-                  className="month-label"
-                  style={{ left: `${leftPosition}px` }}
-                >
-                  {month}
-                </span>
-              );
-            })}
-          </div>
-
-          {/* Contribution grid */}
+        <div className="graph-scroll-shell">
           <div
-            className="contribution-grid"
+            id={calendarId}
+            className="graph-content"
+            ref={graphContentRef}
+            role="region"
+            aria-label="GitHub contribution calendar"
+            // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Native overflow regions need focus for keyboard scrolling.
+            tabIndex={isScrollable ? 0 : undefined}
             style={
               {
-                '--week-width': `${weekWidth}px`,
+                '--calendar-width': `${totalWeeks * (weekWidth + 2) - (totalWeeks > 0 ? 2 : 0)}px`,
               } as React.CSSProperties
             }
           >
-            {calendarWeeks.map((week, weekIndex) => (
-              <div key={weekIndex} className="contribution-week">
-                {week.contributionDays.map((day, dayIndex) => (
-                  <div
-                    key={`${weekIndex}-${dayIndex}`}
-                    className={`contribution-day level-${getLevelClass(day.contributionLevel)}`}
-                    role="img"
-                    style={
-                      {
-                        '--delay': `${(weekIndex * 7 + dayIndex) * 0.002}s`,
-                      } as React.CSSProperties
-                    }
-                    title={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
-                    aria-label={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
-                  />
-                ))}
-              </div>
-            ))}
+            {/* Month labels */}
+            <div className="month-labels" aria-hidden="true">
+              {monthLabels.map(({ month, weekIndex }) => {
+                // Calculate left position: each week column width + gap
+                // Position at the start of the week where the month begins
+                const leftPosition = weekIndex * (weekWidth + 2); // weekWidth + 2px gap
+                return (
+                  <span
+                    key={`${month}-${weekIndex}`}
+                    className="month-label"
+                    style={{ left: `${leftPosition}px` }}
+                  >
+                    {month}
+                  </span>
+                );
+              })}
+            </div>
+
+            {/* Contribution grid */}
+            <div
+              className="contribution-grid"
+              style={
+                {
+                  '--week-width': `${weekWidth}px`,
+                } as React.CSSProperties
+              }
+            >
+              {calendarWeeks.map((week, weekIndex) => (
+                <div key={weekIndex} className="contribution-week">
+                  {week.contributionDays.map((day, dayIndex) => (
+                    <div
+                      key={`${weekIndex}-${dayIndex}`}
+                      className={`contribution-day level-${getLevelClass(day.contributionLevel)}`}
+                      role="img"
+                      style={
+                        {
+                          '--delay': `${(weekIndex * 7 + dayIndex) * 0.002}s`,
+                        } as React.CSSProperties
+                      }
+                      title={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
+                      aria-label={`${day.contributionCount} contributions on ${formatDate(day.date)}`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
+          {(['earlier', 'later'] as const).map((edge) => (
+            <div
+              key={edge}
+              className={`graph-scroll-cue graph-scroll-cue--${edge}`}
+              hidden={!scrollEdges[edge]}
+            >
+              <button
+                ref={edge === 'earlier' ? earlierButtonRef : laterButtonRef}
+                type="button"
+                className="graph-scroll-button"
+                aria-label={`Scroll to ${edge} contributions`}
+                aria-controls={calendarId}
+                onClick={() => scrollCalendar(edge === 'earlier' ? -1 : 1)}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    d={edge === 'earlier' ? 'M14 6l-6 6 6 6' : 'M10 6l6 6-6 6'}
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          ))}
         </div>
       </div>
-
-      {isScrollable && (
-        <p className="graph-scroll-hint">
-          Scroll horizontally to see the full year.
-        </p>
-      )}
 
       {/* Legend */}
       <div className="graph-legend" aria-hidden="true">
