@@ -159,6 +159,12 @@
   font-weight: 500;
 }
 
+@media (min-height: 521px) {
+  .hero-stack {
+    margin-top: 0.5rem;
+  }
+}
+
 .title-divider {
   color: var(--color-primary-ink);
   font-size: 1.5rem;
