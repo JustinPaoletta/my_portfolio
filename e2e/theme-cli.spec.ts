@@ -525,7 +525,7 @@ test('software graphics keeps a rendered room without continuously redrawing', a
     ]) {
       const getParameter = prototype.getParameter;
       prototype.getParameter = function (parameter: number) {
-        return parameter === 0x9246
+        return parameter === 0x9246 || parameter === this.RENDERER
           ? 'ANGLE (Google, SwiftShader Device)'
           : getParameter.call(this, parameter);
       };

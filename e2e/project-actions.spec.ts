@@ -27,6 +27,7 @@ for (const theme of ['minimal', 'engineer', 'cosmic']) {
   for (const mode of ['light', 'dark']) {
     test(`project actions stay visible with keyboard focus in ${theme} ${mode}`, async ({
       page,
+      browserName,
     }) => {
       await page.emulateMedia({ reducedMotion: 'reduce' });
       await mockPortfolioApis(page);
@@ -43,8 +44,10 @@ for (const theme of ['minimal', 'engineer', 'cosmic']) {
       await expectPaintedAction(projects.getByLabel('Project in development'));
 
       await source.focus();
-      await page.keyboard.press('Shift+Tab');
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(
+        browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab'
+      );
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       await expect(source).toBeFocused();
       await expectPaintedAction(source);
       await expect
@@ -60,7 +63,7 @@ for (const theme of ['minimal', 'engineer', 'cosmic']) {
         )
         .toBe(true);
 
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       const nextSource = projects.getByRole('link', {
         name: 'View BitStockerz source code',
       });
@@ -70,7 +73,7 @@ for (const theme of ['minimal', 'engineer', 'cosmic']) {
           await nextSource.evaluate((link) => document.activeElement === link)
         )
           break;
-        await page.keyboard.press('Tab');
+        await page.keyboard.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
       }
       await expect(nextSource).toBeFocused();
       await expectPaintedAction(nextSource);

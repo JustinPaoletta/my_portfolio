@@ -317,8 +317,6 @@ test('mobile menu About tap: first scrollTo runs after body scroll lock is relea
 });
 
 /** Delay applied to the Contact lazy chunk response (simulates slow network). */
-const CONTACT_CHUNK_DELAY_MS = 4500;
-
 /**
  * Delivers the Contact code-split chunk late: Suspense should show
  * SectionRouteFallback (reserved space + status) until the lazy module resolves
@@ -327,14 +325,18 @@ const CONTACT_CHUNK_DELAY_MS = 4500;
 test('slow Contact chunk: shows section fallback until Contact lazy chunk loads', async ({
   page,
 }) => {
+  let releaseChunk!: () => void;
+  const chunkGate = new Promise<void>((resolve) => {
+    releaseChunk = resolve;
+  });
+  let chunkRequested = false;
   await page.route(
     (url) =>
       url.pathname.includes('/assets/') &&
       /\/Contact-[^/]+\.js$/u.test(url.pathname),
     async (route) => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, CONTACT_CHUNK_DELAY_MS);
-      });
+      chunkRequested = true;
+      await chunkGate;
       await route.continue();
     }
   );
@@ -380,27 +382,12 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
     )
     .toBe(true);
 
-  const absentChecks = 18;
-  const absentStepMs = 180;
-  for (let i = 0; i < absentChecks; i += 1) {
-    const { contactMounted, fallbackVisible } = await page.evaluate(() => ({
-      contactMounted: document.getElementById('contact') !== null,
-      fallbackVisible: Boolean(
-        document.querySelector(
-          '[data-section-route-fallback][data-section-id="contact"]'
-        )
-      ),
-    }));
-    expect(
-      contactMounted,
-      `expected #contact to stay unmounted while chunk is delayed (sample ${i + 1}/${absentChecks})`
-    ).toBe(false);
-    expect(
-      fallbackVisible,
-      `expected Contact Suspense fallback to be visible while chunk is delayed (sample ${i + 1}/${absentChecks})`
-    ).toBe(true);
-    await page.waitForTimeout(absentStepMs);
-  }
+  await expect.poll(() => chunkRequested).toBe(true);
+  await expect(page.locator('section#contact')).toHaveCount(0);
+  await expect(
+    page.getByRole('status', { name: 'Loading Contact section' })
+  ).toHaveAttribute('aria-busy', 'true');
+  releaseChunk();
 
   await expect
     .poll(

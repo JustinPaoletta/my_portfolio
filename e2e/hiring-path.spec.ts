@@ -15,7 +15,29 @@ async function expectNoHorizontalOverflow(page: Page): Promise<void> {
     const scroller = document.scrollingElement ?? document.documentElement;
     return scroller.scrollWidth - scroller.clientWidth;
   });
-  expect(overflow).toBeLessThanOrEqual(1);
+  const offenders =
+    overflow > 1
+      ? await page.evaluate(() =>
+          Array.from(document.querySelectorAll('body *'))
+            .flatMap((element) => {
+              const rect = element.getBoundingClientRect();
+              return rect.width > 0 &&
+                rect.right > document.documentElement.clientWidth + 1 &&
+                rect.left >= 0
+                ? [
+                    {
+                      tag: element.tagName,
+                      className: element.className,
+                      right: rect.right,
+                      width: rect.width,
+                    },
+                  ]
+                : [];
+            })
+            .slice(0, 12)
+        )
+      : [];
+  expect(overflow, JSON.stringify(offenders)).toBeLessThanOrEqual(1);
 }
 
 async function expectSettledHeading(

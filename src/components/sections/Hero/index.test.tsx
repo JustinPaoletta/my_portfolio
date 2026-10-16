@@ -436,6 +436,7 @@ describe('Hero section', () => {
       )
     );
     fireEvent.error(view.container.querySelector('.hero-astronaut')!);
+    fireEvent.error(view.container.querySelector('.hero-astronaut')!);
     expect(view.container.querySelector('.hero-astronaut')).toHaveAttribute(
       'src',
       expect.stringContaining('astronaut-asteroid')
@@ -489,6 +490,47 @@ describe('Hero section', () => {
     expect(cancel).toHaveBeenCalledWith(17);
     act(() => callback!({} as IdleDeadline));
     expect(preloadRichHeroSceneMock).not.toHaveBeenCalled();
+  });
+
+  it('keeps the hero readable when speculative scene preloading fails', async () => {
+    installEngineerMatchMediaMock();
+    themeName = 'engineer';
+    const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    preloadRichHeroSceneMock.mockRejectedValueOnce(
+      new Error('Preload unavailable')
+    );
+    const view = render(<Hero />);
+    await waitFor(() => expect(warning).toHaveBeenCalled());
+    expect(
+      screen.getByRole('heading', { name: 'Justin Paoletta' })
+    ).toBeInTheDocument();
+    expect(
+      view.container.querySelector('.hero-engineer-visual')
+    ).toBeInTheDocument();
+    view.unmount();
+    warning.mockRestore();
+  });
+
+  it('updates calm motion through legacy media query listeners', async () => {
+    const media = installEngineerMatchMediaMock();
+    const original = window.matchMedia;
+    window.matchMedia = (query) =>
+      ({
+        ...original(query),
+        addEventListener: undefined,
+        removeEventListener: undefined,
+      }) as unknown as MediaQueryList;
+    themeName = 'engineer';
+    const view = render(<Hero />);
+    await screen.findByTestId('engineer-circuit-3d');
+    expect(
+      view.container.querySelector('.hero-engineer-visual')
+    ).toHaveAttribute('data-engineer-circuit-motion', 'normal');
+    act(() => media.setCompact(true));
+    expect(
+      view.container.querySelector('.hero-engineer-visual')
+    ).toHaveAttribute('data-engineer-circuit-motion', 'calm');
+    view.unmount();
   });
 
   it('renders non-CLI copy for minimal theme and CLI terminal for CLI theme', async () => {

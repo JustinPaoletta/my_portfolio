@@ -30,7 +30,7 @@ This inventory covers the complete PR against `main`, rather than only the most 
 ## Continuous checks
 
 - Quality CI runs the existing V8 coverage command and enforces the existing 90% statement, branch, function, and line thresholds. It uploads the coverage report for inspection and runs the server suite separately.
-- Functional CI runs both desktop Chromium and the mobile Chromium project, including the mobile orientation tests that the former desktop-only command excluded.
+- Functional CI runs desktop Chromium, Firefox, WebKit, and the mobile Chromium project, including the mobile orientation tests that the former desktop-only command excluded.
 - Visual CI compares approved Linux images in the pinned Playwright container. About has its own references on desktop and mobile.
 - Screenshot tolerances are unchanged. Section-only visual captures have a stable viewport origin; normal-flow placement is tested separately in browser journeys, including project info/demo order.
 
@@ -42,10 +42,18 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 
 ### Latest local results
 
-- Unit coverage: 96.52% lines, 96.41% statements, 96.00% functions, 90.35% branches; all existing 90% thresholds pass.
-- Frontend: 278 cases pass. Server suite is run by the required pre-push check.
+- Unit coverage: 97.28% lines, 97.18% statements, 96.56% functions, 90.45% branches; all existing 90% thresholds pass.
+- Frontend: 287 cases pass. Server suite is run by the required pre-push check.
 - Production Chromium/mobile: 93 passed, one preview-only test skipped; three additional professional-layout checks passed.
 - Desktop/mobile fractional-layout regression: both passed with byte-identical captures.
 - macOS section visuals: 15 passed, including new About references; updated images visually reviewed before staging.
 - Delivered Blender GLB validator passed (179,410 triangles, finite geometry, valid skinning, five embedded textures, WaveThenRest clip).
-- Cross-browser and final CI results are recorded after the final run below.
+- Firefox/WebKit keyboard regressions: all 10 terminal/calendar cases passed after the final keyboard fallback. The full final browser matrix and PR CI are checked after pushing.
+
+### Defects found during this audit
+
+- Fix 320px horizontal overflow in WebKit when its scrollbar reserves layout space: allow the body to fit the available width and size the menu backdrop to its inset bounds.
+- Add keyboard arrow scrolling to the focusable contribution region so browsers with inconsistent native overflow-key handling can reach the full year. Preserve modifier-key navigation and reduced-motion behavior.
+- Support legacy media-query listeners when updating responsive hero posters, with matched cleanup.
+- Remove the stale Foster label from the CLI dog details.
+- Correct tests that relied on platform-specific Tab focus, scrollend support, or a fixed chunk-delay stopwatch. The chunk test now explicitly holds/releases the response; the scroll test waits for observed stable positions.

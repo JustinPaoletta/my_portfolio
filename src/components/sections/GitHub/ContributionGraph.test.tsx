@@ -118,6 +118,19 @@ describe('ContributionGraph', () => {
         screen.getByRole('button', { name: 'Scroll to earlier contributions' })
       );
       expect(calendar.scrollLeft).toBe(0);
+      for (const key of ['ArrowRight', 'ArrowLeft'])
+        fireEvent.keyDown(calendar, { key });
+      expect(calendar.scrollLeft).toBe(0);
+      const calls = scrollBy.mock.calls.length;
+      for (const modifiers of [
+        { altKey: true },
+        { ctrlKey: true },
+        { metaKey: true },
+        { shiftKey: true },
+      ])
+        fireEvent.keyDown(calendar, { key: 'ArrowRight', ...modifiers });
+      fireEvent.keyDown(calendar, { key: 'Escape' });
+      expect(scrollBy).toHaveBeenCalledTimes(calls);
       later.focus();
       calendar.scrollLeft = 407;
       fireEvent.scroll(calendar);
@@ -135,6 +148,9 @@ describe('ContributionGraph', () => {
         observers.forEach((callback) => callback([], {} as ResizeObserver))
       );
       expect(calendar).not.toHaveAttribute('tabindex');
+      const callsAfterFit = scrollBy.mock.calls.length;
+      fireEvent.keyDown(calendar, { key: 'ArrowRight' });
+      expect(scrollBy).toHaveBeenCalledTimes(callsAfterFit);
       expect(
         screen.queryByRole('button', { name: /Scroll to/ })
       ).not.toBeInTheDocument();

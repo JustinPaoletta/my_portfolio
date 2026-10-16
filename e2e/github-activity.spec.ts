@@ -41,28 +41,38 @@ for (const width of [320, 390, 768, 1440]) {
         .toBeGreaterThan(0);
       await earlier.click();
       await expect(earlier).toBeHidden();
+      await calendar.scrollIntoViewIfNeeded();
       await calendar.focus();
-      const keyboardScrollEnd = calendar.evaluate(
-        (el) =>
-          new Promise<void>((resolve) =>
-            el.addEventListener('scrollend', () => resolve(), { once: true })
-          )
-      );
       await calendar.press('ArrowRight');
-      await keyboardScrollEnd;
       await expect
         .poll(() => calendar.evaluate((el) => el.scrollLeft))
         .toBeGreaterThan(0);
+      let previousLeft = -1;
+      let stableSamples = 0;
+      await expect
+        .poll(
+          async () => {
+            const left = await calendar.evaluate((el) => el.scrollLeft);
+            stableSamples =
+              Math.abs(left - previousLeft) < 0.1 ? stableSamples + 1 : 0;
+            previousLeft = left;
+            return stableSamples;
+          },
+          { intervals: [100, 150, 250] }
+        )
+        .toBeGreaterThanOrEqual(3);
       // Reach both ends of the native scroll area and confirm no weeks are lost.
       await calendar.evaluate((el) => {
         el.scrollLeft = el.scrollWidth;
       });
+      await calendar.scrollIntoViewIfNeeded();
       await expect(calendar.getByRole('img').last()).toBeInViewport();
       await expect(later).toBeHidden();
       await expect(earlier).toBeVisible();
       await calendar.evaluate((el) => {
         el.scrollLeft = 0;
       });
+      await calendar.scrollIntoViewIfNeeded();
       await expect(calendar.getByRole('img').first()).toBeInViewport();
       await expect(earlier).toBeHidden();
       await expect(later).toBeVisible();

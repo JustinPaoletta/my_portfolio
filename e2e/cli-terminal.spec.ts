@@ -141,6 +141,7 @@ test('terminal prompt follows the output and scrolls with the transcript', async
 
 test('terminal keyboard editing, completion and history preserve the draft', async ({
   page,
+  browserName,
 }) => {
   await openTerminal(page);
   const terminal = page.getByRole('region', {
@@ -190,12 +191,25 @@ test('terminal keyboard editing, completion and history preserve the draft', asy
     '/resume/Justin-Paoletta_Software-Engineer.pdf'
   );
   await prompt.focus();
-  await prompt.press('Shift+Tab');
+  await prompt.press(browserName === 'webkit' ? 'Alt+Shift+Tab' : 'Shift+Tab');
   await expect(resume).toBeFocused();
-  await resume.press('Tab');
+  await resume.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
   await expect(prompt).toBeFocused();
-  await prompt.press('Tab');
-  await expect(prompt).not.toBeFocused();
+  // At the final page control, headless browsers differ in whether DOM focus
+  // remains on the input while browser chrome receives the next Tab. Assert
+  // the terminal leaves native navigation uncancelled instead.
+  const tabAllowed = page.evaluate(
+    () =>
+      new Promise<boolean>((resolve) => {
+        document.addEventListener(
+          'keydown',
+          (event) => resolve(!event.defaultPrevented),
+          { once: true }
+        );
+      })
+  );
+  await prompt.press(browserName === 'webkit' ? 'Alt+Tab' : 'Tab');
+  expect(await tabAllowed).toBe(true);
 });
 
 for (const mode of ['light', 'dark']) {

@@ -256,6 +256,7 @@ function ContributionGraph({
         )}
 
         <div className="graph-scroll-shell">
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Focusable overflow regions need keyboard scrolling across browsers. */}
           <div
             id={calendarId}
             className="graph-content"
@@ -264,6 +265,20 @@ function ContributionGraph({
             aria-label="GitHub contribution calendar"
             // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- Native overflow regions need focus for keyboard scrolling.
             tabIndex={isScrollable ? 0 : undefined}
+            onKeyDown={(event) => {
+              if (
+                !isScrollable ||
+                event.altKey ||
+                event.ctrlKey ||
+                event.metaKey ||
+                event.shiftKey
+              )
+                return;
+              if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight')
+                return;
+              event.preventDefault();
+              scrollCalendar(event.key === 'ArrowLeft' ? -1 : 1);
+            }}
             style={
               {
                 '--calendar-width': `${totalWeeks * (weekWidth + 2) - (totalWeeks > 0 ? 2 : 0)}px`,
