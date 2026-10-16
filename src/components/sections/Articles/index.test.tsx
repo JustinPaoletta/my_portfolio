@@ -33,7 +33,7 @@ describe('Articles section', () => {
       })
     ).toBeInTheDocument();
     expect(
-      screen.getByRole('link', { name: 'View more on LinkedIn' })
+      screen.getByRole('link', { name: 'See more on LinkedIn' })
     ).toHaveAttribute('href', 'https://www.linkedin.com/in/justin-paoletta/');
     expect(screen.getByText('Article 1 of 2')).toBeInTheDocument();
   });
