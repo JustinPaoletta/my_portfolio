@@ -48,7 +48,7 @@ describe('Projects section', () => {
       .getByRole('heading', { name: 'SQUARK' })
       .closest('article')!;
     const action = within(card).getByRole('link', {
-      name: 'Play preview: SQUARK',
+      name: 'Preview In Browser: SQUARK',
     });
     expect(action).toHaveAttribute(
       'href',
@@ -62,6 +62,9 @@ describe('Projects section', () => {
     expect(
       within(card).getByAltText(/Actual SQUARK browser gameplay/)
     ).toHaveAttribute('loading', 'lazy');
+    expect(
+      card.querySelector('.card-header img, .card-header .folder-icon')
+    ).toBeNull();
     expect(card.querySelector('iframe, video, canvas, script')).toBeNull();
   });
 
@@ -97,7 +100,7 @@ describe('Projects section', () => {
 
     expect(
       document.querySelector(
-        'img.folder-icon--image[src="/images/projects/squark-icon-120.webp"]'
+        'img.folder-icon--image[src="/images/projects/sidequest-logo-60.webp"]'
       )
     ).toBeInTheDocument();
 

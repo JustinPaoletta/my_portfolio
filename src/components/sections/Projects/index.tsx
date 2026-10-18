@@ -35,6 +35,7 @@ interface Project extends ProjectSummary {
   cardImage?: string;
   cardImageAlt?: string;
   cardImageFit?: 'cover' | 'contain';
+  hideHeaderIcon?: boolean;
   cardHeaderIcon?: string;
   cardHeaderIconSrcSet?: string;
   /** When set, shown instead of `title` text in the project heading (e.g. transparent PNG wordmark). */
@@ -111,7 +112,7 @@ const projects: Project[] = [
     cardImage: '/images/projects/squark-gameplay-800.webp',
     cardImageAlt:
       'Actual SQUARK browser gameplay: a conure flying above the river valley and rings',
-    cardHeaderIcon: '/images/projects/squark-icon-120.webp',
+    hideHeaderIcon: true,
   },
   {
     id: 'project-4',
@@ -488,36 +489,39 @@ function Projects(): React.ReactElement {
               delay={280 + index * 80}
               visible={isVisible}
             >
-              <div className="card-header">
-                {project.cardHeaderIcon ? (
-                  <img
-                    src={project.cardHeaderIcon}
-                    srcSet={project.cardHeaderIconSrcSet}
-                    sizes={project.cardHeaderIconSrcSet ? '60px' : undefined}
-                    alt=""
-                    aria-hidden="true"
-                    className="folder-icon folder-icon--image"
-                    width={60}
-                    height={60}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <svg
-                    className="folder-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+              <div
+                className={`card-header${project.hideHeaderIcon ? ' card-header--actions-only' : ''}`}
+              >
+                {!project.hideHeaderIcon &&
+                  (project.cardHeaderIcon ? (
+                    <img
+                      src={project.cardHeaderIcon}
+                      srcSet={project.cardHeaderIconSrcSet}
+                      sizes={project.cardHeaderIconSrcSet ? '60px' : undefined}
+                      alt=""
+                      aria-hidden="true"
+                      className="folder-icon folder-icon--image"
+                      width={60}
+                      height={60}
+                      loading="lazy"
+                      decoding="async"
                     />
-                  </svg>
-                )}
+                  ) : (
+                    <svg
+                      className="folder-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ))}
                 <div className="card-links">
                   {project.private ? (
                     <span

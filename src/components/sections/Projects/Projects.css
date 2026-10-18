@@ -245,6 +245,10 @@
   margin-bottom: 1.25rem;
 }
 
+.card-header--actions-only {
+  justify-content: flex-end;
+}
+
 .card-image-wrapper {
   width: 100%;
   margin-bottom: 1.25rem;

@@ -1,8 +1,8 @@
 # SQUARK browser demo review
 
-The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture and a small conure icon are the only added media. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. SQUARK replaces Godot Playground in the visual list and occupies CLI project 3. Both presentations share its description and review link.
+The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture is shown beneath the browser-preview action. The card header has no icon. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. SQUARK replaces Godot Playground in the visual list and occupies CLI project 3. Both presentations share its description and review link.
 
-[Review the separate game preview](https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app). Vercel sign-in is currently required. The portfolio explicitly says **Play preview** and explains this access requirement. This is not yet an anonymous public demo.
+[Review the separate game preview](https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app). Vercel sign-in is currently required. The portfolio explicitly says **Preview In Browser** and explains this access requirement. This is not yet an anonymous public demo.
 
 ## Game implementation
 
@@ -32,7 +32,7 @@ Vercel attempted to make the new project's first deployment production without a
 
 ## Remaining release decisions
 
-1. Review the game preview and approve an anonymous public launch separately. Keep preview protection intact during review. After public launch, replace `SQUARK_PROJECT.liveUrl` with the verified public URL, use **Play demo**, and remove the sign-in sentence.
+1. Review the game preview and approve an anonymous public launch separately. Keep preview protection intact during review. After public launch, replace `SQUARK_PROJECT.liveUrl` with the verified public URL and remove the sign-in sentence.
 2. Complete physical iPhone/Android acceptance before claiming phone support. Check simultaneous steering/boost/action touches, browser chrome and safe areas, orientation, audio interruption, app switching, and the complete course/retries.
 3. Run Microsoft Edge before adding it to the accepted browser matrix. Further Firefox startup tuning remains a useful improvement.
 

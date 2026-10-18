@@ -22,9 +22,14 @@ for (const width of [320, 1280]) {
     const card = projects.locator('article').filter({
       has: page.getByRole('heading', { name: 'SQUARK', exact: true }),
     });
-    const action = card.getByRole('link', { name: 'Play preview: SQUARK' });
+    const action = card.getByRole('link', {
+      name: 'Preview In Browser: SQUARK',
+    });
     await action.scrollIntoViewIfNeeded();
     await expect(action).toBeVisible();
+    await expect(
+      card.locator('.card-header img, .card-header .folder-icon')
+    ).toHaveCount(0);
     await expect(
       card.getByText(/preview requires Vercel sign-in/)
     ).toBeVisible();

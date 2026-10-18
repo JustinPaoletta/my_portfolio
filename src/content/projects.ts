@@ -68,5 +68,5 @@ export const SQUARK_PROJECT: ProjectSummary = {
   status: 'testing',
   featured: false,
   liveUrl: 'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app',
-  liveLabel: 'Play preview',
+  liveLabel: 'Preview In Browser',
 };
