@@ -18,7 +18,7 @@
     right: 0;
     height: 1px;
     background: var(--border-subtle);
-    opacity: 0;
+    display: none;
   }
 
   &.scrolled {
@@ -26,7 +26,7 @@
     padding: 0.75rem 20px;
 
     &::after {
-      opacity: 1;
+      display: block;
     }
   }
 }
