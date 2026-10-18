@@ -136,6 +136,7 @@ for (const width of [390, 1440]) {
   test(`featured demos load on demand and play at ${width}px`, async ({
     page,
   }) => {
+    test.setTimeout(75000);
     await page.setViewportSize({ width, height: 1000 });
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await mockPortfolioApis(page);
@@ -217,26 +218,20 @@ for (const width of [390, 1440]) {
       );
       expect(Number.isFinite(duration)).toBe(true);
       expect(duration).toBeGreaterThan(0.5);
-      await video.evaluate((element: HTMLVideoElement) => element.pause());
+      // Exercise the recorded walkthrough from start to finish. Seeking to
+      // the final half-second bypasses most decoding and is weaker evidence.
+      await expect
+        .poll(
+          () => video.evaluate((element: HTMLVideoElement) => element.ended),
+          { timeout: Math.ceil(duration * 1000) + 10000 }
+        )
+        .toBe(true);
       expect(
         await video.evaluate((element: HTMLVideoElement) => element.paused)
       ).toBe(true);
-      await video.evaluate((element: HTMLVideoElement) => element.play());
-      await expect
-        .poll(() =>
-          video.evaluate((element: HTMLVideoElement) => element.paused)
-        )
-        .toBe(false);
-      // Seek while playback is active. This exercises completion without the
-      // Linux WebKit/GStreamer paused-seek resume deadlock.
-      await video.evaluate((element: HTMLVideoElement) => {
-        element.currentTime = element.duration - 0.5;
-      });
-      await expect
-        .poll(() =>
-          video.evaluate((element: HTMLVideoElement) => element.ended)
-        )
-        .toBe(true);
+      expect(
+        await video.evaluate((element: HTMLVideoElement) => element.currentTime)
+      ).toBeCloseTo(duration, 1);
       await article.getByText('Read the walkthrough', { exact: true }).click();
       await expect(article.getByText(transcript)).toBeVisible();
     }
