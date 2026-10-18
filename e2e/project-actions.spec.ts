@@ -212,10 +212,28 @@ for (const width of [390, 1440]) {
       ).toBe(height);
       const bounds = await video.boundingBox();
       expect(bounds!.width / bounds!.height).toBeCloseTo(1440 / height, 2);
+      const duration = await video.evaluate(
+        (element: HTMLVideoElement) => element.duration
+      );
+      expect(Number.isFinite(duration)).toBe(true);
+      expect(duration).toBeGreaterThan(0.5);
       await video.evaluate((element: HTMLVideoElement) => {
         element.pause();
         element.currentTime = element.duration - 0.5;
       });
+      // Decode the seek target before resuming. Linux WebKit's media pipeline
+      // can leave play() pending when it races a paused seek.
+      await expect
+        .poll(
+          () =>
+            video.evaluate(
+              (element: HTMLVideoElement) =>
+                !element.seeking &&
+                element.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
+            ),
+          { timeout: 10000 }
+        )
+        .toBe(true);
       await video.evaluate((element: HTMLVideoElement) => element.play());
       await expect
         .poll(() =>
