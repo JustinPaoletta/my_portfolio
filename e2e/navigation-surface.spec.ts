@@ -1,10 +1,20 @@
 import AxeBuilder from '@axe-core/playwright';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
+
+async function expectDividerOpacity(navigation: Locator, opacity: string) {
+  await expect
+    .poll(() =>
+      navigation.evaluate(
+        (element) => getComputedStyle(element, '::after').opacity
+      )
+    )
+    .toBe(opacity);
+}
 
 for (const theme of ['minimal', 'engineer', 'cosmic'] as const) {
   for (const mode of ['light', 'dark'] as const) {
-    test(`${theme} ${mode} navigation stays opaque before and after scrolling`, async ({
+    test(`${theme} ${mode} navigation stays opaque and only shows its divider after scrolling`, async ({
       page,
     }, testInfo) => {
       await page.emulateMedia({ colorScheme: mode, reducedMotion: 'reduce' });
@@ -19,6 +29,7 @@ for (const theme of ['minimal', 'engineer', 'cosmic'] as const) {
         });
         await expect(navigation).toBeVisible();
         await expect(navigation).not.toHaveClass(/scrolled/);
+        await expectDividerOpacity(navigation, '0');
         // Keep the desktop resume action in the mobile menu on narrow screens.
         if (width === 390) {
           await expect(navigation.locator('.nav-resume')).not.toBeVisible();
@@ -46,9 +57,19 @@ for (const theme of ['minimal', 'engineer', 'cosmic'] as const) {
         });
 
         await page.evaluate(() =>
+          window.scrollTo({ top: 1, behavior: 'instant' })
+        );
+        await expectDividerOpacity(navigation, '1');
+
+        await page.evaluate(() =>
           window.scrollTo({ top: 350, behavior: 'instant' })
         );
         await expect(navigation).toHaveClass(/scrolled/);
+        await expectDividerOpacity(navigation, '1');
+        await testInfo.attach(`${theme}-${mode}-${width}-scrolled-banner`, {
+          body: await navigation.screenshot(),
+          contentType: 'image/png',
+        });
         await expect(navigation).toHaveCSS(
           'background-color',
           background.color
@@ -71,6 +92,7 @@ for (const theme of ['minimal', 'engineer', 'cosmic'] as const) {
           window.scrollTo({ top: 0, behavior: 'instant' })
         );
         await expect(navigation).not.toHaveClass(/scrolled/);
+        await expectDividerOpacity(navigation, '0');
         await expect(navigation).toHaveCSS(
           'background-color',
           background.color

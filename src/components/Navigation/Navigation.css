@@ -18,11 +18,16 @@
     right: 0;
     height: 1px;
     background: var(--border-subtle);
+    opacity: 0;
   }
 
   &.scrolled {
     box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
     padding: 0.75rem 20px;
+
+    &::after {
+      opacity: 1;
+    }
   }
 }
 
