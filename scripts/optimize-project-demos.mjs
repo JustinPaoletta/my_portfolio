@@ -11,14 +11,22 @@ const captures = [
   'design-system-assistant',
   'bitstockerz-workspace',
   'plexarr-catalog',
+  'plexarr-picks',
+  'plexarr-overview',
+  'plexarr-rating',
 ];
 let count = 0;
 for (const name of captures) {
   const source = path.join(root, `assets/source/project-demos/${name}.png`);
   const { width: sourceWidth } = await sharp(source).metadata();
-  for (const width of [640, 960, 1440].filter(
-    (width) => width <= sourceWidth
-  )) {
+  const widths = [
+    ...new Set(
+      sourceWidth < 640
+        ? [320, 480, sourceWidth]
+        : [640, 960, 1440, sourceWidth]
+    ),
+  ];
+  for (const width of widths.filter((width) => width <= sourceWidth)) {
     await sharp(path.join(root, `assets/source/project-demos/${name}.png`))
       .resize({ width, withoutEnlargement: true })
       .webp({ quality: 90, effort: 6 })

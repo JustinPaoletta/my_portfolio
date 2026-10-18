@@ -162,7 +162,18 @@
     "assets/source/project-demos/plexarr-catalog.png": "00877c6fec0df1bd77911524a27d4bbcd91083b2a63cb961e87282eecd29f463",
     "public/images/projects/plexarr-catalog-1440.webp": "de7e04437fbf1a183f425e796aee70af1e7514bd8c57e21df724dfd4ca52c8be",
     "public/images/projects/plexarr-catalog-640.webp": "83165b0ebd0d9da938ff59b930e504e7375e3de57be047c99bb4f9d09e433029",
-    "public/images/projects/plexarr-catalog-960.webp": "0954879a1a8abdeebcb15a0dfac5a13d5c4052f14bb2e3dd4691ad3d9ef9d8f7"
+    "public/images/projects/plexarr-catalog-960.webp": "0954879a1a8abdeebcb15a0dfac5a13d5c4052f14bb2e3dd4691ad3d9ef9d8f7",
+    "assets/source/project-demos/plexarr-picks.png": "a337d8277e041b3f84eaf771a6fc0efc32af489f448cc07ab251e537a6507567",
+    "assets/source/project-demos/plexarr-overview.png": "f64e75a597561438923bdb2e8253e4244409f4c7a0f9ab56f569725339db8b78",
+    "assets/source/project-demos/plexarr-rating.png": "0b46a978578c7096c9a4150c6c8f725ed5f827e480f7e36c01218b5cdcbfc88d",
+    "public/images/projects/plexarr-overview-480.webp": "f8dc662620bbd5c84e3e001515e2c6a03a88e5491d3f1fe375c1dcb9d91b7d67",
+    "public/images/projects/plexarr-overview-320.webp": "67ff06924bd9c26ab68132fb286013b2e5cb6979deb9fa2e16bdb1cf873c5e40",
+    "public/images/projects/plexarr-overview-576.webp": "7f18e716d309fcccdbfa23b07aefcb8b7957ba78e24ce115e2042276d43c351c",
+    "public/images/projects/plexarr-rating-480.webp": "e0887f3531330295d4ea8fadbc5d43e0432c51166b909cf9959874f19ac5ad67",
+    "public/images/projects/plexarr-rating-320.webp": "d105033efe3b6c3b2ea4c6a23d8c1dbffb19c3db31f19e3d6510c4169c3230da",
+    "public/images/projects/plexarr-picks-640.webp": "b7dd5c48f694ebbc26f8d06eb8d63249745898c56b0b4d244df0da4923aaa140",
+    "public/images/projects/plexarr-rating-522.webp": "b871820f10d97d6ddd7813d78450ed062137ba73f9b38a5da5f2ebb7d7e1fd2b",
+    "public/images/projects/plexarr-picks-700.webp": "0a4529e6cb6a20ace4fbdbdfb9acfed76c333a2ff2e461df85b7784b927a93d0"
   },
   "wildApricot": {
     "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
@@ -178,17 +189,58 @@
   "plexarr": {
     "captured": "2026-10-15",
     "presentationUpdated": "2026-10-18",
-    "mode": "Static crop from the previously captured authenticated live Discover catalog. No new recording has been made.",
-    "source": "assets/source/project-demos/plexarr-live-discover.png",
-    "poster": "assets/source/project-demos/plexarr-catalog.png",
-    "crop": {
-      "x": 0,
-      "y": 193,
-      "width": 1440,
-      "height": 592
-    },
-    "boundaries": "Request-focused video and full-navigation poster removed from public assets. Original recordings retained only as historical source evidence.",
-    "pending": "Record a new authenticated Library, Discover, and favorites/ratings walkthrough after owner passkey sign-in. Never include request controls or flow."
+    "mode": "Owner-approved reuse of authentic live-app captures in a manually controlled screenshot carousel. No video, mock data, new sign-in, or live interaction is claimed.",
+    "workflow": [
+      "Discover catalog",
+      "Personalized next-watch recommendation and favorite/Not interested controls",
+      "Separate title-overview and genres/community-rating excerpts"
+    ],
+    "captures": [
+      {
+        "file": "plexarr-catalog.png",
+        "source": "plexarr-live-discover.png",
+        "crop": {
+          "x": 0,
+          "y": 193,
+          "width": 1440,
+          "height": 592
+        }
+      },
+      {
+        "file": "plexarr-picks.png",
+        "source": "plexarr-live-catalog-capture.mp4",
+        "frameSeconds": 20.3,
+        "crop": {
+          "x": 18,
+          "y": 273,
+          "width": 700,
+          "height": 252
+        }
+      },
+      {
+        "file": "plexarr-overview.png",
+        "source": "plexarr-live-catalog-capture.mp4",
+        "frameSeconds": 23,
+        "crop": {
+          "x": 434,
+          "y": 117,
+          "width": 576,
+          "height": 267
+        }
+      },
+      {
+        "file": "plexarr-rating.png",
+        "source": "plexarr-live-catalog-capture.mp4",
+        "frameSeconds": 23,
+        "crop": {
+          "x": 459,
+          "y": 486,
+          "width": 522,
+          "height": 47
+        }
+      }
+    ],
+    "boundaries": "Public crops exclude Request navigation, actions, forms, and availability messaging. The third slide stacks two separate metadata excerpts; it is not an unmodified full-window capture. Library and preference mutations are not demonstrated. Original recordings remain historical source evidence only; no Plexarr video is deployed."
   },
   "plexarrArchivedOctober15": {
     "captured": "2026-10-15",

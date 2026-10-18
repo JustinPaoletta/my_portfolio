@@ -18,10 +18,11 @@ import {
 import './Projects.css';
 import { DesignSystemShowcase } from './DesignSystemShowcase';
 import { ExportShowcase } from './ExportShowcase';
+import { PlexarrShowcase } from './PlexarrShowcase';
 
 interface Project extends ProjectSummary {
   id: string;
-  showcase?: 'design-system' | 'exports';
+  showcase?: 'design-system' | 'exports' | 'plexarr';
   image: string;
   imageCaption?: string;
   demo?: { src: string; webm: string; captions: string; transcript: string };
@@ -150,6 +151,7 @@ const projects: Project[] = [
   {
     ...PLEXARR_PROJECT,
     id: 'project-6',
+    showcase: 'plexarr',
     cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
     image: '/images/projects/plexarr-catalog-1440.webp',
@@ -376,6 +378,8 @@ function Projects(): React.ReactElement {
                 <DesignSystemShowcase />
               ) : project.showcase === 'exports' ? (
                 <ExportShowcase />
+              ) : project.showcase === 'plexarr' ? (
+                <PlexarrShowcase />
               ) : project.demo ? (
                 <figure className="project-demo">
                   <video

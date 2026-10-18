@@ -85,20 +85,39 @@ The VTT and HTML transcript describe this workflow. Both video formats remain un
 
 ## Plexarr
 
-The current card uses a static crop of the authenticated live Discover catalog
-captured on October 15. `plexarr-catalog.png` crops the original
-`plexarr-live-discover.png` at x=0, y=193, width=1440, height=592. This excludes
-the top navigation, including Request, without altering the catalog UI.
-Run `npm run optimize:project-demos` to reproduce its WebP variants.
+The card uses a three-slide screenshot carousel with arrows, direct slide buttons,
+keyboard navigation, and touch swipes. It does not rotate automatically or load video.
+Only the selected slide's images mount. Full-size links keep small text accessible.
+
+The owner approved reuse of the October 15 authenticated live-app captures on
+October 18. No new sign-in, Library capture, or preference mutation is claimed.
+The slides show Discover, personalized picks, and title metadata.
+
+| Output PNG             | Source                             | Frame (seconds) | Crop: x, y, width, height |
+| ---------------------- | ---------------------------------- | --------------- | ------------------------- |
+| `plexarr-catalog.png`  | `plexarr-live-discover.png`        | —               | 0, 193, 1440, 592         |
+| `plexarr-picks.png`    | `plexarr-live-catalog-capture.mp4` | 20.3            | 18, 273, 700, 252         |
+| `plexarr-overview.png` | `plexarr-live-catalog-capture.mp4` | 23              | 434, 117, 576, 267        |
+| `plexarr-rating.png`   | `plexarr-live-catalog-capture.mp4` | 23              | 459, 486, 522, 47         |
+
+The third slide stacks two separate metadata excerpts. It does not reproduce a
+complete dialog. Every public crop excludes Request navigation, buttons, forms,
+and availability messaging. No catalog data or displayed rating was changed.
+The manifest records the source crops and output hashes.
+
+To extract a source frame, run this command from the repository root:
+
+```sh
+ffmpeg -ss 20.3 -i assets/source/project-demos/plexarr-live-catalog-capture.mp4 \
+  -frames:v 1 /tmp/plexarr-picks-frame.png
+```
+
+Use Sharp's `extract({ left, top, width, height })` with the table's crop coordinates.
+Save the resulting PNG under `assets/source/project-demos/`.
+Run `npm run optimize:project-demos` to reproduce the responsive WebP variants.
+The optimizer retains small metadata crops at their native maximum width.
 
 The previous request-focused video, captions, and full-navigation public poster
-were removed on October 18 at the owner's direction. The two October 15 source
-recordings remain historical evidence under `assets/source/project-demos`;
-they are not served by the portfolio. The manifest retains their original
-provenance in `plexarrArchivedOctober15`.
-
-A new Library, Discover, and favorites/ratings recording is pending the owner's
-normal passkey sign-in to the live app. Do not restore the old recording or show
-request controls in the replacement. No new recording or successful sign-in is
-claimed by this interim change. No fake data, auth bypass, or service changes
-are used.
+were removed on October 18. The two original recordings remain historical source
+evidence. They are not served by the portfolio. Their original provenance remains
+in `plexarrArchivedOctober15` in the capture manifest.
