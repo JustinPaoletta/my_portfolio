@@ -152,6 +152,7 @@ for (const width of [390, 1440]) {
     });
     page.on('response', (response) => {
       if (
+        response.status() > 0 &&
         /\/media\/(bitstockerz-demo|plexarr-live-demo)\.(mp4|webm)/.test(
           response.url()
         )
@@ -175,7 +176,7 @@ for (const width of [390, 1440]) {
       .analyze();
     expect(accessibility.violations).toEqual([]);
     // Linux WebKit emits canceled source probes even with preload="none".
-    // They never receive a response or load media; assert actual loading rather
+    // Their synthetic response has status 0 and no body; assert HTTP loading rather
     // than counting request-start events that the browser immediately cancels.
     expect(mediaResponses).toHaveLength(0);
     for (const video of await projects.locator('video').all()) {
