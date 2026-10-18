@@ -11,7 +11,7 @@ describe('About section', () => {
     expect(
       screen.getByText('3–4 hour process to about 25 minutes.')
     ).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: 'View résumé' })).toHaveAttribute(
+    expect(screen.getByRole('link', { name: 'View Resume' })).toHaveAttribute(
       'href',
       '/resume/Justin-Paoletta_Software-Engineer.pdf'
     );

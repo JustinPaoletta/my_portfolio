@@ -312,7 +312,7 @@ for (const width of [320, 390, 1280]) {
       'mentor engineers',
     ]);
     const resume = about.getByRole('link', {
-      name: 'View résumé',
+      name: 'View Resume',
       exact: true,
     });
     await resume.scrollIntoViewIfNeeded();
