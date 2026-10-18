@@ -35,7 +35,9 @@ for (const width of [320, 1280]) {
     expect(gameRequests).toEqual([]);
     await expect(card.locator('iframe,canvas,video')).toHaveCount(0);
     const box = await action.boundingBox();
-    expect(box!.height).toBeGreaterThanOrEqual(44);
+    // Firefox can lose a few millionths when subtracting large page offsets.
+    // Compare CSS-pixel dimensions at 0.001px precision, preserving the 44px gate.
+    expect(Math.round(box!.height * 1000) / 1000).toBeGreaterThanOrEqual(44);
     expect(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth
