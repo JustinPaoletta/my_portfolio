@@ -42,13 +42,14 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 
 ### Latest local results
 
-- Unit coverage: 97.28% lines, 97.18% statements, 96.56% functions, 90.45% branches; all existing 90% thresholds pass.
+- Unit coverage: 97.21% lines, 97.11% statements, 96.38% functions, 91.02% branches; all existing 90% thresholds pass.
 - Frontend: 287 cases pass. Server suite is run by the required pre-push check.
 - Production Chromium/mobile: 93 passed, one preview-only test skipped; three additional professional-layout checks passed.
 - Desktop/mobile fractional-layout regression: both passed with byte-identical captures.
 - macOS section visuals: 15 passed, including new About references; updated images visually reviewed before staging.
 - Delivered Blender GLB validator passed (179,410 triangles, finite geometry, valid skinning, five embedded textures, WaveThenRest clip).
-- Firefox/WebKit keyboard regressions: all 10 terminal/calendar cases passed after the final keyboard fallback. The full final browser matrix and PR CI are checked after pushing.
+- Firefox/WebKit keyboard regressions: all 10 terminal/calendar cases passed after the final keyboard fallback.
+- Hosted verification at `c8f5c21`: quality/coverage, bundle, Lighthouse, Chromium, mobile Chromium, all 33 Linux visual checks, and Vercel passed. The expanded Firefox/WebKit jobs exposed the environment/media checks below; all 16 focused Firefox/WebKit follow-up cases passed locally. Hosted verification of the follow-up is pending.
 
 ### Defects found during this audit
 
@@ -57,3 +58,9 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 - Support legacy media-query listeners when updating responsive hero posters, with matched cleanup.
 - Remove the stale Foster label from the CLI dog details.
 - Correct tests that relied on platform-specific Tab focus, scrollend support, or a fixed chunk-delay stopwatch. The chunk test now explicitly holds/releases the response; the scroll test waits for observed stable positions.
+
+### Cross-browser follow-up
+
+- Firefox traces on the headless Linux runner reported `AllowWebgl2:false`; configure the Firefox test launch to allow real WebGL and use headless EGL on Linux. Keep poster-failure tests and all 3D assertions enabled.
+- Prefer the MP4 source before WebM for native Safari compatibility while retaining both formats and `preload="none"`. The existing browser test checks no initial video requests and verifies actual playback, dimensions, completion, and transcripts.
+- Scan the theme modal while the background is inert, explicitly check that inert state, then scan the whole page after closing it. This avoids treating the intentionally inactive main landmark as a missing page landmark.

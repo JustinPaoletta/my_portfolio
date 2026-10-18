@@ -3,8 +3,9 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 import { revealDeferredSection } from './support/sections';
 
-async function expectNoAxeViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).analyze();
+async function expectNoAxeViolations(page: Page, scope?: string) {
+  const builder = new AxeBuilder({ page });
+  const results = await (scope ? builder.include(scope) : builder).analyze();
   expect(
     results.violations,
     results.violations.map((violation) => violation.id).join(', ')
@@ -101,10 +102,15 @@ test('@a11y theme switcher dialog has no violations and restores focus', async (
   await expect(dialog).toBeVisible();
   await expect(page.getByRole('radio', { name: 'System' })).toBeFocused();
 
-  await expectNoAxeViolations(page);
+  // Background main/heading are intentionally inert while this modal is open.
+  // Scan its active accessibility subtree, then the restored whole page.
+  await expect(page.locator('main')).toHaveAttribute('inert', '');
+  await expectNoAxeViolations(page, '[role="dialog"]');
 
   await page.keyboard.press('Escape');
   await expect(toggle).toBeFocused();
+  await expect(page.locator('main')).not.toHaveAttribute('inert');
+  await expectNoAxeViolations(page);
 });
 
 test('@a11y contact form surfaces field-level errors to assistive tech', async ({
