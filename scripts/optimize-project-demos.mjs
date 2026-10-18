@@ -9,7 +9,7 @@ const captures = [
   'design-system-forms',
   'design-system-data',
   'design-system-assistant',
-  'bitstockerz-research',
+  'bitstockerz-workspace',
   'plexarr-live-discover',
 ];
 let count = 0;

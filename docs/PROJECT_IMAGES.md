@@ -123,7 +123,7 @@ replacement design is deferred at the owner’s request.
 
 ## Featured browser demos (2026-10-15)
 
-The design-system dashboard and BitStockerz research stills are real Chrome
+The design-system dashboard and BitStockerz workspace stills are real Chrome
 captures. Their PNG masters, raw walkthrough and capture manifest live in
 `assets/source/project-demos/`. Run `npm run optimize:project-demos` to rebuild
 640/960/1440px WebPs; no image is enlarged.
@@ -153,3 +153,5 @@ remains; there is no public app or source link. The capture notes retain the two
 cropped source recordings, edit ranges, output hashes, and reproduction command.
 New `plexarr-live-*` image and media URLs avoid cached versions of the removed
 fictional demo. Its 60px header logo retains the existing lossless variants.
+
+The BitStockerz demo was refreshed on 2026-10-18 from the current local UI. It shows the revised dashboard, strategy library, rules, settings, and results. New `bitstockerz-workspace-*` media and poster URLs replace the old capture. Capture notes and hashes identify the dirty source tree and disposable seed API.

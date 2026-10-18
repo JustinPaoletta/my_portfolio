@@ -144,7 +144,7 @@ for (const width of [390, 1440]) {
     const mediaResponses: string[] = [];
     page.on('request', (request) => {
       if (
-        /\/media\/(bitstockerz-demo|plexarr-live-demo)\.(mp4|webm)/.test(
+        /\/media\/(bitstockerz-workspace-demo|plexarr-live-demo)\.(mp4|webm)/.test(
           request.url()
         )
       ) {
@@ -154,7 +154,7 @@ for (const width of [390, 1440]) {
     page.on('response', (response) => {
       if (
         response.status() > 0 &&
-        /\/media\/(bitstockerz-demo|plexarr-live-demo)\.(mp4|webm)/.test(
+        /\/media\/(bitstockerz-workspace-demo|plexarr-live-demo)\.(mp4|webm)/.test(
           response.url()
         )
       ) {

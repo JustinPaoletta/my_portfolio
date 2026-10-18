@@ -91,17 +91,17 @@ const projects: Project[] = [
   {
     ...BITSTOCKERZ_PROJECT,
     id: 'project-1',
-    image: '/images/projects/bitstockerz-research-1440.webp',
+    image: '/images/projects/bitstockerz-workspace-1440.webp',
     imageWidth: 1440,
     imageHeight: 960,
     imageCaption:
-      '16-second local app walkthrough: strategy rules → simulation settings → backtest results. Synthetic demo data; no live trading.',
+      '21-second current-app walkthrough: dashboard → strategy rules → backtest settings → results and equity charts. Synthetic demo data; no live trading.',
     demo: {
-      src: '/media/bitstockerz-demo.mp4',
-      webm: '/media/bitstockerz-demo.webm',
-      captions: '/media/bitstockerz-demo.vtt',
+      src: '/media/bitstockerz-workspace-demo.mp4',
+      webm: '/media/bitstockerz-workspace-demo.webm',
+      captions: '/media/bitstockerz-workspace-demo.vtt',
       transcript:
-        'In a disposable local account, change the moving-average period and risk exit, then validate and save the strategy. Configure a backtest with 75% allocation, 5 basis points of commission and 5 basis points of slippage. Run the simulation and inspect its benchmark comparison and equity curve. Prices and results are synthetic demo data.',
+        'In a disposable local account, review the Trading Workspace dashboard and Get Strategic strategy library. Open SMA momentum study to inspect its saved rules. Configure a backtest with 75% allocation, 5 basis points of commission and 5 basis points of slippage. Run the simulation and inspect its assumptions, metrics, buy-and-hold comparison, and equity curve. Prices and results are synthetic demo data.',
     },
   },
   {

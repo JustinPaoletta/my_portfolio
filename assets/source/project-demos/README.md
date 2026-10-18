@@ -49,38 +49,39 @@ The portfolio displays verbatim log excerpts, the first JSON record, six of the
 and JSON, original fictional files, the manifest, a README, and the full log.
 Only the temporary folder and loopback port are normalized in that log.
 
-## BitStockerz
+## BitStockerz — refreshed 2026-10-18
 
-The current Angular development server used a disposable seed-mode API with
-`BITSTOCKERZ_SKIP_ENV_FILE=true`, an empty `DATABASE_URL`, and ingestion, live
-market data, private beta and AI disabled. The API used its existing local
-compiled build. Another task was updating the web working tree during this
-session; the revision is a reference, not a claim of a clean release build.
-No provider credentials or real account data were used.
+The refreshed recording uses the current Angular working tree, including revised copy and approved branding.
+The API runs from its existing compiled build in disposable seed mode.
+`BITSTOCKERZ_SKIP_ENV_FILE=true` prevents loading project credentials. The database URL is empty.
+Ingestion, live market data, private beta, and AI calls are disabled.
 
-The recording edits a sample SMA strategy's period and risk exit, validates and
-saves it, configures 75% allocation with 5 bps commission and 5 bps slippage, runs
-a backtest, and scrolls to its benchmark comparison and equity curve. Demo prices
-and results are synthetic. The run is not evidence of investment performance,
-live-provider acceptance, or production availability.
+The recording opens the dashboard, strategy library, and saved `SMA momentum study` rules.
+It configures 75% allocation, 5 bps commission, and 5 bps slippage, then runs the actual local backtester.
+It displays assumptions, metrics, the buy-and-hold comparison, and the equity curve.
+Prices and results are synthetic. No provider calls, real account access, or real-money orders are demonstrated.
+No browser API responses or visible copy were replaced for this capture.
 
-The original WebM is retained outside the public directory. Its 15.6-second H.264
-export has no audio, uses yuv420p and faststart, and loads only after playback is
-requested. The VTT provides timed descriptions of the visible workflow; an HTML
-transcript provides the same context without playback.
+The continuous raw capture is `bitstockerz-workspace-walkthrough.webm`: 21.2 seconds, 1440 × 960, 25 fps, silent.
+`bitstockerz-workspace.png` is a separate screenshot of the same result, framed to show metrics and the benchmark chart.
+The previous October 15 sources remain archived here; the portfolio uses the new workspace filenames.
+The manifest records source hashes, the dirty working-tree status, and capture details.
 
-Re-encode the recording from the repository root with:
+Re-encode from the portfolio root:
 
 ```sh
-ffmpeg -i assets/source/project-demos/bitstockerz-walkthrough.webm \
-  -an -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p \
-  -movflags +faststart public/media/bitstockerz-demo.mp4
+ffmpeg -i assets/source/project-demos/bitstockerz-workspace-walkthrough.webm \
+  -an -map_metadata -1 -c:v libx264 -profile:v baseline -bf 0 -g 25 \
+  -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart \
+  public/media/bitstockerz-workspace-demo.mp4
+ffmpeg -i assets/source/project-demos/bitstockerz-workspace-walkthrough.webm \
+  -an -map_metadata -1 -c:v libvpx-vp9 -crf 31 -b:v 0 -row-mt 1 -cpu-used 3 \
+  public/media/bitstockerz-workspace-demo.webm
 ```
 
-Run `npm run optimize:project-demos` to regenerate 640/960/1440px WebP stills
-from the PNG masters, up to each capture's original width. The generator does not
-enlarge them. Review refreshed
-captures before replacing these assets and update the manifest hashes.
+Run `npm run optimize:project-demos` to generate the 640/960/1440px WebP posters.
+The new media URLs prevent browsers from reusing the previous recording.
+The VTT and HTML transcript describe this workflow. Both video formats remain unloaded until playback is requested.
 
 ## Plexarr
 
