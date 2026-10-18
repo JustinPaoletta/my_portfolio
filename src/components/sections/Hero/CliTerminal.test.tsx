@@ -1035,7 +1035,7 @@ describe('CliTerminal', () => {
       })
     ).toHaveAttribute(
       'href',
-      'https://squark-demo-8twobaom5-justin-paolettas-projects.vercel.app'
+      'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app'
     );
   });
 

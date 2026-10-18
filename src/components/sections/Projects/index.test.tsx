@@ -49,7 +49,7 @@ describe('Projects section', () => {
     });
     expect(action).toHaveAttribute(
       'href',
-      'https://squark-demo-8twobaom5-justin-paolettas-projects.vercel.app'
+      'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app'
     );
     expect(action).toHaveAttribute('target', '_blank');
     expect(action).toHaveAttribute('rel', 'noopener noreferrer');

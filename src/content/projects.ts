@@ -67,6 +67,6 @@ export const SQUARK_PROJECT: ProjectSummary = {
   techStack: ['Godot', 'GDScript', 'WebGL 2', 'WebAssembly'],
   status: 'testing',
   featured: false,
-  liveUrl: 'https://squark-demo-8twobaom5-justin-paolettas-projects.vercel.app',
+  liveUrl: 'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app',
   liveLabel: 'Play preview',
 };

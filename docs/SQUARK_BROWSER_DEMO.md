@@ -2,7 +2,7 @@
 
 The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture and a small conure icon are the only added media. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. CLI project 7 uses the same description and review link.
 
-[Review the separate game preview](https://squark-demo-8twobaom5-justin-paolettas-projects.vercel.app). Vercel sign-in is currently required. The portfolio explicitly says **Play preview** and explains this access requirement. This is not yet an anonymous public demo.
+[Review the separate game preview](https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app). Vercel sign-in is currently required. The portfolio explicitly says **Play preview** and explains this access requirement. This is not yet an anonymous public demo.
 
 ## Game implementation
 
@@ -12,22 +12,23 @@ The Godot 4.5.1 single-thread Compatibility export retains Jolt and the existing
 
 The shell provides click-to-download, real or indeterminate progress, errors/retry, input choice, optional fullscreen, storage-denied session play, context-loss recovery, and safe-area-aware touch layout. Audio starts after a game gesture. Focus/visibility changes use the existing pause/input-clear path. The normal export excludes private diagnostics.
 
-The final public artifact is release `8a1f92116d474124ee75`: **51,446,887 bytes / 49.06 MiB** core gzip transfer and **56,734,267 bytes** for the full static site, including an H.264 gameplay fallback. The unoptimized baseline was approximately 230 MiB gzip-equivalent. Receipts hash source/tool/template inputs and enforce a 50 MiB transfer and 100,000,000-byte upload gate.
+The final release artifact is release `6e6d40291ad12ce9831f`: **51,446,887 bytes / 49.06 MiB** core gzip transfer and **58,070,569 bytes** for the full static site, including an H.264 gameplay fallback. The unoptimized baseline was approximately 230 MiB gzip-equivalent. Receipts hash source/tool/template inputs and enforce a 50 MiB transfer and 100,000,000-byte upload gate.
 
 ## Acceptance evidence
 
-- Ten packaging/HTTP contracts and the isolated runtime pack audit pass; all 117 declared dependencies and 7 rings are present.
+- Twelve packaging/HTTP contracts and the isolated runtime pack audit pass; all 117 declared dependencies and 7 rings are present.
 - Twelve relevant native regression fixtures pass; intro, mobile layout, and pause scrolling pass again after browser layout work.
 - Installed Chrome completes the course, results tally, three fresh retries, real WebAudio starts, and the shell/recovery checks. Initial M4 flight measurements were p50 16.7 ms and p95 18.7 ms.
 - Actual macOS Safari completes the course, reaches the perch/results, and retries after a crash. Automated WebKit remains a separate check.
-- Playwright Firefox 148.0.2 passes all 13 checks on QA v4, including full-course and retry acceptance. Cold startup is slower, with an approximately 15-second preparation hitch. The v4 sampled frame report is p50 17 ms / p95 33 ms; it excluded individual active frames over 500 ms, so it is not a worst-case frame guarantee. The final probe retains all active frames.
-- Physical iPhone Safari, Android Chrome, and Microsoft Edge have not been accepted. Mobile support is not advertised.
+- Playwright Firefox 148.0.2 passes all 13 checks on QA v4, including full-course and retry acceptance. Cold startup is slower, with an approximately 15-second preparation hitch. The final full-course report retains all active frames: p50 17 ms / p95 32 ms, with a 15,397 ms maximum during startup. This is not a worst-case frame guarantee.
+- Automated WebKit passes all 13 browser checks. Final audio/course checks pass in Chrome and Firefox; final audio/retry checks pass in WebKit. Fullscreen with reachable exit controls and natural fallback-video completion pass in all three browser engines (six checks).
+- Physical iPhone Safari, Android Chrome, and Microsoft Edge have not been accepted. An isolated vendor-verified Edge build could not render reliably under this Mac automation; it was not installed. Mobile support is not advertised.
 - Browser ambience reuses immutable loop resources across attempts. Chrome backing-store growth over three retries fell from 20.7 MB to 0.9 MB; a 2 MiB regression guard now covers this counter. The native audio fixture passes after this change.
 - Total browser/GPU peak memory is not established. The engine static counter is unavailable in this Web build; it is reported as unknown, never zero. Retained-memory sampling is separate from total process memory.
 
-Protected HTTPS checks on the first preview confirm correct MIME types, gzip encoding, immutable versioned assets, revalidated HTML, scoped CSP, and pack bytes matching the exported SHA-256. The final preview receives its own hosted smoke check. Previous immutable previews and local receipts remain available for rollback.
+Protected HTTPS checks on the first preview confirm correct MIME types, gzip encoding, immutable versioned assets, revalidated HTML, scoped CSP, and pack bytes matching the exported SHA-256. The final preview passes hosted gameplay/audio smoke with no page errors and no engine requests before Play. Cold and repeat WASM/pack transfers were measured: the protected repeat load still transferred the full files despite immutable headers, so warm-cache savings remain unverified and must be checked anonymously at public launch. Previous immutable previews and local receipts remain available for rollback.
 
-Vercel attempted to make the new project's first deployment production without a production flag. It was canceled before completion. Both review deployments explicitly target preview; future deploy commands must include `--target preview`.
+Vercel attempted to make the new project's first deployment production without a production flag. It was canceled before completion. Subsequent review deployments explicitly target preview; future deploy commands must include `--target preview`.
 
 ## Remaining release decisions
 
