@@ -220,18 +220,47 @@ for (const width of [390, 1440]) {
       expect(duration).toBeGreaterThan(0.5);
       // Exercise the recorded walkthrough from start to finish. Seeking to
       // the final half-second bypasses most decoding and is weaker evidence.
-      await expect
-        .poll(
-          () => video.evaluate((element: HTMLVideoElement) => element.ended),
-          { timeout: Math.ceil(duration * 1000) + 10000 }
-        )
-        .toBe(true);
-      expect(
-        await video.evaluate((element: HTMLVideoElement) => element.paused)
-      ).toBe(true);
-      expect(
-        await video.evaluate((element: HTMLVideoElement) => element.currentTime)
-      ).toBeCloseTo(duration, 1);
+      try {
+        await expect
+          .poll(
+            () => video.evaluate((element: HTMLVideoElement) => element.ended),
+            { timeout: Math.ceil(duration * 1000) + 10000 }
+          )
+          .toBe(true);
+        expect(
+          await video.evaluate((element: HTMLVideoElement) => element.paused)
+        ).toBe(true);
+        expect(
+          await video.evaluate(
+            (element: HTMLVideoElement) => element.currentTime
+          )
+        ).toBeCloseTo(duration, 1);
+      } finally {
+        await test.info().attach(`${title}-media-state`, {
+          body: JSON.stringify(
+            await video.evaluate((element: HTMLVideoElement) => ({
+              source: element.currentSrc,
+              time: element.currentTime,
+              duration: element.duration,
+              paused: element.paused,
+              ended: element.ended,
+              readyState: element.readyState,
+              networkState: element.networkState,
+              error: element.error?.message ?? null,
+              buffered: Array.from(
+                { length: element.buffered.length },
+                (_, index) => [
+                  element.buffered.start(index),
+                  element.buffered.end(index),
+                ]
+              ),
+            })),
+            null,
+            2
+          ),
+          contentType: 'application/json',
+        });
+      }
       await article.getByText('Read the walkthrough', { exact: true }).click();
       await expect(article.getByText(transcript)).toBeVisible();
     }

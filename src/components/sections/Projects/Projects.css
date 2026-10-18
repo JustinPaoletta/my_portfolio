@@ -733,3 +733,13 @@
 .export-demo-caption .project-capture-link {
   color: var(--text-primary);
 }
+
+.projects-section .card-links .card-link--demo {
+  width: auto;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+}

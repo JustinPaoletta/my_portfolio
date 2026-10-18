@@ -39,6 +39,29 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
   });
 
+  it('shows the SQUARK review action without loading an embedded game', () => {
+    render(<Projects />);
+    const card = screen
+      .getByRole('heading', { name: 'SQUARK' })
+      .closest('article')!;
+    const action = within(card).getByRole('link', {
+      name: 'Play preview: SQUARK',
+    });
+    expect(action).toHaveAttribute(
+      'href',
+      'https://squark-demo-8twobaom5-justin-paolettas-projects.vercel.app'
+    );
+    expect(action).toHaveAttribute('target', '_blank');
+    expect(action).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(
+      within(card).getByText(/preview requires Vercel sign-in/)
+    ).toBeInTheDocument();
+    expect(
+      within(card).getByAltText(/Actual SQUARK browser gameplay/)
+    ).toHaveAttribute('loading', 'lazy');
+    expect(card.querySelector('iframe, video, canvas, script')).toBeNull();
+  });
+
   it('renders project content consistently', () => {
     render(<Projects />);
 

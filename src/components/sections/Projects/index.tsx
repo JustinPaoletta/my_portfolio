@@ -11,6 +11,7 @@ import {
   BITSTOCKERZ_PROJECT,
   JP_DESIGN_SYSTEM_PROJECT,
   PROJECT_STATUS_LABELS,
+  SQUARK_PROJECT,
   type ProjectSummary,
 } from '@/content/projects';
 import './Projects.css';
@@ -102,6 +103,15 @@ const projects: Project[] = [
       transcript:
         'In a disposable local account, change the moving-average period and risk exit, then validate and save the strategy. Configure a backtest with 75% allocation, 5 basis points of commission and 5 basis points of slippage. Run the simulation and inspect its benchmark comparison and equity curve. Prices and results are synthetic demo data.',
     },
+  },
+  {
+    ...SQUARK_PROJECT,
+    id: 'project-squark',
+    image: '/images/projects/squark-gameplay-800.webp',
+    cardImage: '/images/projects/squark-gameplay-800.webp',
+    cardImageAlt:
+      'Actual SQUARK browser gameplay: a conure flying above the river valley and rings',
+    cardHeaderIcon: '/images/projects/squark-icon-120.webp',
   },
   {
     id: 'project-3',
@@ -559,9 +569,14 @@ function Projects(): React.ReactElement {
                       href={project.liveUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="card-link"
-                      aria-label={`View ${project.title} live`}
+                      className={`card-link${project.liveLabel ? ' card-link--demo' : ''}`}
+                      aria-label={
+                        project.liveLabel
+                          ? `${project.liveLabel}: ${project.title}`
+                          : `View ${project.title} live`
+                      }
                     >
+                      {project.liveLabel && <span>{project.liveLabel}</span>}
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"

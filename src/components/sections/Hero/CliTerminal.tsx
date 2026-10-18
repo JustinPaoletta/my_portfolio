@@ -12,6 +12,7 @@ import {
   BITSTOCKERZ_PROJECT,
   JP_DESIGN_SYSTEM_PROJECT,
   PROJECT_STATUS_LABELS,
+  SQUARK_PROJECT,
   type ProjectSummary,
 } from '@/content/projects';
 import { useBreakpoint } from '@/hooks/useBreakpoint';
@@ -259,6 +260,7 @@ const PROJECTS: ProjectSummary[] = [
     featured: false,
     private: true,
   },
+  SQUARK_PROJECT,
 ];
 
 const SKILL_CATEGORIES: CliSkillCategory[] = [
@@ -550,6 +552,15 @@ function CliTerminal(): React.ReactElement {
       },
       ...(repoLine ? [repoLine] : []),
       ...(packageLine ? [packageLine] : []),
+      ...(project.liveUrl
+        ? [
+            {
+              kind: 'output' as const,
+              text: `${project.liveLabel ?? 'Demo'}: ${project.liveUrl}`,
+              url: project.liveUrl,
+            },
+          ]
+        : []),
       { kind: 'output', text: project.description },
       { kind: 'output', text: `Stack: ${project.techStack.join(', ')}` },
       {

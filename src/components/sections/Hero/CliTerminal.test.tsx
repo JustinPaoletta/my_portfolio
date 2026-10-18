@@ -1023,6 +1023,22 @@ describe('CliTerminal', () => {
     ).toBeInTheDocument();
   });
 
+  it('exposes the same SQUARK review link through project navigation', () => {
+    renderTerminal();
+    runCommand('project 7');
+    expect(
+      terminalTranscript().getByText('[PROJECT 7] SQUARK')
+    ).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByRole('link', {
+        name: /Play preview: https:\/\/squark-demo/,
+      })
+    ).toHaveAttribute(
+      'href',
+      'https://squark-demo-8twobaom5-justin-paolettas-projects.vercel.app'
+    );
+  });
+
   it('handles whitespace input and missing dog stat fallback state', () => {
     dogsState = [{ name: 'Nala', stats: { treats: 1, scritches: 2 } }];
     renderTerminal();

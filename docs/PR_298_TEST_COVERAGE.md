@@ -42,8 +42,8 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 
 ### Latest local results
 
-- Unit coverage: 97.21% lines, 97.11% statements, 96.38% functions, 91.02% branches; all existing 90% thresholds pass.
-- Frontend: 287 cases pass. Server suite is run by the required pre-push check.
+- Unit coverage with SQUARK integration: 97.17% lines, 97.07% statements, 96.20% functions, 91.71% branches; all existing 90% thresholds pass.
+- Frontend: 289 cases pass. Server suite is run by the required pre-push check.
 - Production Chromium/mobile: 93 passed, one preview-only test skipped; three additional professional-layout checks passed.
 - Desktop/mobile fractional-layout regression: both passed with byte-identical captures.
 - macOS section visuals: 15 passed, including new About references; updated images visually reviewed before staging.
@@ -64,3 +64,7 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 - Firefox traces on the headless Linux runner reported `AllowWebgl2:false`; configure the Firefox test launch to allow real WebGL and use headless EGL on Linux. A follow-up trace identified missing EGL libraries (`FEATURE_FAILURE_EGL_LOAD_3`); install Mesa/EGL and select its surfaceless software renderer explicitly. Keep poster-failure tests and all 3D assertions enabled.
 - Linux WebKit emits immediately canceled video source probes under `preload="none"`. Assert no media responses and no loaded media before playback, rather than treating canceled request-start events as downloads. Preserve WebM/MP4 fallback sources and verify actual playback, dimensions, completion, and transcripts.
 - Scan the theme modal while the background is inert, explicitly check that inert state, then scan the whole page after closing it. This avoids treating the intentionally inactive main landmark as a missing page landmark.
+
+### SQUARK browser integration
+
+Projects/CLI unit checks share the review URL and disclose preview sign-in. Browser checks at 320/1280px verify the image, 44px action target, no overflow, no game/engine downloads before activation, and the separate-window launch. The game has separate real-course, audio, retry, lifecycle, failure, HTTP/pack, and native-regression evidence in [SQUARK browser demo review](SQUARK_BROWSER_DEMO.md). The protected preview is not yet anonymous public acceptance. Project recordings now play naturally to completion instead of seeking past most of the decoded content.
