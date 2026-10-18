@@ -1025,9 +1025,13 @@ describe('CliTerminal', () => {
 
   it('exposes the same SQUARK review link through project navigation', () => {
     renderTerminal();
-    runCommand('project 7');
+    runCommand('projects');
     expect(
-      terminalTranscript().getByText('[PROJECT 7] SQUARK')
+      terminalTranscript().queryByText(/Godot Playground/)
+    ).not.toBeInTheDocument();
+    runCommand('project 3');
+    expect(
+      terminalTranscript().getByText('[PROJECT 3] SQUARK')
     ).toBeInTheDocument();
     expect(
       terminalTranscript().getByRole('link', {

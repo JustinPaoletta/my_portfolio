@@ -114,18 +114,6 @@ const projects: Project[] = [
     cardHeaderIcon: '/images/projects/squark-icon-120.webp',
   },
   {
-    id: 'project-3',
-    title: 'Godot Playground',
-    description:
-      'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene designed to be reused or referenced in future projects.',
-    image: '/images/projects/godot-playground.webp',
-    cardHeaderIcon: '/images/projects/godot-playground.webp',
-    techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
-    githubUrl: `${githubProfileUrl}/godot_practice`,
-    featured: false,
-    status: 'development',
-  },
-  {
     id: 'project-4',
     showcase: 'exports',
     title: 'wild-apricot-exports',

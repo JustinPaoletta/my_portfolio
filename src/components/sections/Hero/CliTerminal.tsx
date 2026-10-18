@@ -226,15 +226,7 @@ const githubProfileUrl = env.social.github.replace(/\/+$/, '');
 const PROJECTS: ProjectSummary[] = [
   JP_DESIGN_SYSTEM_PROJECT,
   BITSTOCKERZ_PROJECT,
-  {
-    title: 'Godot Playground',
-    description:
-      'My sandbox for learning the Godot engine, built around small, isolated mechanics, movement systems, UI components, shaders, physics experiments, and prototype gameplay loops. Each technique is a self-contained scene.',
-    techStack: ['Godot', 'GDScript', 'Shaders', 'Physics'],
-    status: 'development',
-    featured: false,
-    githubUrl: `${githubProfileUrl}/godot_practice`,
-  },
+  SQUARK_PROJECT,
   {
     title: 'wild-apricot-exports',
     description:
@@ -260,7 +252,6 @@ const PROJECTS: ProjectSummary[] = [
     featured: false,
     private: true,
   },
-  SQUARK_PROJECT,
 ];
 
 const SKILL_CATEGORIES: CliSkillCategory[] = [

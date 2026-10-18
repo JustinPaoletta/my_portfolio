@@ -16,6 +16,9 @@ for (const width of [320, 1280]) {
     });
     await page.goto('/?theme=minimal&mode=dark');
     const projects = await revealDeferredSection(page, 'projects');
+    await expect(
+      projects.getByRole('heading', { name: 'Godot Playground', exact: true })
+    ).toHaveCount(0);
     const card = projects.locator('article').filter({
       has: page.getByRole('heading', { name: 'SQUARK', exact: true }),
     });

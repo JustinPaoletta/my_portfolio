@@ -1,6 +1,6 @@
 # SQUARK browser demo review
 
-The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture and a small conure icon are the only added media. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. CLI project 7 uses the same description and review link.
+The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture and a small conure icon are the only added media. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. SQUARK replaces Godot Playground in the visual list and occupies CLI project 3. Both presentations share its description and review link.
 
 [Review the separate game preview](https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app). Vercel sign-in is currently required. The portfolio explicitly says **Play preview** and explains this access requirement. This is not yet an anonymous public demo.
 

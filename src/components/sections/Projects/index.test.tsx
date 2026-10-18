@@ -41,6 +41,9 @@ describe('Projects section', () => {
 
   it('shows the SQUARK review action without loading an embedded game', () => {
     render(<Projects />);
+    expect(
+      screen.queryByRole('heading', { name: 'Godot Playground' })
+    ).not.toBeInTheDocument();
     const card = screen
       .getByRole('heading', { name: 'SQUARK' })
       .closest('article')!;
@@ -94,7 +97,7 @@ describe('Projects section', () => {
 
     expect(
       document.querySelector(
-        'img.folder-icon--image[src="/images/projects/godot-playground.webp"]'
+        'img.folder-icon--image[src="/images/projects/squark-icon-120.webp"]'
       )
     ).toBeInTheDocument();
 
