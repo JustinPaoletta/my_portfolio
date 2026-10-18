@@ -1,0 +1,146 @@
+{
+  "captured": "2026-10-15",
+  "viewport": {
+    "width": 1440,
+    "height": 960
+  },
+  "designSystem": {
+    "sourceRevision": "69a33edea3cf7d3dfbd2f5b7b7e8606bcf0f9a88",
+    "story": "compositions-app-shell-dashboard--dashboard",
+    "accent": "gold",
+    "captures": [
+      {
+        "file": "design-system-dashboard.png",
+        "story": "compositions-app-shell-dashboard--dashboard",
+        "viewport": {
+          "width": 1440,
+          "height": 960
+        }
+      },
+      {
+        "file": "design-system-forms.png",
+        "story": "compositions-controls-form--default",
+        "viewport": {
+          "width": 960,
+          "height": 640
+        }
+      },
+      {
+        "file": "design-system-data.png",
+        "story": "compositions-data-display--default",
+        "viewport": {
+          "width": 960,
+          "height": 640
+        }
+      },
+      {
+        "file": "design-system-assistant.png",
+        "story": "compositions-assistant-system--default",
+        "viewport": {
+          "width": 960,
+          "height": 640
+        }
+      }
+    ]
+  },
+  "bitstockerz": {
+    "sourceRevision": "44584e441c39969e7ab3f17b7053c93b4dae8e56",
+    "mode": "Disposable local seed API; current Angular development server; existing compiled API. No database, live provider, or AI calls.",
+    "runId": "04a19027-f084-45e9-853c-d793541f706e",
+    "durationSeconds": 15.6,
+    "encoding": "VP9 WebM and H.264 MP4, 1440x960, 15fps, no audio"
+  },
+  "sha256": {
+    "assets/source/project-demos/design-system-dashboard.png": "ecd30aa4bb59d3fff91c7d9bc9db9c106c28bca7002c88fb16e611a15e94853d",
+    "assets/source/project-demos/bitstockerz-walkthrough.webm": "a2d4511dd702561e763c9c9093e8bace3ac2a5e5f31cc5397138d5691257cf07",
+    "assets/source/project-demos/bitstockerz-research.png": "cf6721ed3181d78903dbb2906ac582996542b49e9698e94d58712e1276ba4822",
+    "public/media/bitstockerz-demo.mp4": "9cbb62e7271e2c7bc3b12f4c94ba4997eb66b61564731aec025c9dcd5ceadb84",
+    "public/media/bitstockerz-demo.vtt": "117b93835f58dc83e501b9692c7d25d468226f93c0ca29479fd5357087f51939",
+    "public/media/bitstockerz-demo.webm": "dacf3977864967786caae300c2bb67ff3e9fbca4505fdac19ba9a199f60f8f01",
+    "assets/source/project-demos/design-system-assistant.png": "117fa8afd14decda7d024511f1d1da4bfed328710bcdf356346c34f7305bad1f",
+    "assets/source/project-demos/design-system-data.png": "a5847cf7e8bf4f9dc1305f353f0250ba38cb49dfc778c1e656fd996d4c32c1ed",
+    "assets/source/project-demos/design-system-forms.png": "a6595435c7b7ba82b41918a405c58b2ad557e0fb937e713a1bdcb736effd94c7",
+    "assets/source/project-demos/wild-apricot/README.txt": "a16b1798d92a41cc08ac113d7203a6cfec15ee2884087b0a7f6742cefa395fce",
+    "assets/source/project-demos/wild-apricot/demo-exports/contacts/contacts.csv": "4933fb38131a3dd60e4788accbedf83a2adfa71f436a02065bc969c74e098c60",
+    "assets/source/project-demos/wild-apricot/demo-exports/contacts/contacts.json": "45023369bbc8198c05e32f06cfbfb2033616811e764ef4a1dad3869f2b757033",
+    "assets/source/project-demos/wild-apricot/demo-exports/events/wild-apricot-events.csv": "54bbea8257d9284401d5560ff8f3282327ee4c50dfc768b45354a853f5c02fc8",
+    "assets/source/project-demos/wild-apricot/demo-exports/events/wild-apricot-events.json": "27fbd38390dae6e1188bef7f2eb1cd39df6ad5b37a1c118dc9326ebd8f8543c1",
+    "assets/source/project-demos/wild-apricot/demo-exports/files/Documents/member-guide.txt": "daec9a651223389937cad0a7afd709321ac026c9c3cdad51a53374523e8c848c",
+    "assets/source/project-demos/wild-apricot/demo-exports/files/Pictures/club-mark.svg": "112fd8c991965207db1b4e979ab25a528701fba8a8477729a4e3c64a6f62d4ff",
+    "assets/source/project-demos/wild-apricot/demo-exports/files/_manifest.json": "b7c022b582020aea54028f6eef71660a02ac1c5d240c87c2dac736f2f2a811eb",
+    "assets/source/project-demos/wild-apricot/fixtures.json": "f6d49e4505d5828b74d8fe44dfa10759a95d8ed22927b32a5f20e1d35b43221c",
+    "assets/source/project-demos/wild-apricot/run.log": "cf62e571bf6fa0fcba24e8cbbfd98a6587a216c0296fd0ee4e98bd34b4e5532c",
+    "public/demos/wild-apricot-sample.zip": "fc0da5b41d99da01282ad492abf0e9ac44a596980e8d0582c4671c478f947244",
+    "public/images/projects/design-system-assistant-640.webp": "862811e47100e0cd1dcd85bea9e48a3e41903fe7cdfbb671758d9632b476530a",
+    "public/images/projects/design-system-assistant-960.webp": "5808983563468523b80cea3dda3b943ca4a9803287ea2af07ae36e35a92e1793",
+    "public/images/projects/design-system-dashboard-1440.webp": "828a0cd447213f97e3ba33753ed167c71028b28bd1ce41744bf79105ebc49d4e",
+    "public/images/projects/design-system-dashboard-640.webp": "611fbd12aef4a2f67cf723d4032b041c3d814def18cdc788ba4d5915269c1a0a",
+    "public/images/projects/design-system-dashboard-960.webp": "939022c1436a3ce42d97a3d54b6f00247a44fad709b158609c9f0dc3885fbc11",
+    "public/images/projects/design-system-data-640.webp": "88897aa16017b1ad90b0ccb491075cf66ae60b3c49dd9087a9dfb39f96f8f7a7",
+    "public/images/projects/design-system-data-960.webp": "f8466f87e76a48fe37b91eb7b97be186deaa1aa26f52eadacbeef735252d3d75",
+    "public/images/projects/design-system-forms-640.webp": "3e9a5334d085c85c573d01e12e9201cb559d948340d49a1cbd3a54d4f9d35db2",
+    "public/images/projects/design-system-forms-960.webp": "bc8aa8ef20a8dbc5e138e89de8627785e433c0c7270742e38d9fd2cb42e8e4a0",
+    "public/images/projects/design-system-showcase.webp": "b55fa64d5b40a64de19ebcc498ffaaf725d95b720f552ceec30eba3070277fd7",
+    "src/content/generated/wild-apricot-demo.json": "522f8f36e3f8d587ec7f7354849fb0080d0e785b89ee58e8c60195ce5ba462df",
+    "assets/source/project-demos/plexarr-live-request-capture.mp4": "59a5483fc716c109d49602ed34e56844246aeee58b15d1480453ce72508e8f69",
+    "assets/source/project-demos/plexarr-live-catalog-capture.mp4": "46a9593babcddb48efec487f962378699422ea480eb1d1bcedf21b4ffb3b0c84",
+    "assets/source/project-demos/plexarr-live-discover.png": "dcdf32a4e0ded0c8e3a9db9ac3e95ec00b865113d1d4f0cbdff7354bea078740",
+    "public/media/plexarr-live-demo.vtt": "7609e9d8868a8489dc5a8321d6078f1f8cba0d9f2d349e38dea76686bf0f0f28",
+    "public/media/plexarr-live-demo.webm": "79143fad8bae61fd80730d8c5e3a4fbc43349e12807d881f7001dfcfeaae0b93",
+    "public/media/plexarr-live-demo.mp4": "05b10a06a3917c81a7fb3e0d8c798b7301d9756fb54f0159af1038645590f4ed",
+    "public/images/projects/plexarr-live-discover-960.webp": "9646c82919bf8d5d3c17327e7d82752d45ed40d8b89fcb86c6e8cb11884d80a8",
+    "public/images/projects/plexarr-live-discover-1440.webp": "e3722fd9d50cbfe9397f0c286c913c37a8abfac39c9f76dfa197cf9d0826d689",
+    "public/images/projects/plexarr-live-discover-640.webp": "4a66a8690b555d1b2b433620e31774bc865dfdcb0dfac54af5236f825a2b2681"
+  },
+  "wildApricot": {
+    "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
+    "version": "1.0.1",
+    "mode": "Unmodified CLI, fixed REST fixtures and loopback WebDAV. Fictional data; no real credentials or external requests.",
+    "counts": {
+      "contacts": 3,
+      "events": 2,
+      "originalFiles": 2
+    },
+    "resume": "Two cached files skipped; zero additional GET requests."
+  },
+  "plexarr": {
+    "captured": "2026-10-15",
+    "deployedRevision": "Not independently verified from the browser.",
+    "mode": "Owner-authenticated live app in Chrome after normal passkey sign-in. Real catalog, recommendation, availability, and quality-profile responses. No interception, seed data, auth bypass, submitted request, or download.",
+    "sourceViewport": {
+      "width": 1777,
+      "height": 810
+    },
+    "nativeWindowRecording": {
+      "width": 1778,
+      "height": 988
+    },
+    "crop": {
+      "x": 168,
+      "y": 178,
+      "width": 1440,
+      "height": 808
+    },
+    "durationSeconds": 18,
+    "encoding": "VP9 WebM and H.264 MP4, 1440x808, 15fps, no audio",
+    "edit": [
+      {
+        "source": "plexarr-live-catalog-capture.mp4",
+        "startSeconds": 17,
+        "endSeconds": 26
+      },
+      {
+        "source": "plexarr-live-request-capture.mp4",
+        "startSeconds": 2,
+        "endSeconds": 11
+      }
+    ],
+    "workflow": [
+      "Real Discover movie grid",
+      "Avengers: Infinity War (2018) details and availability",
+      "Request review with HD-1080p selected",
+      "Cancel before submission; return to Discover"
+    ],
+    "boundaries": "Selection change occurs between the retained segments. No claim of uninterrupted recording, passkey ceremony, request submission, successful add, or download."
+  }
+}

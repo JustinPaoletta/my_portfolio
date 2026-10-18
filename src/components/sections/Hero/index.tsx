@@ -6,7 +6,11 @@
 
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { env } from '@/config/env';
-import { HERO_TAGLINE } from '@/content/site';
+import {
+  COSMIC_ASTRONAUT_ANIMATION,
+  COSMIC_ASTRONAUT_POSTER,
+} from '@/config/cosmicAstronautAssets';
+import { HERO_TAGLINE, SECTION_NAMES } from '@/content/site';
 import useIntersectionObserver from '@/hooks/useIntersectionObserver';
 import { useReducedMotion } from '@/hooks/useReducedMotion';
 import { useTheme } from '@/hooks/useTheme';
@@ -19,8 +23,9 @@ import {
   type RichHeroTheme,
 } from './preloadRichHeroScene';
 import './Hero.css';
+// CLI geometry is required at first render, alongside the terminal styles.
+import './Hero.cli.css';
 const themeStyleLoaders: Record<string, () => Promise<unknown>> = {
-  cli: () => import('./Hero.cli.css'),
   cosmic: () => import('./Hero.cosmic.css'),
   engineer: () => import('./Hero.engineer.css'),
 };
@@ -243,6 +248,8 @@ function Hero(): React.ReactElement {
   const { themeName, resolvedMode } = useTheme();
   const isVisualTest = isVisualTestMode();
   const isCosmicTheme = themeName === 'cosmic';
+  const [astronautAnimationFailed, setAstronautAnimationFailed] =
+    useState(false);
   const isEngineerTheme = themeName === 'engineer';
   const isCliTheme = themeName === 'cli';
   const prefersReducedMotion = Boolean(useReducedMotion());
@@ -254,6 +261,11 @@ function Hero(): React.ReactElement {
   );
   const shouldLoadRichHeroScene =
     deferredHeroEnhancement.shouldMountRichScene && !shouldUseStaticHeroScene;
+  const shouldAnimateAstronaut =
+    shouldLoadRichHeroScene &&
+    !prefersReducedMotion &&
+    !isVisualTest &&
+    !astronautAnimationFailed;
   const useCalmerChipMotion = Boolean(
     heroEnvironmentFlags & CALM_HERO_MOTION_FLAGS
   );
@@ -443,26 +455,16 @@ function Hero(): React.ReactElement {
                   <ul className="hero-title-list" aria-label="Core roles">
                     <li className="hero-title-list-item">Software Engineer</li>
                     <li className="hero-title-list-item">
-                      Frontend Platform Architecture
-                    </li>
-                    <li className="hero-title-list-item">
-                      Modernization &amp; Automation
+                      Angular · React · TypeScript
                     </li>
                   </ul>
                 ) : (
                   <p className="hero-title">
-                    <span className="title-text">Software Engineer</span>
-                    <span className="title-divider" aria-hidden="true">
-                      •
+                    <span className="title-text hero-role">
+                      Software Engineer
                     </span>
-                    <span className="title-text">
-                      Frontend Platform Architecture
-                    </span>
-                    <span className="title-divider" aria-hidden="true">
-                      •
-                    </span>
-                    <span className="title-text">
-                      Modernization &amp; Automation
+                    <span className="title-text hero-stack">
+                      Angular · React · TypeScript
                     </span>
                   </p>
                 )}
@@ -475,12 +477,25 @@ function Hero(): React.ReactElement {
               </div>
 
               {isCosmicTheme && (
-                <span className="hero-astronaut-rig" aria-hidden="true">
-                  <span className="hero-asteroid-tail" />
-                  <span className="hero-asteroid" />
+                <span
+                  className="hero-astronaut-rig"
+                  data-astronaut-motion={
+                    shouldAnimateAstronaut ? 'wave' : 'still'
+                  }
+                  aria-hidden="true"
+                >
                   <img
                     className="hero-astronaut"
-                    src="/images/hero/astro.webp"
+                    src={
+                      shouldAnimateAstronaut
+                        ? COSMIC_ASTRONAUT_ANIMATION
+                        : COSMIC_ASTRONAUT_POSTER
+                    }
+                    onError={() => {
+                      if (shouldAnimateAstronaut) {
+                        setAstronautAnimationFailed(true);
+                      }
+                    }}
                     alt=""
                     aria-hidden="true"
                     loading="eager"
@@ -491,33 +506,15 @@ function Hero(): React.ReactElement {
             </div>
 
             {isCosmicTheme && (
-              <div className="hero-tagline">
-                <p>{HERO_TAGLINE}</p>
+              <div className="hero-message">
+                <p className="hero-specialty">
+                  Web Applications &amp; Developer Tools
+                </p>
+                <div className="hero-tagline">
+                  <p>{HERO_TAGLINE}</p>
+                </div>
               </div>
             )}
-
-            <div className="hero-cta">
-              <a href="#projects" className="cta-primary">
-                <span>View My Work</span>
-                <svg
-                  className="cta-icon"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M5 12h14M12 5l7 7-7 7"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </a>
-              <a href="#contact" className="cta-secondary">
-                <span>Get In Touch</span>
-              </a>
-            </div>
 
             <div className="hero-social">
               <a
@@ -550,6 +547,29 @@ function Hero(): React.ReactElement {
                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                   <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z" />
                 </svg>
+              </a>
+            </div>
+
+            <div className="hero-cta">
+              <a href="#projects" className="cta-primary">
+                <span>View My Projects</span>
+                <svg
+                  className="cta-icon"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    d="M5 12h14M12 5l7 7-7 7"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </a>
+              <a href="#contact" className="cta-secondary">
+                <span>{SECTION_NAMES.contact}</span>
               </a>
             </div>
           </>

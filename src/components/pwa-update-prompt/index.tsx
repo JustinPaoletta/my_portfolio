@@ -8,7 +8,11 @@ const OFFLINE_READY_ACK_KEY = 'pwa-offline-ready-ack-v1';
  * Component to prompt user when a PWA update is available,
  * when the app is ready for offline use, or when the app can be installed
  */
-export default function PWAUpdatePrompt(): React.ReactElement | null {
+export default function PWAUpdatePrompt({
+  isHidden = false,
+}: {
+  isHidden?: boolean;
+}): React.ReactElement | null {
   const {
     needRefresh,
     canInstall,
@@ -89,12 +93,13 @@ export default function PWAUpdatePrompt(): React.ReactElement | null {
     };
   }, []);
 
-  // Don't render anything if no prompt state is active
+  // Keep listening while CLI owns the viewport, without covering its prompt.
   if (
-    !needRefresh &&
-    !canInstall &&
-    !showPostInstallHint &&
-    !showOfflineReadyConfirmation
+    isHidden ||
+    (!needRefresh &&
+      !canInstall &&
+      !showPostInstallHint &&
+      !showOfflineReadyConfirmation)
   ) {
     return null;
   }

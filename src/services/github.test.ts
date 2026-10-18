@@ -15,9 +15,8 @@ import {
   fetchGitHubUser,
   fetchGitHubRepos,
   fetchGitHubGraphQLData,
-  generateMockContributions,
   createPinnedFromRepos,
-} from './github';
+} from '@/services/github';
 import type { GitHubRepo } from '@/types/github';
 
 describe('github service', () => {
@@ -207,19 +206,6 @@ describe('github service', () => {
     await expect(fetchGitHubGraphQLData()).rejects.toThrow(
       'Failed to fetch GitHub data: 500 Server Error'
     );
-  });
-
-  it('generateMockContributions creates one year of valid week/day data', () => {
-    const randomSpy = vi.spyOn(Math, 'random').mockReturnValue(0.1);
-
-    const calendar = generateMockContributions();
-
-    expect(randomSpy).toHaveBeenCalled();
-    expect(calendar.weeks).toHaveLength(52);
-    expect(
-      calendar.weeks.every((week) => week.contributionDays.length === 7)
-    ).toBe(true);
-    expect(calendar.totalContributions).toBeGreaterThan(0);
   });
 
   it('createPinnedFromRepos maps top six repos and assigns language colors', () => {

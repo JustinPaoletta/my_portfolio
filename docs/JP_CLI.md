@@ -1,91 +1,73 @@
-# JP_CLI Theme Guide
+# JP-CLI terminal guide
 
-This document explains the interactive JP_CLI theme behavior, controls, and command model.
+The top row shows the macOS window dots and Justin Paoletta's name, Software
+Engineer title, and Angular / React / TypeScript stack. Narrow screens retain
+the name. The red dot shows an × on hover or keyboard focus; activating it has
+the same result as `exit`. Yellow and green are decorative and do not respond.
 
-## Overview
+The terminal opens with `Welcome to JP-CLI`, then displays the command
+instructions 500ms later. Reduced-motion preference shows both immediately.
+The prompt follows the latest output and scrolls with the transcript.
+Submitting or clearing brings it into view; scrolling up lets you read history.
+This is a portfolio command interface, with no access to your filesystem.
 
-The JP_CLI theme presents the portfolio as a fullscreen terminal-style interface with:
+## Explore with ls and cd
 
-- A terminal pane and a navigation pane
-- Keyboard-first interaction
-- Command parsing for section drill-in
-- A prompt styled as `jp@cli: ~%`
+```text
+ls
+cd projects
+ls
+cd 1
+cd ..
+cd /experience/1
+cd ~/contact
+cd /resume
+cd /
+```
 
-On app load in JP_CLI mode, output starts with minimal pre-rendered text to keep the active prompt near the top.
+`ls` lists the current directory. `cd <path>` enters a directory and displays
+its content. Projects, skills, experience, and dogs contain numbered directories
+shown by `ls`; entering one displays its details and real links.
 
-## Layout Behavior
+Paths support `/`, `~`, `.`, and `..`. `cd` without a path returns home.
+`ls <path>` inspects another directory without changing the current location.
+Invalid paths produce guidance and leave the current directory unchanged.
+The prompt and `pwd` show your current location.
 
-- Desktop/tablet:
-- Navigation pane on the left
-- Terminal pane on the right
-- Compact/mobile:
-- Terminal pane first
-- Navigation pane below terminal pane
+## Commands
 
-In JP_CLI mode, the top navbar is hidden.
+| Command                                  | Result                                                           |
+| ---------------------------------------- | ---------------------------------------------------------------- |
+| `ls [path]`                              | List the current or specified directory                          |
+| `cd [path]`                              | Enter a relative or absolute directory; no argument returns home |
+| `pwd`                                    | Show the current directory                                       |
+| `help` / `help <topic>`                  | Command guidance and examples                                    |
+| `theme <minimal\|engineer\|cosmic\|cli>` | Change the portfolio theme                                       |
+| `mode <light\|dark\|system>`             | Change the color preference                                      |
+| `exit` / `quit`                          | Return to the Minimal visual portfolio                           |
+| `history`                                | Show commands from this session                                  |
+| `clear` / `cls`                          | Clear output and restore the welcome at home                     |
+| `dog <n> treat` / `dog <n> scritch`      | Record the corresponding pet interaction                         |
 
-## Theme Switcher in JP_CLI
+Root directories are `about`, `projects`, `experience`, `skills`, `github`,
+`contact`, `resume`, and `dogs`. Source, email, professional profile, and PDF
+links remain keyboard-accessible. `help dogs` explains pet interactions.
 
-- The theme switcher is fixed in the bottom-right corner.
-- Its menu opens upward so options remain visible near the viewport edge.
+Earlier named commands and numeric shortcuts remain compatibility aliases;
+the opening guide and directory output use `ls` and `cd`. Appearance changes
+persist on reload, including sessions opened with theme/mode URL overrides.
 
-## Interaction Model
+## Keyboard and touch
 
-JP_CLI supports staged input and Enter-to-run:
+- Enter executes a command. Empty Enter does nothing.
+- Up/Down recall history and restore an unfinished draft after the newest entry.
+- Left/Right edit text normally.
+- Ctrl+Space completes commands and directory paths, or shows matches.
+- Ctrl+L clears output. Ctrl+C cancels the draft when no text is selected.
+- Selected text can be copied normally; Tab and Shift+Tab move focus without a trap.
 
-- Arrow keys (`↑ ↓ ← →`) move current menu selection
-- `Space` stages the current selection value in the prompt
-- Number keys (`0-9`, including numpad) stage numeric input in the prompt
-- `Enter` executes the staged or typed command
-- Clicking a menu option stages that option in the prompt
-
-Actions do not execute on click, number key, or space alone.
-
-## Command Reference
-
-### Main menu numbers
-
-- `1` About
-- `2` Projects
-- `3` Skills
-- `4` Experience
-- `5` GitHub Stats
-- `6` Contact
-- `7` Pet Dawgs
-- `8` Resume
-- `9` Help
-- `0` Clear terminal
-
-### Aliases
-
-- `about`
-- `projects`
-- `skills`
-- `experience` or `education`
-- `github` or `gh`
-- `contact`
-- `dogs` / `doggos` / `pets`
-- `resume` / `cv`
-- `menu`
-- `help` / `h`
-- `clear` / `cls`
-
-### Drill-in commands
-
-- `project <n>`
-- `skill <n>`
-- `exp <n>`
-
-### Dog commands
-
-- `dog <n>`
-- `dog <n> treat`
-- `dog <n> scritch`
-- `dog <n> scritches`
-
-### Theme exit commands
-
-- `exit`
-- `quit`
-
-`exit`/`quit` switches from the JP_CLI theme back to the app default theme (`minimal`).
+Mobile input does not open the keyboard automatically. Tap the prompt and use
+the keyboard's submit key. Text wraps and the transcript scrolls within the
+viewport. The session retains up to 300 output lines and 100 commands, and is
+not saved across reloads. Screen-reader and physical mobile-keyboard acceptance
+remain separate from automated checks.

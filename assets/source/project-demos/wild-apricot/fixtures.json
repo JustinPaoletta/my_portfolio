@@ -1,0 +1,71 @@
+{
+  "contacts": [
+    {
+      "Id": 1001,
+      "FirstName": "Alex",
+      "LastName": "Morgan",
+      "Email": "alex@example.com",
+      "DisplayName": "Alex Morgan",
+      "Organization": "Northside Community Club",
+      "MembershipEnabled": true,
+      "MembershipLevel": { "Id": 1, "Name": "Community" },
+      "Status": "Active",
+      "FieldValues": [
+        { "FieldName": "Member since", "Value": "2025-10-01" },
+        { "FieldName": "Renewal due", "Value": "2026-10-31" }
+      ]
+    },
+    {
+      "Id": 1002,
+      "FirstName": "Maya",
+      "LastName": "Chen",
+      "Email": "maya@example.com",
+      "DisplayName": "Maya Chen",
+      "Organization": "Northside Community Club",
+      "MembershipEnabled": true,
+      "MembershipLevel": { "Id": 2, "Name": "Volunteer" },
+      "Status": "Active",
+      "FieldValues": [
+        { "FieldName": "Member since", "Value": "2026-02-01" },
+        { "FieldName": "Renewal due", "Value": "2027-02-01" }
+      ]
+    },
+    {
+      "Id": 1003,
+      "FirstName": "Jordan",
+      "LastName": "Davis",
+      "Email": "jordan@example.com",
+      "DisplayName": "Jordan Davis",
+      "Organization": "Northside Community Club",
+      "MembershipEnabled": true,
+      "MembershipLevel": { "Id": 1, "Name": "Community" },
+      "Status": "PendingRenewal",
+      "FieldValues": [
+        { "FieldName": "Member since", "Value": "2024-10-01" },
+        { "FieldName": "Renewal due", "Value": "2026-10-01" }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "Id": 2001,
+      "Name": "Autumn volunteer day",
+      "StartDate": "2026-10-24T09:00:00",
+      "EndDate": "2026-10-24T12:00:00",
+      "Location": "Northside Community Hall",
+      "RegistrationEnabled": true,
+      "RegistrationLimit": 40,
+      "RegisteredCount": 18
+    },
+    {
+      "Id": 2002,
+      "Name": "Community planning night",
+      "StartDate": "2026-11-05T18:00:00",
+      "EndDate": "2026-11-05T20:00:00",
+      "Location": "Northside Community Hall",
+      "RegistrationEnabled": true,
+      "RegistrationLimit": 60,
+      "RegisteredCount": 24
+    }
+  ]
+}

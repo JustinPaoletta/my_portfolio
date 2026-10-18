@@ -245,20 +245,6 @@ describe('App', () => {
     expect(heading).toHaveTextContent(/./); // Ensures heading has some text
   });
 
-  it('renders the JP image with correct attributes', async () => {
-    await act(async () => {
-      render(<App />);
-    });
-
-    const jpImage = await screen.findByAltText(
-      /Justin Paoletta working on code/i
-    );
-    expect(jpImage).toBeInTheDocument();
-    expect(jpImage).toHaveAttribute('width', '400');
-    expect(jpImage).toHaveAttribute('height', '400');
-    expect(jpImage).toHaveAttribute('src', '/branding/jp-headshot/jp-400.webp');
-  });
-
   it('renders skip link for keyboard navigation', async () => {
     const scrollIntoViewMock = vi.fn();
     Object.defineProperty(HTMLElement.prototype, 'scrollIntoView', {
@@ -377,7 +363,7 @@ describe('App', () => {
       render(<App />);
     });
 
-    await screen.findByRole('heading', { name: /My Projects/i });
+    await screen.findByRole('heading', { name: /^Projects$/i });
 
     expect(document.getElementById('github')).not.toBeInTheDocument();
     expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
@@ -401,12 +387,12 @@ describe('App', () => {
       render(<App />);
     });
 
-    await screen.findByRole('heading', { name: /My Projects/i });
+    await screen.findByRole('heading', { name: /^Projects$/i });
 
     await waitFor(() => {
       expect(
         document.querySelectorAll('[data-deferred-sentinel="true"]')
-      ).toHaveLength(6);
+      ).toHaveLength(7);
     });
 
     expect(document.getElementById('articles')).not.toBeInTheDocument();
@@ -417,7 +403,7 @@ describe('App', () => {
     expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
   });
 
-  it('has no footer in CLI view', async () => {
+  it('keeps CLI navigation and appearance controls inside the terminal', async () => {
     localStorage.setItem('portfolio-theme', 'cli');
     await act(async () => {
       render(<App />);
@@ -428,6 +414,12 @@ describe('App', () => {
     await waitFor(() => {
       expect(screen.queryByRole('contentinfo')).not.toBeInTheDocument();
     });
+    expect(
+      screen.queryByRole('button', { name: /toggle theme switcher/i })
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('navigation', { name: /main navigation/i })
+    ).not.toBeInTheDocument();
   });
 
   it('CLI Enter submits typed command', async () => {
@@ -483,7 +475,7 @@ describe('App', () => {
     });
   });
 
-  it('Cosmic theme never renders a legacy video element', async () => {
+  it('Cosmic hero never renders a legacy video element', async () => {
     localStorage.setItem('portfolio-theme', 'cosmic');
 
     await act(async () => {
@@ -495,6 +487,6 @@ describe('App', () => {
     });
 
     expect(document.querySelector('.hero-cosmic-video')).toBeNull();
-    expect(document.querySelector('video')).toBeNull();
+    expect(document.querySelector('#hero video')).toBeNull();
   });
 });

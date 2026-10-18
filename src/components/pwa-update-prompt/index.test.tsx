@@ -74,6 +74,28 @@ describe('PWAUpdatePrompt', () => {
     expect(container.firstChild).toBeNull();
   });
 
+  it('preserves a pending update while the terminal hides the prompt', () => {
+    pwaHookMock.mockReturnValue({
+      needRefresh: true,
+      offlineReady: false,
+      canInstall: false,
+      isInstalling: false,
+      updateServiceWorker,
+      promptInstall,
+      dismissInstall,
+      closePrompt,
+    });
+
+    const { rerender } = render(<PWAUpdatePrompt isHidden />);
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+    expect(updateServiceWorker).not.toHaveBeenCalled();
+    expect(closePrompt).not.toHaveBeenCalled();
+
+    rerender(<PWAUpdatePrompt isHidden={false} />);
+    expect(screen.getByText('Update Available')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Reload' })).toBeVisible();
+  });
+
   it('renders install prompt and supports Not Now dismissal', () => {
     pwaHookMock.mockReturnValue({
       needRefresh: false,

@@ -132,8 +132,6 @@
 :root[data-color-mode='light'][data-theme='cosmic']
   .navigation:not(.scrolled)
   .nav-logo {
-  --jp-logo-primary: #f8f1ff;
-  --jp-logo-cursor: #ffffff;
   filter: drop-shadow(0 1px 0 rgba(70, 38, 126, 0.34))
     drop-shadow(0 8px 18px rgba(38, 14, 74, 0.28));
 }
@@ -271,10 +269,10 @@
 
 .nav-link {
   position: relative;
-  padding: 0.85rem 1.3rem;
+  padding: 0.85rem 1rem;
   color: var(--text-secondary);
   text-decoration: none;
-  font-size: 1.2rem;
+  font-size: 0.95rem;
   font-weight: 600;
   transition: color 0.15s ease;
   border-radius: 12px;
@@ -305,6 +303,62 @@
     outline: 2px solid var(--color-primary-ink);
     outline-offset: 2px;
   }
+}
+
+.nav-resume {
+  grid-column: 3;
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  min-height: 44px;
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    border-color: var(--color-primary-ink);
+    background: var(--bg-card-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--color-primary-ink);
+    outline-offset: 3px;
+  }
+}
+
+.nav-resume-format {
+  font-family: var(--font-mono);
+  font-size: 0.7em;
+  letter-spacing: 0.04em;
+}
+
+:root[data-color-mode='light'][data-theme='cosmic']
+  .navigation:not(.scrolled)
+  .nav-resume {
+  color: #572c83;
+  background: #f8f1ff;
+  border-color: #d4b9ef;
+
+  &:hover {
+    background: #ffffff;
+  }
+
+  &:focus-visible {
+    outline-color: #f8f1ff;
+  }
+}
+
+.mobile-nav-link.mobile-nav-resume {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 @media (max-width: 1120px) {
@@ -429,10 +483,7 @@
 
   .mobile-menu-backdrop {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
+    inset: 0;
     border: none;
     background: rgba(0, 0, 0, 0.85);
     cursor: pointer;
@@ -610,6 +661,7 @@
   }
 
   .nav-links,
+  .nav-resume,
   .nav-social {
     display: none;
   }

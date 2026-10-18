@@ -18,15 +18,12 @@ import {
   type ColorMode,
   type ModeColors,
 } from '@/config/themes';
+import faviconSvg from '@/assets/jp-favicon.svg?raw';
 
 const THEME_STORAGE_KEY = 'portfolio-theme';
 const MODE_STORAGE_KEY = 'portfolio-color-mode';
-const FAVICON_TEMPLATE_PATH = '/branding/JP-no-cursor.svg';
-const FAVICON_LOGO_FILL = '#7ed957';
-const FAVICON_CURSOR_FILL = '#ffffff';
 const hasOwnTheme = (value: string): value is ThemeName =>
   Object.prototype.hasOwnProperty.call(themes, value);
-let faviconTemplatePromise: Promise<string | null> | null = null;
 
 function normalizeThemeName(value: string | null): ThemeName | null {
   if (!value) {
@@ -182,60 +179,23 @@ function setThemeMetaColor(color: string): void {
   }
 }
 
-function setSvgFaviconHref(href: string): void {
-  const iconLinks = document.querySelectorAll<HTMLLinkElement>(
-    'link[rel="icon"][type="image/svg+xml"], link[rel="shortcut icon"][type="image/svg+xml"]'
-  );
-
-  iconLinks.forEach((link) => {
-    if (link.getAttribute('href') !== href) {
-      link.setAttribute('href', href);
-    }
-  });
-}
-
-function getFaviconTemplate(): Promise<string | null> {
-  if (!faviconTemplatePromise) {
-    const fetchImpl = globalThis.fetch;
-    if (typeof fetchImpl !== 'function') {
-      faviconTemplatePromise = Promise.resolve(null);
-    } else {
-      try {
-        const responsePromise = fetchImpl(FAVICON_TEMPLATE_PATH);
-        faviconTemplatePromise =
-          responsePromise != null &&
-          typeof (responsePromise as PromiseLike<unknown>).then === 'function'
-            ? (responsePromise as Promise<Response>)
-                .then((response) => (response.ok ? response.text() : null))
-                .catch(() => null)
-            : Promise.resolve(null);
-      } catch {
-        faviconTemplatePromise = Promise.resolve(null);
+function updateFavicon(theme: Theme): void {
+  // The icon has its own dark tile, so use the bright accent in both page modes.
+  const href =
+    theme.name === 'minimal'
+      ? '/favicons/jp-monogram.svg?v=jp-1'
+      : `data:image/svg+xml,${encodeURIComponent(
+          faviconSvg.replaceAll('#8e99a8', theme.colors.primary)
+        )}`;
+  document
+    .querySelectorAll<HTMLLinkElement>(
+      'link[rel="icon"][type="image/svg+xml"], link[rel="shortcut icon"][type="image/svg+xml"]'
+    )
+    .forEach((link) => {
+      if (link.getAttribute('href') !== href) {
+        link.setAttribute('href', href);
       }
-    }
-  }
-
-  return faviconTemplatePromise;
-}
-
-async function updateFavicon(
-  theme: Theme,
-  resolvedMode: 'dark' | 'light'
-): Promise<void> {
-  const template = await getFaviconTemplate();
-  if (!template) {
-    return;
-  }
-
-  const logoFill =
-    resolvedMode === 'light' ? theme.colors.primaryDark : theme.colors.primary;
-  const cursorFill = theme[resolvedMode].textPrimary;
-  const themedSvg = template
-    .replace(new RegExp(FAVICON_LOGO_FILL, 'gi'), logoFill)
-    .replace(new RegExp(FAVICON_CURSOR_FILL, 'gi'), cursorFill);
-
-  const dataUrl = `data:image/svg+xml,${encodeURIComponent(themedSvg)}`;
-  setSvgFaviconHref(dataUrl);
+    });
 }
 
 /**
@@ -340,7 +300,7 @@ function applyThemeToDocument(
   root.dataset.colorMode = resolvedMode;
 
   setThemeMetaColor(modeColors.bgMain);
-  void updateFavicon(theme, resolvedMode);
+  updateFavicon(theme);
 }
 
 /**

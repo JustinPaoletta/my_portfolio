@@ -34,15 +34,15 @@ const initialDogsData = [
 
 const dogMetadata: Record<string, Omit<Dog, 'name' | 'stats'>> = {
   Nala: {
-    image: '/images/pets/nala.webp',
+    image: '/images/pets/nala-cutout.webp',
     alt: 'Nala, a beautiful Australian Cattle Dog, Australian Shepherd, German Shepherd mix looking happy',
   },
   Rosie: {
-    image: '/images/pets/rosie.webp',
+    image: '/images/pets/rosie-cutout.webp',
     alt: 'Rosie, a sweet Bloodhound Beagle mix with a gentle expression',
   },
   Tito: {
-    image: '/images/pets/tito.webp',
+    image: '/images/pets/tito-cutout.webp',
     alt: 'Tito, a playful Chihuahua Pomeranian Dachshund mix with lots of energy',
   },
 };
@@ -136,11 +136,6 @@ function PetDogs(): React.ReactElement {
                       loading="lazy"
                       decoding="async"
                     />
-                    {dog.name === 'Nala' && (
-                      <span className="dog-badge-overlay" role="status">
-                        Foster
-                      </span>
-                    )}
                   </div>
 
                   <div className="dog-row-main">

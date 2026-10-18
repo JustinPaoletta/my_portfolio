@@ -117,7 +117,7 @@ function AppLayout(): React.ReactElement {
     <>
       {shouldMountPwaPrompt && (
         <Suspense fallback={null}>
-          <PWAUpdatePrompt />
+          <PWAUpdatePrompt isHidden={isCliTheme} />
         </Suspense>
       )}
 
@@ -133,8 +133,8 @@ function AppLayout(): React.ReactElement {
         </Suspense>
       )}
 
-      {/* Theme switcher - always floating bottom-right */}
-      {!isVisualTest && (
+      {/* CLI theme exposes appearance and exit commands in the terminal. */}
+      {!isVisualTest && !isCliTheme && (
         <ThemeSwitcher
           placement="floating"
           isTemporarilyHidden={isMobileMenuOpen}

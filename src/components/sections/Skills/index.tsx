@@ -1,262 +1,57 @@
-/**
- * Skills Section
- * Technologies and tools showcase with category tabs
- */
+/** A focused stack connected to actual work. */
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
-import { useTheme } from '@/hooks/useTheme';
 import './Skills.css';
 
-interface SkillCategory {
-  name: string;
-  skills: Skill[];
-}
+const skillIcons: Record<string, string[]> = {
+  'Claude Code': ['/icons/claude.webp'],
+  Codex: ['/icons/codex.webp'],
+  'Cursor (IDE)': ['/icons/cursor.webp'],
+  Angular: ['/icons/angular.svg'],
+  React: ['/icons/react.svg'],
+  TypeScript: ['/icons/typescript.svg'],
+  RxJS: ['/icons/rxjs.svg'],
+  SCSS: ['/icons/sass.svg'],
+  Playwright: ['/icons/playwright.webp'],
+  'GitHub Actions': ['/icons/githubactions.svg'],
+  Jenkins: ['/icons/jenkins.svg'],
+  'Node.js': ['/icons/nodejs.svg'],
+  NestJS: ['/icons/nestjs.svg'],
+  Prisma: ['/icons/prisma.svg'],
+  'MySQL/MariaDB': ['/icons/mysql.svg', '/icons/mariadb.svg'],
+};
 
-interface Skill {
-  name: string;
-  icon: string;
-  color: string;
-  url?: string;
-}
-
-const skillCategories: SkillCategory[] = [
+const skillAreas = [
   {
-    name: 'Frontend',
-    skills: [
-      {
-        name: 'Angular',
-        icon: '/icons/angular.svg',
-        color: '#DD0031',
-        url: 'https://angular.dev/',
-      },
-      {
-        name: 'React',
-        icon: '/icons/react.svg',
-        color: '#61DAFB',
-        url: 'https://react.dev/',
-      },
-      {
-        name: 'TypeScript',
-        icon: '/icons/typescript.svg',
-        color: '#3178C6',
-        url: 'https://www.typescriptlang.org/',
-      },
-      {
-        name: 'Tailwind CSS',
-        icon: 'https://cdn.simpleicons.org/tailwindcss',
-        color: '#06B6D4',
-        url: 'https://tailwindcss.com/',
-      },
-      {
-        name: 'RxJS',
-        icon: '/icons/rxjs.svg',
-        color: '#B7178C',
-        url: 'https://rxjs.dev/',
-      },
-      {
-        name: 'HTML5',
-        icon: '/icons/html5.svg',
-        color: '#E34F26',
-        url: 'https://html.spec.whatwg.org/',
-      },
-      {
-        name: 'CSS3',
-        icon: '/icons/css3.svg',
-        color: '#1572B6',
-        url: 'https://www.w3.org/Style/CSS/',
-      },
-      {
-        name: 'JavaScript',
-        icon: '/icons/javascript.svg',
-        color: '#F7DF1E',
-        url: 'https://tc39.es/',
-      },
-      {
-        name: 'Playwright',
-        icon: '/icons/playwright.webp',
-        color: '#2EAD33',
-        url: 'https://playwright.dev/',
-      },
-      {
-        name: 'AngularJS',
-        icon: '/icons/angularjs.svg',
-        color: '#E23237',
-        url: 'https://angularjs.org/',
-      },
-    ],
+    title: 'Frontend systems',
+    technologies: ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS'],
+    description:
+      'I modernize established frontend applications while keeping existing features dependable. My work spans reusable components, micro-frontend integration, and clear boundaries between frameworks and styles.',
   },
   {
-    name: 'Backend',
-    skills: [
-      {
-        name: 'Node.js',
-        icon: '/icons/nodejs.svg',
-        color: '#339933',
-        url: 'https://nodejs.org/',
-      },
-      {
-        name: 'Express',
-        icon: '/icons/express.svg',
-        color: '#000000',
-        url: 'https://expressjs.com/',
-      },
-      {
-        name: 'PostgreSQL',
-        icon: '/icons/postgresql.svg',
-        color: '#4169E1',
-        url: 'https://www.postgresql.org/',
-      },
-      {
-        name: 'Java',
-        icon: '/icons/java.svg',
-        color: '#ED8B00',
-        url: 'https://www.oracle.com/java/',
-      },
-      {
-        name: 'Postman',
-        icon: '/icons/postman.webp',
-        color: '#FF6C37',
-        url: 'https://www.postman.com/',
-      },
-    ],
+    title: 'Testing & delivery',
+    technologies: ['Playwright', 'GitHub Actions', 'Jenkins'],
+    description:
+      'I turn critical user journeys into repeatable browser checks and automate build and release workflows, giving teams faster feedback and reducing manual release work.',
   },
   {
-    name: 'Tooling',
-    skills: [
-      {
-        name: 'Git',
-        icon: '/icons/git.svg',
-        color: '#F05032',
-        url: 'https://git-scm.com/',
-      },
-      {
-        name: 'GitHub',
-        icon: '/icons/github.svg',
-        color: '#181717',
-        url: 'https://github.com/',
-      },
-      {
-        name: 'GitHub Actions',
-        icon: 'https://cdn.simpleicons.org/githubactions',
-        color: '#2088FF',
-        url: 'https://github.com/features/actions',
-      },
-      {
-        name: 'Jenkins',
-        icon: '/icons/jenkins.svg',
-        color: '#D24939',
-        url: 'https://www.jenkins.io/',
-      },
-      {
-        name: 'Jira',
-        icon: '/icons/jira.svg',
-        color: '#0052CC',
-        url: 'https://www.atlassian.com/software/jira',
-      },
-      {
-        name: 'Figma',
-        icon: 'https://cdn.simpleicons.org/figma',
-        color: '#F24E1E',
-        url: 'https://www.figma.com/',
-      },
-      {
-        name: 'GitLab',
-        icon: 'https://cdn.simpleicons.org/gitlab',
-        color: '#FC6D26',
-        url: 'https://about.gitlab.com/',
-      },
-      {
-        name: 'Docker',
-        icon: '/icons/docker.svg',
-        color: '#2496ED',
-        url: 'https://www.docker.com/',
-      },
-      {
-        name: 'AWS',
-        icon: '/icons/aws.svg',
-        color: '#FF9900',
-        url: 'https://aws.amazon.com/',
-      },
-      {
-        name: 'Confluence',
-        icon: '/icons/confluence.svg',
-        color: '#172B4D',
-        url: 'https://www.atlassian.com/software/confluence',
-      },
-    ],
+    title: 'APIs & data',
+    technologies: ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB'],
+    description:
+      'I build typed APIs and relational data models that connect application features to persistent storage, using clear service boundaries and consistent database access.',
   },
   {
-    name: 'AI',
-    skills: [
-      {
-        name: 'Claude Code',
-        icon: '/icons/claude.webp',
-        color: '#8C6A4A',
-        url: 'https://claude.ai/',
-      },
-      {
-        name: 'ChatGPT',
-        icon: '/icons/chatgpt.svg',
-        color: '#000000',
-        url: 'https://chatgpt.com/',
-      },
-      {
-        name: 'GitHub Copilot',
-        icon: '/icons/copilot.svg',
-        color: '#000000',
-        url: 'https://github.com/features/copilot',
-      },
-      {
-        name: 'Codex',
-        icon: '/icons/codex.webp',
-        color: '#4A8C6A',
-        url: 'https://openai.com/codex',
-      },
-      {
-        name: 'Cursor',
-        icon: '/icons/cursor.webp',
-        color: '#4A6A8C',
-        url: 'https://cursor.com/',
-      },
-    ],
+    title: 'AI-assisted development',
+    technologies: ['Claude Code', 'Codex', 'Cursor (IDE)'],
+    description:
+      'I use AI tools to explore approaches, draft implementations, and review code. I verify changes with tests and manual review, and remain responsible for the code I ship.',
   },
-];
-
-const additionalSkills = [
-  { name: 'CI/CD' },
-  { name: 'Micro-frontends' },
-  { name: 'Platform Architecture' },
-  { name: 'AngularJS Modernization' },
-  { name: 'Cross-Framework Integration' },
-  { name: 'Release Automation' },
-  { name: 'Developer Tooling' },
-  { name: 'AI Workflows' },
-  { name: 'Code Reviews' },
-  { name: 'Release Notes Automation' },
-  { name: 'Jira Automation' },
-  { name: 'QA Documentation' },
-  { name: 'Unit Testing' },
-  { name: 'E2E Testing' },
-  { name: 'Figma Validation' },
-  { name: 'Accessibility', url: 'https://www.w3.org/WAI/' },
 ];
 
 function Skills(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
   const isVisible = useRevealInView(sectionRef);
-  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const [activeTab, setActiveTab] = useState(0);
-  const { resolvedMode } = useTheme();
-  const isDarkMode = resolvedMode === 'dark';
-
-  const handleTabChange = (index: number): void => {
-    setActiveTab(index);
-  };
-
-  const focusTab = (index: number): void => {
-    tabRefs.current[index]?.focus();
-  };
 
   return (
     <section
@@ -273,14 +68,6 @@ function Skills(): React.ReactElement {
           visible={isVisible}
         >
           <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Expertise
-          </Reveal>
-          <Reveal
             as="h2"
             id="skills-heading"
             className="section-title"
@@ -291,148 +78,51 @@ function Skills(): React.ReactElement {
           </Reveal>
         </Reveal>
 
-        <Reveal
-          as="div"
-          className="skills-tabs-container"
-          delay={140}
-          visible={isVisible}
-        >
-          <div
-            className="tabs-list"
-            role="tablist"
-            aria-label="Skill categories"
-          >
-            {skillCategories.map((category, index) => (
-              <button
-                ref={(element) => {
-                  tabRefs.current[index] = element;
-                }}
-                key={category.name}
-                className={`tab-button ${activeTab === index ? 'active' : ''}`}
-                role="tab"
-                aria-selected={activeTab === index}
-                aria-controls={`tabpanel-${index}`}
-                id={`tab-${index}`}
-                tabIndex={activeTab === index ? 0 : -1}
-                onClick={() => handleTabChange(index)}
-                onKeyDown={(e) => {
-                  if (e.key === 'ArrowRight') {
-                    e.preventDefault();
-                    const nextIndex = (index + 1) % skillCategories.length;
-                    handleTabChange(nextIndex);
-                    focusTab(nextIndex);
-                  } else if (e.key === 'ArrowLeft') {
-                    e.preventDefault();
-                    const previousIndex =
-                      (index - 1 + skillCategories.length) %
-                      skillCategories.length;
-                    handleTabChange(previousIndex);
-                    focusTab(previousIndex);
-                  } else if (e.key === 'Home') {
-                    e.preventDefault();
-                    handleTabChange(0);
-                    focusTab(0);
-                  } else if (e.key === 'End') {
-                    e.preventDefault();
-                    const lastIndex = skillCategories.length - 1;
-                    handleTabChange(lastIndex);
-                    focusTab(lastIndex);
-                  }
-                }}
-              >
-                {category.name}
-              </button>
-            ))}
-          </div>
-
-          {skillCategories.map((category, categoryIndex) => {
-            const isActivePanel = activeTab === categoryIndex;
-            const panelVisible = isVisible && isActivePanel;
-
-            return (
-              <div
-                key={category.name}
-                id={`tabpanel-${categoryIndex}`}
-                role="tabpanel"
-                aria-labelledby={`tab-${categoryIndex}`}
-                hidden={!isActivePanel}
-                className={`tab-panel ${isActivePanel ? 'active' : ''}`}
-              >
-                <div className="skills-grid">
-                  {category.skills.map((skill, skillIndex) => (
-                    <Reveal
-                      as="a"
-                      key={skill.name}
-                      className={`skill-item ${skill.url ? 'skill-link' : ''}`}
-                      data-skill={skill.name.toLowerCase().replace(/\s+/g, '-')}
-                      href={skill.url}
-                      target={skill.url ? '_blank' : undefined}
-                      rel={skill.url ? 'noopener noreferrer' : undefined}
-                      aria-label={
-                        skill.url ? `${skill.name} official website` : undefined
-                      }
-                      delay={80 + skillIndex * 40}
-                      visible={panelVisible}
-                    >
-                      <div className="skill-item-icon">
-                        <img
-                          src={
-                            skill.name === 'AWS' && isDarkMode
-                              ? '/icons/aws-dark.svg'
-                              : skill.icon
-                          }
-                          alt={`${skill.name} icon`}
-                          width="48"
-                          height="48"
-                          loading="lazy"
-                        />
-                      </div>
-                      <span className="skill-item-name">{skill.name}</span>
-                    </Reveal>
-                  ))}
-                </div>
+        <div className="skill-areas">
+          {skillAreas.map((area, index) => (
+            <Reveal
+              as="article"
+              key={area.title}
+              className="skill-area"
+              delay={140 + index * 60}
+              visible={isVisible}
+            >
+              <h3>{area.title}</h3>
+              <div className="skill-icons" aria-hidden="true">
+                {area.technologies.flatMap((technology) =>
+                  skillIcons[technology]?.map((icon) => (
+                    <span key={icon} className="skill-icon">
+                      <img
+                        src={icon}
+                        alt=""
+                        width={48}
+                        height={48}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                  ))
+                )}
               </div>
-            );
-          })}
-        </Reveal>
-
-        <Reveal
-          as="div"
-          className="additional-skills"
-          delay={220}
-          visible={isVisible}
-        >
-          <h3 className="additional-title">Also Experienced With</h3>
-          <div className="skill-tags">
-            {additionalSkills.map((skill, index) =>
-              skill.url ? (
-                <Reveal
-                  as="a"
-                  key={skill.name}
-                  className="skill-tag skill-link"
-                  href={skill.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${skill.name} official website`}
-                  delay={120 + index * 30}
-                  visible={isVisible}
-                >
-                  <span className="skill-tag-label">{skill.name}</span>
-                </Reveal>
-              ) : (
-                <Reveal
-                  as="span"
-                  key={skill.name}
-                  className="skill-tag"
-                  delay={120 + index * 30}
-                  visible={isVisible}
-                >
-                  <span className="skill-tag-label">{skill.name}</span>
-                </Reveal>
-              )
-            )}
-          </div>
-        </Reveal>
+              <ul
+                className="skill-stack"
+                aria-label={`${area.title} technologies`}
+              >
+                {area.technologies.map((technology, technologyIndex) => (
+                  <li key={technology}>
+                    <span>{technology}</span>
+                    {technologyIndex < area.technologies.length - 1 && (
+                      <span aria-hidden="true" className="skill-separator">
+                        ·
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+              <p className="skill-summary">{area.description}</p>
+            </Reveal>
+          ))}
+        </div>
       </div>
     </section>
   );

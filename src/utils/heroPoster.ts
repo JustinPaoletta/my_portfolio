@@ -101,11 +101,13 @@ export function useHeroPosterPath(
     };
 
     updatePath();
-    mediaQuery.addEventListener('change', updatePath);
+    if (typeof mediaQuery.addEventListener === 'function') {
+      mediaQuery.addEventListener('change', updatePath);
+      return () => mediaQuery.removeEventListener('change', updatePath);
+    }
 
-    return () => {
-      mediaQuery.removeEventListener('change', updatePath);
-    };
+    mediaQuery.addListener(updatePath);
+    return () => mediaQuery.removeListener(updatePath);
   }, [theme, mode]);
 
   return path;

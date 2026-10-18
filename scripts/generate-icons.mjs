@@ -1,87 +1,73 @@
 #!/usr/bin/env node
-/**
- * Generates PWA and favicon assets from the no-cursor SVG logo.
- * Source: public/branding/JP-no-cursor.svg
- * Output: public/favicons/
- *
- * Generates:
- * - favicons/favicon-48x48.png (Google search, browser)
- * - favicons/apple-touch-icon.png (180x180, iOS home screen)
- * - favicons/pwa-192x192.png (Android/Chrome PWA, Windows tile)
- * - favicons/pwa-512x512.png (PWA splash, app stores)
- */
-
+/** All logo/icon exports share the outlined master in assets/branding/jp-mark.svg. */
 import sharp from 'sharp';
 import { Buffer } from 'node:buffer';
-import { readFileSync } from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const projectRoot = join(__dirname, '..');
-const publicDir = join(projectRoot, 'public');
-const sourceSvg = join(publicDir, 'branding', 'JP-no-cursor.svg');
-const faviconsDir = join(publicDir, 'favicons');
+const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const master = await readFile(
+  path.join(root, 'assets/branding/jp-mark.svg'),
+  'utf8'
+);
+const body = master.replace(/<svg[^>]*>/, '').replace('</svg>', '');
+const background = '#101216';
+const icon = (maskable = false) =>
+  `<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512"><rect width="512" height="512" rx="${maskable ? 0 : 88}" fill="${background}"/><g transform="translate(${maskable ? '83 144' : '77 140'}) scale(${maskable ? 1.06 : 1.1})">${body}</g></svg>`;
+const out = path.join(root, 'public/favicons');
+await mkdir(out, { recursive: true });
+await writeFile(path.join(out, 'jp-monogram.svg'), icon());
+// The theme hook recolors this exact favicon synchronously, without a fetch race.
+await writeFile(path.join(root, 'src/assets/jp-favicon.svg'), icon());
 
-const sizes = [
-  { name: 'favicon-48x48.png', size: 48 },
-  { name: 'apple-touch-icon.png', size: 180 },
-  { name: 'pwa-192x192.png', size: 192 },
-  { name: 'pwa-512x512.png', size: 512 },
-];
-
-// Inject background rect and fix horizontal centering.
-// SVG viewBox 0-330 has content 0-326 (J+cursor); 4px more padding on right.
-// Shift viewBox left by 4 so left/right padding are equal.
-const BACKGROUND = '#242424';
-let svgContent = readFileSync(sourceSvg, 'utf8');
-svgContent = svgContent
-  .replace(/viewBox="0 0 330 ([^"]+)"/, 'viewBox="-4 0 354 $1"')
-  .replace(
-    /<svg([^>]*)>/,
-    `<svg$1><rect width="100%" height="100%" fill="${BACKGROUND}"/>`
+// Keep historical logo URLs and the React import in sync; no redrawing of the mark.
+for (const folder of ['public/branding', 'src/assets']) {
+  await writeFile(path.join(root, folder, 'JP.svg'), master);
+  await writeFile(
+    path.join(root, folder, 'JP-no-cursor.svg'),
+    master.replace(/^[ \t]*<rect class="jp-logo-cursor"[^>]*\/>\n?/m, '')
   );
-const svgBuffer = Buffer.from(svgContent);
-
-// Logo scale: 0.85 = fits in 85% of canvas, more padding (zoom out).
-const LOGO_SCALE = 0.85;
-// Optical horizontal adjustment: source glyph mass sits right of geometric center.
-// Negative shifts logo left across all generated sizes.
-const LOGO_X_OFFSET_RATIO = -0.05;
-
-// Corner radius as fraction of size (0.22 = iOS-style squircle-ish rounding).
-const CORNER_RADIUS = 0.22;
-
-for (const { name, size } of sizes) {
-  const outPath = join(faviconsDir, name);
-  const innerSize = Math.round(size * LOGO_SCALE);
-
-  const resizedLogo = await sharp(svgBuffer)
-    .resize(innerSize, innerSize, { fit: 'contain', background: BACKGROUND })
-    .flatten({ background: BACKGROUND })
-    .toBuffer();
-
-  const left = Math.round((size - innerSize) / 2 + size * LOGO_X_OFFSET_RATIO);
-  const top = Math.round((size - innerSize) / 2);
-
-  const iconWithAlpha = await sharp({
-    create: {
-      width: size,
-      height: size,
-      channels: 4,
-      background: { r: 36, g: 36, b: 36, alpha: 1 },
-    },
-  })
-    .composite([{ input: resizedLogo, left, top }])
-    .png()
-    .toBuffer();
-
-  const radius = Math.round(size * CORNER_RADIUS);
-  const maskSvg = `<svg width="${size}" height="${size}" xmlns="http://www.w3.org/2000/svg"><rect x="0" y="0" width="${size}" height="${size}" rx="${radius}" ry="${radius}" fill="white"/></svg>`;
-
-  await sharp(iconWithAlpha)
-    .composite([{ input: Buffer.from(maskSvg), blend: 'dest-in' }])
-    .png()
-    .toFile(outPath);
-  globalThis.console.log(`Generated favicons/${name}`);
 }
+
+for (const [name, size, maskable] of [
+  ['favicon-16x16.png', 16, false],
+  ['favicon-32x32.png', 32, false],
+  ['favicon-48x48.png', 48, false],
+  ['apple-touch-icon.png', 180, true],
+  ['pwa-192x192.png', 192, false],
+  ['pwa-512x512.png', 512, false],
+  ['pwa-maskable-512x512.png', 512, true],
+]) {
+  await sharp(Buffer.from(icon(maskable)))
+    .resize(size, size)
+    .png()
+    .toFile(path.join(out, name));
+}
+
+// ICO directory with actual 16/32/48px PNG payloads (not a renamed PNG).
+const sizes = [16, 32, 48];
+const images = await Promise.all(
+  sizes.map((size) => readFile(path.join(out, `favicon-${size}x${size}.png`)))
+);
+const header = Buffer.alloc(6 + 16 * sizes.length);
+header.writeUInt16LE(1, 2);
+header.writeUInt16LE(sizes.length, 4);
+let offset = header.length;
+images.forEach((data, index) => {
+  const entry = 6 + index * 16;
+  header[entry] = sizes[index];
+  header[entry + 1] = sizes[index];
+  header.writeUInt16LE(1, entry + 4);
+  header.writeUInt16LE(32, entry + 6);
+  header.writeUInt32LE(data.length, entry + 8);
+  header.writeUInt32LE(offset, entry + 12);
+  offset += data.length;
+});
+await writeFile(
+  path.join(root, 'public/favicon.ico'),
+  Buffer.concat([header, ...images])
+);
+globalThis.console.log(
+  'Generated matching SVG, ICO, PNG, Apple and maskable JP icons.'
+);

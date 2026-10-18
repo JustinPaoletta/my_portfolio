@@ -51,7 +51,19 @@ export default defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         launchOptions: {
+          env:
+            process.platform === 'linux'
+              ? {
+                  ...process.env,
+                  MOZ_WEBGL_FORCE_EGL: '1',
+                  EGL_PLATFORM: 'surfaceless',
+                  LIBGL_ALWAYS_SOFTWARE: '1',
+                }
+              : undefined,
           firefoxUserPrefs: {
+            // Headless Linux runners have no physical GPU. Keep real WebGL2
+            // rendering enabled through Mesa instead of taking the poster fallback.
+            'webgl.force-enabled': true,
             'media.autoplay.default': 0,
             'media.autoplay.blocking_policy': 0,
           },

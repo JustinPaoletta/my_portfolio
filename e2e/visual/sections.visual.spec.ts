@@ -1,12 +1,66 @@
+import { writeFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 import {
   DESKTOP_SECTION_VIEWPORT,
+  MOBILE_VIEWPORT,
   gotoVisualState,
   waitForSectionToSettle,
 } from '../support/visual';
 
 test.describe('@visual section states', () => {
   test.describe.configure({ mode: 'parallel' });
+
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures About on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, { theme: 'minimal', mode: 'dark', viewport });
+      const about = page.locator('section#about');
+      await waitForSectionToSettle(page, about);
+      await expect(about).toHaveScreenshot(`about-${label}.png`, {
+        caret: 'hide',
+      });
+    });
+  }
+
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', { width: 390, height: 1600 }],
+  ] as const) {
+    test(`section captures are independent of fractional preceding layout on ${label}`, async ({
+      page,
+    }, testInfo) => {
+      await gotoVisualState(page, {
+        theme: 'minimal',
+        mode: 'light',
+        viewport,
+      });
+      const skills = page.locator('#skills');
+      await waitForSectionToSettle(page, skills);
+      const original = await skills.screenshot({ animations: 'disabled' });
+      // A copy edit earlier in the document can move this section by a fraction
+      // of a pixel without changing any of its own content or layout.
+      await page.locator('#about').evaluate((section) => {
+        section.style.marginBottom = '0.375px';
+      });
+      await waitForSectionToSettle(page, skills);
+      const after = await skills.screenshot({ animations: 'disabled' });
+      if (!after.equals(original)) {
+        await writeFile(testInfo.outputPath('before.png'), original);
+        await writeFile(testInfo.outputPath('after.png'), after);
+        await testInfo.attach('before', {
+          body: original,
+          contentType: 'image/png',
+        });
+        await testInfo.attach('after', {
+          body: after,
+          contentType: 'image/png',
+        });
+      }
+      expect(after.equals(original)).toBe(true);
+    });
+  }
 
   test('captures projects section', async ({ page }) => {
     await gotoVisualState(page, {
@@ -55,20 +109,75 @@ test.describe('@visual section states', () => {
     });
   });
 
-  test('captures github section', async ({ page }) => {
-    await gotoVisualState(page, {
-      theme: 'minimal',
-      mode: 'light',
-      viewport: DESKTOP_SECTION_VIEWPORT,
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures skill icons on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, {
+        theme: 'cosmic',
+        mode: 'dark',
+        // Fit the tall component without screenshot-time viewport resizing.
+        viewport: label === 'mobile' ? { ...viewport, height: 1600 } : viewport,
+      });
+      const skills = page.locator('section#skills');
+      await waitForSectionToSettle(page, skills);
+      const icons = skills.locator('.skill-icon img');
+      await expect(icons).toHaveCount(16);
+      const loaded = await icons.evaluateAll((images) =>
+        images.every(
+          (image) =>
+            image instanceof HTMLImageElement &&
+            image.complete &&
+            image.naturalWidth > 0
+        )
+      );
+      expect(loaded).toBe(true);
+      await expect(skills).toHaveScreenshot(`skills-${label}.png`, {
+        caret: 'hide',
+      });
     });
+  }
 
-    const github = page.locator('section#github');
-    await waitForSectionToSettle(page, github);
-
-    await expect(github).toHaveScreenshot('github-section.png', {
-      caret: 'hide',
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures github section on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, {
+        theme: 'minimal',
+        mode: 'light',
+        viewport,
+        githubContributionWeeks: 53,
+      });
+      const github = page.locator('section#github');
+      await waitForSectionToSettle(page, github);
+      await expect(github).toHaveScreenshot(
+        label === 'desktop' ? 'github-section.png' : 'github-mobile.png',
+        { caret: 'hide' }
+      );
     });
-  });
+  }
+
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', MOBILE_VIEWPORT],
+  ] as const) {
+    test(`captures professional experience on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, {
+        theme: 'minimal',
+        mode: 'light',
+        viewport,
+      });
+
+      const experience = page.locator('section#experience');
+      await waitForSectionToSettle(page, experience);
+
+      await expect(experience).toHaveScreenshot(`experience-${label}.png`, {
+        caret: 'hide',
+      });
+    });
+  }
 
   test('captures contact section', async ({ page }) => {
     await gotoVisualState(page, {

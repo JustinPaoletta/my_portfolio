@@ -1,0 +1,58 @@
+{
+  "blender": "5.1.2",
+  "source_sha256": "244ab259221fd6103ca954c50c6b08d70037f834af125c4b24392dc70a2e9472",
+  "source_objects": 97,
+  "source_action": "WaveThenRest",
+  "source_frames": [1, 96],
+  "packed_source_image": "american-flag-badge.png",
+  "source_inspection_warnings": [],
+  "glb": {
+    "sha256": "608ab2147092122ce6e135eded90163b8c180723a508aab86c4e51a767aa6d98",
+    "bytes": 6028336,
+    "triangles": 179410,
+    "exported_vertices": 111079,
+    "weighted_vertices": 20135,
+    "max_weight_error": 2.9802322387695312e-8,
+    "embedded_images": 5,
+    "skins": 1,
+    "clip": "WaveThenRest",
+    "clip_start": 0,
+    "duration": 4.75,
+    "checks": "Finite geometry, unit normals, bounded indices, normalized skin weights, valid joint indices, embedded PBR images, zero-based clip"
+  },
+  "source_to_webgl_wrist_parity": {
+    "source_frames": 96,
+    "maximum_wrist_error_m": 4.825528557755134e-7,
+    "source_sha256": "244ab259221fd6103ca954c50c6b08d70037f834af125c4b24392dc70a2e9472",
+    "glb_sha256": "608ab2147092122ce6e135eded90163b8c180723a508aab86c4e51a767aa6d98",
+    "renderer": "Three.js WebGL in Chrome",
+    "tolerance_m": 1e-5
+  },
+  "web_delivery": {
+    "still_bytes": 45778,
+    "still_dimensions": [720, 800],
+    "animation_bytes": 500638,
+    "animation_dimensions": [420, 467],
+    "encoded_frames": 81,
+    "total_duration_ms": 4800,
+    "loop_count": 1,
+    "alpha": true,
+    "glb_requested_by_hero": false
+  },
+  "observed_checks": {
+    "lint": "TypeScript, ESLint, and Prettier passed in isolated checkout",
+    "unit_tests": 222,
+    "accessibility_unit_tests": 10,
+    "focused_browser_tests": 9,
+    "macos_cosmic_visual_states": 4,
+    "browser_cases": [
+      "desktop and phone animation loads",
+      "delivered image matches content-hash URL",
+      "live reduced-motion change",
+      "Save-Data and 3g avoid animation download",
+      "failed animation recovers to still",
+      "existing hero poster transitions"
+    ]
+  },
+  "limits": "GLB reviewed in desktop Chrome WebGL; phone website layout emulated. Native mobile GPU performance and other engine importers not measured."
+}

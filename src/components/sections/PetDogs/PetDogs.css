@@ -138,24 +138,6 @@
   font-weight: 700;
 }
 
-.dog-badge-overlay {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 12px;
-  height: 25%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-size: 0.65rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #ffffff;
-  background: #000000;
-}
-
 .dog-counter-actions {
   display: inline-flex;
   align-items: center;

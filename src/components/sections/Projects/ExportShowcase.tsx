@@ -1,0 +1,157 @@
+/* eslint-disable jsx-a11y/no-noninteractive-tabindex -- The scrollable output regions need keyboard focus. */
+import demo from '@/content/generated/wild-apricot-demo.json';
+import { DemoTabs } from './DemoTabs';
+
+export function ExportShowcase(): React.ReactElement {
+  return (
+    <div className="export-showcase">
+      <DemoTabs
+        label="Wild Apricot export examples"
+        items={[
+          {
+            label: 'CLI run',
+            content: (
+              <div
+                className="export-output"
+                role="region"
+                aria-label="CLI output excerpts"
+                tabIndex={0}
+              >
+                <p className="export-output-label">
+                  Actual run · output excerpts
+                </p>
+                <pre className="export-terminal">
+                  <code>
+                    <span className="export-command">$ {demo.command}</span>
+                    {'\n'}
+                    {demo.logExcerpt}
+                    {'\n\n'}
+                    <span className="export-command">
+                      $ {demo.resumeCommand}
+                    </span>
+                    {'\n'}
+                    {demo.resumeExcerpt}
+                  </code>
+                </pre>
+              </div>
+            ),
+          },
+          {
+            label: 'CSV',
+            content: (
+              <div
+                className="export-output"
+                role="region"
+                aria-label="CSV export preview"
+                tabIndex={0}
+              >
+                <p className="export-output-label">
+                  contacts.csv · 6 of {demo.csvPreview.totalColumns} columns
+                </p>
+                <div
+                  className="export-table-scroll"
+                  role="region"
+                  aria-label="Sample contacts CSV"
+                  tabIndex={0}
+                >
+                  <table>
+                    <caption>Three fictional members</caption>
+                    <thead>
+                      <tr>
+                        {demo.csvPreview.columns.map((column) => (
+                          <th key={column} scope="col">
+                            {column}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {demo.csvPreview.rows.map((row) => (
+                        <tr key={row[0]}>
+                          {row.map((value, index) => (
+                            <td key={demo.csvPreview.columns[index]}>
+                              {value}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="export-note">
+                  Includes membership level, status, and renewal dates. The
+                  download contains every exported column.
+                </p>
+              </div>
+            ),
+          },
+          {
+            label: 'JSON',
+            content: (
+              <div
+                className="export-output"
+                role="region"
+                aria-label="JSON export preview"
+                tabIndex={0}
+              >
+                <p className="export-output-label">
+                  contacts.json · first of 3 records
+                </p>
+                <pre>
+                  <code>{JSON.stringify(demo.contacts[0], null, 2)}</code>
+                </pre>
+                <p className="export-note">
+                  Original nested fields remain available alongside the
+                  flattened CSV.
+                </p>
+              </div>
+            ),
+          },
+          {
+            label: 'Files',
+            content: (
+              <div
+                className="export-output"
+                role="region"
+                aria-label="Exported files"
+                tabIndex={0}
+              >
+                <p className="export-output-label">
+                  demo-exports/ · actual generated files
+                </p>
+                <ul className="export-files">
+                  {demo.files.map((file) => (
+                    <li key={file}>{file}</li>
+                  ))}
+                </ul>
+                <p className="export-note">
+                  Original document and image folders are preserved. The
+                  manifest lets the next run skip both downloaded files.
+                </p>
+              </div>
+            ),
+          },
+        ]}
+      />
+      <div className="export-demo-caption">
+        <p>
+          <strong>
+            {demo.counts.contacts} contacts · {demo.counts.events} events ·{' '}
+            {demo.counts.originalFiles} original files
+          </strong>
+        </p>
+        <p>
+          Generated by the real CLI against local fixtures. All names and files
+          are fictional.
+        </p>
+        <a
+          className="project-capture-link"
+          href="/demos/wild-apricot-sample.zip"
+          download
+        >
+          Download sample export (.zip) ↓
+        </a>
+      </div>
+    </div>
+  );
+}

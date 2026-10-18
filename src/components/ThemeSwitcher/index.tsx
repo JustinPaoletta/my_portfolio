@@ -163,9 +163,10 @@ export default function ThemeSwitcher({
     };
 
     document.addEventListener('keydown', handleKeyDown);
-    window.requestAnimationFrame(focusInitialControl);
+    const focusFrame = window.requestAnimationFrame(focusInitialControl);
 
     return () => {
+      window.cancelAnimationFrame(focusFrame);
       document.removeEventListener('keydown', handleKeyDown);
       restoreInertState();
       if (toggleButton) {
@@ -176,7 +177,7 @@ export default function ThemeSwitcher({
         }
       }
 
-      if (shouldRestoreFocus.current) {
+      if (shouldRestoreFocus.current && toggleButton?.isConnected) {
         toggleButton?.focus();
       }
     };

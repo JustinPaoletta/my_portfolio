@@ -3,7 +3,6 @@
  * Site footer with copyright
  */
 import JPLogo from '@/components/Brand/JPLogo';
-import { ArrowRightIcon } from '@/components/icons';
 import './Footer.css';
 
 function Footer(): React.ReactElement {
@@ -14,22 +13,10 @@ function Footer(): React.ReactElement {
       <div className="footer-container">
         <div className="footer-brand">
           <a href="#hero" className="footer-logo">
-            <JPLogo className="logo-image" hideCursor />
+            <JPLogo className="logo-image" />
             <span className="visually-hidden">- Go to top</span>
           </a>
-          <p className="footer-tagline">
-            <span>Ideas</span>
-            <ArrowRightIcon
-              className="footer-tagline-icon"
-              aria-hidden="true"
-            />
-            <span>Prompts</span>
-            <ArrowRightIcon
-              className="footer-tagline-icon"
-              aria-hidden="true"
-            />
-            <span>Production</span>
-          </p>
+          <p className="footer-tagline">Design - Develop - Deliver</p>
         </div>
         <p className="copyright">
           © {currentYear} Justin Paoletta. All rights reserved.

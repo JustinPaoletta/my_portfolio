@@ -6,16 +6,16 @@ in focused companion files when useful.
 
 ## What's Next
 
-1. **Start Priority 1** — offline data and contact reliability per [`docs/OFFLINE_RELIABILITY_PLAN.md`](./docs/OFFLINE_RELIABILITY_PLAN.md). Begin with GitHub avatar offline caching (1.1), then avatar fallback (1.2), stale GitHub data (1.3), and the contact outbox queue (1.4–1.5).
-2. **Priority 2 (manual)** — Google Search Console verification, external profile links, and SEO monitoring when ready.
+1. Complete the hiring-focused work and acceptance checks in [PROFESSIONAL_PORTFOLIO_PLAN.md](./PROFESSIONAL_PORTFOLIO_PLAN.md), implemented in [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298).
+2. Add owner-approved employer case studies and reconcile the résumé and profile claims. These are the highest-value remaining evidence gaps.
+3. Revisit the offline reliability backlog below after the professional presentation work. The contact outbox is optional follow-up work; it is not a launch prerequisite.
 
-## Current Status (as of 2026-07-03)
+## Current Status (as of 2026-10-11)
 
-- Current app version: `1.2.1`.
-- Released in `v1.2.1`: hero poster framing fixes (`#282`–`#283`), fade transitions (`#284`), and documentation refresh (`#285`).
-- No open GitHub issues or pull requests.
-- On-site SEO implementation is documented in `docs/SEO.md`; external profile follow-ups live under Priority 2 below.
-- Priority 1 (offline reliability) is not started; see `docs/OFFLINE_RELIABILITY_PLAN.md` for implementation phases.
+- Current app version: `1.2.1`; professional portfolio changes are in draft PR #298.
+- Hiring clarity, public project evidence, résumé access, and dependable navigation take priority over new offline features.
+- The existing public résumé is retained until the revised document is approved and supplied.
+- On-site SEO implementation is documented in `docs/SEO.md`; account and cross-profile follow-ups remain separate from code validation.
 
 ## Priority 1 - Offline Data And Contact Reliability
 

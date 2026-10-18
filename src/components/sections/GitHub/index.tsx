@@ -7,8 +7,8 @@ import { useRef } from 'react';
 import { Reveal, useRevealInView } from '@/components/Reveal';
 import { useGitHub } from '@/hooks/useGitHub';
 import { env } from '@/config/env';
-import ContributionGraph from './ContributionGraph';
-import './GitHub.css';
+import ContributionGraph from '@/components/sections/GitHub/ContributionGraph';
+import '@/components/sections/GitHub/GitHub.css';
 
 function GitHub(): React.ReactElement {
   const sectionRef = useRef<HTMLElement>(null);
@@ -30,14 +30,6 @@ function GitHub(): React.ReactElement {
           effect="fade-only"
           visible={isVisible}
         >
-          <Reveal
-            as="span"
-            className="section-label"
-            delay={40}
-            visible={isVisible}
-          >
-            Let's Code
-          </Reveal>
           <Reveal
             as="h2"
             id="github-heading"
@@ -66,11 +58,10 @@ function GitHub(): React.ReactElement {
           </Reveal>
         )}
 
-        {/* GitHub Stats Overview */}
         {user && (
           <Reveal
             as="div"
-            className="github-stats-bar"
+            className="github-profile"
             effect="fade-only"
             delay={200}
             visible={isVisible}
@@ -82,46 +73,22 @@ function GitHub(): React.ReactElement {
               className="github-profile-link"
             >
               <img
-                src={user.avatar_url}
-                alt={`${user.name || user.login}'s avatar`}
                 className="github-avatar"
-                width={48}
-                height={48}
+                src={user.avatar_url}
+                alt=""
+                width={56}
+                height={56}
                 loading="lazy"
                 decoding="async"
               />
-              <div className="github-profile-info">
+              <span className="github-profile-identity">
                 <span className="github-name">{user.name || user.login}</span>
                 <span className="github-username">@{user.login}</span>
-              </div>
+              </span>
             </a>
-
-            <div className="github-stats">
-              <div className="stat-item">
-                <span className="stat-value">{user.public_repos}</span>
-                <span className="stat-label">Repos</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">{user.followers}</span>
-                <span className="stat-label">Followers</span>
-              </div>
-              <div className="stat-item">
-                <span className="stat-value">{user.following}</span>
-                <span className="stat-label">Following</span>
-              </div>
-              {contributions && (
-                <div className="stat-item highlight">
-                  <span className="stat-value">
-                    {contributions.totalContributions}
-                  </span>
-                  <span className="stat-label">Contributions</span>
-                </div>
-              )}
-            </div>
           </Reveal>
         )}
 
-        {/* Contribution Graph */}
         {contributions && (
           <Reveal as="div" delay={240} visible={isVisible}>
             <ContributionGraph
@@ -129,6 +96,19 @@ function GitHub(): React.ReactElement {
               loading={loading}
               isVisible={isVisible}
             />
+          </Reveal>
+        )}
+
+        {!loading && !error && user && !contributions && (
+          <Reveal
+            as="p"
+            className="github-contributions-unavailable"
+            role="status"
+            delay={240}
+            visible={isVisible}
+          >
+            Contribution history is temporarily unavailable. View the profile on
+            GitHub for current activity.
           </Reveal>
         )}
 
@@ -141,8 +121,7 @@ function GitHub(): React.ReactElement {
             aria-busy="true"
             aria-label="Loading GitHub data"
           >
-            <div className="loading-skeleton contribution-skeleton" />
-            <div className="loading-skeleton repos-skeleton" />
+            Loading public profile…
           </div>
         )}
 

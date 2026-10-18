@@ -72,3 +72,39 @@ describe('pwaConfig', () => {
     ).toBe(false);
   });
 });
+
+// Cache boundaries matter when the same filename exists on an external origin.
+describe('runtime cache isolation', () => {
+  it.each([
+    ['images-cache', '/images/pets/nala-cutout.webp', 'image'],
+    ['media-cache', '/media/plexarr-live-demo.mp4', 'video'],
+    ['hero-models-cache', '/models/hero/cosmic-astronaut.glb', ''],
+    ['static-resources', '/assets/app.js', 'script'],
+    ['static-resources', '/assets/app.css', 'style'],
+    ['api-cache', '/api/github', ''],
+  ])(
+    'matches only appropriate same-origin requests for %s',
+    (cacheName, pathname, destination) => {
+      const rule = pwaConfig.workbox!.runtimeCaching!.find(
+        (route) => route.options?.cacheName === cacheName
+      )!;
+      const matches = rule.urlPattern as (input: {
+        url: URL;
+        request: { destination: string };
+      }) => boolean;
+      const request = { destination };
+      expect(
+        matches({ url: new URL(pathname, self.location.origin), request })
+      ).toBe(true);
+      expect(
+        matches({ url: new URL(pathname, 'https://external.example'), request })
+      ).toBe(false);
+      expect(
+        matches({
+          url: new URL('/unrelated.txt', self.location.origin),
+          request: { destination: 'document' },
+        })
+      ).toBe(false);
+    }
+  );
+});

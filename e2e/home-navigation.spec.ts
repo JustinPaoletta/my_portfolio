@@ -141,21 +141,29 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
   await expect(
     page.getByRole('heading', { name: /Justin Paoletta/i })
   ).toBeVisible();
-  await expect(page.getByRole('heading', { name: /My Career/i })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: /My Projects/i })
+    page
+      .locator('.hero-cta')
+      .getByRole('link', { name: 'Contact', exact: true })
+  ).toHaveAttribute('href', '#contact');
+  await expect(
+    page.getByRole('heading', { name: /^Projects$/i })
   ).toBeVisible();
 
   const experienceSection = await revealDeferredSection(page, 'experience');
+  const aboutSection = await revealDeferredSection(page, 'about');
   const articlesSection = await revealDeferredSection(page, 'articles');
   const githubSection = await revealDeferredSection(page, 'github');
   const contactSection = await revealDeferredSection(page, 'contact');
 
   await expect(
-    experienceSection.getByRole('heading', { name: /Experience & Education/i })
+    experienceSection.getByRole('heading', { name: /Experience/i })
   ).toBeVisible();
   await expect(
-    articlesSection.getByRole('heading', { name: /LinkedIn Articles/i })
+    aboutSection.getByRole('heading', { name: 'About' })
+  ).toBeVisible();
+  await expect(
+    articlesSection.getByRole('heading', { name: 'Articles', exact: true })
   ).toBeVisible();
   await expect(articlesSection.getByText('Article 1 of 2')).toBeVisible();
   await expect(
@@ -167,7 +175,7 @@ test('renders core portfolio sections in default theme', async ({ page }) => {
     githubSection.getByRole('heading', { name: /GitHub Activity/i })
   ).toBeVisible();
   await expect(
-    contactSection.getByRole('heading', { name: /Get In Touch/i })
+    contactSection.getByRole('heading', { name: /Contact/i })
   ).toBeVisible();
   await expect(page.getByRole('contentinfo')).toBeVisible();
 });
@@ -176,7 +184,10 @@ test('desktop navigation scrolls to Contact section', async ({ page }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
 
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
 
   await expectSectionInViewport(page, 'contact');
   await expect(page.locator('section#contact')).toBeFocused();
@@ -230,7 +241,10 @@ test('mobile navigation opens, navigates, and closes', async ({ page }) => {
   await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused();
 
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
 
   await expectSectionInViewport(page, 'contact');
   await expect(page.locator('section#contact')).toBeFocused();
@@ -303,8 +317,6 @@ test('mobile menu About tap: first scrollTo runs after body scroll lock is relea
 });
 
 /** Delay applied to the Contact lazy chunk response (simulates slow network). */
-const CONTACT_CHUNK_DELAY_MS = 4500;
-
 /**
  * Delivers the Contact code-split chunk late: Suspense should show
  * SectionRouteFallback (reserved space + status) until the lazy module resolves
@@ -313,14 +325,18 @@ const CONTACT_CHUNK_DELAY_MS = 4500;
 test('slow Contact chunk: shows section fallback until Contact lazy chunk loads', async ({
   page,
 }) => {
+  let releaseChunk!: () => void;
+  const chunkGate = new Promise<void>((resolve) => {
+    releaseChunk = resolve;
+  });
+  let chunkRequested = false;
   await page.route(
     (url) =>
       url.pathname.includes('/assets/') &&
       /\/Contact-[^/]+\.js$/u.test(url.pathname),
     async (route) => {
-      await new Promise((resolve) => {
-        setTimeout(resolve, CONTACT_CHUNK_DELAY_MS);
-      });
+      chunkRequested = true;
+      await chunkGate;
       await route.continue();
     }
   );
@@ -344,7 +360,10 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
     'false'
   );
 
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation')
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
   await expect(page.locator('#mobile-menu')).toHaveAttribute(
     'aria-hidden',
     'true'
@@ -363,27 +382,12 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
     )
     .toBe(true);
 
-  const absentChecks = 18;
-  const absentStepMs = 180;
-  for (let i = 0; i < absentChecks; i += 1) {
-    const { contactMounted, fallbackVisible } = await page.evaluate(() => ({
-      contactMounted: document.getElementById('contact') !== null,
-      fallbackVisible: Boolean(
-        document.querySelector(
-          '[data-section-route-fallback][data-section-id="contact"]'
-        )
-      ),
-    }));
-    expect(
-      contactMounted,
-      `expected #contact to stay unmounted while chunk is delayed (sample ${i + 1}/${absentChecks})`
-    ).toBe(false);
-    expect(
-      fallbackVisible,
-      `expected Contact Suspense fallback to be visible while chunk is delayed (sample ${i + 1}/${absentChecks})`
-    ).toBe(true);
-    await page.waitForTimeout(absentStepMs);
-  }
+  await expect.poll(() => chunkRequested).toBe(true);
+  await expect(page.locator('section#contact')).toHaveCount(0);
+  await expect(
+    page.getByRole('status', { name: 'Loading Contact section' })
+  ).toHaveAttribute('aria-busy', 'true');
+  releaseChunk();
 
   await expect
     .poll(
@@ -393,9 +397,12 @@ test('slow Contact chunk: shows section fallback until Contact lazy chunk loads'
     )
     .toBe(true);
 
-  await expect(
-    page.getByRole('heading', { name: /Get In Touch/i })
-  ).toBeVisible({ timeout: 10_000 });
+  await expect(page.getByRole('heading', { name: /Contact/i })).toBeVisible({
+    timeout: 10_000,
+  });
+  await expectSectionInViewport(page, 'contact');
+  await expect(page.locator('section#contact')).toBeFocused();
+  await expect(page).toHaveURL(/#contact$/);
 });
 
 test('mobile orientation change still reveals deferred sections while scrolling @mobile', async ({

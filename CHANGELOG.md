@@ -7,6 +7,35 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ## [Unreleased]
 
+### Changed
+
+- Replace the Cosmic hero illustration with the Blender astronaut and asteroid, a once-playing wave, reduced-motion/limited-connection stills, and download-failure recovery. Include editable source, reusable skinned GLB, and rebuild/validation tools.
+- Share navigation labels with their destination headings and remove the GitHub introduction and contribution-history disclosure.
+
+- Rebuild CLI mode as a single terminal session with an in-terminal guide, contextual help, command history, completion, and appearance/exit commands. The prompt follows the latest output and scrolls with the transcript. Use ls/cd navigation, a two-line delayed welcome, and a responsive identity row with macOS dots. The red dot exits; yellow and green are decorative. Preserve accessible output links and compatibility aliases.
+- Lead with Software Engineer and the Angular/React/TypeScript stack, pair the hero work action with Contact and retain navigation résumé downloads, and put selected work and professional experience before supporting content.
+- Curate public projects with a real design-system showcase capture and explicitly labeled workflow diagrams; move private projects to supporting cards and retain the writing carousel.
+- Condense About and Skills around implementation evidence, omit the stylized portrait, show GitHub contributions directly with the profile avatar, and align the CLI wording. Update contact copy. Defer the OG image redesign.
+
+- Give professional work the primary Experience layout, move the résumé action beside the work history, and condense education into supporting credentials.
+- Keep project source links, status, and privacy labels visible at rest, with theme-aware focus styles and larger touch targets.
+- Serve responsive WebP project logos sized for their featured artwork and 60px icon slots. Keep the original PNG masters outside the public assets and add a repeatable optimization command.
+
+### Fixed
+
+- Keep captured portfolio content visible in prerendered HTML when JavaScript is disabled, and omit the duplicate fallback summary after a successful prerender.
+- Reveal the About approach vertically so its offscreen entrance does not widen tablet layouts.
+- Cancel delayed section navigation when visitors interact or choose another destination so contact validation retains field focus; wait for slow chunks within a bounded 12-second window.
+
+- Reconcile BitStockerz and design-system claims against current source and CI. Share their standard/CLI descriptions, stacks, and lifecycle labels; identify MySQL/MariaDB persistence, stored-bar paper pricing, disabled live-data integration, and the design system's prerelease and preview limits.
+- Remove synthetic GitHub contribution statistics and reject the legacy cache format. Contribution outages now show an unavailable state while retaining real profile and repository data, including in the CLI theme.
+- Make GitHub refreshes bypass cached results and prevent stale requests from overwriting newer data.
+- Normalize project repository URLs to avoid duplicate path separators.
+
+### Security
+
+- Update the transitive `source-map-js` dependency to 1.2.2 to resolve GHSA-68fv-2mgg-jv7q and restore the production dependency audit gate.
+
 ## [1.2.1] - 2026-07-03
 
 ### Fixed

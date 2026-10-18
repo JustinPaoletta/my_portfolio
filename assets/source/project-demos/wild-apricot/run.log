@@ -1,0 +1,65 @@
+$ wa-export all --include events,contacts,files --out-dir demo-exports
+
+===============================================================================
+# events
+===============================================================================
+Fetching event list...
+Fetching: https://api.wildapricot.org/v2.2/accounts/123456/events?$top=100&$skip=0
+Fetching event details (0ms between requests; event routes are often ~30/min)...
+[1/2] Event 2001... ok
+[2/2] Event 2002... ok
+
+Done.
+Detail fetched OK : 2/2 (2 this run)
+JSON: ./demo-exports/events/wild-apricot-events.json
+CSV:  ./demo-exports/events/wild-apricot-events.csv
+
+===============================================================================
+# contacts
+===============================================================================
+Fetching contacts via async API (this can take several minutes for large databases)...
+  starting async query: https://api.wildapricot.org/v2.2/accounts/123456/contacts?%24async=false&includeDetails=true
+Got 3 contacts.
+
+Done.
+JSON: ./demo-exports/contacts/contacts.json
+CSV:  ./demo-exports/contacts/contacts.csv
+
+===============================================================================
+# files
+===============================================================================
+WebDAV URL: http://127.0.0.1:FIXTURE
+Output dir: ./demo-exports/files
+
+Crawling: / (root, recursive — everything)
+  [DOWN] /Documents/member-guide.txt
+  [DOWN] /Pictures/club-mark.svg
+
+--- Done ---
+Total files found : 2
+Downloaded        : 2
+Skipped (cached)  : 0
+Failed            : 0
+Manifest          : ./demo-exports/files/_manifest.json
+
+===============================================================================
+# Summary
+===============================================================================
+  ✓ events
+  ✓ contacts
+  ✓ files
+
+$ wa-export files --out-dir demo-exports
+WebDAV URL: http://127.0.0.1:FIXTURE
+Output dir: ./demo-exports/files
+
+Crawling: / (root, recursive — everything)
+  [SKIP] /Documents/member-guide.txt
+  [SKIP] /Pictures/club-mark.svg
+
+--- Done ---
+Total files found : 2
+Downloaded        : 0
+Skipped (cached)  : 2
+Failed            : 0
+Manifest          : ./demo-exports/files/_manifest.json

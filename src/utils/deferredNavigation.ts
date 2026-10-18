@@ -5,9 +5,10 @@ import {
 
 const NAV_OFFSET_PX = 80;
 const POLL_INTERVAL_MS = 120;
-const MAX_POLL_ATTEMPTS = 20;
+const MAX_WAIT_MS = 12_000;
 const SETTLE_DELAY_MS = 80;
 const MAX_SCROLL_RETRIES = 6;
+let cancelPendingNavigation: (() => void) | undefined;
 
 export function scrollToElement(
   element: HTMLElement,
@@ -29,9 +30,7 @@ export function focusSection(targetId: string): void {
     element.setAttribute('tabindex', '-1');
   }
 
-  window.requestAnimationFrame(() => {
-    element.focus({ preventScroll: true });
-  });
+  element.focus({ preventScroll: true });
 }
 
 function navigateToMountedTarget(
@@ -51,6 +50,8 @@ function navigateToMountedTarget(
  * If the target already exists in the DOM, scrolls immediately.
  */
 export function revealAndNavigate(targetId: string): void {
+  cancelPendingNavigation?.();
+
   const existingTarget = document.getElementById(targetId);
   if (existingTarget instanceof HTMLElement) {
     navigateToMountedTarget(targetId, existingTarget);
@@ -66,34 +67,68 @@ export function revealAndNavigate(targetId: string): void {
 
   const observerRoot = document.getElementById('main') ?? document.body;
   let timerId = 0;
-  let attemptsLeft = MAX_POLL_ATTEMPTS;
+  let frameId = 0;
+  let isCancelled = false;
+  const deadline = Date.now() + MAX_WAIT_MS;
 
-  const cleanup = (): void => {
+  const stopWaitingForMount = (): void => {
     mutationObserver.disconnect();
     window.clearTimeout(timerId);
+  };
+
+  const cleanup = (): void => {
+    stopWaitingForMount();
+    window.cancelAnimationFrame(frameId);
+    document.removeEventListener('focusin', cancel);
+    document.removeEventListener('pointerdown', cancel, true);
+    document.removeEventListener('keydown', cancel, true);
+    window.removeEventListener('wheel', cancel, true);
+    if (cancelPendingNavigation === cancel) {
+      cancelPendingNavigation = undefined;
+    }
+  };
+
+  const cancel = (): void => {
+    isCancelled = true;
+    cleanup();
+  };
+
+  const completeNavigation = (mountedTarget: HTMLElement): void => {
+    if (isCancelled || !mountedTarget.isConnected) {
+      cancel();
+      return;
+    }
+
+    cleanup();
+    navigateToMountedTarget(targetId, mountedTarget);
   };
 
   const ensureTargetInView = (
     mountedTarget: HTMLElement,
     remainingAttempts = MAX_SCROLL_RETRIES
   ): void => {
+    if (isCancelled || !mountedTarget.isConnected) {
+      cancel();
+      return;
+    }
+
     scrollToElement(mountedTarget, 'auto');
 
     if (remainingAttempts <= 1) {
-      window.requestAnimationFrame(() => {
-        navigateToMountedTarget(targetId, mountedTarget);
+      frameId = window.requestAnimationFrame(() => {
+        completeNavigation(mountedTarget);
       });
       return;
     }
 
-    window.requestAnimationFrame(() => {
+    frameId = window.requestAnimationFrame(() => {
       const rect = mountedTarget.getBoundingClientRect();
       const isInViewport =
         rect.top <= window.innerHeight - NAV_OFFSET_PX &&
         rect.bottom >= NAV_OFFSET_PX;
 
       if (isInViewport) {
-        navigateToMountedTarget(targetId, mountedTarget);
+        completeNavigation(mountedTarget);
         return;
       }
 
@@ -107,7 +142,7 @@ export function revealAndNavigate(targetId: string): void {
       return false;
     }
 
-    cleanup();
+    stopWaitingForMount();
     timerId = window.setTimeout(() => {
       ensureTargetInView(mountedTarget);
     }, SETTLE_DELAY_MS);
@@ -119,32 +154,32 @@ export function revealAndNavigate(targetId: string): void {
       return;
     }
 
-    if (attemptsLeft <= 0) {
-      cleanup();
+    if (Date.now() >= deadline) {
+      cancel();
       return;
     }
 
-    attemptsLeft -= 1;
     timerId = window.setTimeout(() => {
       waitForTarget();
     }, POLL_INTERVAL_MS);
   };
 
   const mutationObserver = new MutationObserver(() => {
-    if (finishWhenMounted()) {
-      return;
-    }
-
-    window.clearTimeout(timerId);
-    timerId = window.setTimeout(() => {
-      waitForTarget();
-    }, POLL_INTERVAL_MS);
+    finishWhenMounted();
   });
 
   mutationObserver.observe(observerRoot, {
     childList: true,
     subtree: true,
   });
+
+  // Once a visitor starts another action, late-loading content must not move
+  // their viewport or steal focus from a form field or a new navigation target.
+  cancelPendingNavigation = cancel;
+  document.addEventListener('focusin', cancel);
+  document.addEventListener('pointerdown', cancel, true);
+  document.addEventListener('keydown', cancel, true);
+  window.addEventListener('wheel', cancel, { capture: true, passive: true });
 
   waitForTarget();
 }

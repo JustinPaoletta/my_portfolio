@@ -23,7 +23,7 @@ describe('PetDogs section', () => {
     vi.clearAllMocks();
   });
 
-  it('toggles dogs panel and renders foster badge branch for Nala only', () => {
+  it('toggles the dogs panel and shows the rescue dogs without a foster badge', () => {
     render(<PetDogs />);
 
     const toggle = screen.getByRole('button', { name: 'Show dogs' });
@@ -39,7 +39,7 @@ describe('PetDogs section', () => {
     expect(
       screen.getByText('Sure you can!', { exact: false })
     ).toBeInTheDocument();
-    expect(screen.getByText('Foster')).toBeInTheDocument();
+    expect(screen.queryByText('Foster')).not.toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: 'Hide dogs' }));
     expect(

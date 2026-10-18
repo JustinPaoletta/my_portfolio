@@ -3,8 +3,9 @@ import { expect, test, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
 import { revealDeferredSection } from './support/sections';
 
-async function expectNoAxeViolations(page: Page) {
-  const results = await new AxeBuilder({ page }).analyze();
+async function expectNoAxeViolations(page: Page, scope?: string) {
+  const builder = new AxeBuilder({ page });
+  const results = await (scope ? builder.include(scope) : builder).analyze();
   expect(
     results.violations,
     results.violations.map((violation) => violation.id).join(', ')
@@ -61,14 +62,28 @@ test('@a11y mobile menu acts as a keyboard-managed dialog', async ({
     'aria-hidden',
     'false'
   );
-  await expect(page.getByRole('dialog', { name: 'Main menu' })).toBeVisible();
+  const dialog = page.getByRole('dialog', { name: 'Main menu' });
+  await expect(dialog).toBeVisible();
   await expect(page.getByRole('button', { name: 'Close menu' })).toBeFocused();
 
-  await pressKeyboardTab(page, browserName);
-  await expect(page.getByRole('link', { name: 'About' })).toBeFocused();
+  for (const label of [
+    'Projects',
+    'Experience',
+    'About',
+    'Articles',
+    'Contact',
+    'Resume PDF',
+  ]) {
+    await pressKeyboardTab(page, browserName);
+    await expect(
+      dialog.getByRole('link', { name: label, exact: true })
+    ).toBeFocused();
+  }
 
   await pressKeyboardTab(page, browserName);
-  await expect(page.getByRole('link', { name: 'Projects' })).toBeFocused();
+  await expect(
+    dialog.getByRole('button', { name: 'Close menu' })
+  ).toBeFocused();
 
   await page.keyboard.press('Escape');
   await expect(menuButton).toBeFocused();
@@ -87,10 +102,15 @@ test('@a11y theme switcher dialog has no violations and restores focus', async (
   await expect(dialog).toBeVisible();
   await expect(page.getByRole('radio', { name: 'System' })).toBeFocused();
 
-  await expectNoAxeViolations(page);
+  // Background main/heading are intentionally inert while this modal is open.
+  // Scan its active accessibility subtree, then the restored whole page.
+  await expect(page.locator('main')).toHaveAttribute('inert', '');
+  await expectNoAxeViolations(page, '[role="dialog"]');
 
   await page.keyboard.press('Escape');
   await expect(toggle).toBeFocused();
+  await expect(page.locator('main')).not.toHaveAttribute('inert');
+  await expectNoAxeViolations(page);
 });
 
 test('@a11y contact form surfaces field-level errors to assistive tech', async ({
@@ -98,7 +118,10 @@ test('@a11y contact form surfaces field-level errors to assistive tech', async (
 }) => {
   await mockPortfolioApis(page);
   await page.goto('/');
-  await page.getByRole('link', { name: 'Contact' }).click();
+  await page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Contact', exact: true })
+    .click();
   await expect(page.locator('section#contact')).toBeVisible({
     timeout: 10_000,
   });

@@ -53,17 +53,6 @@ export function useBreakpoint(): Breakpoint {
 }
 
 /**
- * Configuration for contribution graph weeks per breakpoint
- */
-export const CONTRIBUTION_WEEKS_CONFIG: Record<Breakpoint, number> = {
-  xs: 9, // ~2 months
-  sm: 17, // ~4 months
-  md: 26, // ~6 months
-  lg: 39, // ~9 months
-  xl: 52, // 12 months (full year)
-};
-
-/**
  * Configuration for showing full day labels vs abbreviated
  */
 export const SHOW_FULL_DAY_LABELS: Record<Breakpoint, boolean> = {

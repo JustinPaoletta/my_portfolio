@@ -4,20 +4,25 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import type { GitHubStats } from '@/types/github';
+import type {
+  ContributionCalendar,
+  GitHubStats,
+  PinnedRepository,
+} from '@/types/github';
 import {
   fetchGitHubUser,
   fetchGitHubRepos,
   fetchGitHubGraphQLData,
-  generateMockContributions,
   createPinnedFromRepos,
 } from '@/services/github';
 import { normalizeContributionCalendar } from '@/utils/contributions';
 
 const CACHE_KEY = 'github_stats_cache';
+const CACHE_VERSION = 2;
 const CACHE_DURATION = 1000 * 60 * 60; // 1 hour
 
 interface CachedData {
+  version: typeof CACHE_VERSION;
   data: GitHubStats;
   timestamp: number;
 }
@@ -27,22 +32,24 @@ function getCachedData(): GitHubStats | null {
     const cached = localStorage.getItem(CACHE_KEY);
     if (!cached) return null;
 
-    const parsed = JSON.parse(cached) as CachedData;
-    const isExpired = Date.now() - parsed.timestamp > CACHE_DURATION;
-
-    if (isExpired) {
+    const parsed = JSON.parse(cached) as CachedData | null;
+    // Unversioned entries may contain the old synthetic contribution fallback.
+    if (
+      parsed?.version !== CACHE_VERSION ||
+      !Number.isFinite(parsed.timestamp) ||
+      Date.now() - parsed.timestamp > CACHE_DURATION ||
+      !parsed.data.user ||
+      !parsed.data.contributions ||
+      parsed.data.error !== null
+    ) {
       localStorage.removeItem(CACHE_KEY);
       return null;
     }
 
-    if (parsed.data.contributions) {
-      return {
-        ...parsed.data,
-        contributions: normalizeContributionCalendar(parsed.data.contributions),
-      };
-    }
-
-    return parsed.data;
+    return {
+      ...parsed.data,
+      contributions: normalizeContributionCalendar(parsed.data.contributions),
+    };
   } catch {
     return null;
   }
@@ -51,6 +58,7 @@ function getCachedData(): GitHubStats | null {
 function setCachedData(data: GitHubStats): void {
   try {
     const cacheData: CachedData = {
+      version: CACHE_VERSION,
       data,
       timestamp: Date.now(),
     };
@@ -78,15 +86,17 @@ function getInitialState(): GitHubStats {
 
 export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
   const [stats, setStats] = useState<GitHubStats>(getInitialState);
-  const hasFetched = useRef(false);
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const needsInitialFetch = useRef(stats.loading);
+  const requestIdRef = useRef(0);
 
   const fetchData = useCallback(async (): Promise<void> => {
-    // Check cache first
-    const cached = getCachedData();
-    if (cached) {
-      setStats({ ...cached, loading: false });
-      return;
+    const requestId = ++requestIdRef.current;
+    // A manual refresh must reach the API and must not leave a failed result
+    // masked by an older cache entry on the next visit.
+    try {
+      localStorage.removeItem(CACHE_KEY);
+    } catch {
+      // Continue fetching when browser storage is unavailable.
     }
 
     setStats((prev) => ({ ...prev, loading: true, error: null }));
@@ -98,10 +108,8 @@ export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
         fetchGitHubRepos(),
       ]);
 
-      // Try to fetch real contribution data and pinned repos from our API proxy
-      // Falls back to mock data if the API is unavailable
-      let contributions;
-      let pinnedRepos;
+      let contributions: ContributionCalendar | null = null;
+      let pinnedRepos: PinnedRepository[];
 
       try {
         const graphqlData = await fetchGitHubGraphQLData();
@@ -112,15 +120,13 @@ export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
             ? graphqlData.pinnedRepos
             : createPinnedFromRepos(repos);
       } catch (graphqlError) {
-        // GraphQL API unavailable (missing token, rate limited, etc.)
-        // Fall back to mock contributions and top starred repos
+        contributions = null;
         if (import.meta.env.DEV) {
           console.warn(
-            '[GitHub] GraphQL API unavailable, using fallback data:',
+            '[GitHub] Contribution data unavailable; retaining public profile and repos:',
             graphqlError
           );
         }
-        contributions = generateMockContributions();
         pinnedRepos = createPinnedFromRepos(repos);
       }
 
@@ -137,9 +143,16 @@ export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
         error: null,
       };
 
+      if (requestId !== requestIdRef.current) return;
+
       setStats(newStats);
-      setCachedData(newStats);
+      // Do not cache an outage for an hour. A new visit can retry immediately.
+      if (normalizedContributions) {
+        setCachedData(newStats);
+      }
     } catch (error) {
+      if (requestId !== requestIdRef.current) return;
+
       const message =
         error instanceof Error ? error.message : 'Failed to fetch GitHub data';
       setStats((prev) => ({
@@ -151,26 +164,21 @@ export function useGitHub(): GitHubStats & { refetch: () => Promise<void> } {
   }, []);
 
   useEffect(() => {
-    // Only fetch if not already cached and not already fetched
-    if (hasFetched.current) return;
-    if (!stats.loading) return; // Already have cached data
-
-    hasFetched.current = true;
-    abortControllerRef.current = new AbortController();
+    let cancelled = false;
 
     // Use queueMicrotask to defer fetchData call, avoiding synchronous
     // setState within the effect body (required by react-hooks/set-state-in-effect)
     queueMicrotask(() => {
-      void fetchData();
+      if (!cancelled && needsInitialFetch.current) {
+        void fetchData();
+      }
     });
 
     return () => {
-      abortControllerRef.current?.abort();
-      // Reset hasFetched on cleanup so re-mounting can trigger fetch again
-      // This handles React StrictMode double-mounting in development
-      hasFetched.current = false;
+      cancelled = true;
+      requestIdRef.current += 1;
     };
-  }, [stats.loading, fetchData]);
+  }, [fetchData]);
 
   return { ...stats, refetch: fetchData };
 }
