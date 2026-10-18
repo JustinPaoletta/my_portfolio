@@ -168,7 +168,7 @@ account credentials or execute exports in visitors' browsers.
 Plexarr is the fourth featured project. A manually controlled screenshot carousel
 shows Discover, personalized picks, and title details with community ratings.
 The owner approved reuse of the authenticated October 15 captures. Every crop
-excludes Request controls and availability messaging. The title-details slide
+excludes Request controls and the title dialog’s request-status message. The title-details slide
 stacks two separate metadata excerpts. No new sign-in or Library capture is claimed.
 Arrows, direct slide buttons, keyboard controls, touch swipes, and full-size links
 support narrow screens. The carousel does not auto-advance or load video.

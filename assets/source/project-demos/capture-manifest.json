@@ -240,7 +240,7 @@
         }
       }
     ],
-    "boundaries": "Public crops exclude Request navigation, actions, forms, and availability messaging. The third slide stacks two separate metadata excerpts; it is not an unmodified full-window capture. Library and preference mutations are not demonstrated. Original recordings remain historical source evidence only; no Plexarr video is deployed."
+    "boundaries": "Public crops exclude Request navigation, actions, forms, and the title dialog’s request-status message. The third slide stacks two separate metadata excerpts; it is not an unmodified full-window capture. Library and preference mutations are not demonstrated. Original recordings remain historical source evidence only; no Plexarr video is deployed."
   },
   "plexarrArchivedOctober15": {
     "captured": "2026-10-15",

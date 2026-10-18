@@ -102,7 +102,7 @@ The slides show Discover, personalized picks, and title metadata.
 
 The third slide stacks two separate metadata excerpts. It does not reproduce a
 complete dialog. Every public crop excludes Request navigation, buttons, forms,
-and availability messaging. No catalog data or displayed rating was changed.
+and the title dialog’s request-status message. No catalog data or displayed rating was changed.
 The manifest records the source crops and output hashes.
 
 To extract a source frame, run this command from the repository root:
