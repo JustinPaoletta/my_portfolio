@@ -217,24 +217,21 @@ for (const width of [390, 1440]) {
       );
       expect(Number.isFinite(duration)).toBe(true);
       expect(duration).toBeGreaterThan(0.5);
+      await video.evaluate((element: HTMLVideoElement) => element.pause());
+      expect(
+        await video.evaluate((element: HTMLVideoElement) => element.paused)
+      ).toBe(true);
+      await video.evaluate((element: HTMLVideoElement) => element.play());
+      await expect
+        .poll(() =>
+          video.evaluate((element: HTMLVideoElement) => element.paused)
+        )
+        .toBe(false);
+      // Seek while playback is active. This exercises completion without the
+      // Linux WebKit/GStreamer paused-seek resume deadlock.
       await video.evaluate((element: HTMLVideoElement) => {
-        element.pause();
         element.currentTime = element.duration - 0.5;
       });
-      // Decode the seek target before resuming. Linux WebKit's media pipeline
-      // can leave play() pending when it races a paused seek.
-      await expect
-        .poll(
-          () =>
-            video.evaluate(
-              (element: HTMLVideoElement) =>
-                !element.seeking &&
-                element.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA
-            ),
-          { timeout: 10000 }
-        )
-        .toBe(true);
-      await video.evaluate((element: HTMLVideoElement) => element.play());
       await expect
         .poll(() =>
           video.evaluate((element: HTMLVideoElement) => element.ended)
