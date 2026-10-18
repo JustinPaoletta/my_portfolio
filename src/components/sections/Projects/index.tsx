@@ -10,6 +10,7 @@ import { env } from '@/config/env';
 import {
   BITSTOCKERZ_PROJECT,
   JP_DESIGN_SYSTEM_PROJECT,
+  PLEXARR_PROJECT,
   PROJECT_STATUS_LABELS,
   SQUARK_PROJECT,
   type ProjectSummary,
@@ -147,27 +148,22 @@ const projects: Project[] = [
     featured: false,
   },
   {
+    ...PLEXARR_PROJECT,
     id: 'project-6',
-    title: 'Plexarr',
     cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
-    description:
-      'A self-hosted app for discovering and requesting media for my at-home Plex server. Built with Next.js and React, it brings title discovery, quality selection, request confirmation, and an activity log into one flow. Passkeys protect access, and service credentials stay server-side.',
     image: '/images/projects/plexarr-live-discover-1440.webp',
     imageWidth: 1440,
     imageHeight: 808,
     imageCaption:
-      '18-second live app walkthrough: browse the real catalog → review a title → inspect request options. Cancelled before submission.',
+      'Live app walkthrough: browse the catalog → inspect title details and availability → review a request → return to Discover.',
     demo: {
       src: '/media/plexarr-live-demo.mp4',
       webm: '/media/plexarr-live-demo.webm',
-      captions: '/media/plexarr-live-demo.vtt',
+      captions: '/media/plexarr-product-walkthrough.vtt',
       transcript:
-        'Recorded from the live Plexarr app after passkey sign-in. Browse real movie posters and availability badges, then open Avengers: Infinity War to review its overview, genres, rating, and current availability. Open the request review and inspect the HD-1080p quality selection, then cancel and return to Discover. This edited recording uses real catalog and service responses, with no mock data or API interception. No request was submitted, and sign-in is outside the recording.',
+        'Recorded from the live Plexarr app after passkey sign-in. Browse the title catalog, open a detail view to inspect its overview, genres, rating, and current availability, then review request settings. Cancel the review and return to Discover. This edited walkthrough uses real catalog and service responses, with no mock data or API interception. No request was submitted; sign-in is outside the recording.',
     },
-    techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
-    private: true,
-    featured: true,
   },
 ];
 

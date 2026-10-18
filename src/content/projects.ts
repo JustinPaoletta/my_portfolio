@@ -70,3 +70,13 @@ export const SQUARK_PROJECT: ProjectSummary = {
   liveUrl: 'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app',
   liveLabel: 'Preview In Browser',
 };
+
+/** Private household-library dashboard; access remains allowlisted. */
+export const PLEXARR_PROJECT: ProjectSummary = {
+  title: 'Plexarr',
+  description:
+    'A private, self-hosted dashboard for managing a household media library. Built with Next.js and React, Plexarr brings catalog search, library availability, request review, and activity history into one responsive interface. Allowlisted users sign in with passkeys; backend integrations and service credentials stay server-side.',
+  techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
+  private: true,
+  featured: true,
+};

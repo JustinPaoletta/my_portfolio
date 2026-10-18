@@ -164,7 +164,8 @@
     "public/media/bitstockerz-workspace-demo.webm": "f4979973dc9e059d74711e3d1aac4d2666b5bf19cc5a36e71d7ac23fd040b0a2",
     "public/images/projects/bitstockerz-workspace-1440.webp": "6ee603829bbe2bd658068fd0b7a9cc6f37133a117c05ec934a33e5c6728c1a76",
     "public/images/projects/bitstockerz-workspace-640.webp": "f0962ac7b7a4c704ab8e40871851b756f784e2104222e190177f9ef12f7c1eda",
-    "public/images/projects/bitstockerz-workspace-960.webp": "01de8b90a60bfba239f5cd04ef572e8f425fb551991954165fb51bb5fe1afd61"
+    "public/images/projects/bitstockerz-workspace-960.webp": "01de8b90a60bfba239f5cd04ef572e8f425fb551991954165fb51bb5fe1afd61",
+    "public/media/plexarr-product-walkthrough.vtt": "7432f069b28f6b567d37ec6a6eedcf5c602f97176ae52bcfe57fdb42dbac7033"
   },
   "wildApricot": {
     "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
@@ -215,6 +216,8 @@
       "Request review with HD-1080p selected",
       "Cancel before submission; return to Discover"
     ],
-    "boundaries": "Selection change occurs between the retained segments. No claim of uninterrupted recording, passkey ceremony, request submission, successful add, or download."
+    "boundaries": "Selection change occurs between the retained segments. No claim of uninterrupted recording, passkey ceremony, request submission, successful add, or download.",
+    "presentationUpdated": "2026-10-18",
+    "presentationNotes": "Shared card/CLI copy and timed captions now emphasize the private household-library dashboard, catalog browsing, availability, and request review. Video footage remains the authentic 2026-10-15 recording."
   }
 }

@@ -123,3 +123,15 @@ speed 3. Both formats load only on playback and include timed descriptions plus
 an HTML transcript. New `plexarr-live-*` URLs prevent the previous sample clip
 from being reused by the browser's media or image cache. The fictional capture,
 fixture tool, and public media are removed from the current branch.
+
+### Plexarr presentation refresh — October 18, 2026
+
+The card and CLI share the household-library dashboard description in
+`src/content/projects.ts`. The public description covers catalog search, library
+availability, request review, activity history, allowlisted passkey access, and
+server-side integrations. It does not claim public streaming or hosting.
+
+The existing 18-second recording is retained with task-focused captions at
+`public/media/plexarr-product-walkthrough.vtt`: catalog browsing, title details
+and availability, request review, and cancellation back to Discover. The video
+still dates from October 15; this presentation update is not a new capture.
