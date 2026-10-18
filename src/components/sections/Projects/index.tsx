@@ -399,8 +399,8 @@ function Projects(): React.ReactElement {
                     }}
                     aria-label={`${project.title} product walkthrough`}
                   >
-                    <source src={project.demo.src} type="video/mp4" />
                     <source src={project.demo.webm} type="video/webm" />
+                    <source src={project.demo.src} type="video/mp4" />
                     <track
                       kind="captions"
                       src={project.demo.captions}

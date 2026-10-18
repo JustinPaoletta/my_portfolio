@@ -140,6 +140,7 @@ for (const width of [390, 1440]) {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await mockPortfolioApis(page);
     const mediaRequests: string[] = [];
+    const mediaResponses: string[] = [];
     page.on('request', (request) => {
       if (
         /\/media\/(bitstockerz-demo|plexarr-live-demo)\.(mp4|webm)/.test(
@@ -147,6 +148,15 @@ for (const width of [390, 1440]) {
         )
       ) {
         mediaRequests.push(request.url());
+      }
+    });
+    page.on('response', (response) => {
+      if (
+        /\/media\/(bitstockerz-demo|plexarr-live-demo)\.(mp4|webm)/.test(
+          response.url()
+        )
+      ) {
+        mediaResponses.push(response.url());
       }
     });
     await page.goto('/?theme=minimal&mode=light');
@@ -164,7 +174,15 @@ for (const width of [390, 1440]) {
       .include('#projects')
       .analyze();
     expect(accessibility.violations).toEqual([]);
-    expect(mediaRequests).toHaveLength(0);
+    // Linux WebKit emits canceled source probes even with preload="none".
+    // They never receive a response or load media; assert actual loading rather
+    // than counting request-start events that the browser immediately cancels.
+    expect(mediaResponses).toHaveLength(0);
+    for (const video of await projects.locator('video').all()) {
+      expect(
+        await video.evaluate((element: HTMLVideoElement) => element.readyState)
+      ).toBe(0);
+    }
     for (const [title, transcript, height] of [
       ['BitStockerz', /In a disposable local account/, 960],
       ['Plexarr', /Recorded from the live Plexarr app/, 808],
@@ -184,6 +202,7 @@ for (const width of [390, 1440]) {
         )
         .toBeGreaterThan(0.2);
       expect(mediaRequests.length).toBeGreaterThan(0);
+      expect(mediaResponses.length).toBeGreaterThan(0);
       expect(
         await video.evaluate((element: HTMLVideoElement) => element.videoWidth)
       ).toBe(1440);

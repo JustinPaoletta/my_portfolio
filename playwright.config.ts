@@ -53,7 +53,12 @@ export default defineConfig({
         launchOptions: {
           env:
             process.platform === 'linux'
-              ? { ...process.env, MOZ_WEBGL_FORCE_EGL: '1' }
+              ? {
+                  ...process.env,
+                  MOZ_WEBGL_FORCE_EGL: '1',
+                  EGL_PLATFORM: 'surfaceless',
+                  LIBGL_ALWAYS_SOFTWARE: '1',
+                }
               : undefined,
           firefoxUserPrefs: {
             // Headless Linux runners have no physical GPU. Keep real WebGL2

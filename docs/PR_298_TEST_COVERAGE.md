@@ -49,7 +49,7 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 - macOS section visuals: 15 passed, including new About references; updated images visually reviewed before staging.
 - Delivered Blender GLB validator passed (179,410 triangles, finite geometry, valid skinning, five embedded textures, WaveThenRest clip).
 - Firefox/WebKit keyboard regressions: all 10 terminal/calendar cases passed after the final keyboard fallback.
-- Hosted verification at `c8f5c21`: quality/coverage, bundle, Lighthouse, Chromium, mobile Chromium, all 33 Linux visual checks, and Vercel passed. The expanded Firefox/WebKit jobs exposed the environment/media checks below; all 16 focused Firefox/WebKit follow-up cases passed locally. Hosted verification of the follow-up is pending.
+- Hosted verification at `c8f5c21`: quality/coverage, bundle, Lighthouse, Chromium, mobile Chromium, all 33 Linux visual checks, and Vercel passed. The expanded Firefox/WebKit jobs exposed the environment/media checks below; all 16 focused Firefox/WebKit follow-up cases passed locally. Current hosted results are available in the required PR checks.
 
 ### Defects found during this audit
 
@@ -61,6 +61,6 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 
 ### Cross-browser follow-up
 
-- Firefox traces on the headless Linux runner reported `AllowWebgl2:false`; configure the Firefox test launch to allow real WebGL and use headless EGL on Linux. Keep poster-failure tests and all 3D assertions enabled.
-- Prefer the MP4 source before WebM for native Safari compatibility while retaining both formats and `preload="none"`. The existing browser test checks no initial video requests and verifies actual playback, dimensions, completion, and transcripts.
+- Firefox traces on the headless Linux runner reported `AllowWebgl2:false`; configure the Firefox test launch to allow real WebGL and use headless EGL on Linux. A follow-up trace identified missing EGL libraries (`FEATURE_FAILURE_EGL_LOAD_3`); install Mesa/EGL and select its surfaceless software renderer explicitly. Keep poster-failure tests and all 3D assertions enabled.
+- Linux WebKit emits immediately canceled video source probes under `preload="none"`. Assert no media responses and no loaded media before playback, rather than treating canceled request-start events as downloads. Preserve WebM/MP4 fallback sources and verify actual playback, dimensions, completion, and transcripts.
 - Scan the theme modal while the background is inert, explicitly check that inert state, then scan the whole page after closing it. This avoids treating the intentionally inactive main landmark as a missing page landmark.
