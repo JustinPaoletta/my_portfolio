@@ -19,6 +19,12 @@ for (const theme of ['minimal', 'engineer', 'cosmic'] as const) {
         });
         await expect(navigation).toBeVisible();
         await expect(navigation).not.toHaveClass(/scrolled/);
+        // Keep the desktop resume action in the mobile menu on narrow screens.
+        if (width === 390) {
+          await expect(navigation.locator('.nav-resume')).not.toBeVisible();
+        } else {
+          await expect(navigation.locator('.nav-resume')).toBeVisible();
+        }
         const background = await navigation.evaluate((element) => {
           const color = getComputedStyle(element).backgroundColor;
           const canvas = document.createElement('canvas');

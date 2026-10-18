@@ -267,7 +267,7 @@
   }
 }
 
-.navigation .nav-resume {
+.nav-resume {
   grid-column: 3;
   justify-self: end;
   display: inline-flex;
@@ -287,13 +287,17 @@
   &:hover {
     border-color: var(--color-primary-ink);
     background: var(--bg-card-hover);
-    color: var(--text-primary);
   }
 
   &:focus-visible {
     outline: 2px solid var(--color-primary-ink);
     outline-offset: 3px;
   }
+}
+
+.navigation .nav-resume,
+.navigation .nav-resume:hover {
+  color: var(--text-primary);
 }
 
 .nav-resume-format {
