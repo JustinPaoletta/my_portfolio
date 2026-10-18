@@ -51,7 +51,7 @@ for (const width of [320, 390, 1280]) {
     const skills = page.locator('#skills');
     await revealDeferredSection(page, 'skills');
     await expect(
-      skills.getByRole('heading', { name: 'AI-assisted development' })
+      skills.getByRole('heading', { name: 'AI-Assisted Development' })
     ).toBeVisible();
     await expect(skills.locator('a')).toHaveCount(0);
     for (const card of await skills.getByRole('article').all()) {
