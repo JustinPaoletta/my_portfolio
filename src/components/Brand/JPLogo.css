@@ -13,10 +13,3 @@
   --jp-logo-primary: var(--color-primary-ink);
   --jp-logo-cursor: var(--text-primary);
 }
-
-:root[data-color-mode='light'][data-theme='cosmic']
-  .navigation:not(.scrolled)
-  .jp-logo-svg {
-  --jp-logo-primary: var(--color-primary);
-  --jp-logo-cursor: #f5f7fa;
-}

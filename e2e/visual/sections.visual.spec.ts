@@ -77,6 +77,38 @@ test.describe('@visual section states', () => {
     });
   });
 
+  for (const [label, viewport] of [
+    ['desktop', DESKTOP_SECTION_VIEWPORT],
+    ['mobile', { width: 390, height: 1000 }],
+  ] as const) {
+    test(`captures Plexarr screenshots on ${label}`, async ({ page }) => {
+      await gotoVisualState(page, {
+        theme: label === 'mobile' ? 'cosmic' : 'minimal',
+        mode: label === 'mobile' ? 'dark' : 'light',
+        viewport,
+      });
+      const carousel = page.getByRole('region', {
+        name: 'Plexarr feature screenshots',
+      });
+      for (const name of ['discover', 'picks', 'ratings']) {
+        await waitForSectionToSettle(page, carousel);
+        await expect(carousel).toHaveScreenshot(
+          `plexarr-${label}-${name}.png`,
+          {
+            caret: 'hide',
+            // Hide unrelated text behind the fixed card's rounded corners.
+            style: `body * { visibility: hidden !important; }
+              .plexarr-carousel, .plexarr-carousel * { visibility: visible !important; }`,
+          }
+        );
+        if (name !== 'ratings')
+          await carousel
+            .getByRole('button', { name: 'Next Plexarr screenshot' })
+            .click();
+      }
+    });
+  }
+
   test('captures articles section', async ({ page }) => {
     await gotoVisualState(page, {
       theme: 'minimal',

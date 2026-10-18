@@ -10,6 +10,7 @@ import { env } from '@/config/env';
 import {
   BITSTOCKERZ_PROJECT,
   JP_DESIGN_SYSTEM_PROJECT,
+  PLEXARR_PROJECT,
   PROJECT_STATUS_LABELS,
   SQUARK_PROJECT,
   type ProjectSummary,
@@ -17,10 +18,11 @@ import {
 import './Projects.css';
 import { DesignSystemShowcase } from './DesignSystemShowcase';
 import { ExportShowcase } from './ExportShowcase';
+import { PlexarrShowcase } from './PlexarrShowcase';
 
 interface Project extends ProjectSummary {
   id: string;
-  showcase?: 'design-system' | 'exports';
+  showcase?: 'design-system' | 'exports' | 'plexarr';
   image: string;
   imageCaption?: string;
   demo?: { src: string; webm: string; captions: string; transcript: string };
@@ -35,6 +37,7 @@ interface Project extends ProjectSummary {
   cardImage?: string;
   cardImageAlt?: string;
   cardImageFit?: 'cover' | 'contain';
+  hideHeaderIcon?: boolean;
   cardHeaderIcon?: string;
   cardHeaderIconSrcSet?: string;
   /** When set, shown instead of `title` text in the project heading (e.g. transparent PNG wordmark). */
@@ -91,17 +94,17 @@ const projects: Project[] = [
   {
     ...BITSTOCKERZ_PROJECT,
     id: 'project-1',
-    image: '/images/projects/bitstockerz-research-1440.webp',
+    image: '/images/projects/bitstockerz-workspace-1440.webp',
     imageWidth: 1440,
     imageHeight: 960,
     imageCaption:
-      '16-second local app walkthrough: strategy rules → simulation settings → backtest results. Synthetic demo data; no live trading.',
+      '21-second current-app walkthrough: dashboard → strategy rules → backtest settings → results and equity charts. Synthetic demo data; no live trading.',
     demo: {
-      src: '/media/bitstockerz-demo.mp4',
-      webm: '/media/bitstockerz-demo.webm',
-      captions: '/media/bitstockerz-demo.vtt',
+      src: '/media/bitstockerz-workspace-demo.mp4',
+      webm: '/media/bitstockerz-workspace-demo.webm',
+      captions: '/media/bitstockerz-workspace-demo.vtt',
       transcript:
-        'In a disposable local account, change the moving-average period and risk exit, then validate and save the strategy. Configure a backtest with 75% allocation, 5 basis points of commission and 5 basis points of slippage. Run the simulation and inspect its benchmark comparison and equity curve. Prices and results are synthetic demo data.',
+        'In a disposable local account, review the Trading Workspace dashboard and Get Strategic strategy library. Open SMA momentum study to inspect its saved rules. Configure a backtest with 75% allocation, 5 basis points of commission and 5 basis points of slippage. Run the simulation and inspect its assumptions, metrics, buy-and-hold comparison, and equity curve. Prices and results are synthetic demo data.',
     },
   },
   {
@@ -111,7 +114,7 @@ const projects: Project[] = [
     cardImage: '/images/projects/squark-gameplay-800.webp',
     cardImageAlt:
       'Actual SQUARK browser gameplay: a conure flying above the river valley and rings',
-    cardHeaderIcon: '/images/projects/squark-icon-120.webp',
+    hideHeaderIcon: true,
   },
   {
     id: 'project-4',
@@ -132,12 +135,12 @@ const projects: Project[] = [
     title: 'SideQuest: Pittsburgh',
     description:
       'A private React Native app for discovering offbeat places across Pittsburgh. An offline-first feed prioritizes proximity, novelty, and curated tags. Source access is private; this entry is supporting project context.',
-    image: '/images/projects/sidequest-logo-480.webp',
-    imageSrcSet: logoSrcSet('sidequest-logo', [240, 480, 720, 960, 1254]),
+    image: '/images/projects/sidequest-sq-logo-480.webp',
+    imageSrcSet: logoSrcSet('sidequest-sq-logo', [240, 480, 720, 960, 1254]),
     imageSizes: sideQuestImageSizes,
-    imageAlt: 'SideQuest: Pittsburgh logo',
-    cardHeaderIcon: '/images/projects/sidequest-logo-60.webp',
-    cardHeaderIconSrcSet: logoSrcSet('sidequest-logo', [60, 120, 180]),
+    imageAlt: 'SQ Pittsburgh app logo with a gold monogram and bridge',
+    cardHeaderIcon: '/images/projects/sidequest-sq-logo-60.webp',
+    cardHeaderIconSrcSet: logoSrcSet('sidequest-sq-logo', [60, 120, 180]),
     imageWidth: 1254,
     imageHeight: 1254,
     imageFit: 'contain',
@@ -146,27 +149,19 @@ const projects: Project[] = [
     featured: false,
   },
   {
+    ...PLEXARR_PROJECT,
     id: 'project-6',
-    title: 'Plexarr',
+    showcase: 'plexarr',
     cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
-    description:
-      'A self-hosted app for discovering and requesting media for my at-home Plex server. Built with Next.js and React, it brings title discovery, quality selection, request confirmation, and an activity log into one flow. Passkeys protect access, and service credentials stay server-side.',
-    image: '/images/projects/plexarr-live-discover-1440.webp',
+    image: '/images/projects/plexarr-catalog-1440.webp',
+    imageSrcSet: logoSrcSet('plexarr-catalog', [640, 960, 1440]),
+    imageSizes: '(max-width: 1024px) 100vw, 50vw',
+    imageAlt: 'Live Plexarr Discover catalog with movie artwork and ratings',
     imageWidth: 1440,
-    imageHeight: 808,
+    imageHeight: 592,
     imageCaption:
-      '18-second live app walkthrough: browse the real catalog → review a title → inspect request options. Cancelled before submission.',
-    demo: {
-      src: '/media/plexarr-live-demo.mp4',
-      webm: '/media/plexarr-live-demo.webm',
-      captions: '/media/plexarr-live-demo.vtt',
-      transcript:
-        'Recorded from the live Plexarr app after passkey sign-in. Browse real movie posters and availability badges, then open Avengers: Infinity War to review its overview, genres, rating, and current availability. Open the request review and inspect the HD-1080p quality selection, then cancel and return to Discover. This edited recording uses real catalog and service responses, with no mock data or API interception. No request was submitted, and sign-in is outside the recording.',
-    },
-    techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
-    private: true,
-    featured: true,
+      'Discover catalog captured from the live app, with movie artwork, genres, and ratings.',
   },
 ];
 
@@ -383,6 +378,8 @@ function Projects(): React.ReactElement {
                 <DesignSystemShowcase />
               ) : project.showcase === 'exports' ? (
                 <ExportShowcase />
+              ) : project.showcase === 'plexarr' ? (
+                <PlexarrShowcase />
               ) : project.demo ? (
                 <figure className="project-demo">
                   <video
@@ -488,36 +485,39 @@ function Projects(): React.ReactElement {
               delay={280 + index * 80}
               visible={isVisible}
             >
-              <div className="card-header">
-                {project.cardHeaderIcon ? (
-                  <img
-                    src={project.cardHeaderIcon}
-                    srcSet={project.cardHeaderIconSrcSet}
-                    sizes={project.cardHeaderIconSrcSet ? '60px' : undefined}
-                    alt=""
-                    aria-hidden="true"
-                    className="folder-icon folder-icon--image"
-                    width={60}
-                    height={60}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                ) : (
-                  <svg
-                    className="folder-icon"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+              <div
+                className={`card-header${project.hideHeaderIcon ? ' card-header--actions-only' : ''}`}
+              >
+                {!project.hideHeaderIcon &&
+                  (project.cardHeaderIcon ? (
+                    <img
+                      src={project.cardHeaderIcon}
+                      srcSet={project.cardHeaderIconSrcSet}
+                      sizes={project.cardHeaderIconSrcSet ? '60px' : undefined}
+                      alt=""
+                      aria-hidden="true"
+                      className="folder-icon folder-icon--image"
+                      width={60}
+                      height={60}
+                      loading="lazy"
+                      decoding="async"
                     />
-                  </svg>
-                )}
+                  ) : (
+                    <svg
+                      className="folder-icon"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      aria-hidden="true"
+                    >
+                      <path
+                        d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  ))}
                 <div className="card-links">
                   {project.private ? (
                     <span

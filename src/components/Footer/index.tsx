@@ -16,7 +16,7 @@ function Footer(): React.ReactElement {
             <JPLogo className="logo-image" />
             <span className="visually-hidden">- Go to top</span>
           </a>
-          <p className="footer-tagline">Design - Develop - Deliver</p>
+          <p className="footer-tagline">Design · Develop · Deliver</p>
         </div>
         <p className="copyright">
           © {currentYear} Justin Paoletta. All rights reserved.

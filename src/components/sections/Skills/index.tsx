@@ -7,7 +7,7 @@ import './Skills.css';
 const skillIcons: Record<string, string[]> = {
   'Claude Code': ['/icons/claude.webp'],
   Codex: ['/icons/codex.webp'],
-  'Cursor (IDE)': ['/icons/cursor.webp'],
+  Cursor: ['/icons/cursor.webp'],
   Angular: ['/icons/angular.svg'],
   React: ['/icons/react.svg'],
   TypeScript: ['/icons/typescript.svg'],
@@ -24,28 +24,28 @@ const skillIcons: Record<string, string[]> = {
 
 const skillAreas = [
   {
-    title: 'Frontend systems',
+    title: 'Frontend Architecture',
     technologies: ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS'],
     description:
-      'I modernize established frontend applications while keeping existing features dependable. My work spans reusable components, micro-frontend integration, and clear boundaries between frameworks and styles.',
+      'I lead frontend modernization for an AngularJS platform used by hundreds of venues worldwide. I architected a React micro-frontend and led the migration of eight Angular micro-frontends into the platform. My work establishes repeatable integration patterns that isolate framework lifecycles and styles, support independent feature development, and reduce technical debt.',
   },
   {
-    title: 'Testing & delivery',
+    title: 'Testing & Release Automation',
     technologies: ['Playwright', 'GitHub Actions', 'Jenkins'],
     description:
-      'I turn critical user journeys into repeatable browser checks and automate build and release workflows, giving teams faster feedback and reducing manual release work.',
+      'I own release automation across 8+ applications, using Jenkins pipelines and internal tooling to cut deployment time by about 75%. I build automated checks for UI behavior, code quality, and test coverage. My work includes Playwright validation and a GitHub Actions review bot that improves review consistency and flags logic, security, and memory risks.',
   },
   {
-    title: 'APIs & data',
+    title: 'Backend APIs & Data',
     technologies: ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB'],
     description:
-      'I build typed APIs and relational data models that connect application features to persistent storage, using clear service boundaries and consistent database access.',
+      'I build typed APIs and relational data models that connect application features to persistent storage. I organize backend services around clear responsibilities and consistent database access. My focus is keeping application logic and data access easy to understand, maintain, and extend.',
   },
   {
-    title: 'AI-assisted development',
-    technologies: ['Claude Code', 'Codex', 'Cursor (IDE)'],
+    title: 'AI-Assisted Development',
+    technologies: ['Claude Code', 'Codex', 'Cursor'],
     description:
-      'I use AI tools to explore approaches, draft implementations, and review code. I verify changes with tests and manual review, and remain responsible for the code I ship.',
+      'I design AI-assisted workflows that turn Jira requirements into implementation plans and validate UI changes against Figma using Playwright. I also standardize QA documentation and unit and end-to-end test generation. I make these tasks repeatable and verify generated changes through code review and testing.',
   },
 ];
 

@@ -34,6 +34,17 @@ test.describe('@visual home states', () => {
       await expect(page).toHaveScreenshot(`home-${theme}-${mode}-desktop.png`, {
         caret: 'hide',
       });
+      if (theme === 'cosmic' && mode === 'dark') {
+        // A page-wide tolerance can miss a disappearing short label over glass.
+        await expect(
+          page
+            .locator('#hero')
+            .getByRole('link', { name: 'Contact', exact: true })
+        ).toHaveScreenshot('home-cosmic-dark-contact-button.png', {
+          caret: 'hide',
+          maxDiffPixelRatio: 0.001,
+        });
+      }
     });
   }
 

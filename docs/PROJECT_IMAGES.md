@@ -20,14 +20,34 @@ npm run optimize:project-logos
 
 The script resolves source and output paths relative to its own file, so it
 also works when called by an absolute path from another directory. It writes
-only the eleven listed WebP variants into `public/images/projects/`.
+only the fourteen configured WebP variants into `public/images/projects/`.
 
 The script checks each output's format, dimensions, and alpha-channel
 presence. For the six lossless icon variants, it also compares every decoded
 pixel byte with the resized source before writing the file. `exact: true`
 preserves color data in fully transparent pixels as well.
 
-## Source masters
+## Current SideQuest app branding (October 18, 2026)
+
+The portfolio now uses `sidequest-sq-logo.png`, copied byte-for-byte from
+`SideQuest-Pittsburgh/mobile/assets/branding/sq-pittsburgh-logo.png`. This is
+the current 1254 × 1254 opaque logo master documented by that app's branding
+README: a flat gold SQ monogram and Roberto Clemente Bridge with white
+PITTSBURGH lettering. It is the same design as the app's 1024px icon; no
+artwork was recreated or recolored.
+
+The source was taken from the local app checkout at `a3e1704` with its
+existing local branding changes. Its SHA-256 is
+`e188a77e7e43687f4858dc8871ccd2e4f40518a035fa8eec95417fbb1e3ef567`.
+The original app files were not changed. The older skyline master and its
+variants remain as historical assets; the portfolio references the new
+`sidequest-sq-logo-*` filenames to avoid stale cached artwork.
+
+The generator creates 60, 120, 180, 240, 480, 720, 960, and 1254px variants
+using WebP quality 90. The card uses the 60/120/180px candidates at 60 CSS
+pixels. Their file sizes are 1,512 / 3,526 / 5,748 bytes, respectively.
+
+## Original source masters (historical)
 
 | Source                 | Dimensions  | Original bytes | Alpha channel |
 | ---------------------- | ----------- | -------------: | ------------- |
@@ -123,7 +143,7 @@ replacement design is deferred at the owner’s request.
 
 ## Featured browser demos (2026-10-15)
 
-The design-system dashboard and BitStockerz research stills are real Chrome
+The design-system dashboard and BitStockerz workspace stills are real Chrome
 captures. Their PNG masters, raw walkthrough and capture manifest live in
 `assets/source/project-demos/`. Run `npm run optimize:project-demos` to rebuild
 640/960/1440px WebPs; no image is enlarged.
@@ -145,11 +165,14 @@ comes from fictional local fixtures. The downloadable ZIP and the generator's
 checks are documented in the same capture notes. The portfolio does not request
 account credentials or execute exports in visitors' browsers.
 
-Plexarr is the fourth featured project with an 18-second recording from the
-owner-authenticated live app and a real movie-grid poster. It shows real catalog
-artwork, availability and quality profiles, then cancels the request review.
-There is no API interception or submitted request. The private repository badge
-remains; there is no public app or source link. The capture notes retain the two
-cropped source recordings, edit ranges, output hashes, and reproduction command.
-New `plexarr-live-*` image and media URLs avoid cached versions of the removed
-fictional demo. Its 60px header logo retains the existing lossless variants.
+Plexarr is the fourth featured project. A manually controlled screenshot carousel
+shows Discover, personalized picks, and title details with community ratings.
+The owner approved reuse of the authenticated October 15 captures. Every crop
+excludes Request controls and the title dialog’s request-status message. The title-details slide
+stacks two separate metadata excerpts. No new sign-in or Library capture is claimed.
+Arrows, direct slide buttons, keyboard controls, touch swipes, and full-size links
+support narrow screens. The carousel does not auto-advance or load video.
+The private repository badge and header logo remain. Capture notes and hashes
+record the exact source frames and crops.
+
+The BitStockerz demo was refreshed on 2026-10-18 from the current local UI. It shows the revised dashboard, strategy library, rules, settings, and results. New `bitstockerz-workspace-*` media and poster URLs replace the old capture. Capture notes and hashes identify the dirty source tree and disposable seed API.

@@ -49,76 +49,75 @@ The portfolio displays verbatim log excerpts, the first JSON record, six of the
 and JSON, original fictional files, the manifest, a README, and the full log.
 Only the temporary folder and loopback port are normalized in that log.
 
-## BitStockerz
+## BitStockerz — refreshed 2026-10-18
 
-The current Angular development server used a disposable seed-mode API with
-`BITSTOCKERZ_SKIP_ENV_FILE=true`, an empty `DATABASE_URL`, and ingestion, live
-market data, private beta and AI disabled. The API used its existing local
-compiled build. Another task was updating the web working tree during this
-session; the revision is a reference, not a claim of a clean release build.
-No provider credentials or real account data were used.
+The refreshed recording uses the current Angular working tree, including revised copy and approved branding.
+The API runs from its existing compiled build in disposable seed mode.
+`BITSTOCKERZ_SKIP_ENV_FILE=true` prevents loading project credentials. The database URL is empty.
+Ingestion, live market data, private beta, and AI calls are disabled.
 
-The recording edits a sample SMA strategy's period and risk exit, validates and
-saves it, configures 75% allocation with 5 bps commission and 5 bps slippage, runs
-a backtest, and scrolls to its benchmark comparison and equity curve. Demo prices
-and results are synthetic. The run is not evidence of investment performance,
-live-provider acceptance, or production availability.
+The recording opens the dashboard, strategy library, and saved `SMA momentum study` rules.
+It configures 75% allocation, 5 bps commission, and 5 bps slippage, then runs the actual local backtester.
+It displays assumptions, metrics, the buy-and-hold comparison, and the equity curve.
+Prices and results are synthetic. No provider calls, real account access, or real-money orders are demonstrated.
+No browser API responses or visible copy were replaced for this capture.
 
-The original WebM is retained outside the public directory. Its 15.6-second H.264
-export has no audio, uses yuv420p and faststart, and loads only after playback is
-requested. The VTT provides timed descriptions of the visible workflow; an HTML
-transcript provides the same context without playback.
+The continuous raw capture is `bitstockerz-workspace-walkthrough.webm`: 21.2 seconds, 1440 × 960, 25 fps, silent.
+`bitstockerz-workspace.png` is a separate screenshot of the same result, framed to show metrics and the benchmark chart.
+The previous October 15 sources remain archived here; the portfolio uses the new workspace filenames.
+The manifest records source hashes, the dirty working-tree status, and capture details.
 
-Re-encode the recording from the repository root with:
+Re-encode from the portfolio root:
 
 ```sh
-ffmpeg -i assets/source/project-demos/bitstockerz-walkthrough.webm \
-  -an -c:v libx264 -preset slow -crf 23 -pix_fmt yuv420p \
-  -movflags +faststart public/media/bitstockerz-demo.mp4
+ffmpeg -i assets/source/project-demos/bitstockerz-workspace-walkthrough.webm \
+  -an -map_metadata -1 -c:v libx264 -profile:v baseline -bf 0 -g 25 \
+  -preset slow -crf 22 -pix_fmt yuv420p -movflags +faststart \
+  public/media/bitstockerz-workspace-demo.mp4
+ffmpeg -i assets/source/project-demos/bitstockerz-workspace-walkthrough.webm \
+  -an -map_metadata -1 -c:v libvpx-vp9 -crf 31 -b:v 0 -row-mt 1 -cpu-used 3 \
+  public/media/bitstockerz-workspace-demo.webm
 ```
 
-Run `npm run optimize:project-demos` to regenerate 640/960/1440px WebP stills
-from the PNG masters, up to each capture's original width. The generator does not
-enlarge them. Review refreshed
-captures before replacing these assets and update the manifest hashes.
+Run `npm run optimize:project-demos` to generate the 640/960/1440px WebP posters.
+The new media URLs prevent browsers from reusing the previous recording.
+The VTT and HTML transcript describe this workflow. Both video formats remain unloaded until playback is requested.
 
 ## Plexarr
 
-The 18-second edited recording comes directly from the owner's authenticated live
-Plexarr deployment in Chrome. Movie posters, recommendations, availability and
-quality profiles are real app responses. There is no API interception, fictional
-catalog, seeded Activity entry or authentication bypass. The owner completed the
-normal passkey sign-in before capture. No credentials, sign-in ceremony or other
-users' Activity are included.
+The card uses a three-slide screenshot carousel with arrows, direct slide buttons,
+keyboard navigation, and touch swipes. It does not rotate automatically or load video.
+Only the selected slide's images mount. Full-size links keep small text accessible.
 
-The flow browses the movie grid, opens Avengers: Infinity War (2018), reviews its
-metadata and availability, inspects the request form with HD-1080p selected, and
-cancels back to Discover. Confirm was never clicked. The recording does not claim
-a successful add or download. The selection change occurs between the retained
-segments; the clip shows the selected profile, not an uninterrupted selection
-interaction. It has no audio or trailer playback.
+The owner approved reuse of the October 15 authenticated live-app captures on
+October 18. No new sign-in, Library capture, or preference mutation is claimed.
+The slides show Discover, personalized picks, and title metadata.
 
-Native window capture excludes other desktop overlays. The two retained source
-MP4s are cropped to the app's 1440 × 808 content area, excluding browser toolbars,
-bookmarks and the address bar. They preserve the captured UI at 15fps. The PNG
-poster comes from the same live movie grid. The manifest records the crop and
-edit ranges; the deployed app revision was not independently verified. No private
-source, environment values or operational runbooks are copied into this repo.
+| Output PNG             | Source                             | Frame (seconds) | Crop: x, y, width, height |
+| ---------------------- | ---------------------------------- | --------------- | ------------------------- |
+| `plexarr-catalog.png`  | `plexarr-live-discover.png`        | —               | 0, 193, 1440, 592         |
+| `plexarr-picks.png`    | `plexarr-live-catalog-capture.mp4` | 20.3            | 18, 273, 700, 252         |
+| `plexarr-overview.png` | `plexarr-live-catalog-capture.mp4` | 23              | 434, 117, 576, 267        |
+| `plexarr-rating.png`   | `plexarr-live-catalog-capture.mp4` | 23              | 459, 486, 522, 47         |
 
-The public edit joins seconds 17–26 of `plexarr-live-catalog-capture.mp4` to seconds
-2–11 of `plexarr-live-request-capture.mp4`. This removes idle capture time and the
-gap between recordings without changing the UI content. Reproduce it with:
+The third slide stacks two separate metadata excerpts. It does not reproduce a
+complete dialog. Every public crop excludes Request navigation, buttons, forms,
+and the title dialog’s request-status message. No catalog data or displayed rating was changed.
+The manifest records the source crops and output hashes.
+
+To extract a source frame, run this command from the repository root:
 
 ```sh
-ffmpeg -i assets/source/project-demos/plexarr-live-catalog-capture.mp4 \
-  -i assets/source/project-demos/plexarr-live-request-capture.mp4 \
-  -filter_complex '[0:v]trim=start=17:end=26,setpts=PTS-STARTPTS[a];[1:v]trim=start=2:end=11,setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1:a=0[v]' \
-  -map '[v]' -an -map_metadata -1 -c:v libx264 -preset slow -crf 21 \
-  -pix_fmt yuv420p -movflags +faststart public/media/plexarr-live-demo.mp4
+ffmpeg -ss 20.3 -i assets/source/project-demos/plexarr-live-catalog-capture.mp4 \
+  -frames:v 1 /tmp/plexarr-picks-frame.png
 ```
 
-The WebM uses the same edit with VP9, CRF 30, zero target bitrate, and encoder
-speed 3. Both formats load only on playback and include timed descriptions plus
-an HTML transcript. New `plexarr-live-*` URLs prevent the previous sample clip
-from being reused by the browser's media or image cache. The fictional capture,
-fixture tool, and public media are removed from the current branch.
+Use Sharp's `extract({ left, top, width, height })` with the table's crop coordinates.
+Save the resulting PNG under `assets/source/project-demos/`.
+Run `npm run optimize:project-demos` to reproduce the responsive WebP variants.
+The optimizer retains small metadata crops at their native maximum width.
+
+The previous request-focused video, captions, and full-navigation public poster
+were removed on October 18. The two original recordings remain historical source
+evidence. They are not served by the portfolio. Their original provenance remains
+in `plexarrArchivedOctober15` in the capture manifest.

@@ -11,6 +11,7 @@ import { defaultTheme } from '@/config/themes';
 import {
   BITSTOCKERZ_PROJECT,
   JP_DESIGN_SYSTEM_PROJECT,
+  PLEXARR_PROJECT,
   PROJECT_STATUS_LABELS,
   SQUARK_PROJECT,
   type ProjectSummary,
@@ -244,14 +245,7 @@ const PROJECTS: ProjectSummary[] = [
     featured: false,
     private: true,
   },
-  {
-    title: 'Plexarr',
-    description:
-      'A self-hosted media request system for managing a home Plex server. Users authenticate via passkeys (WebAuthn), search for content, and submit requests through a private dashboard. Features include real-time service health monitoring, per-user quality profiles, and an activity audit log.',
-    techStack: ['React', 'TypeScript', 'Node.js', 'WebAuthn'],
-    featured: false,
-    private: true,
-  },
+  PLEXARR_PROJECT,
 ];
 
 const SKILL_CATEGORIES: CliSkillCategory[] = [

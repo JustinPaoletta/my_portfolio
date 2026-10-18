@@ -398,8 +398,8 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       contentFontFamily: expect.stringContaining('Space Grotesk'),
       greetingFontFamily: expect.stringContaining('Space Grotesk'),
       nameFontFamily: expect.stringContaining('Inter'),
-      navLinkColor: 'rgb(248, 241, 255)',
-      navLogoPrimary: '#c77dff',
+      navLinkColor: 'rgb(92, 31, 153)',
+      navLogoPrimary: '#5c1f99',
     });
 
   await page.evaluate(() => {

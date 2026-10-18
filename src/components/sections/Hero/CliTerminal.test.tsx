@@ -1035,7 +1035,7 @@ describe('CliTerminal', () => {
     ).toBeInTheDocument();
     expect(
       terminalTranscript().getByRole('link', {
-        name: /Play preview: https:\/\/squark-demo/,
+        name: /Preview In Browser: https:\/\/squark-demo/,
       })
     ).toHaveAttribute(
       'href',

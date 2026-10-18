@@ -77,7 +77,7 @@ describe('pwaConfig', () => {
 describe('runtime cache isolation', () => {
   it.each([
     ['images-cache', '/images/pets/nala-cutout.webp', 'image'],
-    ['media-cache', '/media/plexarr-live-demo.mp4', 'video'],
+    ['media-cache', '/media/bitstockerz-workspace-demo.mp4', 'video'],
     ['hero-models-cache', '/models/hero/cosmic-astronaut.glb', ''],
     ['static-resources', '/assets/app.js', 'script'],
     ['static-resources', '/assets/app.css', 'style'],

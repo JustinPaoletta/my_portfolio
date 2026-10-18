@@ -276,10 +276,11 @@
 .cta-secondary {
   border: 1px solid transparent;
   color: var(--text-primary);
-  backdrop-filter: blur(10px);
+  isolation: isolate;
 }
 
 .cta-secondary::before {
+  backdrop-filter: blur(10px);
   content: '';
   position: absolute;
   inset: 0;

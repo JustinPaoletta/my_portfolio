@@ -86,7 +86,7 @@ describe('published branding and dog assets', () => {
 
   it('keeps the footer identity and return-to-top action accessible', () => {
     render(<Footer />);
-    expect(screen.getByText('Design - Develop - Deliver')).toBeInTheDocument();
+    expect(screen.getByText('Design · Develop · Deliver')).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /Go to top/ })).toHaveAttribute(
       'href',
       '#hero'
