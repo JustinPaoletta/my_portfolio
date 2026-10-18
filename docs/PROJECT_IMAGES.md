@@ -165,13 +165,12 @@ comes from fictional local fixtures. The downloadable ZIP and the generator's
 checks are documented in the same capture notes. The portfolio does not request
 account credentials or execute exports in visitors' browsers.
 
-Plexarr is the fourth featured project with an 18-second recording from the
-owner-authenticated live app and a real movie-grid poster. It shows real catalog
-artwork, availability and quality profiles, then cancels the request review.
-There is no API interception or submitted request. The private repository badge
-remains; there is no public app or source link. The capture notes retain the two
-cropped source recordings, edit ranges, output hashes, and reproduction command.
-New `plexarr-live-*` image and media URLs avoid cached versions of the removed
-fictional demo. Its 60px header logo retains the existing lossless variants.
+Plexarr is the fourth featured project. Its current image is a cropped live
+Discover catalog capture showing artwork, genres, and ratings. The crop excludes
+the top navigation. The previous request-focused video and public poster were
+removed; a new Library, Discover, and favorites/ratings walkthrough awaits owner
+passkey sign-in. The private repository badge and 60px header logo remain.
+Capture notes and the manifest distinguish the static October 15 source from
+this October 18 presentation change.
 
 The BitStockerz demo was refreshed on 2026-10-18 from the current local UI. It shows the revised dashboard, strategy library, rules, settings, and results. New `bitstockerz-workspace-*` media and poster URLs replace the old capture. Capture notes and hashes identify the dirty source tree and disposable seed API.

@@ -144,9 +144,7 @@ for (const width of [390, 1440]) {
     const mediaResponses: string[] = [];
     page.on('request', (request) => {
       if (
-        /\/media\/(bitstockerz-workspace-demo|plexarr-live-demo)\.(mp4|webm)/.test(
-          request.url()
-        )
+        /\/media\/bitstockerz-workspace-demo\.(mp4|webm)/.test(request.url())
       ) {
         mediaRequests.push(request.url());
       }
@@ -154,9 +152,7 @@ for (const width of [390, 1440]) {
     page.on('response', (response) => {
       if (
         response.status() > 0 &&
-        /\/media\/(bitstockerz-workspace-demo|plexarr-live-demo)\.(mp4|webm)/.test(
-          response.url()
-        )
+        /\/media\/bitstockerz-workspace-demo\.(mp4|webm)/.test(response.url())
       ) {
         mediaResponses.push(response.url());
       }
@@ -187,7 +183,6 @@ for (const width of [390, 1440]) {
     }
     for (const [title, transcript, height] of [
       ['BitStockerz', /In a disposable local account/, 960],
-      ['Plexarr', /Recorded from the live Plexarr app/, 808],
     ] as const) {
       const article = projects.locator('article.featured-project').filter({
         has: page.getByRole('heading', { name: title, exact: true }),

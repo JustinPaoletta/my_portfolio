@@ -152,18 +152,14 @@ const projects: Project[] = [
     id: 'project-6',
     cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
-    image: '/images/projects/plexarr-live-discover-1440.webp',
+    image: '/images/projects/plexarr-catalog-1440.webp',
+    imageSrcSet: logoSrcSet('plexarr-catalog', [640, 960, 1440]),
+    imageSizes: '(max-width: 1024px) 100vw, 50vw',
+    imageAlt: 'Live Plexarr Discover catalog with movie artwork and ratings',
     imageWidth: 1440,
-    imageHeight: 808,
+    imageHeight: 592,
     imageCaption:
-      'Live app walkthrough: browse the catalog → inspect title details and availability → review a request → return to Discover.',
-    demo: {
-      src: '/media/plexarr-live-demo.mp4',
-      webm: '/media/plexarr-live-demo.webm',
-      captions: '/media/plexarr-product-walkthrough.vtt',
-      transcript:
-        'Recorded from the live Plexarr app after passkey sign-in. Browse the title catalog, open a detail view to inspect its overview, genres, rating, and current availability, then review request settings. Cancel the review and return to Discover. This edited walkthrough uses real catalog and service responses, with no mock data or API interception. No request was submitted; sign-in is outside the recording.',
-    },
+      'Discover catalog captured from the live app, with movie artwork, genres, and ratings.',
   },
 ];
 

@@ -151,12 +151,6 @@
     "assets/source/project-demos/plexarr-live-request-capture.mp4": "59a5483fc716c109d49602ed34e56844246aeee58b15d1480453ce72508e8f69",
     "assets/source/project-demos/plexarr-live-catalog-capture.mp4": "46a9593babcddb48efec487f962378699422ea480eb1d1bcedf21b4ffb3b0c84",
     "assets/source/project-demos/plexarr-live-discover.png": "dcdf32a4e0ded0c8e3a9db9ac3e95ec00b865113d1d4f0cbdff7354bea078740",
-    "public/media/plexarr-live-demo.vtt": "7609e9d8868a8489dc5a8321d6078f1f8cba0d9f2d349e38dea76686bf0f0f28",
-    "public/media/plexarr-live-demo.webm": "79143fad8bae61fd80730d8c5e3a4fbc43349e12807d881f7001dfcfeaae0b93",
-    "public/media/plexarr-live-demo.mp4": "05b10a06a3917c81a7fb3e0d8c798b7301d9756fb54f0159af1038645590f4ed",
-    "public/images/projects/plexarr-live-discover-960.webp": "9646c82919bf8d5d3c17327e7d82752d45ed40d8b89fcb86c6e8cb11884d80a8",
-    "public/images/projects/plexarr-live-discover-1440.webp": "e3722fd9d50cbfe9397f0c286c913c37a8abfac39c9f76dfa197cf9d0826d689",
-    "public/images/projects/plexarr-live-discover-640.webp": "4a66a8690b555d1b2b433620e31774bc865dfdcb0dfac54af5236f825a2b2681",
     "assets/source/project-demos/bitstockerz-workspace-walkthrough.webm": "d55259d27ab9913bcb28dc81f91065433658a1c7b6c19ec8df9d52691ee1e6b9",
     "assets/source/project-demos/bitstockerz-workspace.png": "011f5409bbb069bb2a6c39efe52256c2d5e07c084210531d3e6bf858cdd2586a",
     "public/media/bitstockerz-workspace-demo.mp4": "149f01feb81fc0c13a8f6b7a084de9c1ce16e2126bdbfc15b9e09687819c35c8",
@@ -165,7 +159,10 @@
     "public/images/projects/bitstockerz-workspace-1440.webp": "6ee603829bbe2bd658068fd0b7a9cc6f37133a117c05ec934a33e5c6728c1a76",
     "public/images/projects/bitstockerz-workspace-640.webp": "f0962ac7b7a4c704ab8e40871851b756f784e2104222e190177f9ef12f7c1eda",
     "public/images/projects/bitstockerz-workspace-960.webp": "01de8b90a60bfba239f5cd04ef572e8f425fb551991954165fb51bb5fe1afd61",
-    "public/media/plexarr-product-walkthrough.vtt": "7432f069b28f6b567d37ec6a6eedcf5c602f97176ae52bcfe57fdb42dbac7033"
+    "assets/source/project-demos/plexarr-catalog.png": "00877c6fec0df1bd77911524a27d4bbcd91083b2a63cb961e87282eecd29f463",
+    "public/images/projects/plexarr-catalog-1440.webp": "de7e04437fbf1a183f425e796aee70af1e7514bd8c57e21df724dfd4ca52c8be",
+    "public/images/projects/plexarr-catalog-640.webp": "83165b0ebd0d9da938ff59b930e504e7375e3de57be047c99bb4f9d09e433029",
+    "public/images/projects/plexarr-catalog-960.webp": "0954879a1a8abdeebcb15a0dfac5a13d5c4052f14bb2e3dd4691ad3d9ef9d8f7"
   },
   "wildApricot": {
     "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
@@ -179,6 +176,21 @@
     "resume": "Two cached files skipped; zero additional GET requests."
   },
   "plexarr": {
+    "captured": "2026-10-15",
+    "presentationUpdated": "2026-10-18",
+    "mode": "Static crop from the previously captured authenticated live Discover catalog. No new recording has been made.",
+    "source": "assets/source/project-demos/plexarr-live-discover.png",
+    "poster": "assets/source/project-demos/plexarr-catalog.png",
+    "crop": {
+      "x": 0,
+      "y": 193,
+      "width": 1440,
+      "height": 592
+    },
+    "boundaries": "Request-focused video and full-navigation poster removed from public assets. Original recordings retained only as historical source evidence.",
+    "pending": "Record a new authenticated Library, Discover, and favorites/ratings walkthrough after owner passkey sign-in. Never include request controls or flow."
+  },
+  "plexarrArchivedOctober15": {
     "captured": "2026-10-15",
     "deployedRevision": "Not independently verified from the browser.",
     "mode": "Owner-authenticated live app in Chrome after normal passkey sign-in. Real catalog, recommendation, availability, and quality-profile responses. No interception, seed data, auth bypass, submitted request, or download.",

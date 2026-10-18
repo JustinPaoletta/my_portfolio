@@ -68,6 +68,20 @@ describe('Projects section', () => {
     expect(card.querySelector('iframe, video, canvas, script')).toBeNull();
   });
 
+  it('does not offer the retired request-focused Plexarr recording', () => {
+    render(<Projects />);
+    const card = screen
+      .getByRole('heading', { name: 'Plexarr' })
+      .closest('article')!;
+    expect(card.querySelector('video, source, track')).toBeNull();
+    expect(
+      within(card).queryByText('Read the walkthrough')
+    ).not.toBeInTheDocument();
+    expect(
+      within(card).getByAltText(/Live Plexarr Discover catalog/)
+    ).toBeInTheDocument();
+  });
+
   it('renders project content consistently', () => {
     render(<Projects />);
 

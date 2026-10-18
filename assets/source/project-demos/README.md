@@ -85,53 +85,20 @@ The VTT and HTML transcript describe this workflow. Both video formats remain un
 
 ## Plexarr
 
-The 18-second edited recording comes directly from the owner's authenticated live
-Plexarr deployment in Chrome. Movie posters, recommendations, availability and
-quality profiles are real app responses. There is no API interception, fictional
-catalog, seeded Activity entry or authentication bypass. The owner completed the
-normal passkey sign-in before capture. No credentials, sign-in ceremony or other
-users' Activity are included.
+The current card uses a static crop of the authenticated live Discover catalog
+captured on October 15. `plexarr-catalog.png` crops the original
+`plexarr-live-discover.png` at x=0, y=193, width=1440, height=592. This excludes
+the top navigation, including Request, without altering the catalog UI.
+Run `npm run optimize:project-demos` to reproduce its WebP variants.
 
-The flow browses the movie grid, opens Avengers: Infinity War (2018), reviews its
-metadata and availability, inspects the request form with HD-1080p selected, and
-cancels back to Discover. Confirm was never clicked. The recording does not claim
-a successful add or download. The selection change occurs between the retained
-segments; the clip shows the selected profile, not an uninterrupted selection
-interaction. It has no audio or trailer playback.
+The previous request-focused video, captions, and full-navigation public poster
+were removed on October 18 at the owner's direction. The two October 15 source
+recordings remain historical evidence under `assets/source/project-demos`;
+they are not served by the portfolio. The manifest retains their original
+provenance in `plexarrArchivedOctober15`.
 
-Native window capture excludes other desktop overlays. The two retained source
-MP4s are cropped to the app's 1440 × 808 content area, excluding browser toolbars,
-bookmarks and the address bar. They preserve the captured UI at 15fps. The PNG
-poster comes from the same live movie grid. The manifest records the crop and
-edit ranges; the deployed app revision was not independently verified. No private
-source, environment values or operational runbooks are copied into this repo.
-
-The public edit joins seconds 17–26 of `plexarr-live-catalog-capture.mp4` to seconds
-2–11 of `plexarr-live-request-capture.mp4`. This removes idle capture time and the
-gap between recordings without changing the UI content. Reproduce it with:
-
-```sh
-ffmpeg -i assets/source/project-demos/plexarr-live-catalog-capture.mp4 \
-  -i assets/source/project-demos/plexarr-live-request-capture.mp4 \
-  -filter_complex '[0:v]trim=start=17:end=26,setpts=PTS-STARTPTS[a];[1:v]trim=start=2:end=11,setpts=PTS-STARTPTS[b];[a][b]concat=n=2:v=1:a=0[v]' \
-  -map '[v]' -an -map_metadata -1 -c:v libx264 -preset slow -crf 21 \
-  -pix_fmt yuv420p -movflags +faststart public/media/plexarr-live-demo.mp4
-```
-
-The WebM uses the same edit with VP9, CRF 30, zero target bitrate, and encoder
-speed 3. Both formats load only on playback and include timed descriptions plus
-an HTML transcript. New `plexarr-live-*` URLs prevent the previous sample clip
-from being reused by the browser's media or image cache. The fictional capture,
-fixture tool, and public media are removed from the current branch.
-
-### Plexarr presentation refresh — October 18, 2026
-
-The card and CLI share the household-library dashboard description in
-`src/content/projects.ts`. The public description covers catalog search, library
-availability, request review, activity history, allowlisted passkey access, and
-server-side integrations. It does not claim public streaming or hosting.
-
-The existing 18-second recording is retained with task-focused captions at
-`public/media/plexarr-product-walkthrough.vtt`: catalog browsing, title details
-and availability, request review, and cancellation back to Discover. The video
-still dates from October 15; this presentation update is not a new capture.
+A new Library, Discover, and favorites/ratings recording is pending the owner's
+normal passkey sign-in to the live app. Do not restore the old recording or show
+request controls in the replacement. No new recording or successful sign-in is
+claimed by this interim change. No fake data, auth bypass, or service changes
+are used.
