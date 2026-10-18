@@ -100,7 +100,7 @@ describe('Projects section', () => {
 
     expect(
       document.querySelector(
-        'img.folder-icon--image[src="/images/projects/sidequest-logo-60.webp"]'
+        'img.folder-icon--image[src="/images/projects/sidequest-sq-logo-60.webp"]'
       )
     ).toBeInTheDocument();
 

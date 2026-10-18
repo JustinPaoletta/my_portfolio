@@ -20,14 +20,34 @@ npm run optimize:project-logos
 
 The script resolves source and output paths relative to its own file, so it
 also works when called by an absolute path from another directory. It writes
-only the eleven listed WebP variants into `public/images/projects/`.
+only the fourteen configured WebP variants into `public/images/projects/`.
 
 The script checks each output's format, dimensions, and alpha-channel
 presence. For the six lossless icon variants, it also compares every decoded
 pixel byte with the resized source before writing the file. `exact: true`
 preserves color data in fully transparent pixels as well.
 
-## Source masters
+## Current SideQuest app branding (October 18, 2026)
+
+The portfolio now uses `sidequest-sq-logo.png`, copied byte-for-byte from
+`SideQuest-Pittsburgh/mobile/assets/branding/sq-pittsburgh-logo.png`. This is
+the current 1254 × 1254 opaque logo master documented by that app's branding
+README: a flat gold SQ monogram and Roberto Clemente Bridge with white
+PITTSBURGH lettering. It is the same design as the app's 1024px icon; no
+artwork was recreated or recolored.
+
+The source was taken from the local app checkout at `a3e1704` with its
+existing local branding changes. Its SHA-256 is
+`e188a77e7e43687f4858dc8871ccd2e4f40518a035fa8eec95417fbb1e3ef567`.
+The original app files were not changed. The older skyline master and its
+variants remain as historical assets; the portfolio references the new
+`sidequest-sq-logo-*` filenames to avoid stale cached artwork.
+
+The generator creates 60, 120, 180, 240, 480, 720, 960, and 1254px variants
+using WebP quality 90. The card uses the 60/120/180px candidates at 60 CSS
+pixels. Their file sizes are 1,512 / 3,526 / 5,748 bytes, respectively.
+
+## Original source masters (historical)
 
 | Source                 | Dimensions  | Original bytes | Alpha channel |
 | ---------------------- | ----------- | -------------: | ------------- |

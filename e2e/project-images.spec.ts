@@ -42,7 +42,7 @@ interface ImageMeasurement {
 const TARGETS: readonly ProjectImageTarget[] = [
   {
     name: 'SideQuest: Pittsburgh',
-    basename: 'sidequest-logo',
+    basename: 'sidequest-sq-logo',
     kind: 'icon',
     candidateWidths: [60, 120, 180],
   },
@@ -249,7 +249,7 @@ for (const viewportCase of VIEWPORT_CASES) {
         const originalRequests = [...requestedPaths].filter(
           (pathname) =>
             pathname.includes('/assets/source/project-logos/') ||
-            /\/(?:sidequest-logo|wae-exports-logo|plexarr[-_]icon)\.png$/.test(
+            /\/(?:sidequest-sq-logo|wae-exports-logo|plexarr[-_]icon)\.png$/.test(
               pathname
             )
         );
