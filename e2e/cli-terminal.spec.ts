@@ -9,7 +9,7 @@ async function openTerminal(page: Page, mode = 'dark'): Promise<void> {
     page.getByRole('region', { name: 'Portfolio terminal', exact: true })
   ).toBeVisible();
   await expect(page.getByLabel('Terminal command input')).toBeVisible();
-  await expect(page.getByText(/^Type ls to list directories/)).toBeVisible();
+  await expect(page.getByText(/^ls to list directories/)).toBeVisible();
 }
 
 async function runCommand(page: Page, command: string): Promise<void> {

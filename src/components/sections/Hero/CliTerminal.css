@@ -215,8 +215,7 @@
   border: 0;
 }
 
-:root[data-theme='cli'] .cli-context-hint {
-  margin-top: 0.35rem;
+:root[data-theme='cli'] .cli-startup-instructions {
   font-size: 0.75rem;
   color: var(--text-muted);
 }

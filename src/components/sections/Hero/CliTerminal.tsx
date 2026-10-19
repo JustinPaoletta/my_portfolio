@@ -71,7 +71,7 @@ interface DogData {
 type InitialLine = Omit<TerminalLine, 'id'>;
 
 const STARTUP_INSTRUCTIONS =
-  'Type ls to list directories, cd <directory> to enter, and cd .. to go back. Use help for commands, theme or mode for appearance, and exit to return to the portfolio.';
+  'ls to list directories · cd <directory> to enter · cd .. to go back · help for commands';
 const MAX_SCROLLBACK_LINES = 300;
 const MAX_COMMAND_HISTORY = 100;
 const COMMANDS = [
@@ -1499,11 +1499,6 @@ function CliTerminal(): React.ReactElement {
     }
   }, [lines]);
 
-  const contextHint =
-    directoryPath.length === 0
-      ? 'ls to explore · cd <directory> to enter · help for commands'
-      : 'ls to explore · cd .. to go up · cd / to return home · help for commands';
-
   return (
     <section className="cli-terminal-shell" aria-label="Portfolio terminal">
       <div className="cli-terminal-toolbar">
@@ -1559,7 +1554,9 @@ function CliTerminal(): React.ReactElement {
             {(showStartupInstructions ||
               reducedMotion ||
               isVisualTestMode()) && (
-              <p className="cli-line cli-line--hint">{STARTUP_INSTRUCTIONS}</p>
+              <p className="cli-line cli-startup-instructions">
+                {STARTUP_INSTRUCTIONS}
+              </p>
             )}
           </div>
           <div className="cli-history">
@@ -1643,10 +1640,8 @@ function CliTerminal(): React.ReactElement {
                   onKeyDown={handleKeyDown}
                 />
               </div>
-              <p className="cli-line cli-context-hint">{contextHint}</p>
               <p id="cli-keyboard-shortcuts" className="cli-keyboard-shortcuts">
-                Enter run · ↑ ↓ history · Ctrl+Space complete · Tab move focus ·
-                help keyboard
+                Enter to run · ↑ / ↓ for command history
               </p>
             </div>
           </form>

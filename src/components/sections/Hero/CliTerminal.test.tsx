@@ -144,7 +144,7 @@ describe('CliTerminal', () => {
     try {
       renderTerminal();
       expect(
-        terminalTranscript().getByText(/^Type ls to list directories/)
+        terminalTranscript().getByText(/^ls to list directories/)
       ).toBeInTheDocument();
     } finally {
       media.mockRestore();
@@ -159,19 +159,19 @@ describe('CliTerminal', () => {
         terminalTranscript().getByText('Welcome to JP-CLI')
       ).toBeInTheDocument();
       expect(
-        terminalTranscript().queryByText(/^Type ls to list directories/)
+        terminalTranscript().queryByText(/^ls to list directories/)
       ).not.toBeInTheDocument();
       act(() => {
         vi.advanceTimersByTime(499);
       });
       expect(
-        terminalTranscript().queryByText(/^Type ls to list directories/)
+        terminalTranscript().queryByText(/^ls to list directories/)
       ).not.toBeInTheDocument();
       act(() => {
         vi.advanceTimersByTime(1);
       });
       expect(
-        terminalTranscript().getByText(/^Type ls to list directories/)
+        terminalTranscript().getByText(/^ls to list directories/)
       ).toBeInTheDocument();
     } finally {
       vi.useRealTimers();
@@ -448,6 +448,11 @@ describe('CliTerminal', () => {
     expect(within(terminal).getAllByRole('button')).toHaveLength(1);
     expect(screen.queryByRole('log')).not.toBeInTheDocument();
     expect(transcript).not.toHaveAttribute('aria-live');
+    expect(terminal).toHaveTextContent(
+      'Enter to run · ↑ / ↓ for command history'
+    );
+    expect(terminal).not.toHaveTextContent('Ctrl+Space');
+    expect(terminal.querySelector('.cli-context-hint')).toBeNull();
     const initialOutput = transcript.textContent;
     runCommand('');
     runCommand('   ');
