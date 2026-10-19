@@ -1023,7 +1023,7 @@ describe('CliTerminal', () => {
     ).toBeInTheDocument();
   });
 
-  it('exposes the same SQUARK review link through project navigation', () => {
+  it('exposes the same public SQUARK link through project navigation', () => {
     renderTerminal();
     runCommand('projects');
     expect(
@@ -1039,7 +1039,7 @@ describe('CliTerminal', () => {
       })
     ).toHaveAttribute(
       'href',
-      'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app'
+      'https://squark-demo-justin-paolettas-projects.vercel.app'
     );
   });
 
