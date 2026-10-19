@@ -39,7 +39,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the SQUARK review action without loading an embedded game', () => {
+  it('shows the public SQUARK action without loading an embedded game', () => {
     render(<Projects />);
     expect(
       screen.queryByRole('heading', { name: 'Godot Playground' })
@@ -52,13 +52,14 @@ describe('Projects section', () => {
     });
     expect(action).toHaveAttribute(
       'href',
-      'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app'
+      'https://squark-demo-justin-paolettas-projects.vercel.app'
     );
     expect(action).toHaveAttribute('target', '_blank');
     expect(action).toHaveAttribute('rel', 'noopener noreferrer');
     expect(
-      within(card).getByText(/preview requires Vercel sign-in/)
+      within(card).getByText(/desktop browser demo needs no account/)
     ).toBeInTheDocument();
+    expect(within(card).queryByText(/Vercel sign-in/)).not.toBeInTheDocument();
     expect(
       within(card).getByAltText(/Actual SQUARK browser gameplay/)
     ).toHaveAttribute('loading', 'lazy');

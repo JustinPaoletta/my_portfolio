@@ -39,6 +39,8 @@ describe('ThemeSwitcher', () => {
     });
     fireEvent.click(toggle);
 
+    expect(screen.getByRole('group', { name: 'Mode' })).toBeVisible();
+
     fireEvent.click(screen.getByTitle('Dark'));
     expect(setColorModeMock).toHaveBeenCalledWith('dark');
 
