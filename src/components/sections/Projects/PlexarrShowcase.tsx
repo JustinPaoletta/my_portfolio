@@ -14,7 +14,6 @@ const slides = [
         height: 592,
         sizes: [640, 960, 1440],
         alt: 'Live Plexarr Discover catalog with movie artwork, genres, ratings, and pagination',
-        link: 'View full-size capture',
       },
     ],
   },
@@ -29,7 +28,6 @@ const slides = [
         height: 252,
         sizes: [640, 700],
         alt: 'Plexarr recommends Avengers: Infinity War based on Science Fiction favorites, with heart and thumbs-down controls',
-        link: 'View full-size capture',
       },
     ],
   },
@@ -44,7 +42,6 @@ const slides = [
         height: 267,
         sizes: [320, 480, 576],
         alt: 'Plexarr title overview for Avengers: Infinity War (2018)',
-        link: 'View full-size overview',
       },
       {
         name: 'rating',
@@ -52,7 +49,6 @@ const slides = [
         height: 47,
         sizes: [320, 480, 522],
         alt: 'Adventure, Action, and Science Fiction genres with an 8.0 out of 10 community rating from 33,148 votes',
-        link: 'View full-size rating',
       },
     ],
   },
@@ -157,17 +153,6 @@ export function PlexarrShowcase(): React.ReactElement {
         <figcaption>
           <h4>{slide.title}</h4>
           <p>{slide.caption}</p>
-          {slide.images.map((capture) => (
-            <a
-              key={capture.name}
-              className="project-capture-link"
-              href={`/images/projects/plexarr-${capture.name}-${capture.width}.webp`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              {capture.link} ↗
-            </a>
-          ))}
         </figcaption>
       </figure>
       <div
