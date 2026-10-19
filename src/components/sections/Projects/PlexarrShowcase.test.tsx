@@ -13,15 +13,14 @@ describe('Plexarr screenshot carousel', () => {
     });
     expect(screen.getAllByRole('img')).toHaveLength(1);
     expect(screen.getByText('1 of 3')).toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
     fireEvent.click(previous);
     expect(screen.getByText('3 of 3')).toBeInTheDocument();
     expect(screen.getAllByRole('img')).toHaveLength(2);
     expect(
       screen.getByRole('button', { name: 'Show Title details & ratings' })
     ).toHaveAttribute('aria-pressed', 'true');
-    expect(
-      screen.getByRole('link', { name: /full-size rating/ })
-    ).toHaveAttribute('href', '/images/projects/plexarr-rating-522.webp');
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
     fireEvent.click(next);
     expect(screen.getByText('1 of 3')).toBeInTheDocument();
     fireEvent.click(next);
@@ -32,6 +31,7 @@ describe('Plexarr screenshot carousel', () => {
     expect(
       screen.queryByAltText(/Live Plexarr Discover catalog/)
     ).not.toBeInTheDocument();
+    expect(screen.queryByRole('link')).not.toBeInTheDocument();
     expect(container.querySelector('video, iframe, source, track')).toBeNull();
     expect(container).not.toHaveTextContent(/request/i);
   });

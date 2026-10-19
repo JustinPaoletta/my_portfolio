@@ -96,13 +96,6 @@
     }
   }
 
-  .project-capture-link,
-  .project-capture-link:hover {
-    color: var(--text-primary);
-    text-decoration: underline;
-    text-underline-offset: 0.2em;
-  }
-
   .plexarr-carousel__dots {
     display: flex;
     justify-content: center;
