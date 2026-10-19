@@ -69,12 +69,7 @@ for (const width of [320, 390, 1440]) {
           /\/plexarr-(catalog|picks|overview|rating)-\d+\.webp$/
         );
       }
-      for (const link of await carousel.getByRole('link').all()) {
-        const href = await link.getAttribute('href');
-        const response = await page.request.get(href!);
-        expect(response.ok()).toBe(true);
-        expect(response.headers()['content-type']).toContain('image/webp');
-      }
+      await expect(carousel.getByRole('link')).toHaveCount(0);
       expect(
         (await new AxeBuilder({ page }).include('.plexarr-carousel').analyze())
           .violations
