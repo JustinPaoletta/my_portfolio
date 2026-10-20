@@ -183,17 +183,17 @@ describe('CliTerminal', () => {
     const cwd = () => document.querySelector('.cli-prompt-prefix')?.textContent;
     runCommand('ls');
     expect(terminalTranscript().getByText('projects/')).toBeInTheDocument();
-    runCommand('cd projects/2');
-    expect(cwd()).toBe('~/projects/2 $');
+    runCommand('cd projects/bitstockerz');
+    expect(cwd()).toBe('~/projects/bitstockerz $');
     expect(
-      terminalTranscript().getByText('[PROJECT 2] BitStockerz')
+      terminalTranscript().getByText('[PROJECT] BitStockerz')
     ).toBeInTheDocument();
     runCommand('ls ..');
-    expect(cwd()).toBe('~/projects/2 $');
+    expect(cwd()).toBe('~/projects/bitstockerz $');
     runCommand('cd ..');
     expect(cwd()).toBe('~/projects $');
-    runCommand('cd ../skills/5');
-    expect(cwd()).toBe('~/skills/5 $');
+    runCommand('cd ../skills/supporting-practices');
+    expect(cwd()).toBe('~/skills/supporting-practices $');
     runCommand('cd /contact');
     expect(cwd()).toBe('~/contact $');
     expect(terminalTranscript().getByText('[CONTACT]')).toBeInTheDocument();
@@ -203,7 +203,7 @@ describe('CliTerminal', () => {
       'cd missing',
       'cd /projects/99',
       'cd /missing/../projects',
-      'cd /projects/1/child',
+      'cd /projects/jp-design-system/child',
       'cd /projects extra',
       'ls /missing',
     ]) {
@@ -235,10 +235,67 @@ describe('CliTerminal', () => {
     window.history.replaceState({}, '', originalUrl);
   });
 
-  it('covers menu numerics, aliases, help, clear, unknown and exit', () => {
+  it('rejects numeric shortcuts and paths without triggering navigation or dog actions', () => {
+    renderTerminal();
+    for (const command of [
+      '0',
+      '1',
+      '2',
+      '9',
+      'project 1',
+      'skill 1',
+      'exp 1',
+      'dog 1 treat',
+      'cd /projects/1',
+      'cd /skills/1',
+      'cd /experience/1',
+      'cd /dogs/1',
+    ]) {
+      runCommand(command);
+      expect(
+        screen.getByRole('region', { name: 'Terminal transcript' }).textContent
+      ).toContain(command);
+      expect(document.querySelector('.cli-prompt-prefix')).toHaveTextContent(
+        '~ $'
+      );
+    }
+    for (const directory of ['projects', 'skills', 'experience', 'dogs']) {
+      runCommand(`cd /${directory}`);
+      for (const command of ['1', '0', '9', 'cd 1']) {
+        runCommand(command);
+        expect(document.querySelector('.cli-prompt-prefix')).toHaveTextContent(
+          `~/${directory} $`
+        );
+      }
+    }
+    expect(updateDogStatsMock).not.toHaveBeenCalled();
+    expect(terminalTranscript().queryByText('[ABOUT]')).not.toBeInTheDocument();
+    expect(terminalTranscript().queryByText('[HELP]')).not.toBeInTheDocument();
+    for (const command of [
+      'help',
+      'help projects',
+      'help skills',
+      'help experience',
+      'help dogs',
+      'help navigation',
+      'help aliases',
+      'ls /projects',
+      'ls /skills',
+      'ls /experience',
+      'ls /dogs',
+    ])
+      runCommand(command);
+    expect(
+      terminalTranscript().queryByText(
+        /<number>|number shortcuts|Main-menu numbers/
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  it('covers named navigation, aliases, help, clear, unknown and exit', () => {
     renderTerminal();
 
-    runCommand('1');
+    runCommand('about');
     expect(terminalTranscript().getByText('[ABOUT]')).toBeInTheDocument();
     expect(
       terminalTranscript().getByText(
@@ -249,7 +306,7 @@ describe('CliTerminal', () => {
       terminalTranscript().queryByText(/5\+ years|75% faster releases/)
     ).not.toBeInTheDocument();
 
-    runCommand('2');
+    runCommand('projects');
     expect(terminalTranscript().getByText('[PROJECTS]')).toBeInTheDocument();
 
     runCommand('skills');
@@ -260,7 +317,7 @@ describe('CliTerminal', () => {
       terminalTranscript().getByText('[EXPERIENCE & EDUCATION]')
     ).toBeInTheDocument();
 
-    runCommand('9');
+    runCommand('help');
     expect(terminalTranscript().getByText('[HELP]')).toBeInTheDocument();
 
     runCommand('totally-unknown');
@@ -286,20 +343,20 @@ describe('CliTerminal', () => {
 
     runCommand('project abc');
     expect(
-      terminalTranscript().getByText('Usage: project <number>')
+      terminalTranscript().getAllByText('Usage: project <name>')[0]
     ).toBeInTheDocument();
 
     runCommand('project 99');
     expect(
-      terminalTranscript().getByText('Project 99 not found.')
+      terminalTranscript().getAllByText('Usage: project <name>')[0]
     ).toBeInTheDocument();
 
-    runCommand('project 1');
-    expect(terminalTranscript().getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
+    runCommand('project jp-design-system');
+    expect(terminalTranscript().getByText(/\[PROJECT\]/)).toBeInTheDocument();
 
-    runCommand('project 4');
+    runCommand('project wild-apricot-exports');
     expect(
-      terminalTranscript().getByText(/\[PROJECT 4\] wild-apricot-exports/)
+      terminalTranscript().getByText(/\[PROJECT\] wild-apricot-exports/)
     ).toBeInTheDocument();
     expect(
       terminalTranscript().getByText('Type: Featured')
@@ -315,17 +372,17 @@ describe('CliTerminal', () => {
 
     runCommand('skill abc');
     expect(
-      terminalTranscript().getByText('Usage: skill <number>')
+      terminalTranscript().getAllByText('Usage: skill <name>')[0]
     ).toBeInTheDocument();
 
-    runCommand('skill 5');
+    runCommand('skill supporting-practices');
     expect(
-      terminalTranscript().getByText('[SKILL CATEGORY 5] Supporting practices')
+      terminalTranscript().getByText('[SKILL CATEGORY] Supporting practices')
     ).toBeInTheDocument();
 
     runCommand('skill 99');
     expect(
-      terminalTranscript().getByText('Skill category 99 not found.')
+      terminalTranscript().getAllByText('Usage: skill <name>')[0]
     ).toBeInTheDocument();
 
     runCommand('exp');
@@ -335,12 +392,12 @@ describe('CliTerminal', () => {
 
     runCommand('exp abc');
     expect(
-      terminalTranscript().getByText('Usage: exp <number>')
+      terminalTranscript().getAllByText('Usage: exp <name>')[0]
     ).toBeInTheDocument();
 
     runCommand('exp 99');
     expect(
-      terminalTranscript().getByText('Experience entry 99 not found.')
+      terminalTranscript().getAllByText('Usage: exp <name>')[0]
     ).toBeInTheDocument();
   });
 
@@ -352,37 +409,38 @@ describe('CliTerminal', () => {
 
     runCommand('dog x');
     expect(
-      terminalTranscript().getByText('Usage: dog <number> [treat|scritch]')
+      terminalTranscript().getAllByText('Usage: dog <name> [treat|scritch]')[0]
     ).toBeInTheDocument();
 
     runCommand('dog 9');
     expect(
-      terminalTranscript().getByText('Dog 9 not found.')
+      terminalTranscript().getAllByText('Usage: dog <name> [treat|scritch]')[0]
     ).toBeInTheDocument();
 
-    runCommand('dog 1');
-    expect(terminalTranscript().getByText('[DOG 1] Nala')).toBeInTheDocument();
+    runCommand('dog nala');
+    expect(terminalTranscript().getByText('[DOG] Nala')).toBeInTheDocument();
 
-    runCommand('dog 1 treat');
+    runCommand('dog nala treat');
     expect(updateDogStatsMock).toHaveBeenCalledWith('Nala', 'treats');
     expect(
       terminalTranscript().getByText(/Nala got a treat/)
     ).toBeInTheDocument();
 
-    runCommand('dog 2 scritch');
+    runCommand('dog rosie scritch');
     expect(updateDogStatsMock).toHaveBeenCalledWith('Rosie', 'scritches');
     expect(
       terminalTranscript().getByText(/Rosie got scritches/)
     ).toBeInTheDocument();
 
-    runCommand('dog 2 dance');
+    runCommand('dog rosie dance');
     expect(
       terminalTranscript().getByText(/Unknown dog action/)
     ).toBeInTheDocument();
 
     runCommand('dog 9 treat');
     expect(
-      terminalTranscript().getAllByText('Dog 9 not found.').length
+      terminalTranscript().getAllByText('Usage: dog <name> [treat|scritch]')
+        .length
     ).toBeGreaterThan(0);
   });
 
@@ -390,7 +448,7 @@ describe('CliTerminal', () => {
     renderTerminal();
     for (const command of [
       'dog 1oops treat',
-      'dog 1 treat extra',
+      'dog nala treat extra',
       'dog -1 treat',
       'dog 1.5 scritch',
     ]) {
@@ -414,13 +472,13 @@ describe('CliTerminal', () => {
     ).toBeInTheDocument();
 
     githubState = { ...githubState, error: null, loading: true, user: null };
-    runCommand('5');
+    runCommand('github');
     expect(
       terminalTranscript().getByText(/Fetching live GitHub stats/)
     ).toBeInTheDocument();
 
     githubState = { ...githubState, loading: false, user: null };
-    runCommand('5');
+    runCommand('github');
     expect(
       terminalTranscript().getByText(
         /GitHub profile data is currently unavailable/
@@ -458,12 +516,12 @@ describe('CliTerminal', () => {
     runCommand('   ');
     expect(transcript.textContent).toBe(initialOutput);
 
-    fireEvent.change(input, { target: { value: 'project 1' } });
+    fireEvent.change(input, { target: { value: 'project jp-design-system' } });
     for (const key of ['ArrowLeft', 'ArrowRight', 'Tab']) {
       const event = createEvent.keyDown(input, { key, cancelable: true });
       fireEvent(input, event);
       expect(event.defaultPrevented).toBe(false);
-      expect(input).toHaveValue('project 1');
+      expect(input).toHaveValue('project jp-design-system');
     }
     const shiftTab = createEvent.keyDown(input, {
       key: 'Tab',
@@ -506,7 +564,9 @@ describe('CliTerminal', () => {
     const input = screen.getByLabelText('Terminal command input');
     runCommand('about');
     runCommand('projects');
-    fireEvent.change(input, { target: { value: 'project 4' } });
+    fireEvent.change(input, {
+      target: { value: 'project wild-apricot-exports' },
+    });
 
     fireEvent.keyDown(input, { key: 'ArrowUp' });
     expect(input).toHaveValue('projects');
@@ -517,22 +577,22 @@ describe('CliTerminal', () => {
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     expect(input).toHaveValue('projects');
     fireEvent.keyDown(input, { key: 'ArrowDown' });
-    expect(input).toHaveValue('project 4');
+    expect(input).toHaveValue('project wild-apricot-exports');
     fireEvent.keyDown(input, { key: 'ArrowDown' });
-    expect(input).toHaveValue('project 4');
+    expect(input).toHaveValue('project wild-apricot-exports');
   });
 
   it.each([
     ['cd pro', 'cd projects '],
     ['ls /pro', 'ls /projects '],
-    ['cd projects/1', 'cd projects/1 '],
+    ['cd projects/jp-design-system', 'cd projects/jp-design-system '],
     ['theme cos', 'theme cosmic '],
     ['mode sys', 'mode system '],
     ['help key', 'help keyboard '],
-    ['project 2', 'project 2 '],
-    ['skill 5', 'skill 5 '],
-    ['exp 1', 'exp 1 '],
-    ['dog 2 scr', 'dog 2 scritch '],
+    ['project bitstockerz', 'project bitstockerz '],
+    ['skill supporting-practices', 'skill supporting-practices '],
+    ['exp accesso', 'exp accesso '],
+    ['dog rosie scr', 'dog rosie scritch '],
   ])('completes %s to %s', (draft, completed) => {
     renderTerminal();
     const input = screen.getByLabelText(
@@ -547,7 +607,9 @@ describe('CliTerminal', () => {
 
   it.each([
     'cd nowhere/',
-    'cd projects/1/nope',
+    'dog 1 tr',
+    'project 1',
+    'cd projects/jp-design-system/nope',
     'mode nothing',
     'unknown argument',
     'too many words here',
@@ -572,7 +634,7 @@ describe('CliTerminal', () => {
     input.setSelectionRange(input.value.length, input.value.length);
     fireEvent.keyDown(input, { key: ' ', code: 'Space', ctrlKey: true });
     expect(
-      terminalTranscript().getByText(/^Matches: projects\/1/)
+      terminalTranscript().getByText(/^Matches: projects\/jp-design-system/)
     ).toBeInTheDocument();
     fireEvent.change(input, { target: { value: 'help' } });
     input.setSelectionRange(0, 2);
@@ -586,14 +648,14 @@ describe('CliTerminal', () => {
   it('opens every directory detail and education entry through shell navigation', () => {
     renderTerminal();
     for (const [path, heading] of [
-      ['/skills/1', '[SKILL CATEGORY 1]'],
-      ['/experience/3', '[TIMELINE 3]'],
-      ['/experience/4', '[TIMELINE 4]'],
-      ['/dogs/1', '[DOG 1]'],
+      ['/skills/frontend-systems', '[SKILL CATEGORY]'],
+      ['/experience/hack-reactor', '[TIMELINE]'],
+      ['/experience/university-of-central-florida', '[TIMELINE]'],
+      ['/dogs/nala', '[DOG]'],
     ]) {
       runCommand(`cd ${path}`);
       expect(
-        terminalTranscript().getByText((text) => text.startsWith(heading))
+        terminalTranscript().getAllByText((text) => text.startsWith(heading))[0]
       ).toBeInTheDocument();
     }
     runCommand('cd /');
@@ -609,10 +671,12 @@ describe('CliTerminal', () => {
     ).toBeInTheDocument();
     runCommand('help too many');
     expect(
-      terminalTranscript().getByText('Usage: help [topic]')
+      terminalTranscript().getAllByText('Usage: help [topic]')[0]
     ).toBeInTheDocument();
     runCommand('pwd extra');
-    expect(terminalTranscript().getByText('Usage: pwd')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getAllByText('Usage: pwd')[0]
+    ).toBeInTheDocument();
   });
 
   it('does not submit an IME composition or intercept modified history keys', () => {
@@ -668,7 +732,7 @@ describe('CliTerminal', () => {
     const input = screen.getByLabelText(
       'Terminal command input'
     ) as HTMLInputElement;
-    fireEvent.change(input, { target: { value: 'project 1' } });
+    fireEvent.change(input, { target: { value: 'project jp-design-system' } });
     input.focus();
     input.setSelectionRange(0, input.value.length);
     const copy = createEvent.keyDown(input, {
@@ -678,7 +742,7 @@ describe('CliTerminal', () => {
     });
     fireEvent(input, copy);
     expect(copy.defaultPrevented).toBe(false);
-    expect(input).toHaveValue('project 1');
+    expect(input).toHaveValue('project jp-design-system');
 
     input.setSelectionRange(input.value.length, input.value.length);
     const cancel = createEvent.keyDown(input, {
@@ -777,39 +841,27 @@ describe('CliTerminal', () => {
     expect(input).toHaveValue('unknown-command-5');
   });
 
-  it('covers remaining aliases, numeric menu branches, and unknown numeric fallback', () => {
+  it('covers remaining named aliases and rejects numeric input', () => {
     renderTerminal();
 
-    runCommand('3');
-    expect(terminalTranscript().getByText('[SKILLS]')).toBeInTheDocument();
-
-    runCommand('menu');
-    runCommand('4');
-    expect(
-      terminalTranscript().getByText('[EXPERIENCE & EDUCATION]')
-    ).toBeInTheDocument();
-
-    runCommand('menu');
-    runCommand('6');
-    expect(terminalTranscript().getByText('[CONTACT]')).toBeInTheDocument();
-
-    runCommand('menu');
-    runCommand('7');
-    expect(terminalTranscript().getByText('[PET DOGS]')).toBeInTheDocument();
-
-    runCommand('menu');
-    runCommand('8');
-    expect(terminalTranscript().getByText('[RESUME]')).toBeInTheDocument();
-
-    runCommand('menu');
+    for (const [command, heading] of [
+      ['skills', '[SKILLS]'],
+      ['experience', '[EXPERIENCE & EDUCATION]'],
+      ['contact', '[CONTACT]'],
+      ['dogs', '[PET DOGS]'],
+      ['resume', '[RESUME]'],
+    ]) {
+      runCommand(command);
+      expect(terminalTranscript().getByText(heading)).toBeInTheDocument();
+      runCommand('menu');
+    }
     runCommand('11');
     expect(
-      terminalTranscript().getByText('Unknown menu selection: 11')
+      terminalTranscript().getByText('Unknown command: 11')
     ).toBeInTheDocument();
-
-    runCommand('0');
+    runCommand('clear');
     expect(
-      terminalTranscript().queryByText('Unknown menu selection: 11')
+      terminalTranscript().queryByText('Unknown command: 11')
     ).not.toBeInTheDocument();
 
     runCommand('h');
@@ -845,12 +897,12 @@ describe('CliTerminal', () => {
     expect(setThemeMock).toHaveBeenCalledWith(defaultTheme);
   });
 
-  it('routes numeric input by active context and supports back navigation in detail views', () => {
+  it('routes named paths by active context and supports back navigation in detail views', () => {
     renderTerminal();
 
     runCommand('projects');
-    runCommand('1');
-    expect(terminalTranscript().getByText(/\[PROJECT 1\]/)).toBeInTheDocument();
+    runCommand('cd jp-design-system');
+    expect(terminalTranscript().getByText(/\[PROJECT\]/)).toBeInTheDocument();
     expect(
       terminalTranscript().getByText(
         'Stack: Angular, TypeScript, RxJS, SCSS, Storybook'
@@ -865,9 +917,9 @@ describe('CliTerminal', () => {
     expect(terminalTranscript().getByText('portfolio:/')).toBeInTheDocument();
 
     runCommand('skills');
-    runCommand('1');
+    runCommand('cd frontend-systems');
     expect(
-      terminalTranscript().getByText('[SKILL CATEGORY 1] Frontend systems')
+      terminalTranscript().getByText('[SKILL CATEGORY] Frontend systems')
     ).toBeInTheDocument();
     runCommand('back');
     expect(
@@ -875,10 +927,10 @@ describe('CliTerminal', () => {
     ).toBeGreaterThan(0);
 
     runCommand('experience');
-    runCommand('1');
+    runCommand('cd accesso');
     expect(
       terminalTranscript().getByText(
-        '[TIMELINE 1] Software Engineer (UI Engineer)'
+        '[TIMELINE] Software Engineer (UI Engineer)'
       )
     ).toBeInTheDocument();
     runCommand('back');
@@ -887,8 +939,8 @@ describe('CliTerminal', () => {
     ).toBeGreaterThan(0);
 
     runCommand('dogs');
-    runCommand('2');
-    expect(terminalTranscript().getByText('[DOG 2] Rosie')).toBeInTheDocument();
+    runCommand('cd rosie');
+    expect(terminalTranscript().getByText('[DOG] Rosie')).toBeInTheDocument();
     runCommand('back');
     expect(
       terminalTranscript().getAllByText('[PET DOGS]').length
@@ -898,7 +950,7 @@ describe('CliTerminal', () => {
   it.each([
     {
       title: 'BitStockerz',
-      selection: 2,
+      selection: 'bitstockerz',
       status: 'In Development',
       requiredClaims: [
         /recent stored bar closes/,
@@ -910,7 +962,7 @@ describe('CliTerminal', () => {
     },
     {
       title: '@jp-design-system',
-      selection: 1,
+      selection: 'jp-design-system',
       status: 'Pre-release',
       requiredClaims: [
         /automated interaction and accessibility checks/,
@@ -950,7 +1002,7 @@ describe('CliTerminal', () => {
       renderTerminal();
       runCommand('projects');
       expect(
-        terminalTranscript().getByText(`${selection}/ ${title} (${status})`)
+        terminalTranscript().getByText(`${selection}/ — ${title} (${status})`)
       ).toHaveAttribute('href', sourceUrl);
       runCommand(`project ${selection}`);
       expect(terminalTranscript().getByText(description)).toBeInTheDocument();
@@ -1018,9 +1070,9 @@ describe('CliTerminal', () => {
       terminalTranscript().getByText('- pinned-a (77 stars)')
     ).toBeInTheDocument();
 
-    runCommand('project 5');
+    runCommand('project sidequest-pittsburgh');
     expect(
-      terminalTranscript().getByText('[PROJECT 5] SideQuest: Pittsburgh')
+      terminalTranscript().getByText('[PROJECT] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
     expect(terminalTranscript().getByText('Type: Other')).toBeInTheDocument();
     expect(
@@ -1034,9 +1086,9 @@ describe('CliTerminal', () => {
     expect(
       terminalTranscript().queryByText(/Godot Playground/)
     ).not.toBeInTheDocument();
-    runCommand('project 3');
+    runCommand('project squark');
     expect(
-      terminalTranscript().getByText('[PROJECT 3] SQUARK')
+      terminalTranscript().getByText('[PROJECT] SQUARK')
     ).toBeInTheDocument();
     expect(
       terminalTranscript().getByRole('link', {
@@ -1062,10 +1114,12 @@ describe('CliTerminal', () => {
 
     runCommand('dogs');
     expect(
-      terminalTranscript().getByText('2/ Rosie | Treats: 0 | Scritches: 0')
+      terminalTranscript().getByText(
+        'rosie/ — Rosie | Treats: 0 | Scritches: 0'
+      )
     ).toBeInTheDocument();
     expect(
-      terminalTranscript().getByText('3/ Tito | Treats: 0 | Scritches: 0')
+      terminalTranscript().getByText('tito/ — Tito | Treats: 0 | Scritches: 0')
     ).toBeInTheDocument();
   });
 });
