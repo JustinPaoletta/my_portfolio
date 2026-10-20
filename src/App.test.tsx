@@ -432,7 +432,7 @@ describe('App', () => {
 
     const input = await screen.findByLabelText(/terminal command input/i);
     await user.click(input);
-    await user.type(input, '9{Enter}');
+    await user.type(input, 'help{Enter}');
 
     await screen.findByText(/\[HELP\]/, undefined, { timeout: 3000 });
     expect(input).toHaveValue('');

@@ -9,7 +9,7 @@ async function openTerminal(page: Page, mode = 'dark'): Promise<void> {
     page.getByRole('region', { name: 'Portfolio terminal', exact: true })
   ).toBeVisible();
   await expect(page.getByLabel('Terminal command input')).toBeVisible();
-  await expect(page.getByText(/^Type ls to list directories/)).toBeVisible();
+  await expect(page.getByText(/^ls to list directories/)).toBeVisible();
 }
 
 async function runCommand(page: Page, command: string): Promise<void> {
@@ -32,10 +32,14 @@ test('terminal uses ls and cd and restores the macOS close control', async ({
   await runCommand(page, 'ls');
   await expect(page.getByText('projects/', { exact: true })).toBeVisible();
   await runCommand(page, 'cd projects');
-  await runCommand(page, 'cd 2');
-  await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/projects/2 $');
+  await runCommand(page, 'cd bitstockerz');
+  await expect(page.locator('.cli-prompt-prefix')).toHaveText(
+    '~/projects/bitstockerz $'
+  );
   await runCommand(page, 'ls /experience');
-  await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/projects/2 $');
+  await expect(page.locator('.cli-prompt-prefix')).toHaveText(
+    '~/projects/bitstockerz $'
+  );
   await runCommand(page, 'cd ..');
   await runCommand(page, 'cd ../contact');
   await expect(page.locator('.cli-prompt-prefix')).toHaveText('~/contact $');
@@ -103,7 +107,7 @@ test('terminal prompt follows the output and scrolls with the transcript', async
     .poll(async () => (await form.boundingBox())?.y ?? 0)
     .toBeGreaterThan(initialForm!.y + 24);
 
-  for (const command of ['help', 'exp 1', 'project 1']) {
+  for (const command of ['help', 'exp accesso', 'project jp-design-system']) {
     await runCommand(page, command);
   }
   await expect(prompt).toBeFocused();
@@ -157,13 +161,13 @@ test('terminal keyboard editing, completion and history preserve the draft', asy
     page.getByRole('button', { name: /toggle theme switcher/i })
   ).toHaveCount(0);
   await runCommand(page, 'projects');
-  await runCommand(page, 'project 1');
+  await runCommand(page, 'project jp-design-system');
   await expect(
-    page.getByText('[PROJECT 1] @jp-design-system', { exact: true })
+    page.getByText('[PROJECT] @jp-design-system', { exact: true })
   ).toBeVisible();
   await prompt.fill('unfinished draft');
   await prompt.press('ArrowUp');
-  await expect(prompt).toHaveValue('project 1');
+  await expect(prompt).toHaveValue('project jp-design-system');
   await prompt.press('ArrowUp');
   await expect(prompt).toHaveValue('projects');
   await prompt.press('ArrowDown');
@@ -221,9 +225,9 @@ for (const mode of ['light', 'dark']) {
     await expect(page.getByText('[HELP]', { exact: true })).toBeVisible();
     await runCommand(page, 'project invalid');
     await expect(
-      page.getByText('Usage: project <number>', { exact: true })
+      page.getByText('Usage: project <name>', { exact: true })
     ).toBeVisible();
-    await runCommand(page, 'project 1');
+    await runCommand(page, 'project jp-design-system');
     await expect(page.getByRole('link', { name: /^GitHub:/ })).toBeVisible();
     await runCommand(page, 'back');
     await expect(page.getByText('[PROJECTS]', { exact: true })).toBeVisible();
@@ -257,7 +261,7 @@ for (const width of [320, 390]) {
     await expect(toolbar.locator('.cli-terminal-role')).toBeHidden();
     await expect(toolbar.locator('.cli-terminal-technologies')).toBeHidden();
     await runCommand(page, 'help');
-    await runCommand(page, 'exp 1');
+    await runCommand(page, 'exp accesso');
     await page.setViewportSize({ width, height: 440 });
     await runCommand(page, 'contact');
     await expect(page.getByText('[CONTACT]', { exact: true })).toBeVisible();
