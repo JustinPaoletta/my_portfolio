@@ -1,8 +1,27 @@
-# SQUARK browser demo review
+# SQUARK browser demo
 
-The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture and a small conure icon are the only added media. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. SQUARK replaces Godot Playground in the visual list and occupies CLI project 3. Both presentations share its description and review link.
+The portfolio introduces SQUARK under More Projects, preserving the featured order of the design system, BitStockerz, Wild Apricot, and Plexarr. A 61 KB real gameplay capture is shown beneath the browser-preview action. The card header has no icon. The game opens on its own origin; portfolio browsing loads no engine, pack, iframe, or game canvas. SQUARK replaces Godot Playground in the visual list and occupies CLI project 3. Both presentations share its description and public demo link.
 
-[Review the separate game preview](https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app). Vercel sign-in is currently required. The portfolio explicitly says **Play preview** and explains this access requirement. This is not yet an anonymous public demo.
+[Play the public browser demo](https://squark-demo-justin-paolettas-projects.vercel.app). No account or Vercel sign-in is required. The portfolio keeps the **Preview In Browser** action. Desktop browsers are recommended; physical phone acceptance remains open.
+
+## Public release
+
+The owner approved anonymous publication on October 18, 2026. Production deployment `dpl_6jH7FniY2SCY9NPrKxjFnr7doTPE` serves reviewed release `6e6d40291ad12ce9831f` on the existing Hobby project.
+
+Standard Vercel protection keeps preview and generated deployment URLs protected. The stable production domain above is public. The previous review URL remains protected.
+
+The isolated upload contains only the receipt-listed static files. Explicit empty build/install commands prevent unrelated package installation. Game binaries, HTML, artwork, audio, and shell files remain unchanged.
+
+Anonymous acceptance verified:
+
+- HTTP 200 without redirects or credentials for all 11 public game files, with exact SHA-256 matches against the reviewed receipt.
+- Correct WebAssembly MIME type, gzip encoding, immutable release caching, HTML revalidation, and the game-specific Content Security Policy.
+- A fresh Chrome 155 session with zero cookies and no engine requests before Play.
+- Successful startup, the normal flight countdown and keyboard input, running audio, and no page errors.
+- Repeat startup without authentication. Repeat engine downloads still transferred the full files; browser-cache savings remain unverified.
+- Six portfolio navigation checks across Chromium, Firefox, and WebKit at 320px and 1280px. These checks stub the destination; live game acceptance is recorded separately above.
+
+Machine-readable HTTP and browser observations are in `assets/source/project-demos/squark-public-release.json`. Local screenshots are in `output/playwright/squark-public-release/`. This release check did not repeat full-course, physical-phone, or Edge acceptance.
 
 ## Game implementation
 
@@ -28,12 +47,12 @@ The final release artifact is release `6e6d40291ad12ce9831f`: **51,446,887 bytes
 
 Protected HTTPS checks on the first preview confirm correct MIME types, gzip encoding, immutable versioned assets, revalidated HTML, scoped CSP, and pack bytes matching the exported SHA-256. The final preview passes hosted gameplay/audio smoke with no page errors and no engine requests before Play. Cold and repeat WASM/pack transfers were measured: the protected repeat load still transferred the full files despite immutable headers, so warm-cache savings remain unverified and must be checked anonymously at public launch. Previous immutable previews and local receipts remain available for rollback.
 
-Vercel attempted to make the new project's first deployment production without a production flag. It was canceled before completion. Subsequent review deployments explicitly target preview; future deploy commands must include `--target preview`.
+Vercel attempted to make the new project's first deployment production without a production flag. It was canceled before completion. Review deployments explicitly target preview. The approved public release explicitly targets production.
 
 ## Remaining release decisions
 
-1. Review the game preview and approve an anonymous public launch separately. Keep preview protection intact during review. After public launch, replace `SQUARK_PROJECT.liveUrl` with the verified public URL, use **Play demo**, and remove the sign-in sentence.
-2. Complete physical iPhone/Android acceptance before claiming phone support. Check simultaneous steering/boost/action touches, browser chrome and safe areas, orientation, audio interruption, app switching, and the complete course/retries.
-3. Run Microsoft Edge before adding it to the accepted browser matrix. Further Firefox startup tuning remains a useful improvement.
+1. Complete physical iPhone/Android acceptance before claiming phone support. Check simultaneous steering/boost/action touches, browser chrome and safe areas, orientation, audio interruption, app switching, and the complete course/retries.
+2. Run Microsoft Edge before adding it to the accepted browser matrix. Further Firefox startup tuning remains a useful improvement.
+3. Investigate repeat engine transfers before claiming browser-cache savings.
 
-The browser project stays on the existing Hobby plan. No paid upgrade, custom-domain purchase, portfolio production deployment, or PR merge is part of this implementation.
+The browser project stays on the existing Hobby plan. This publication requires no paid upgrade or custom-domain purchase. The portfolio link change follows its normal PR checks.

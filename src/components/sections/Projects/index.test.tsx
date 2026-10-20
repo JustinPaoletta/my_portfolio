@@ -39,7 +39,7 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows the SQUARK review action without loading an embedded game', () => {
+  it('shows the public SQUARK action without loading an embedded game', () => {
     render(<Projects />);
     expect(
       screen.queryByRole('heading', { name: 'Godot Playground' })
@@ -48,21 +48,39 @@ describe('Projects section', () => {
       .getByRole('heading', { name: 'SQUARK' })
       .closest('article')!;
     const action = within(card).getByRole('link', {
-      name: 'Play preview: SQUARK',
+      name: 'Preview In Browser: SQUARK',
     });
     expect(action).toHaveAttribute(
       'href',
-      'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app'
+      'https://squark-demo-justin-paolettas-projects.vercel.app'
     );
     expect(action).toHaveAttribute('target', '_blank');
     expect(action).toHaveAttribute('rel', 'noopener noreferrer');
     expect(
-      within(card).getByText(/preview requires Vercel sign-in/)
+      within(card).getByText(/desktop browser demo needs no account/)
     ).toBeInTheDocument();
+    expect(within(card).queryByText(/Vercel sign-in/)).not.toBeInTheDocument();
     expect(
       within(card).getByAltText(/Actual SQUARK browser gameplay/)
     ).toHaveAttribute('loading', 'lazy');
+    expect(
+      card.querySelector('.card-header img, .card-header .folder-icon')
+    ).toBeNull();
     expect(card.querySelector('iframe, video, canvas, script')).toBeNull();
+  });
+
+  it('does not offer the retired request-focused Plexarr recording', () => {
+    render(<Projects />);
+    const card = screen
+      .getByRole('heading', { name: 'Plexarr' })
+      .closest('article')!;
+    expect(card.querySelector('video, source, track')).toBeNull();
+    expect(
+      within(card).queryByText('Read the walkthrough')
+    ).not.toBeInTheDocument();
+    expect(
+      within(card).getByAltText(/Live Plexarr Discover catalog/)
+    ).toBeInTheDocument();
   });
 
   it('renders project content consistently', () => {
@@ -97,7 +115,7 @@ describe('Projects section', () => {
 
     expect(
       document.querySelector(
-        'img.folder-icon--image[src="/images/projects/squark-icon-120.webp"]'
+        'img.folder-icon--image[src="/images/projects/sidequest-sq-logo-60.webp"]'
       )
     ).toBeInTheDocument();
 

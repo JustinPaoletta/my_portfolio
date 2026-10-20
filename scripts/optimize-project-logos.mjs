@@ -13,8 +13,8 @@ const outputDirectory = join(projectRoot, 'public/images/projects');
 
 const logos = [
   {
-    source: 'sidequest-logo.png',
-    output: 'sidequest-logo',
+    source: 'sidequest-sq-logo.png',
+    output: 'sidequest-sq-logo',
     widths: [60, 120, 180, 240, 480, 720, 960, 1254],
     hasAlpha: false,
     webp: { quality: 90, effort: 6 },

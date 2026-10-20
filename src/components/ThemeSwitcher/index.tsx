@@ -229,7 +229,7 @@ export default function ThemeSwitcher({
             </h2>
 
             <fieldset className="theme-section mode-toggle">
-              <legend className="theme-section-label">Color Mode</legend>
+              <legend className="theme-section-label">Mode</legend>
               <div className="mode-toggle-options">
                 {colorModes.map((mode) => {
                   const inputId = `${dialogId}-${mode}`;

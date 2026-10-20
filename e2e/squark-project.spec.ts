@@ -3,7 +3,7 @@ import { mockPortfolioApis } from './support/mocks';
 import { revealDeferredSection } from './support/sections';
 
 for (const width of [320, 1280]) {
-  test(`SQUARK stays lightweight and opens its separate preview at ${width}px`, async ({
+  test(`SQUARK stays lightweight and opens its public demo at ${width}px`, async ({
     page,
   }) => {
     await page.setViewportSize({ width, height: 844 });
@@ -22,12 +22,22 @@ for (const width of [320, 1280]) {
     const card = projects.locator('article').filter({
       has: page.getByRole('heading', { name: 'SQUARK', exact: true }),
     });
-    const action = card.getByRole('link', { name: 'Play preview: SQUARK' });
+    const action = card.getByRole('link', {
+      name: 'Preview In Browser: SQUARK',
+    });
     await action.scrollIntoViewIfNeeded();
     await expect(action).toBeVisible();
     await expect(
-      card.getByText(/preview requires Vercel sign-in/)
+      card.locator('.card-header img, .card-header .folder-icon')
+    ).toHaveCount(0);
+    await expect(
+      card.getByText(/desktop browser demo needs no account/)
     ).toBeVisible();
+    await expect(card.getByText(/Vercel sign-in/)).toHaveCount(0);
+    await expect(action).toHaveAttribute(
+      'href',
+      'https://squark-demo-justin-paolettas-projects.vercel.app'
+    );
     await expect(
       card.getByRole('img', { name: /Actual SQUARK browser gameplay/ })
     ).toBeVisible();
@@ -47,7 +57,7 @@ for (const width of [320, 1280]) {
       )
     ).toBe(true);
     const destination = await action.getAttribute('href');
-    // Check the portfolio navigation independently of Vercel sign-in and game acceptance.
+    // Check portfolio navigation separately from live public-game acceptance.
     await page.context().route(`${destination}/**`, (route) =>
       route.fulfill({
         contentType: 'text/html',

@@ -1,0 +1,21 @@
+WEBVTT
+
+00:00.000 --> 00:03.500
+Review the Trading Workspace dashboard.
+This recording uses a disposable local account.
+
+00:03.500 --> 00:08.200
+Browse Get Strategic and inspect the saved strategy rules.
+The app shows the current copy and branding.
+
+00:08.200 --> 00:11.500
+Set 75% allocation, commission, and slippage.
+Run a backtest using synthetic local prices.
+
+00:11.500 --> 00:18.500
+Review simulation assumptions, metrics, and the benchmark comparison.
+These are synthetic demo results, not investment performance.
+
+00:18.500 --> 00:21.200
+Inspect the equity curve and trade entry/exit markers.
+No live trading or external provider calls.

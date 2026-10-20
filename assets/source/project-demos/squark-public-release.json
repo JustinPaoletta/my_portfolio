@@ -1,0 +1,175 @@
+{
+  "approvedDate": "2026-10-18",
+  "publicUrl": "https://squark-demo-justin-paolettas-projects.vercel.app",
+  "release": "6e6d40291ad12ce9831f",
+  "projectId": "prj_akz8baXZ84wPV7bMSeimW9dGWIbN",
+  "productionDeploymentId": "dpl_6jH7FniY2SCY9NPrKxjFnr7doTPE",
+  "protection": {
+    "deploymentType": "prod_deployment_urls_and_all_previews",
+    "publicProductionDomain": true,
+    "previousPreviewStatus": 302
+  },
+  "staticDeploymentOverrides": {
+    "framework": null,
+    "installCommand": "",
+    "buildCommand": "",
+    "outputDirectory": "."
+  },
+  "gameAssetChanges": false,
+  "http": {
+    "url": "https://squark-demo-justin-paolettas-projects.vercel.app",
+    "release": "6e6d40291ad12ce9831f",
+    "authenticated": false,
+    "files": [
+      {
+        "path": "index.html",
+        "status": 200,
+        "bytes": 3977,
+        "sha256": "8a32ffde487e115a0a755b736e4c06b44e86c0653be62cac59870bfeefd7b1c4",
+        "contentType": "text/html; charset=utf-8",
+        "contentEncoding": null,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "path": "index.png",
+        "status": 200,
+        "bytes": 9405,
+        "sha256": "1bf99705052d7570b9f0c6dc6181227d8e38f5ab00d7185fe1496f78c76ebf51",
+        "contentType": "image/png",
+        "contentEncoding": null,
+        "cacheControl": "public, max-age=0, must-revalidate"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/gameplay.mp4",
+        "status": 200,
+        "bytes": 6582196,
+        "sha256": "fa365806726175e698d743b852aa12be6458754f373fe5b8bb6150c751681a5e",
+        "contentType": "video/mp4",
+        "contentEncoding": null,
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/index.audio.position.worklet.js",
+        "status": 200,
+        "bytes": 1161,
+        "sha256": "dc77bd39d178bd161770990535976ee3a35d3f76a63acda97e0ea03a7c5a2cd1",
+        "contentType": "application/javascript",
+        "contentEncoding": "gzip",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/index.audio.worklet.js",
+        "status": 200,
+        "bytes": 2194,
+        "sha256": "976140f461ef95aee52cc39f26aa44bd81c526317f4bae6cdbdd49d50efab9a9",
+        "contentType": "application/javascript",
+        "contentEncoding": "gzip",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/index.js",
+        "status": 200,
+        "bytes": 77052,
+        "sha256": "47406b7b1965f65cabf4b1f26b512547d84fa8d2163b5864cea52ce7299a069c",
+        "contentType": "application/javascript",
+        "contentEncoding": "gzip",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/index.pck",
+        "status": 200,
+        "bytes": 42129068,
+        "sha256": "7ebc028c9e9c2a3f182630316b2d4c33d92f7df53f2cba965576f5df70fb6da1",
+        "contentType": "application/octet-stream",
+        "contentEncoding": "gzip",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/index.wasm",
+        "status": 200,
+        "bytes": 9237412,
+        "sha256": "a07444b788aec930d4385edc320935c1827fb520cf3500201cfc61ff2ba66a23",
+        "contentType": "application/wasm",
+        "contentEncoding": "gzip",
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/poster.png",
+        "status": 200,
+        "bytes": 13234,
+        "sha256": "7f27db0119886a7cabb018c8899526d2c9272c8795a6491f4a97ea2db319223e",
+        "contentType": "image/png",
+        "contentEncoding": null,
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/shell.css",
+        "status": 200,
+        "bytes": 3967,
+        "sha256": "5238415b76fdf09a37d9035744125824c44755bb06ecb45127b1624ff279a01f",
+        "contentType": "text/css; charset=utf-8",
+        "contentEncoding": null,
+        "cacheControl": "public, max-age=31536000, immutable"
+      },
+      {
+        "path": "releases/6e6d40291ad12ce9831f/shell.js",
+        "status": 200,
+        "bytes": 7442,
+        "sha256": "c02b77eb9ae746890c2ab914b4188043a1af7268744ebb0dc349a8e628a4ca8f",
+        "contentType": "application/javascript; charset=utf-8",
+        "contentEncoding": null,
+        "cacheControl": "public, max-age=31536000, immutable"
+      }
+    ]
+  },
+  "anonymousChrome": {
+    "beforePlayEngineRequests": 0,
+    "cold": {
+      "browser": "155.0.8059.80",
+      "cookieCount": 0,
+      "observation": {
+        "errors": [],
+        "audioStarts": 40,
+        "resources": [
+          {
+            "url": "https://squark-demo-justin-paolettas-projects.vercel.app/releases/6e6d40291ad12ce9831f/index.wasm",
+            "transferSize": 9237712,
+            "encodedBodySize": 9237412,
+            "decodedBodySize": 38034280
+          },
+          {
+            "url": "https://squark-demo-justin-paolettas-projects.vercel.app/releases/6e6d40291ad12ce9831f/index.pck",
+            "transferSize": 42129368,
+            "encodedBodySize": 42129068,
+            "decodedBodySize": 62099024
+          }
+        ]
+      }
+    },
+    "repeat": {
+      "beforeEngineRequests": 0,
+      "cookieCount": 0,
+      "pageErrors": [],
+      "resources": [
+        {
+          "url": "https://squark-demo-justin-paolettas-projects.vercel.app/releases/6e6d40291ad12ce9831f/index.wasm",
+          "transferSize": 9237712,
+          "encodedBodySize": 9237412,
+          "decodedBodySize": 38034280
+        },
+        {
+          "url": "https://squark-demo-justin-paolettas-projects.vercel.app/releases/6e6d40291ad12ce9831f/index.pck",
+          "transferSize": 42129368,
+          "encodedBodySize": 42129068,
+          "decodedBodySize": 62099024
+        }
+      ]
+    },
+    "flightObservation": "Clicked the visible Let\u2019s Fly canvas button, waited for the countdown, and used normal W keyboard input. The gameplay timer advanced.",
+    "fullCourseRepeated": false
+  },
+  "limitations": [
+    "Physical phone and Microsoft Edge acceptance remain open.",
+    "Repeat engine loads still transferred the full files; browser cache savings are not established."
+  ]
+}

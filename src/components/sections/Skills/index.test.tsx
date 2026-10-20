@@ -7,10 +7,16 @@ describe('Skills section', () => {
     render(<Skills />);
 
     for (const [category, technologies] of [
-      ['Frontend systems', ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS']],
-      ['Testing & delivery', ['Playwright', 'GitHub Actions', 'Jenkins']],
-      ['APIs & data', ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB']],
-      ['AI-assisted development', ['Claude Code', 'Codex', 'Cursor (IDE)']],
+      [
+        'Frontend Architecture',
+        ['Angular', 'React', 'TypeScript', 'RxJS', 'SCSS'],
+      ],
+      [
+        'Testing & Release Automation',
+        ['Playwright', 'GitHub Actions', 'Jenkins'],
+      ],
+      ['Backend APIs & Data', ['Node.js', 'NestJS', 'Prisma', 'MySQL/MariaDB']],
+      ['AI-Assisted Development', ['Claude Code', 'Codex', 'Cursor']],
     ] as const) {
       const group = screen.getByRole('list', {
         name: `${category} technologies`,

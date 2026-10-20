@@ -59,14 +59,24 @@ export const JP_DESIGN_SYSTEM_PROJECT: ProjectSummary = {
   githubUrl: `${githubProfileUrl}/jp-design-system`,
 };
 
-/** Review-only URL. Replace with the public release URL after launch approval. */
+/** Stable public game origin; review deployments remain protected. */
 export const SQUARK_PROJECT: ProjectSummary = {
   title: 'SQUARK',
   description:
-    'Fly a conure through a river valley, collect snacks, and reach the tower perch before the two-minute timer runs out. The Godot browser demo shares its flight, collision, audio, and results systems with the native game. Desktop preview requires Vercel sign-in; phone testing is in progress.',
+    'Fly a conure through a river valley, collect snacks, and reach the tower perch before the two-minute timer runs out. The Godot browser demo shares its flight, collision, audio, and results systems with the native game. The desktop browser demo needs no account; phone testing is in progress.',
   techStack: ['Godot', 'GDScript', 'WebGL 2', 'WebAssembly'],
   status: 'testing',
   featured: false,
-  liveUrl: 'https://squark-demo-mztzrjrps-justin-paolettas-projects.vercel.app',
-  liveLabel: 'Play preview',
+  liveUrl: 'https://squark-demo-justin-paolettas-projects.vercel.app',
+  liveLabel: 'Preview In Browser',
+};
+
+/** Private household-library dashboard; access remains allowlisted. */
+export const PLEXARR_PROJECT: ProjectSummary = {
+  title: 'Plexarr',
+  description:
+    'A private, self-hosted dashboard for browsing a household media library and discovering what to watch next. Built with Next.js and React, Plexarr combines library search and filters, title details, and personalized recommendations shaped by favorites and ratings. Allowlisted users sign in with passkeys; backend integrations and service credentials stay server-side.',
+  techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
+  private: true,
+  featured: true,
 };

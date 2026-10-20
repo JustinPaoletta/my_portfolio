@@ -398,8 +398,8 @@ test('cosmic light mode applies light hero styling', async ({ page }) => {
       contentFontFamily: expect.stringContaining('Space Grotesk'),
       greetingFontFamily: expect.stringContaining('Space Grotesk'),
       nameFontFamily: expect.stringContaining('Inter'),
-      navLinkColor: 'rgb(248, 241, 255)',
-      navLogoPrimary: '#c77dff',
+      navLinkColor: 'rgb(92, 31, 153)',
+      navLogoPrimary: '#5c1f99',
     });
 
   await page.evaluate(() => {
@@ -448,11 +448,11 @@ test('CLI theme supports command execution and exit', async ({ page }) => {
 
   const commandInput = page.getByLabel(/terminal command input/i);
   await expect(commandInput).toBeFocused();
-  await commandInput.fill('9');
+  await commandInput.fill('help');
   await commandInput.press('Enter');
   await expect(page.getByText('[HELP]')).toBeVisible();
 
-  await commandInput.fill('dog 1 treat');
+  await commandInput.fill('dog nala treat');
   await commandInput.press('Enter');
   await expect.poll(async () => nalaTreatPosts).toBeGreaterThan(0);
   await expect(page.getByText(/Nala got a treat\./i)).toBeVisible();

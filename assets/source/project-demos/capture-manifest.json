@@ -44,11 +44,77 @@
     ]
   },
   "bitstockerz": {
+    "captured": "2026-10-18",
     "sourceRevision": "44584e441c39969e7ab3f17b7053c93b4dae8e56",
-    "mode": "Disposable local seed API; current Angular development server; existing compiled API. No database, live provider, or AI calls.",
-    "runId": "04a19027-f084-45e9-853c-d793541f706e",
-    "durationSeconds": 15.6,
-    "encoding": "VP9 WebM and H.264 MP4, 1440x960, 15fps, no audio"
+    "workingTreeDirty": true,
+    "sourceFilesSha256": {
+      "apps/web/public/brand/logo.png": "8b4d8e4e88d9f0f3e7f4653434ad0a6870a6d59a19d57d2fc382df03b07bf75b",
+      "apps/web/src/app/app.css": "eeeb32cb6baa0cb4e25660c621cd25ec52c8fa3327ce5e6dd4b795018ed58125",
+      "apps/web/src/app/app.html": "c094cff7d2d41325c4e759c1cf95156ba29c82138a4c199f794c0302c1027bb9",
+      "apps/web/src/app/app.spec.ts": "4a39090749b73b9eeb100e3224cb3d52f2d1c1125664db8c317f5ff20595bde5",
+      "apps/web/src/app/app.ts": "20e90a86579ddb87d91693caabede00f922493d57e345ea87e88dba90a10a301",
+      "apps/web/src/app/core/api/api-base.interceptor.spec.ts": "951e0cd2d24d16be3cc076cfba4582396277e7648b7f588a177e41c3f40d56cb",
+      "apps/web/src/app/core/api/api-base.interceptor.ts": "f6e012b5bfcc9bfa2a375522f4660a394db6785e94f80fa6c5d4ddd9c918b93f",
+      "apps/web/src/app/core/auth/login.page.spec.ts": "ae6d4218e63ec6302f7ebdf5eddee123e2828c0fd4cb180c55fb52dd7d61b089",
+      "apps/web/src/app/core/auth/login.page.ts": "541dd751b152dd0b035e1ca8dbcb40e6f95b6c1af95163cc4ed16028e8b8cbce",
+      "apps/web/src/app/features/backtests/backtest.mapper.ts": "eded2e68519560a634fa2fbd3c9ca897ba741a675774efca2e23cd31f8f6d7a5",
+      "apps/web/src/app/features/backtests/components/equity-curve-chart.component.ts": "f6077547ca62902dae09ab5e1531fcbddca1d0ae782917cc0a7f5ab34763e1f7",
+      "apps/web/src/app/features/backtests/pages/backtest-detail.page.ts": "0a58500b0bb746367143ae6df47a4f9153cd7131142fda6033c6462911fcadd4",
+      "apps/web/src/app/features/backtests/pages/backtest-list.page.ts": "15ad2254efb9e762d0742228f21ca837b40bf73a45ab05ea192c1eb9d449921f",
+      "apps/web/src/app/features/dashboard/dashboard.page.ts": "b4de20e8e0919936727d064102c22ea87b41be33eb73c1a81364c4894462ece0",
+      "apps/web/src/app/features/market/price-chart.component.ts": "f7116b1077042aec169f5c24edc4cbe2f0c228bcb1a2112897077526b0aa0dd4",
+      "apps/web/src/app/features/strategies/pages/strategy-list.page.ts": "a87561bbd9143908b025c872009b635aec1b0edc8a9322a38caf4942da822ca6",
+      "apps/web/src/environments/environment.prod.ts": "23b936d43e6fe5d05df6c8cee6ed83bafba50a9e593d96c747b76fb46eb2d2af",
+      "apps/web/src/environments/environment.ts": "c35eaaf950e12fb6a0c707c9dd0689ada29da90266b4d8c82598d7383df58a46",
+      "apps/web/src/index.html": "c1d5d16ee9aebe8ac5361a2be6f248c60920a7a2784aff01dfbec9a64ac80c55",
+      "apps/web/src/styles.css": "59a27fba17722b7c87eaff0e874161d50d632e32f3c254b72b6d8f9611586d8e"
+    },
+    "mode": "Current Angular 22 development UI with existing compiled API in disposable local seed mode. No database, credentials, ingestion, live market provider, or AI calls. No browser response interception.",
+    "runId": "519f246f-8928-48ec-84e4-d628fa040e01",
+    "durationSeconds": 21.2,
+    "encoding": "VP9 WebM and constrained-baseline H.264 MP4, 1440x960, 25fps, no audio",
+    "rawEncoding": "VP8 WebM, 1440x960, 25fps, no audio",
+    "workflow": [
+      "Trading Workspace dashboard",
+      "Get Strategic strategy library",
+      "Saved SMA momentum study rules",
+      "75% allocation and 5 bps commission/slippage",
+      "Actual local backtest",
+      "Assumptions, metrics, benchmark comparison, equity curve"
+    ],
+    "scriptPhaseTimings": [
+      {
+        "name": "dashboard",
+        "seconds": 0.002
+      },
+      {
+        "name": "strategy-library",
+        "seconds": 2.266
+      },
+      {
+        "name": "strategy-rules",
+        "seconds": 4.534
+      },
+      {
+        "name": "simulation-settings",
+        "seconds": 7.003
+      },
+      {
+        "name": "results",
+        "seconds": 9.69
+      },
+      {
+        "name": "benchmark-chart",
+        "seconds": 12.955
+      },
+      {
+        "name": "equity-curve",
+        "seconds": 16.48
+      }
+    ],
+    "source": "assets/source/project-demos/bitstockerz-workspace-walkthrough.webm",
+    "poster": "assets/source/project-demos/bitstockerz-workspace.png",
+    "previousSources": "October 15 sources and hashes are retained as archived provenance; current public media uses bitstockerz-workspace-* names."
   },
   "sha256": {
     "assets/source/project-demos/design-system-dashboard.png": "ecd30aa4bb59d3fff91c7d9bc9db9c106c28bca7002c88fb16e611a15e94853d",
@@ -85,12 +151,29 @@
     "assets/source/project-demos/plexarr-live-request-capture.mp4": "59a5483fc716c109d49602ed34e56844246aeee58b15d1480453ce72508e8f69",
     "assets/source/project-demos/plexarr-live-catalog-capture.mp4": "46a9593babcddb48efec487f962378699422ea480eb1d1bcedf21b4ffb3b0c84",
     "assets/source/project-demos/plexarr-live-discover.png": "dcdf32a4e0ded0c8e3a9db9ac3e95ec00b865113d1d4f0cbdff7354bea078740",
-    "public/media/plexarr-live-demo.vtt": "7609e9d8868a8489dc5a8321d6078f1f8cba0d9f2d349e38dea76686bf0f0f28",
-    "public/media/plexarr-live-demo.webm": "79143fad8bae61fd80730d8c5e3a4fbc43349e12807d881f7001dfcfeaae0b93",
-    "public/media/plexarr-live-demo.mp4": "05b10a06a3917c81a7fb3e0d8c798b7301d9756fb54f0159af1038645590f4ed",
-    "public/images/projects/plexarr-live-discover-960.webp": "9646c82919bf8d5d3c17327e7d82752d45ed40d8b89fcb86c6e8cb11884d80a8",
-    "public/images/projects/plexarr-live-discover-1440.webp": "e3722fd9d50cbfe9397f0c286c913c37a8abfac39c9f76dfa197cf9d0826d689",
-    "public/images/projects/plexarr-live-discover-640.webp": "4a66a8690b555d1b2b433620e31774bc865dfdcb0dfac54af5236f825a2b2681"
+    "assets/source/project-demos/bitstockerz-workspace-walkthrough.webm": "d55259d27ab9913bcb28dc81f91065433658a1c7b6c19ec8df9d52691ee1e6b9",
+    "assets/source/project-demos/bitstockerz-workspace.png": "011f5409bbb069bb2a6c39efe52256c2d5e07c084210531d3e6bf858cdd2586a",
+    "public/media/bitstockerz-workspace-demo.mp4": "149f01feb81fc0c13a8f6b7a084de9c1ce16e2126bdbfc15b9e09687819c35c8",
+    "public/media/bitstockerz-workspace-demo.vtt": "081578ec4c2eecf8b059e03c2687a5bc497e9872d7104c03c1fb4c9b03a34fdc",
+    "public/media/bitstockerz-workspace-demo.webm": "f4979973dc9e059d74711e3d1aac4d2666b5bf19cc5a36e71d7ac23fd040b0a2",
+    "public/images/projects/bitstockerz-workspace-1440.webp": "6ee603829bbe2bd658068fd0b7a9cc6f37133a117c05ec934a33e5c6728c1a76",
+    "public/images/projects/bitstockerz-workspace-640.webp": "f0962ac7b7a4c704ab8e40871851b756f784e2104222e190177f9ef12f7c1eda",
+    "public/images/projects/bitstockerz-workspace-960.webp": "01de8b90a60bfba239f5cd04ef572e8f425fb551991954165fb51bb5fe1afd61",
+    "assets/source/project-demos/plexarr-catalog.png": "00877c6fec0df1bd77911524a27d4bbcd91083b2a63cb961e87282eecd29f463",
+    "public/images/projects/plexarr-catalog-1440.webp": "de7e04437fbf1a183f425e796aee70af1e7514bd8c57e21df724dfd4ca52c8be",
+    "public/images/projects/plexarr-catalog-640.webp": "83165b0ebd0d9da938ff59b930e504e7375e3de57be047c99bb4f9d09e433029",
+    "public/images/projects/plexarr-catalog-960.webp": "0954879a1a8abdeebcb15a0dfac5a13d5c4052f14bb2e3dd4691ad3d9ef9d8f7",
+    "assets/source/project-demos/plexarr-picks.png": "a337d8277e041b3f84eaf771a6fc0efc32af489f448cc07ab251e537a6507567",
+    "assets/source/project-demos/plexarr-overview.png": "f64e75a597561438923bdb2e8253e4244409f4c7a0f9ab56f569725339db8b78",
+    "assets/source/project-demos/plexarr-rating.png": "0b46a978578c7096c9a4150c6c8f725ed5f827e480f7e36c01218b5cdcbfc88d",
+    "public/images/projects/plexarr-overview-480.webp": "f8dc662620bbd5c84e3e001515e2c6a03a88e5491d3f1fe375c1dcb9d91b7d67",
+    "public/images/projects/plexarr-overview-320.webp": "67ff06924bd9c26ab68132fb286013b2e5cb6979deb9fa2e16bdb1cf873c5e40",
+    "public/images/projects/plexarr-overview-576.webp": "7f18e716d309fcccdbfa23b07aefcb8b7957ba78e24ce115e2042276d43c351c",
+    "public/images/projects/plexarr-rating-480.webp": "e0887f3531330295d4ea8fadbc5d43e0432c51166b909cf9959874f19ac5ad67",
+    "public/images/projects/plexarr-rating-320.webp": "d105033efe3b6c3b2ea4c6a23d8c1dbffb19c3db31f19e3d6510c4169c3230da",
+    "public/images/projects/plexarr-picks-640.webp": "b7dd5c48f694ebbc26f8d06eb8d63249745898c56b0b4d244df0da4923aaa140",
+    "public/images/projects/plexarr-rating-522.webp": "b871820f10d97d6ddd7813d78450ed062137ba73f9b38a5da5f2ebb7d7e1fd2b",
+    "public/images/projects/plexarr-picks-700.webp": "0a4529e6cb6a20ace4fbdbdfb9acfed76c333a2ff2e461df85b7784b927a93d0"
   },
   "wildApricot": {
     "sourceRevision": "b419827fe25bc6e9eafcf5ef6248354c4529604f",
@@ -104,6 +187,62 @@
     "resume": "Two cached files skipped; zero additional GET requests."
   },
   "plexarr": {
+    "captured": "2026-10-15",
+    "presentationUpdated": "2026-10-18",
+    "mode": "Owner-approved reuse of authentic live-app captures in a manually controlled screenshot carousel. No video, mock data, new sign-in, or live interaction is claimed.",
+    "workflow": [
+      "Discover catalog",
+      "Personalized next-watch recommendation and favorite/Not interested controls",
+      "Separate title-overview and genres/community-rating excerpts"
+    ],
+    "captures": [
+      {
+        "file": "plexarr-catalog.png",
+        "source": "plexarr-live-discover.png",
+        "crop": {
+          "x": 0,
+          "y": 193,
+          "width": 1440,
+          "height": 592
+        }
+      },
+      {
+        "file": "plexarr-picks.png",
+        "source": "plexarr-live-catalog-capture.mp4",
+        "frameSeconds": 20.3,
+        "crop": {
+          "x": 18,
+          "y": 273,
+          "width": 700,
+          "height": 252
+        }
+      },
+      {
+        "file": "plexarr-overview.png",
+        "source": "plexarr-live-catalog-capture.mp4",
+        "frameSeconds": 23,
+        "crop": {
+          "x": 434,
+          "y": 117,
+          "width": 576,
+          "height": 267
+        }
+      },
+      {
+        "file": "plexarr-rating.png",
+        "source": "plexarr-live-catalog-capture.mp4",
+        "frameSeconds": 23,
+        "crop": {
+          "x": 459,
+          "y": 486,
+          "width": 522,
+          "height": 47
+        }
+      }
+    ],
+    "boundaries": "Public crops exclude Request navigation, actions, forms, and the title dialog’s request-status message. The third slide stacks two separate metadata excerpts; it is not an unmodified full-window capture. Library and preference mutations are not demonstrated. Original recordings remain historical source evidence only; no Plexarr video is deployed."
+  },
+  "plexarrArchivedOctober15": {
     "captured": "2026-10-15",
     "deployedRevision": "Not independently verified from the browser.",
     "mode": "Owner-authenticated live app in Chrome after normal passkey sign-in. Real catalog, recommendation, availability, and quality-profile responses. No interception, seed data, auth bypass, submitted request, or download.",
@@ -141,6 +280,8 @@
       "Request review with HD-1080p selected",
       "Cancel before submission; return to Discover"
     ],
-    "boundaries": "Selection change occurs between the retained segments. No claim of uninterrupted recording, passkey ceremony, request submission, successful add, or download."
+    "boundaries": "Selection change occurs between the retained segments. No claim of uninterrupted recording, passkey ceremony, request submission, successful add, or download.",
+    "presentationUpdated": "2026-10-18",
+    "presentationNotes": "Shared card/CLI copy and timed captions now emphasize the private household-library dashboard, catalog browsing, availability, and request review. Video footage remains the authentic 2026-10-15 recording."
   }
 }

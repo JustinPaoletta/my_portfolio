@@ -24,12 +24,12 @@ test.describe('@visual CLI terminal', () => {
       viewport: DESKTOP_HERO_VIEWPORT,
     });
     const prompt = page.getByLabel('Terminal command input');
-    for (const command of ['ls', 'cd projects', 'cd 2']) {
+    for (const command of ['ls', 'cd projects', 'cd bitstockerz']) {
       await prompt.fill(command);
       await prompt.press('Enter');
     }
     await expect(
-      page.getByText('[PROJECT 2] BitStockerz', { exact: true })
+      page.getByText('[PROJECT] BitStockerz', { exact: true })
     ).toBeVisible();
     await prompt.blur();
     await expect(page).toHaveScreenshot('cli-project-session-desktop.png');

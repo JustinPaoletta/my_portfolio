@@ -70,7 +70,7 @@ function About(): React.ReactElement {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                View résumé
+                View Resume
               </a>
             </div>
           </Reveal>
