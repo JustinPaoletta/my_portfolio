@@ -9,6 +9,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
+- Move SideQuest: Pittsburgh into the main project layout with its description, stack, status, and native gallery. Rename More Projects to Games and keep SQUARK as its only entry.
 - Refresh design-system Game 6 examples and add its verified public Storybook action. Update Plexarr to the current sample-library interface, SQUARK to connected mountain gameplay, and SideQuest to native discovery, guide, and collection screens.
 - Share SideQuest descriptions and its SQLite/MapLibre/Fastify/Postgres stack between cards and CLI. Preserve original artwork, gameplay recordings, design references, and dated capture provenance.
 

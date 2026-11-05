@@ -124,14 +124,6 @@ const projects: Project[] = [
     featured: true,
   },
   {
-    ...SIDEQUEST_PROJECT,
-    id: 'project-5',
-    showcase: 'sidequest',
-    image: '/images/projects/sidequest-discovery-20261105-480.webp',
-    cardHeaderIcon: '/images/projects/sidequest-sq-logo-60.webp',
-    cardHeaderIconSrcSet: logoSrcSet('sidequest-sq-logo', [60, 120, 180]),
-  },
-  {
     ...PLEXARR_PROJECT,
     id: 'project-6',
     showcase: 'plexarr',
@@ -148,6 +140,14 @@ const projects: Project[] = [
     imageHeight: 783,
     imageCaption: 'Current interface captured locally with a sample library.',
   },
+  {
+    ...SIDEQUEST_PROJECT,
+    id: 'project-5',
+    showcase: 'sidequest',
+    image: '/images/projects/sidequest-discovery-20261105-480.webp',
+    cardHeaderIcon: '/images/projects/sidequest-sq-logo-60.webp',
+    cardHeaderIconSrcSet: logoSrcSet('sidequest-sq-logo', [60, 120, 180]),
+  },
 ];
 
 function Projects(): React.ReactElement {
@@ -155,7 +155,7 @@ function Projects(): React.ReactElement {
   const isVisible = useRevealInView(sectionRef);
 
   const featuredProjects = projects.filter((p) => p.featured);
-  const otherProjects = projects.filter((p) => !p.featured);
+  const games = projects.filter((p) => p.category === 'game');
 
   return (
     <section
@@ -371,6 +371,8 @@ function Projects(): React.ReactElement {
                 <ExportShowcase />
               ) : project.showcase === 'plexarr' ? (
                 <PlexarrShowcase />
+              ) : project.showcase === 'sidequest' ? (
+                <SideQuestShowcase />
               ) : project.demo ? (
                 <figure className="project-demo">
                   <video
@@ -454,17 +456,22 @@ function Projects(): React.ReactElement {
           ))}
         </div>
 
-        {/* Other Projects */}
+        {/* Games */}
         <Reveal
           as="h3"
+          id="games-heading"
           className="other-projects-title"
           delay={240}
           visible={isVisible}
         >
-          More Projects
+          Games
         </Reveal>
-        <div className="other-projects">
-          {otherProjects.map((project, index) => (
+        <div
+          className="other-projects"
+          role="group"
+          aria-labelledby="games-heading"
+        >
+          {games.map((project, index) => (
             <Reveal
               as="article"
               key={project.id}
@@ -613,9 +620,7 @@ function Projects(): React.ReactElement {
                   )}
                 </div>
               </div>
-              {project.showcase === 'sidequest' ? (
-                <SideQuestShowcase />
-              ) : project.cardImage ? (
+              {project.cardImage ? (
                 <div
                   className={`card-image-wrapper${
                     project.cardImageFit === 'contain'

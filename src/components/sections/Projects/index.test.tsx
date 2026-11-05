@@ -3,14 +3,29 @@ import { describe, expect, it } from 'vitest';
 import Projects from '.';
 
 describe('Projects section', () => {
-  it('renders featured and other projects with status/private branches', () => {
+  it('renders main projects and games with status/private branches', () => {
     render(<Projects />);
 
     expect(
       screen.getByRole('heading', { name: 'Projects' })
     ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Games' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'More Projects' })).toBeNull();
+    const games = screen.getByRole('group', { name: 'Games' });
+    expect(within(games).getAllByRole('article')).toHaveLength(1);
     expect(
-      screen.getByRole('heading', { name: 'More Projects' })
+      within(games).getByRole('heading', { name: 'SQUARK' })
+    ).toBeInTheDocument();
+    const sideQuest = screen
+      .getByRole('heading', { name: 'SideQuest: Pittsburgh', level: 3 })
+      .closest('article')!;
+    expect(sideQuest).toHaveClass('featured-project');
+    expect(sideQuest.querySelector('.project-content')).toBeInTheDocument();
+    expect(
+      within(sideQuest).getByLabelText('Project testing')
+    ).toBeInTheDocument();
+    expect(
+      within(sideQuest).getByRole('group', { name: 'SideQuest app screens' })
     ).toBeInTheDocument();
 
     expect(screen.getAllByLabelText('Project in development').length).toBe(1);

@@ -123,6 +123,26 @@ for (const width of [390, 1280]) {
       name: 'SideQuest app screens',
       exact: true,
     });
+    const sideQuest = page.locator('.featured-projects > article').filter({
+      has: page.getByRole('heading', {
+        name: 'SideQuest: Pittsburgh',
+        level: 3,
+        exact: true,
+      }),
+    });
+    await expect(sideQuest).toHaveCount(1);
+    await expect(sideQuest.locator('.project-content')).toContainText(
+      'React Native'
+    );
+    await expect(
+      sideQuest.getByLabel('SideQuest: Pittsburgh repository is private')
+    ).toBeVisible();
+    await expect(
+      sideQuest.getByRole('group', {
+        name: 'SideQuest app screens',
+        exact: true,
+      })
+    ).toHaveCount(1);
     expect(
       requested.some((url) =>
         /sidequest-(guides|collection)-20261105/.test(url)
@@ -150,8 +170,6 @@ for (const width of [390, 1280]) {
     await expect(
       nativeGallery.getByText(/iOS simulator capture/)
     ).toBeVisible();
-    // Accent ink is calibrated against the page, not the lighter hover card.
-    await nativeGallery.locator('..').hover();
     expect(
       await page.evaluate(
         () =>

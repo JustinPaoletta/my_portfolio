@@ -27,6 +27,7 @@ export interface ProjectSummary {
   techStack: string[];
   status?: ProjectStatus;
   featured: boolean;
+  category?: 'game';
   githubUrl?: string;
   liveUrl?: string;
   liveLabel?: string;
@@ -64,6 +65,7 @@ export const JP_DESIGN_SYSTEM_PROJECT: ProjectSummary = {
 /** Stable public game origin; review deployments remain protected. */
 export const SQUARK_PROJECT: ProjectSummary = {
   title: 'SQUARK',
+  category: 'game',
   description:
     'Fly a conure through a mountain-lined river valley, collect rings and snacks, and reach the tower perch before the two-minute timer runs out. The Godot browser demo shares its flight, collision, audio, and results systems with the native game. The desktop browser demo needs no account; phone testing is in progress.',
   techStack: ['Godot', 'GDScript', 'WebGL 2', 'WebAssembly'],
@@ -98,5 +100,5 @@ export const SIDEQUEST_PROJECT: ProjectSummary = {
   ],
   status: 'testing',
   private: true,
-  featured: false,
+  featured: true,
 };

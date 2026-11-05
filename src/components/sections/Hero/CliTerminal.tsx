@@ -538,7 +538,7 @@ function CliTerminal(): React.ReactElement {
       { kind: 'output', text: `[PROJECT] ${project.title}` },
       {
         kind: 'output',
-        text: `Type: ${project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${PROJECT_STATUS_LABELS[project.status]}` : ''}`,
+        text: `Type: ${project.category === 'game' ? 'Game' : project.featured ? 'Featured' : 'Other'}${project.status ? ` | Status: ${PROJECT_STATUS_LABELS[project.status]}` : ''}`,
       },
       ...(repoLine ? [repoLine] : []),
       ...(packageLine ? [packageLine] : []),

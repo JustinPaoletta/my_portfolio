@@ -1,8 +1,9 @@
 # SQUARK browser demo
 
 Reviewed November 5, 2026. The portfolio shows a lightweight gameplay capture
-under More Projects and opens the game through **Preview In Browser**.
-It does not embed a canvas or request game-engine files before that action.
+under Games and opens the game through **Preview In Browser**.
+SQUARK is the only game in this section. SideQuest uses the main project layout.
+The portfolio does not embed a canvas or request game-engine files before that action.
 
 The [public browser demo](https://squark-demo-justin-paolettas-projects.vercel.app)
 requires no account. Desktop browsers are recommended.
