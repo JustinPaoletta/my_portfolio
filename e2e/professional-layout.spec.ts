@@ -25,6 +25,7 @@ for (const width of [320, 390, 1280]) {
       'BitStockerz',
       'wild-apricot-exports',
       'Plexarr',
+      'SideQuest: Pittsburgh',
     ]);
     if (width <= 1024) {
       for (const project of await featured.all()) {
