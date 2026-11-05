@@ -2,6 +2,8 @@
 
 The pet section keeps optimistic treat and scritch counts in browser storage.
 The optional `/api/pet-dogs` Vercel function stores shared counts in Upstash Redis.
+Engineer and Cosmic show **Can I pet that Dawg?**. Minimal omits the section.
+CLI retains the `dogs` directory and pet commands described in [JP-CLI](JP_CLI.md).
 
 ## Source
 

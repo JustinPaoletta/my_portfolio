@@ -9,6 +9,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
+- Place SideQuest: Pittsburgh above Wild Apricot exports. Omit the pet section from Minimal while retaining Engineer, Cosmic, and CLI pet interactions.
+- Give the SQUARK gameplay image a smooth rounded border and remove its colored side bar.
 - Move SideQuest: Pittsburgh into the main project layout with its description, stack, status, and native gallery. Rename More Projects to Games and keep SQUARK as its only entry.
 - Refresh design-system Game 6 examples and add its verified public Storybook action. Update Plexarr to the current sample-library interface, SQUARK to connected mountain gameplay, and SideQuest to native discovery, guide, and collection screens.
 - Share SideQuest descriptions and its SQLite/MapLibre/Fastify/Postgres stack between cards and CLI. Preserve original artwork, gameplay recordings, design references, and dated capture provenance.
@@ -46,6 +48,7 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Documentation
 
+- Recheck all guides, including the README, against the final project order, theme-specific pet availability, and SQUARK image treatment.
 - Recheck final project grouping, manual-test sequencing, prerender evidence, procedural/GLB caching, optional provider settings, and parsed request-body limits. Remove obsolete budget limits from the generated PR size report.
 
 - Audit maintained guides against source, correct API failure behavior and CLI examples, and distinguish dated implementation records from current instructions.

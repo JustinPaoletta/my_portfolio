@@ -162,8 +162,9 @@ for (const width of [390, 1440]) {
     const headings = projects.locator('.featured-project h3');
     await expect(headings.nth(0)).toHaveText('@jp-design-system');
     await expect(headings.nth(1)).toHaveText('BitStockerz');
-    await expect(headings.nth(2)).toHaveText('wild-apricot-exports');
-    await expect(headings.nth(3)).toHaveText('Plexarr');
+    await expect(headings.nth(2)).toHaveText('SideQuest: Pittsburgh');
+    await expect(headings.nth(3)).toHaveText('wild-apricot-exports');
+    await expect(headings.nth(4)).toHaveText('Plexarr');
     await expect(
       projects.getByLabel('Plexarr repository is private')
     ).toBeVisible();

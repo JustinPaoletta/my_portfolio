@@ -228,7 +228,7 @@ test.describe('@visual section states', () => {
 
   test('captures expanded pet dogs section', async ({ page }) => {
     await gotoVisualState(page, {
-      theme: 'minimal',
+      theme: 'cosmic',
       mode: 'light',
       viewport: DESKTOP_SECTION_VIEWPORT,
     });

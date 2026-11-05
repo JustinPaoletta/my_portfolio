@@ -63,8 +63,12 @@ async function expectAllSectionsVisibleAfterFullScroll(
     'skills',
     'github',
     'contact',
-    'pet-dogs',
-  ] as const;
+  ];
+  const hasPetDogs =
+    (await page.locator('html').getAttribute('data-theme')) !== 'minimal';
+  if (hasPetDogs) {
+    expectedSectionIds.push('pet-dogs');
+  }
   const seenSectionIds = new Set<string>();
 
   const captureVisibleSections = async (): Promise<void> => {
@@ -127,6 +131,12 @@ async function expectAllSectionsVisibleAfterFullScroll(
       seenSectionIds.has(sectionId),
       `Expected section "${sectionId}" to appear during full-page scroll`
     ).toBe(true);
+  }
+  if (!hasPetDogs) {
+    await expect(page.locator('section#pet-dogs')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /show dogs/i })).toHaveCount(
+      0
+    );
   }
 }
 

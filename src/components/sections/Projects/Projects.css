@@ -251,18 +251,7 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
-  background:
-    radial-gradient(
-      circle at 20% 50%,
-      rgba(255, 184, 0, 0.22),
-      transparent 45%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(20, 20, 20, 0.92) 0%,
-      rgba(96, 62, 0, 0.85) 42%,
-      rgba(247, 240, 226, 0.96) 100%
-    );
+  background: var(--bg-card);
 }
 
 .card-image-wrapper--contain {
@@ -274,6 +263,8 @@
   width: 100%;
   aspect-ratio: 16 / 7;
   object-fit: cover;
+  /* Clip the thin colored frame baked into the gameplay capture. */
+  transform: scale(1.015);
 }
 
 .card-image--contain {

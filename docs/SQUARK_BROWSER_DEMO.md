@@ -22,6 +22,7 @@ Its HTML references that mountain release without an authentication redirect.
 This repeated check covers the hosted shell, not hosted gameplay.
 
 The current card uses `squark-mountain-flight-800.webp`.
+The image has a smooth rounded border with no colored side bar.
 Its source is the November 4 browser capture from the game checkout.
 It shows the connected mountain ranges, river, rings, and native HUD.
 The original PNG and release evidence are retained under

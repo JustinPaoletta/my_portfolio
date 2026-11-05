@@ -3,7 +3,15 @@
  * Portfolio with parallax scrolling and animated sections
  */
 
-import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import '@/App.css';
 import '@/styles/reveal.css';
 import DeferredSection from '@/components/DeferredSection';
@@ -27,6 +35,13 @@ const PWAUpdatePrompt = lazy(() => import('@/components/pwa-update-prompt'));
 function AppLayout(): React.ReactElement {
   const { themeName } = useTheme();
   const isCliTheme = themeName === 'cli';
+  const sections = useMemo(
+    () =>
+      SECTION_MANIFEST.filter(
+        (section) => themeName !== 'minimal' || section.id !== 'pet-dogs'
+      ),
+    [themeName]
+  );
   const isVisualTest = isVisualTestMode();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const shouldMountFeaturedSections = useIdleActivation({
@@ -37,6 +52,7 @@ function AppLayout(): React.ReactElement {
     string[]
   >([]);
   const forcedDeferredSectionIdSet = new Set(forcedDeferredSectionIds);
+  const previousIsCliThemeRef = useRef<boolean | null>(null);
 
   const handleSkipToMain = useCallback(
     (event: React.MouseEvent<HTMLAnchorElement>) => {
@@ -63,7 +79,7 @@ function AppLayout(): React.ReactElement {
         return;
       }
 
-      const targetIndex = SECTION_MANIFEST.findIndex(
+      const targetIndex = sections.findIndex(
         (section) => section.id === targetId
       );
 
@@ -71,7 +87,8 @@ function AppLayout(): React.ReactElement {
         return;
       }
 
-      const deferredSectionIds = SECTION_MANIFEST.slice(0, targetIndex + 1)
+      const deferredSectionIds = sections
+        .slice(0, targetIndex + 1)
         .filter((section) => section.activation === 'deferred')
         .map((section) => section.id);
 
@@ -89,14 +106,17 @@ function AppLayout(): React.ReactElement {
         handleRevealTarget
       );
     };
-  }, []);
+  }, [sections]);
 
   useEffect(() => {
+    const shouldHandleCurrentHash = previousIsCliThemeRef.current !== false;
+    previousIsCliThemeRef.current = isCliTheme;
+
     if (isCliTheme) {
       return;
     }
 
-    const sectionIds: Set<string> = new Set(SECTION_MANIFEST.map((s) => s.id));
+    const sectionIds: Set<string> = new Set(sections.map((s) => s.id));
 
     const handleHash = (): void => {
       const hash = window.location.hash.replace('#', '');
@@ -105,13 +125,17 @@ function AppLayout(): React.ReactElement {
       }
     };
 
-    handleHash();
+    // Rebind eligible targets after a theme change without replaying an old
+    // hash and moving the visitor away from their current scroll position.
+    if (shouldHandleCurrentHash) {
+      handleHash();
+    }
 
     window.addEventListener('hashchange', handleHash);
     return () => {
       window.removeEventListener('hashchange', handleHash);
     };
-  }, [isCliTheme]);
+  }, [isCliTheme, sections]);
 
   return (
     <>
@@ -152,7 +176,7 @@ function AppLayout(): React.ReactElement {
         <Hero />
         {!isCliTheme &&
           shouldMountFeaturedSections &&
-          SECTION_MANIFEST.map((section) => {
+          sections.map((section) => {
             const content = (
               <Suspense
                 fallback={<SectionRouteFallback sectionId={section.id} />}

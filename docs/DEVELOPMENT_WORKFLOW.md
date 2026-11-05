@@ -46,7 +46,8 @@ The default pre-push hook runs:
 2. `npm run build`
 3. `npm run test:unit`
 
-Because `npm run build` already includes the production build, contrast check, sitemap generation, and prerendering, this catches most deployment-breaking issues before the push leaves your machine.
+The build includes contrast checks, sitemap generation, and an attempted browser prerender.
+Require `Prerendered dist/index.html` in the build log before reporting successful prerendering.
 
 ### `.husky/pre-push.full`
 

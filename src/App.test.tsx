@@ -1,7 +1,41 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { fireEvent, render, screen, act, waitFor } from '@/test/test-utils';
+import { PORTFOLIO_REVEAL_TARGET_EVENT } from '@/constants/deferred-navigation';
+import * as deferredNavigation from '@/utils/deferredNavigation';
 import App from './App';
+
+// Keep the WebGL boundary isolated in jsdom for both rich visual themes.
+vi.mock('@/components/sections/Hero/EngineerCircuit3D', async () => {
+  const React = await import('react');
+
+  const MockEngineerCircuit3D = ({
+    isActive,
+    mode,
+    onSceneReady,
+  }: {
+    isActive: boolean;
+    mode: string;
+    onSceneReady?: () => void;
+  }): React.ReactElement => {
+    React.useLayoutEffect(() => {
+      onSceneReady?.();
+    }, [onSceneReady]);
+
+    return (
+      <div
+        data-testid="engineer-circuit-3d"
+        data-active={isActive ? 'true' : 'false'}
+        data-mode={mode}
+      />
+    );
+  };
+
+  return {
+    __esModule: true,
+    default: MockEngineerCircuit3D,
+  };
+});
 
 vi.mock('@/components/sections/Hero/CosmicScene3D', async () => {
   const React = await import('react');
@@ -392,7 +426,7 @@ describe('App', () => {
     await waitFor(() => {
       expect(
         document.querySelectorAll('[data-deferred-sentinel="true"]')
-      ).toHaveLength(7);
+      ).toHaveLength(6);
     });
 
     expect(document.getElementById('articles')).not.toBeInTheDocument();
@@ -401,6 +435,133 @@ describe('App', () => {
     expect(document.getElementById('github')).not.toBeInTheDocument();
     expect(document.getElementById('contact')).not.toBeInTheDocument();
     expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
+  });
+
+  it('excludes pet dogs from Minimal even when its deferred route is requested', async () => {
+    localStorage.setItem('portfolio-theme', 'minimal');
+    window.history.replaceState(null, '', '#pet-dogs');
+
+    try {
+      await act(async () => {
+        render(<App />);
+      });
+      await screen.findByRole('heading', { name: /^Projects$/i });
+
+      act(() => {
+        window.dispatchEvent(
+          new CustomEvent(PORTFOLIO_REVEAL_TARGET_EVENT, {
+            detail: { targetId: 'pet-dogs' },
+          })
+        );
+      });
+
+      expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
+      expect(
+        document.getElementById('pet-dogs-heading')
+      ).not.toBeInTheDocument();
+      expect(
+        vi
+          .mocked(fetch)
+          .mock.calls.some(([input]) => String(input).includes('/api/pet-dogs'))
+      ).toBe(false);
+    } finally {
+      window.history.replaceState(null, '', '/');
+    }
+  });
+
+  it.each(['cosmic', 'engineer'])(
+    'retains pet dogs in the %s theme',
+    async (theme) => {
+      localStorage.setItem('portfolio-theme', theme);
+      await act(async () => {
+        render(<App />);
+      });
+      await screen.findByRole('heading', { name: /^Projects$/i });
+
+      act(() => {
+        window.dispatchEvent(
+          new CustomEvent(PORTFOLIO_REVEAL_TARGET_EVENT, {
+            detail: { targetId: 'pet-dogs' },
+          })
+        );
+      });
+
+      expect(
+        await screen.findByRole('button', { name: /show dogs/i })
+      ).toBeInTheDocument();
+      expect(
+        vi
+          .mocked(fetch)
+          .mock.calls.some(([input]) => String(input).includes('/api/pet-dogs'))
+      ).toBe(true);
+    }
+  );
+
+  it('removes an already mounted pet dogs section when switching to Minimal and restores it in Cosmic', async () => {
+    localStorage.setItem('portfolio-theme', 'cosmic');
+    await act(async () => {
+      render(<App />);
+    });
+    await screen.findByRole('heading', { name: /^Projects$/i });
+    act(() => {
+      window.dispatchEvent(
+        new CustomEvent(PORTFOLIO_REVEAL_TARGET_EVENT, {
+          detail: { targetId: 'pet-dogs' },
+        })
+      );
+    });
+    await screen.findByRole('button', { name: /show dogs/i });
+
+    fireEvent.click(
+      screen.getByRole('button', { name: /toggle theme switcher/i })
+    );
+    fireEvent.click(screen.getByRole('radio', { name: /minimal/i }));
+
+    await waitFor(() => {
+      expect(document.getElementById('pet-dogs')).not.toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole('radio', { name: /cosmic/i }));
+    await waitFor(() => {
+      expect(document.getElementById('pet-dogs')).toBeInTheDocument();
+    });
+  });
+
+  it('preserves the current location when a visual theme changes with an older hash', async () => {
+    const navigate = vi
+      .spyOn(deferredNavigation, 'revealAndNavigate')
+      .mockImplementation(() => undefined);
+    localStorage.setItem('portfolio-theme', 'cosmic');
+    window.history.replaceState(null, '', '#projects');
+
+    try {
+      await act(async () => {
+        render(<App />);
+      });
+      await screen.findByRole('heading', { name: /^Projects$/i });
+      expect(navigate).toHaveBeenCalledWith('projects');
+      navigate.mockClear();
+
+      fireEvent.click(
+        screen.getByRole('button', { name: /toggle theme switcher/i })
+      );
+      fireEvent.click(screen.getByRole('radio', { name: /minimal/i }));
+      expect(navigate).not.toHaveBeenCalled();
+
+      act(() => {
+        window.history.replaceState(null, '', '#pet-dogs');
+        fireEvent(window, new HashChangeEvent('hashchange'));
+      });
+      expect(navigate).not.toHaveBeenCalled();
+
+      act(() => {
+        window.history.replaceState(null, '', '#contact');
+        fireEvent(window, new HashChangeEvent('hashchange'));
+      });
+      expect(navigate).toHaveBeenCalledWith('contact');
+    } finally {
+      window.history.replaceState(null, '', '/');
+    }
   });
 
   it('keeps CLI navigation and appearance controls inside the terminal', async () => {

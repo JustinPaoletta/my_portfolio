@@ -80,6 +80,8 @@ Native radio groups use browser keyboard behavior; do not require every radio to
 
 Inspect each theme (`engineer`, `cosmic`, `minimal`, `cli`) with both `mode=light` and `mode=dark`.
 Also test `mode=system` while changing the operating-system color preference.
+Confirm Minimal omits **Can I pet that Dawg?**, including after switching from Engineer or Cosmic.
+Engineer and Cosmic retain the pet section. CLI retains its `dogs` commands.
 
 ## Skills, Articles, and project demos
 

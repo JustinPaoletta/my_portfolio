@@ -25,7 +25,9 @@ Optional Vercel functions support contact, GitHub data, and shared pet counts.
 
 - Ships four presentation modes: `engineer`, `cosmic`, `cli`, and `minimal`.
 - Attempts homepage browser prerendering during production builds; confirm success in the build log.
-- Shows five main projects, including SideQuest, and a Games group containing SQUARK.
+- Shows JP Design System, BitStockerz, SideQuest: Pittsburgh, Wild Apricot exports, and Plexarr in that order.
+- Keeps SQUARK in a separate Games group with a rounded gameplay image.
+- Shows **Can I pet that Dawg?** in Engineer and Cosmic; Minimal omits it, and CLI keeps its `dogs` commands.
 - Generates SEO artifacts such as `sitemap.xml`, `robots.txt`, and structured metadata.
 - Supports PWA install and offline flows plus optional analytics, GitHub, contact, and pet stats integrations.
 

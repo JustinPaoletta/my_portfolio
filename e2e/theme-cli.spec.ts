@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { mockPortfolioApis } from './support/mocks';
+import { revealDeferredSection } from './support/sections';
 
 async function openThemeSwitcher(page: Page): Promise<void> {
   await page.getByRole('button', { name: /toggle theme switcher/i }).click();
@@ -9,7 +10,9 @@ async function openThemeSwitcher(page: Page): Promise<void> {
 }
 
 async function closeThemeSwitcher(page: Page): Promise<void> {
-  await page.getByRole('button', { name: /toggle theme switcher/i }).click();
+  // A layout change can scroll the page and close the switcher first.
+  // Escape also closes an open switcher without reopening a closed one.
+  await page.keyboard.press('Escape');
   await expect(
     page.getByRole('dialog', { name: /theme settings/i })
   ).toHaveCount(0);
@@ -45,6 +48,49 @@ test('theme selection persists after reload', async ({ page }) => {
 
   await page.reload({ waitUntil: 'domcontentloaded' });
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'cosmic');
+});
+
+test('pet dogs stays out of Minimal and returns when switching to Cosmic or Engineer', async ({
+  page,
+}) => {
+  let petDogsGetRequests = 0;
+  page.on('request', (request) => {
+    if (
+      new URL(request.url()).pathname === '/api/pet-dogs' &&
+      request.method() === 'GET'
+    ) {
+      petDogsGetRequests += 1;
+    }
+  });
+  await mockPortfolioApis(page);
+  await page.goto('/?theme=minimal#pet-dogs');
+  await revealDeferredSection(page, 'github');
+
+  const petDogs = page.locator('section#pet-dogs');
+  await expect(petDogs).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /show dogs/i })).toHaveCount(0);
+  expect(petDogsGetRequests).toBe(0);
+
+  await openThemeSwitcher(page);
+  await page.getByRole('radio', { name: 'Cosmic' }).click();
+  await closeThemeSwitcher(page);
+  await revealDeferredSection(page, 'pet-dogs');
+  await expect(petDogs).toBeVisible();
+  await expect.poll(() => petDogsGetRequests).toBeGreaterThan(0);
+
+  await openThemeSwitcher(page);
+  await page.getByRole('radio', { name: 'Minimal' }).click();
+  await closeThemeSwitcher(page);
+  await expect(petDogs).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /show dogs/i })).toHaveCount(0);
+
+  await openThemeSwitcher(page);
+  await page.getByRole('radio', { name: 'Engineer' }).click();
+  await closeThemeSwitcher(page);
+  await revealDeferredSection(page, 'pet-dogs');
+  await expect(
+    petDogs.getByRole('button', { name: /show dogs/i })
+  ).toBeVisible();
 });
 
 test('cosmic theme restores the 3D nebula hero from localStorage', async ({

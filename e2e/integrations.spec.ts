@@ -189,7 +189,7 @@ test('deferred GitHub and pet dogs requests wait until their sections mount', as
   });
 
   await mockPortfolioApis(page);
-  await page.goto('/');
+  await page.goto('/?theme=cosmic');
   await page.waitForLoadState('networkidle');
 
   expect(githubProxyRequests).toBe(0);
@@ -293,7 +293,7 @@ test('pet dogs section syncs API data and tracks interactions', async ({
       petDogPosts.push(payload);
     },
   });
-  await page.goto('/');
+  await page.goto('/?theme=cosmic');
 
   await revealDeferredSection(page, 'pet-dogs');
   await page.getByRole('button', { name: /show dogs/i }).click();

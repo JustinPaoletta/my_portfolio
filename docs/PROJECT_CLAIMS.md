@@ -11,8 +11,8 @@ Capture provenance, source hashes, and data modes are in the
 
 ## Current project content
 
-The main Projects list contains JP Design System, BitStockerz, Wild Apricot exports,
-Plexarr, and SideQuest: Pittsburgh. Each uses the shared main-project layout.
+The main Projects list contains JP Design System, BitStockerz, SideQuest: Pittsburgh,
+Wild Apricot exports, and Plexarr, in that order. Each uses the shared main-project layout.
 The Games group currently contains only SQUARK.
 The CLI keeps all entries under `/projects`; it labels main entries **Featured** and SQUARK **Game**.
 

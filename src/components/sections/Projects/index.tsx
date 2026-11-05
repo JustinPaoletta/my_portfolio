@@ -110,6 +110,14 @@ const projects: Project[] = [
     hideHeaderIcon: true,
   },
   {
+    ...SIDEQUEST_PROJECT,
+    id: 'project-5',
+    showcase: 'sidequest',
+    image: '/images/projects/sidequest-discovery-20261105-480.webp',
+    cardHeaderIcon: '/images/projects/sidequest-sq-logo-60.webp',
+    cardHeaderIconSrcSet: logoSrcSet('sidequest-sq-logo', [60, 120, 180]),
+  },
+  {
     id: 'project-4',
     showcase: 'exports',
     title: 'wild-apricot-exports',
@@ -139,14 +147,6 @@ const projects: Project[] = [
     imageWidth: 1392,
     imageHeight: 783,
     imageCaption: 'Current interface captured locally with a sample library.',
-  },
-  {
-    ...SIDEQUEST_PROJECT,
-    id: 'project-5',
-    showcase: 'sidequest',
-    image: '/images/projects/sidequest-discovery-20261105-480.webp',
-    cardHeaderIcon: '/images/projects/sidequest-sq-logo-60.webp',
-    cardHeaderIconSrcSet: logoSrcSet('sidequest-sq-logo', [60, 120, 180]),
   },
 ];
 
