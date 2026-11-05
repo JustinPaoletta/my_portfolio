@@ -12,3 +12,16 @@ output/playwright/professional-review
 
 # Preserve the actual CLI output and original file bytes used as demo evidence.
 assets/source/project-demos/wild-apricot/demo-exports
+
+# Local browser snapshots and project-demo working output
+/.playwright-cli/
+/output/playwright/
+/output/branding/
+
+# Historical engineer-room working files; curated design context remains tracked.
+/docs/design/engineer-room/*
+!/docs/design/engineer-room/README.md
+!/docs/design/engineer-room/CUSTOM_CONTRACT.md
+!/docs/design/engineer-room/renders/
+/docs/design/engineer-room/renders/*
+!/docs/design/engineer-room/renders/room-concept.jpg
