@@ -21,11 +21,16 @@ The `bundle-size-limit` plugin in `vite.config.ts` fails `npm run build` if any 
 | CSS files                   | `85 KB`   |
 | Total JS + CSS asset weight | `1550 KB` |
 
-The `vendor-three` chunk holds three.js and `@react-three/fiber`, which power the
-3D hero backgrounds. It is isolated into its own lazy-loaded chunk so it never
-enters the initial critical path.
+The `vendor-three` chunk holds three.js and `@react-three/fiber` for the engineer room and cosmic nebula/starfield.
+It loads through deferred scene imports. The astronaut itself is a separate rendered WebP.
+
+The plugin also limits initial-route JS to 355 KiB, CSS to 55 KiB, and their combined size to 380 KiB.
+It measures emitted file bytes divided by 1024, before transfer compression.
+The table above uses the same KiB units despite the plugin’s historical `KB` log label.
 
 These checks run anywhere `npm run build` runs, including local builds, hooks, CI, and Vercel.
+
+These limits describe configured checks, not a promise that every production visit meets the budgets.
 
 ## Lighthouse CI
 

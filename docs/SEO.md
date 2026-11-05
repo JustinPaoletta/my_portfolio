@@ -28,7 +28,7 @@ For the homepage, the important path is:
 2. the production build adds prerendered homepage markup into `dist/index.html`
 3. crawlers and social scrapers can read both the head metadata and visible body content without relying on client-side React execution
 
-That combination matters because social unfurlers often ignore JavaScript entirely, while search engines still benefit from correct first-response HTML even when they can render scripts later.
+Social unfurlers can read metadata without executing JavaScript. Prerendering also exposes body content in the first HTML response.
 
 ## Signals Shipped Today
 
@@ -54,7 +54,7 @@ The build also emits:
 
 The repo no longer has `src/components/SEO.tsx`, and metadata is not updated after React mounts. That is intentional for the current single-page homepage build.
 
-If you later add real client-side routes with distinct SEO requirements, you will need to introduce a runtime metadata layer deliberately instead of assuming one already exists.
+If new routes need distinct SEO metadata, design their metadata and rendering strategy explicitly. The current single-page implementation does not provide per-route metadata.
 
 ## Shared SEO Config
 
@@ -86,7 +86,7 @@ After Vite finishes building, `scripts/prerender.ts`:
 1. serves the built `dist/` directory on a temporary local HTTP server
 2. opens the homepage in headless Chromium
 3. waits for deferred sections to reveal
-4. serializes the hydrated document back into `dist/index.html`
+4. serializes the rendered document back into `dist/index.html`
 
 If Chromium cannot launch because the environment is missing browser dependencies, the script logs a warning and keeps the Vite-generated `dist/index.html` instead. You can also skip the step intentionally with `SKIP_PLAYWRIGHT_PRERENDER=1`.
 

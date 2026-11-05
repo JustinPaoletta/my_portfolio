@@ -4,57 +4,50 @@ import './PlexarrShowcase.css';
 
 const slides = [
   {
-    title: 'Discover',
+    title: 'Library browsing',
     caption:
-      'Browse movies and series with artwork, genres, community ratings, and paginated results.',
+      'Search the household library, browse movie artwork and genres, and keep favorites close at hand.',
     images: [
       {
-        name: 'catalog',
-        width: 1440,
-        height: 592,
-        sizes: [640, 960, 1440],
-        alt: 'Live Plexarr Discover catalog with movie artwork, genres, ratings, and pagination',
+        name: 'current-library',
+        width: 1392,
+        height: 783,
+        sizes: [320, 480, 640, 960, 1392],
+        alt: 'Current Plexarr Library interface with a sample movie library, search field, filters, favorites, and pagination',
       },
     ],
   },
   {
     title: 'Personalized picks',
     caption:
-      'A next-watch recommendation explains why it was selected, with favorite and Not interested controls to refine future suggestions.',
+      'Your Next Watch explains a recommendation and offers favorite, Not interested, and More picks for you controls.',
     images: [
       {
-        name: 'picks',
-        width: 700,
-        height: 252,
-        sizes: [640, 700],
-        alt: 'Plexarr recommends Avengers: Infinity War based on Science Fiction favorites, with heart and thumbs-down controls',
+        name: 'current-picks',
+        width: 878,
+        height: 364,
+        sizes: [320, 480, 640, 878],
+        alt: 'Plexarr sample recommendation for Resident Evil with a Horror favorites explanation and feedback controls',
       },
     ],
   },
   {
-    title: 'Title details & ratings',
+    title: 'Title details',
     caption:
-      'Read a title overview and compare its genres and community rating before choosing what to watch.',
+      'Open library title details for an overview, genre, library availability, and favorite controls.',
     images: [
       {
-        name: 'overview',
+        name: 'current-details',
         width: 576,
-        height: 267,
+        height: 576,
         sizes: [320, 480, 576],
-        alt: 'Plexarr title overview for Avengers: Infinity War (2018)',
-      },
-      {
-        name: 'rating',
-        width: 522,
-        height: 47,
-        sizes: [320, 480, 522],
-        alt: 'Adventure, Action, and Science Fiction genres with an 8.0 out of 10 community rating from 33,148 votes',
+        alt: 'Plexarr details for The Odyssey in Sample Movies, showing overview, Adventure genre, library information, and preference controls',
       },
     ],
   },
 ] as const;
 
-/** Owner-authenticated captures, cropped to catalog and recommendation features. */
+/** Current application UI captured locally with isolated sample-library fixtures. */
 export function PlexarrShowcase(): React.ReactElement {
   const id = useId();
   const [active, setActive] = useState(0);
@@ -80,6 +73,9 @@ export function PlexarrShowcase(): React.ReactElement {
       aria-roledescription="carousel"
       aria-label="Plexarr feature screenshots"
     >
+      <p className="plexarr-carousel__source">
+        Current interface · sample library
+      </p>
       <div className="plexarr-carousel__controls">
         <button
           type="button"
@@ -110,7 +106,7 @@ export function PlexarrShowcase(): React.ReactElement {
         aria-label={`${slide.title}, ${active + 1} of ${slides.length}`}
       >
         <div
-          className={`plexarr-carousel__media${slide.images.length > 1 ? ' plexarr-carousel__media--details' : ''}`}
+          className="plexarr-carousel__media"
           onTouchStart={(event) => {
             const touch = event.touches.length === 1 ? event.touches[0] : null;
             touchStart.current = touch

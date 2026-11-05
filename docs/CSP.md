@@ -25,7 +25,7 @@ upgrade-insecure-requests;
 
 - Fonts are served locally from `public/fonts`, so the policy no longer needs `fonts.googleapis.com` or `fonts.gstatic.com`.
 - The `style-src` directive is now same-origin only plus inline styles.
-- `connect-src` is limited to Umami, Vercel Live preview tooling, New Relic, the public GitHub API, and `blob:` for Three.js GLB texture decoding in the cosmic hero.
+- `connect-src` permits the listed analytics/preview origins, GitHub API, and `blob:` used by Three.js model texture decoding. The cosmic nebula uses WebGL; the separate astronaut uses rendered WebP assets.
 
 ## Directive Notes
 

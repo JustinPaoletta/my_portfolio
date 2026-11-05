@@ -1,13 +1,17 @@
 # Cosmic hero astronaut
 
-The authoritative source is `cosmic-astronaut.blend` (Blender 5.1.2). Open it to
+Documentation inspected against the scripts, manifest, and delivered assets on 2026-11-05.
+Stored Blender/WebGL acceptance results retain their original scope; this inspection did not rerun those sessions.
+
+The authoritative source is `cosmic-astronaut.blend`, last inspected with Blender 5.1.2. Open it to
 edit the geometry, materials, or armature animation. The pre-production source
 is preserved in `checkpoints/cosmic-astronaut-pre-production.blend`.
 
-The current asset has a continuous rounded helmet shell with an oval visor
-aperture, a mounted PLSS backpack with service panels, a sealed corrugated air
-tube, and a larger chest control pack carrying an embroidered American flag
-with 13 stripes and 50 stars. The hero view is angled slightly toward the screen. The
+The asset has a rounded helmet shell with an oval visor aperture.
+Its mounted PLSS backpack has service panels and a sealed corrugated air tube.
+The chest pack carries an embroidered American flag with 13 stripes and 50 stars.
+
+The hero view is angled slightly toward the screen. The
 left pressure sleeve is a continuous deforming mesh. Its three-bone armature
 moves the glove onto the lap, matching the existing right hand's mirrored pose.
 The original body, legs, resting hand, and asteroid geometry were preserved.
@@ -20,8 +24,10 @@ rigid for this seated hero pose; this is not a full locomotion character rig.
 
 `WaveThenRest` is 20 fps. The glove waves for 3 seconds, lowers onto the lap over
 1 second, then holds the pose. The GLB starts at time zero and lasts 4.75 seconds.
-The once-playing hero WebP displays 96 frames over 4.8 seconds, including the
-last frame's display interval. Hero floating motion is CSS-owned. Reduced
+The encoder consumes 96 frame inputs over 4.8 seconds.
+The current WebP contains 81 encoded frames, with an 800 ms final hold; repeated hold frames are merged.
+
+Hero floating motion is CSS-owned. Reduced
 motion, visual tests, and limited connections use the still image.
 
 ## Delivery
@@ -40,6 +46,8 @@ with content hashes so existing service-worker caches receive new releases.
 
 ## Rebuild from the saved source
 
+Install the repository dependencies and use a Blender executable compatible with the saved scene.
+The recorded tool version is Blender 5.1.2.
 From the repository root:
 
 ```sh
@@ -49,8 +57,13 @@ blender --background --factory-startup --python-exit-code 1 --python scripts/ble
 python3 scripts/blender/validate_cosmic_glb.py
 ```
 
-Rendering and GLB export are separate so editing the source never regenerates
-an earlier design. `refine_cosmic_astronaut.py` reproduces this production pass
+Rendering and GLB export both open the saved source. Neither step runs the historical asset generator.
+The render step writes review images and 96 frame inputs. The encoder writes the two public WebPs and their content-hash constants.
+The export step writes the reusable GLB and runtime texture atlases. The validator writes a generated check report.
+
+These commands do not refresh the committed manifest or historical verification summary; inspect their hashes after changing a delivery asset.
+
+`refine_cosmic_astronaut.py` reproduces this production pass
 from the immutable pre-production checkpoint; it overwrites the working source
 and is only for deliberately reproducing the original production refinement.
 The subsequent `refine_cosmic_chest_pack.py` edit works on the current saved
@@ -61,14 +74,16 @@ source unless `--legacy-regeneration` is explicitly supplied.
 
 ## Checks and scope
 
-The current hash-bound check summary is `verification.json`. The GLB wrist
-trajectory matches the saved Blender source at all 96 frame times within
-0.00001 m. Intermediate exported poses and desktop/mobile hero screenshots
-were reviewed. Generated working evidence stays in the ignored
+The stored hash-bound summary is `verification.json`.
+It records source-to-WebGL wrist parity at all 96 frame times within 0.00001 m.
+It also records review of intermediate poses and desktop/emulated-phone layouts.
+These are historical acceptance observations, not new results from a documentation inspection.
+
+Generated working evidence stays in the ignored
 `output/playwright/cosmic-astronaut/` and `output/playwright/professional-review/`
 folders. Run `npm run start:dev` and open `/scripts/blender/viewer.html` to play or scrub
 the GLB independently. The model is supplied for reuse; the portfolio hero
-itself loads only the rendered WebP assets.
+loads the rendered astronaut WebP assets. The separate cosmic nebula/starfield still uses its own WebGL scene.
 
 The intended delivery is a single cosmic portfolio hero. Checks cover the
 Blender source, skin and timing in a Three.js WebGL viewer, desktop and emulated

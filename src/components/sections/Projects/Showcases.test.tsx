@@ -16,16 +16,16 @@ describe('project evidence', () => {
       const image = screen.getByRole('img');
       expect(image).toHaveAttribute(
         'src',
-        `/images/projects/design-system-${slug}-960.webp`
+        `/images/projects/design-system-${slug}-960.webp?v=2026-11-05`
       );
       expect(image.getAttribute('srcset')).toContain(
-        `${slug}-${width}.webp ${width}w`
+        `${slug}-${width}.webp?v=2026-11-05 ${width}w`
       );
       expect(screen.getByRole('link')).toHaveAttribute(
         'href',
-        `/images/projects/design-system-${slug}-${width}.webp`
+        `/images/projects/design-system-${slug}-${width}.webp?v=2026-11-05`
       );
-      expect(screen.getByText(/Fictional club data/)).toBeInTheDocument();
+      expect(screen.getByText(/Game 6 examples/)).toBeInTheDocument();
     }
     expect(screen.getByText(/fixed sample response/)).toBeInTheDocument();
   });

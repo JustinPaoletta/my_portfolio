@@ -1,6 +1,13 @@
 # Development Workflow
 
 This repo uses Husky, commitlint, Conventional Commits, and a manual changelog-driven release process.
+Use Node 22.12 or newer within Node 22 and npm 11.6.4. Install with `npx --yes npm@11.6.4 ci`.
+
+## Documentation writing
+
+Use the [documentation index](README.md) to select the maintained guide.
+Use ASD-STE100 Issue 9 as writing guidance: short sentences, precise conditions, and consistent terms.
+Keep exact identifiers, commands, limits, and dated evidence intact. This is not a claim of certified standard conformity.
 
 ## Source Of Truth
 

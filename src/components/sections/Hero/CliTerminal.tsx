@@ -13,6 +13,7 @@ import {
   JP_DESIGN_SYSTEM_PROJECT,
   PLEXARR_PROJECT,
   PROJECT_STATUS_LABELS,
+  SIDEQUEST_PROJECT,
   SQUARK_PROJECT,
   type ProjectSummary,
 } from '@/content/projects';
@@ -233,14 +234,7 @@ const PROJECTS: ProjectSummary[] = [
     githubUrl: `${githubProfileUrl}/wild-apricot-exports`,
     packageUrl: 'https://www.npmjs.com/package/wild-apricot-exports',
   },
-  {
-    title: 'SideQuest: Pittsburgh',
-    description:
-      'A private React Native app for discovering offbeat places across Pittsburgh. An offline-first feed prioritizes proximity, novelty, and curated tags. Source access is private; this entry is supporting project context.',
-    techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
-    featured: false,
-    private: true,
-  },
+  SIDEQUEST_PROJECT,
   PLEXARR_PROJECT,
 ];
 

@@ -9,19 +9,26 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Changed
 
+- Refresh design-system Game 6 examples and add its verified public Storybook action. Update Plexarr to the current sample-library interface, SQUARK to connected mountain gameplay, and SideQuest to native discovery, guide, and collection screens.
+- Share SideQuest descriptions and its SQLite/MapLibre/Fastify/Postgres stack between cards and CLI. Preserve original artwork, gameplay recordings, design references, and dated capture provenance.
+
 - Replace the Cosmic hero illustration with the Blender astronaut and asteroid, a once-playing wave, reduced-motion/limited-connection stills, and download-failure recovery. Include editable source, reusable skinned GLB, and rebuild/validation tools.
 - Share navigation labels with their destination headings and remove the GitHub introduction and contribution-history disclosure.
 
 - Rebuild CLI mode as a single terminal session with an in-terminal guide, contextual help, command history, completion, and appearance/exit commands. The prompt follows the latest output and scrolls with the transcript. Use ls/cd navigation, a two-line delayed welcome, and a responsive identity row with macOS dots. The red dot exits; yellow and green are decorative. Preserve accessible output links and compatibility aliases.
 - Lead with Software Engineer and the Angular/React/TypeScript stack, pair the hero work action with Contact and retain navigation résumé downloads, and put selected work and professional experience before supporting content.
-- Curate public projects with a real design-system showcase capture and explicitly labeled workflow diagrams; move private projects to supporting cards and retain the writing carousel.
-- Condense About and Skills around implementation evidence, omit the stylized portrait, show GitHub contributions directly with the profile avatar, and align the CLI wording. Update contact copy. Defer the OG image redesign.
+- Curate public projects with real design-system captures, a synthetic-data BitStockerz walkthrough, actual fixture-driven Wild Apricot exports, and a private Plexarr screenshot carousel. Retain the writing carousel.
+- Add the anonymous public SQUARK browser demo and use named CLI directories.
+- Condense About and Skills around implementation evidence, omit the stylized portrait, show GitHub contributions directly with the profile avatar, and align the CLI wording. Update contact copy.
+- Replace the Open Graph image, favicons, and shared identity with the approved JP-and-cursor design.
 
 - Give professional work the primary Experience layout, move the résumé action beside the work history, and condense education into supporting credentials.
 - Keep project source links, status, and privacy labels visible at rest, with theme-aware focus styles and larger touch targets.
 - Serve responsive WebP project logos sized for their featured artwork and 60px icon slots. Keep the original PNG masters outside the public assets and add a repeatable optimization command.
 
 ### Fixed
+
+- Preserve readable project-card title contrast while hovering the current demo galleries.
 
 - Keep captured portfolio content visible in prerendered HTML when JavaScript is disabled, and omit the duplicate fallback summary after a successful prerender.
 - Reveal the About approach vertically so its offscreen entrance does not widen tablet layouts.
@@ -35,6 +42,10 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 ### Security
 
 - Update the transitive `source-map-js` dependency to 1.2.2 to resolve GHSA-68fv-2mgg-jv7q and restore the production dependency audit gate.
+
+### Documentation
+
+- Audit maintained guides against source, correct API failure behavior and CLI examples, and distinguish dated implementation records from current instructions.
 
 ## [1.2.1] - 2026-07-03
 

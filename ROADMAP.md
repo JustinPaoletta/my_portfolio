@@ -6,20 +6,21 @@ in focused companion files when useful.
 
 ## What's Next
 
-1. Complete the hiring-focused work and acceptance checks in [PROFESSIONAL_PORTFOLIO_PLAN.md](./PROFESSIONAL_PORTFOLIO_PLAN.md), implemented in [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298).
+1. Complete the remaining owner and human acceptance checks in [PROFESSIONAL_PORTFOLIO_PLAN.md](./PROFESSIONAL_PORTFOLIO_PLAN.md). The implementation from [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298) is merged.
 2. Add owner-approved employer case studies and reconcile the résumé and profile claims. These are the highest-value remaining evidence gaps.
 3. Revisit the offline reliability backlog below after the professional presentation work. The contact outbox is optional follow-up work; it is not a launch prerequisite.
 
-## Current Status (as of 2026-10-11)
+## Current Status (reviewed 2026-11-05)
 
-- Current app version: `1.2.1`; professional portfolio changes are in draft PR #298.
+- Current app version: `1.2.1`; the professional presentation work from PR #298 is merged.
+- PRs #300–#303 added later demo, public SQUARK, Plexarr, and named CLI refinements.
 - Hiring clarity, public project evidence, résumé access, and dependable navigation take priority over new offline features.
 - The existing public résumé is retained until the revised document is approved and supplied.
 - On-site SEO implementation is documented in `docs/SEO.md`; account and cross-profile follow-ups remain separate from code validation.
 
-## Priority 1 - Offline Data And Contact Reliability
+## Optional reliability backlog
 
-Detailed implementation notes live in `docs/OFFLINE_RELIABILITY_PLAN.md`.
+Detailed implementation notes live in `docs/OFFLINE_RELIABILITY_PLAN.md`. These are proposals, not shipped features. Employer evidence and manual acceptance take priority.
 
 ### 1.1 GitHub avatar offline caching
 
@@ -140,7 +141,7 @@ Done when:
 
 ## Priority 3 - Optional Content Expansion
 
-Do this only if the Search Console/profile work is not enough or if writing becomes a product goal for the portfolio.
+Start this work only if profile improvements are insufficient or writing becomes a portfolio goal.
 
 Potential work:
 
@@ -158,5 +159,5 @@ Done when:
 
 - Keep `CHANGELOG.md` updated under `## [Unreleased]` for user-visible, operator-visible, and documentation-visible changes.
 - Keep README version metadata aligned with `package.json`.
-- Keep roadmap items concise; move detailed implementation plans into separate files only when they are large enough to need their own document.
+- Keep roadmap items concise. Use a companion file only when implementation details need a separate document.
 - Remove completed one-off plan files once their status is captured in changelog, tests, and this roadmap.

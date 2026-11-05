@@ -1074,7 +1074,9 @@ describe('CliTerminal', () => {
     expect(
       terminalTranscript().getByText('[PROJECT] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
-    expect(terminalTranscript().getByText('Type: Other')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Type: Other | Status: Testing')
+    ).toBeInTheDocument();
     expect(
       terminalTranscript().getByText('Repository: Private')
     ).toBeInTheDocument();

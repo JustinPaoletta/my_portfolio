@@ -1,4 +1,4 @@
-import { render, screen, within } from '@/test/test-utils';
+import { fireEvent, render, screen, within } from '@/test/test-utils';
 import { describe, expect, it } from 'vitest';
 import Projects from '.';
 
@@ -79,7 +79,7 @@ describe('Projects section', () => {
       within(card).queryByText('Read the walkthrough')
     ).not.toBeInTheDocument();
     expect(
-      within(card).getByAltText(/Live Plexarr Discover catalog/)
+      within(card).getByAltText(/Current Plexarr Library interface/)
     ).toBeInTheDocument();
   });
 
@@ -120,7 +120,35 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByAltText(/Current JP Design System dashboard/)
+      screen.getByAltText(/JP Design System Game 6 dashboard/)
+    ).toBeInTheDocument();
+  });
+
+  it('offers the prerelease Storybook and lazy native SideQuest screens', () => {
+    render(<Projects />);
+    expect(
+      screen.getByRole('link', { name: 'Explore Storybook: @jp-design-system' })
+    ).toHaveAttribute(
+      'href',
+      'https://justinpaoletta.github.io/jp-design-system/'
+    );
+    const card = screen
+      .getByRole('heading', { name: 'SideQuest: Pittsburgh' })
+      .closest('article')!;
+    expect(within(card).getAllByRole('img')).toHaveLength(1);
+    expect(within(card).getByText('SQLite')).toBeInTheDocument();
+    expect(within(card).queryByText('MongoDB')).not.toBeInTheDocument();
+    fireEvent.click(within(card).getByRole('tab', { name: 'Collection' }));
+    expect(
+      within(card).getByAltText(/Steel City Coin Collection/)
+    ).toBeInTheDocument();
+    expect(within(card).getAllByRole('img')).toHaveLength(1);
+    expect(
+      within(card).getByText(/Additional coin earning/)
+    ).toBeInTheDocument();
+    fireEvent.click(within(card).getByRole('tab', { name: 'Guides' }));
+    expect(
+      within(card).getByAltText(/eleven available Pittsburgh guides/)
     ).toBeInTheDocument();
   });
 });

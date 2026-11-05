@@ -118,6 +118,40 @@ for (const width of [390, 1280]) {
     const zip = await page.request.get('/demos/wild-apricot-sample.zip');
     expect((await zip.body()).subarray(0, 2).toString()).toBe('PK');
     expect((await zip.body()).length).toBeGreaterThan(1000);
+
+    const nativeGallery = page.getByRole('group', {
+      name: 'SideQuest app screens',
+      exact: true,
+    });
+    expect(
+      requested.some((url) =>
+        /sidequest-(guides|collection)-20261105/.test(url)
+      )
+    ).toBe(false);
+    await nativeGallery.getByRole('tab', { name: 'Discovery' }).focus();
+    await page.keyboard.press('End');
+    await expect(
+      nativeGallery.getByRole('tab', { name: 'Collection' })
+    ).toBeFocused();
+    await expect(nativeGallery.getByRole('img')).toHaveCount(1);
+    await expect(nativeGallery.getByRole('img')).toHaveAttribute(
+      'src',
+      /sidequest-collection-20261105/
+    );
+    const nativeCapture = await page.request.get(
+      (await nativeGallery.getByRole('link').getAttribute('href'))!
+    );
+    expect(nativeCapture.status()).toBe(200);
+    expect(nativeCapture.headers()['content-type']).toMatch(/image\/webp/);
+    await page.keyboard.press('ArrowLeft');
+    await expect(
+      nativeGallery.getByRole('tabpanel', { name: 'Guides' })
+    ).toBeVisible();
+    await expect(
+      nativeGallery.getByText(/iOS simulator capture/)
+    ).toBeVisible();
+    // Accent ink is calibrated against the page, not the lighter hover card.
+    await nativeGallery.locator('..').hover();
     expect(
       await page.evaluate(
         () =>
@@ -136,12 +170,13 @@ test('light mobile evidence keeps all panels within the page', async ({
 }) => {
   await page.setViewportSize({ width: 320, height: 844 });
   await page.goto('/?theme=cosmic&mode=light&visual-test=1#projects');
-  for (const name of [
-    'Design system examples',
-    'Wild Apricot export examples',
-  ]) {
+  for (const [name, count] of [
+    ['Design system examples', 4],
+    ['Wild Apricot export examples', 4],
+    ['SideQuest app screens', 3],
+  ] as const) {
     const group = page.getByRole('group', { name, exact: true });
-    await expect(group.getByRole('tab')).toHaveCount(4);
+    await expect(group.getByRole('tab')).toHaveCount(count);
     for (const tab of await group.getByRole('tab').all()) {
       await tab.click();
       await expect(group.getByRole('tabpanel')).toBeVisible();

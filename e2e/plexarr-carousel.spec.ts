@@ -26,6 +26,9 @@ for (const width of [320, 390, 1440]) {
     await carousel.scrollIntoViewIfNeeded();
     await expect(carousel).toHaveAttribute('aria-roledescription', 'carousel');
     await expect(card.locator('video, iframe')).toHaveCount(0);
+    await expect(
+      carousel.getByText('Current interface · sample library')
+    ).toBeVisible();
     await expect(card).not.toContainText(/request/i);
     const next = carousel.getByRole('button', {
       name: 'Next Plexarr screenshot',
@@ -36,9 +39,9 @@ for (const width of [320, 390, 1440]) {
     const media = carousel.locator('.plexarr-carousel__media');
     const initialBounds = await media.boundingBox();
     for (const title of [
-      'Discover',
+      'Library browsing',
       'Personalized picks',
-      'Title details & ratings',
+      'Title details',
     ]) {
       await expect(
         carousel.getByRole('heading', { name: title, exact: true })
@@ -66,7 +69,7 @@ for (const width of [320, 390, 1440]) {
         );
         expect(bounds!.height).toBeCloseTo(initialBounds!.height, 0);
         expect(await image.getAttribute('src')).toMatch(
-          /\/plexarr-(catalog|picks|overview|rating)-\d+\.webp$/
+          /\/plexarr-current-(library|picks|details)-\d+\.webp$/
         );
       }
       await expect(carousel.getByRole('link')).toHaveCount(0);

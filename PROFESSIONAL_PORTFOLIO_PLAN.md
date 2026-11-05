@@ -1,8 +1,12 @@
 # Professional portfolio plan
 
-Updated 2026-10-15. Implementation is on draft [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298). This plan preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
+Reviewed 2026-11-05. [PR #298](https://github.com/JustinPaoletta/my_portfolio/pull/298) is merged.
+The remaining owner inputs below are still open.
+The completed sections are dated implementation history, not the current demo specification or fresh test results.
+See [ROADMAP.md](./ROADMAP.md) for priorities and [project capture notes](./assets/source/project-demos/README.md) for current media.
+This record preserves the original audit task numbers; task 20 remains excluded and the writing carousel stays.
 
-## Remaining work in this PR — owner request, 2026-10-12
+## Completed PR work — owner request, 2026-10-12
 
 The owner approved the matching OG image and favicon on 2026-10-15. The requested featured-project demo revision is implemented for review.
 
@@ -14,7 +18,7 @@ The owner approved the matching OG image and favicon on 2026-10-15. The requeste
 
 A hiring reader should quickly identify the role, inspect relevant work, understand the professional experience, download the résumé, and make contact. Put evidence before activity counts and decorative imagery. Preserve the four themes without requiring visitors to explore them to find essential information.
 
-The implementation is ready for review with stated content assumptions. Existing employment titles, dates, and the approximately 75% deployment-time claim are retained, not independently re-measured. A public employer case study and final résumé approval remain owner work; they do not justify blocking improvements to navigation or presentation.
+The implementation is ready for review with stated content assumptions. Existing employment titles, dates, and the approximately 75% deployment-time claim are retained, not independently re-measured. A public employer case study and final résumé approval remain owner work. They are separate from the merged navigation and presentation improvements.
 
 ## Implemented in this PR
 
@@ -58,7 +62,7 @@ These are content or human acceptance tasks; do not replace missing facts with i
 - Retain the article carousel and themed identity. A real portrait is optional; an accurate text-first identity is sufficient.
 - Keep public source/package links available while demos are unreleased. Do not imply a deployed BitStockerz service or published design-system package.
 - Prioritize employer evidence and profile consistency over an offline contact outbox. Offline reliability remains in `docs/OFFLINE_RELIABILITY_PLAN.md` as later work.
-- Preview/CI validation does not authorize merging or publishing a production release. This work updates the existing draft PR.
+- Preview/CI validation does not establish human acceptance or authorize a new production release. The implementation PR is already merged.
 
 ## CLI terminal revision — 2026-10-11
 

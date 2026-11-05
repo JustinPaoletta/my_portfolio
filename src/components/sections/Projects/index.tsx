@@ -12,6 +12,7 @@ import {
   JP_DESIGN_SYSTEM_PROJECT,
   PLEXARR_PROJECT,
   PROJECT_STATUS_LABELS,
+  SIDEQUEST_PROJECT,
   SQUARK_PROJECT,
   type ProjectSummary,
 } from '@/content/projects';
@@ -19,10 +20,11 @@ import './Projects.css';
 import { DesignSystemShowcase } from './DesignSystemShowcase';
 import { ExportShowcase } from './ExportShowcase';
 import { PlexarrShowcase } from './PlexarrShowcase';
+import { SideQuestShowcase } from './SideQuestShowcase';
 
 interface Project extends ProjectSummary {
   id: string;
-  showcase?: 'design-system' | 'exports' | 'plexarr';
+  showcase?: 'design-system' | 'exports' | 'plexarr' | 'sidequest';
   image: string;
   imageCaption?: string;
   demo?: { src: string; webm: string; captions: string; transcript: string };
@@ -75,15 +77,6 @@ function logoSrcSet(name: string, widths: readonly number[]): string {
     .join(', ');
 }
 
-// The square artwork is contained within a 90%-wide, 4:3 frame with a 3px
-// border. Match its painted width through the stacked and two-column layouts.
-const sideQuestImageSizes = [
-  '(max-width: 640px) calc(67.5vw - 2.025rem - 6px)',
-  '(max-width: 1024px) calc(67.5vw - 2.7rem - 6px)',
-  '(max-width: 1264px) calc(36.82vw - 2.578rem - 6px)',
-  '419px',
-].join(', ');
-
 const projects: Project[] = [
   {
     ...JP_DESIGN_SYSTEM_PROJECT,
@@ -110,10 +103,10 @@ const projects: Project[] = [
   {
     ...SQUARK_PROJECT,
     id: 'project-squark',
-    image: '/images/projects/squark-gameplay-800.webp',
-    cardImage: '/images/projects/squark-gameplay-800.webp',
+    image: '/images/projects/squark-mountain-flight-800.webp',
+    cardImage: '/images/projects/squark-mountain-flight-800.webp',
     cardImageAlt:
-      'Actual SQUARK browser gameplay: a conure flying above the river valley and rings',
+      'Actual SQUARK browser gameplay: a conure flying between connected mountain ranges above the river and rings',
     hideHeaderIcon: true,
   },
   {
@@ -131,22 +124,12 @@ const projects: Project[] = [
     featured: true,
   },
   {
+    ...SIDEQUEST_PROJECT,
     id: 'project-5',
-    title: 'SideQuest: Pittsburgh',
-    description:
-      'A private React Native app for discovering offbeat places across Pittsburgh. An offline-first feed prioritizes proximity, novelty, and curated tags. Source access is private; this entry is supporting project context.',
-    image: '/images/projects/sidequest-sq-logo-480.webp',
-    imageSrcSet: logoSrcSet('sidequest-sq-logo', [240, 480, 720, 960, 1254]),
-    imageSizes: sideQuestImageSizes,
-    imageAlt: 'SQ Pittsburgh app logo with a gold monogram and bridge',
+    showcase: 'sidequest',
+    image: '/images/projects/sidequest-discovery-20261105-480.webp',
     cardHeaderIcon: '/images/projects/sidequest-sq-logo-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('sidequest-sq-logo', [60, 120, 180]),
-    imageWidth: 1254,
-    imageHeight: 1254,
-    imageFit: 'contain',
-    techStack: ['React Native', 'TypeScript', 'Express', 'MongoDB', 'Maps API'],
-    private: true,
-    featured: false,
   },
   {
     ...PLEXARR_PROJECT,
@@ -154,14 +137,16 @@ const projects: Project[] = [
     showcase: 'plexarr',
     cardHeaderIcon: '/images/projects/plexarr-icon-60.webp',
     cardHeaderIconSrcSet: logoSrcSet('plexarr-icon', [60, 120, 180]),
-    image: '/images/projects/plexarr-catalog-1440.webp',
-    imageSrcSet: logoSrcSet('plexarr-catalog', [640, 960, 1440]),
+    image: '/images/projects/plexarr-current-library-1392.webp',
+    imageSrcSet: logoSrcSet(
+      'plexarr-current-library',
+      [320, 480, 640, 960, 1392]
+    ),
     imageSizes: '(max-width: 1024px) 100vw, 50vw',
-    imageAlt: 'Live Plexarr Discover catalog with movie artwork and ratings',
-    imageWidth: 1440,
-    imageHeight: 592,
-    imageCaption:
-      'Discover catalog captured from the live app, with movie artwork, genres, and ratings.',
+    imageAlt: 'Current Plexarr Library interface with sample movie data',
+    imageWidth: 1392,
+    imageHeight: 783,
+    imageCaption: 'Current interface captured locally with a sample library.',
   },
 ];
 
@@ -257,13 +242,19 @@ function Projects(): React.ReactElement {
                     </span>
                   )}
                   {project.liveUrl &&
-                    (!project.status || project.status === 'live') && (
+                    (project.liveLabel ||
+                      !project.status ||
+                      project.status === 'live') && (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="project-link"
-                        aria-label={`View ${project.title} live demo`}
+                        aria-label={
+                          project.liveLabel
+                            ? `${project.liveLabel}: ${project.title}`
+                            : `View ${project.title} live demo`
+                        }
                       >
                         <svg
                           viewBox="0 0 24 24"
@@ -293,7 +284,7 @@ function Projects(): React.ReactElement {
                             strokeLinejoin="round"
                           />
                         </svg>
-                        <span>Live Demo</span>
+                        <span>{project.liveLabel ?? 'Live Demo'}</span>
                       </a>
                     )}
                   {project.private ? (
@@ -622,7 +613,9 @@ function Projects(): React.ReactElement {
                   )}
                 </div>
               </div>
-              {project.cardImage && (
+              {project.showcase === 'sidequest' ? (
+                <SideQuestShowcase />
+              ) : project.cardImage ? (
                 <div
                   className={`card-image-wrapper${
                     project.cardImageFit === 'contain'
@@ -641,7 +634,7 @@ function Projects(): React.ReactElement {
                     loading="lazy"
                   />
                 </div>
-              )}
+              ) : null}
               <h4 className="card-title">
                 <ProjectHeadingTitle project={project} />
               </h4>

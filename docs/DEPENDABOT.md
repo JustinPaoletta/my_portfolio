@@ -47,6 +47,7 @@ The workflow at [`.github/workflows/dependabot-auto-merge.yml`](../.github/workf
 
 - runs on `pull_request_target` so the GitHub token can actually enable auto-merge for Dependabot PRs
 - only acts on PRs opened by `dependabot[bot]`
+- first verifies required branch checks and administrator enforcement; 403/404 or missing protection leaves the PR for manual review
 - only enables auto-merge when the PR matches one of the configured security-update groups
 - uses squash merge after the repository's required checks pass
 
@@ -72,7 +73,7 @@ For the policy to work as intended, GitHub should have:
 - Dependabot security updates enabled
 - Allow auto-merge enabled
 - GitHub Actions workflow permissions set to read and write
-- "Allow GitHub Actions to create and approve pull requests" enabled
+- Check repository policy before enabling any workflow ability to create or approve pull requests; this workflow neither creates nor approves them
 
 Branch protection on the default branch should continue to require the normal CI checks before merge.
 

@@ -109,6 +109,7 @@ try {
   }
 }
 
+// Example manual helper call; the UI does not currently emit this event.
 trackPageAction('resume_download', { source: 'hero' });
 ```
 

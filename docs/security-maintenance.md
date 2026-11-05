@@ -2,28 +2,36 @@
 
 ## Dependency status
 
-The October 2026 maintenance update aligns Vitest, its UI, and V8 coverage on
-4.1.11, updates Sharp and Vercel tooling, and refreshes the lockfile. The production
-npm audit reports zero vulnerabilities. The full audit still reports 27 affected
-development packages, all inherited from two unpatched dependencies:
+Read-only npm audits on 2026-11-05 checked the committed lockfile at
+`ea1d2bb`. Lockfile SHA-256:
+`0391d214d17d45fda47f0e1728b38bda79b9e91365bae1b67ea0885bde860c57`.
 
-- `braces`: deep-pattern stack exhaustion, used by Vercel's build analysis.
-  <https://github.com/advisories/GHSA-vfj7-8cjw-p6xm>
-- `extract-zip`: archive symlink traversal, used by Lighthouse's browser tooling.
-  <https://github.com/advisories/GHSA-7pqw-9j4j-h8q3>
-  <https://github.com/advisories/GHSA-jmr9-qjv8-65gv>
+- `npm audit --omit=dev --json`: zero reported vulnerabilities.
+- `npm audit --json`: 52 affected package records: 3 low, 31 moderate, and 18 high.
+- These counts describe this dated audit. Advisory data can change without a source change.
 
-These packages have no published patched release at the time of this update.
-Do not feed untrusted patterns or archives to these tools. Keep Dependabot alerts
-open until upstream fixes are available; do not suppress the advisories or run
-`npm audit fix --force` to accept unrelated downgrades.
+The development graph includes findings in browser/build/test tooling and its transitive dependencies.
+The earlier claim that only two unpatched packages remained is obsolete.
+Findings include Vitest mocker, HTTP parsers/clients, URI/glob libraries, and archive extraction.
+Some updates have available fixes; evaluate compatibility and dependency paths before changing versions.
+Do not use `npm audit fix --force` as a substitute for that inspection.
 
-The `package.json` overrides patch transitive archive, HTTP, YAML/TOML, routing,
-compression, UUID, and parser dependencies that upstream tooling still pins to
-vulnerable versions. Version selectors retain major versions where possible.
-Undici 5 is moved to patched 6; Busboy 2 to 3; Once 2 replaces 1; and UUID 11
-replaces 8–10. Verify Vercel builds and Lighthouse collection when changing these
-overrides, and remove them once upstream packages request patched versions.
+Reproduce with the pinned npm version:
+
+```sh
+npx --yes npm@11.6.4 audit --omit=dev
+npx --yes npm@11.6.4 audit
+```
+
+A production-only audit does not prove the development tools are safe.
+Avoid untrusted inputs to affected tooling while remediation remains open.
+Inspect the current JSON advisory report rather than relying on this historical count.
+The required quality workflow checks production dependencies; development findings need separate maintenance.
+
+`package.json` contains transitive overrides.
+Some cross major versions to replace earlier vulnerable dependencies.
+Test Vercel builds and Lighthouse collection when changing them.
+Remove an override only after the normal dependency graph resolves a suitable version.
 
 ## API protection
 
@@ -53,8 +61,7 @@ increments. External GitHub and Resend calls have ten-second timeouts.
 
 CI and Vercel install the committed lockfile with pinned npm 11.6.4 and `npm ci`.
 The npm version is pinned because npm 10 can restore a vulnerable routing package
-when resolving Vercel’s aliased dependency overrides. CI uses Node 22,
-matching the deployment runtime. GitHub Actions are pinned to commit hashes,
+when resolving Vercel’s aliased dependency overrides. CI uses Node 22. The deployment runtime is not pinned in the checked-in configuration. GitHub Actions are pinned to commit hashes,
 and manual snapshot inputs enter shell commands through environment variables.
 Quality CI checks lint, browser and server unit tests, and the production audit.
 

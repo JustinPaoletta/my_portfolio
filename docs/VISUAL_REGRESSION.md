@@ -45,7 +45,7 @@ Visual specs always navigate with `?visual-test=1`. The app treats that as a det
 
 - global CSS animations and transitions
 - hero parallax and motion-driven transforms
-- the interactive 3D hero scenes (the cosmic poster and engineer SVG fallbacks render instead) and SVG motion in the hero variants
+- interactive hero scenes and motion; both themes use still posters, including the astronaut still instead of its animation
 - transient terminal caret/focus styles during captures; CLI startup has no boot delay
 - transient focus, caret, and hover residue during capture
 
@@ -57,6 +57,7 @@ Committed baselines live next to each visual spec:
 
 - `e2e/visual/home.visual.spec.ts-snapshots`
 - `e2e/visual/sections.visual.spec.ts-snapshots`
+- `e2e/visual/cli.visual.spec.ts-snapshots`
 
 Current coverage includes:
 
@@ -73,6 +74,7 @@ The repo currently keeps both `*-darwin.png` and `*-linux.png` snapshots. Treat 
 When `npm run test:visual` fails, Playwright writes the diff artifacts into `test-results/` and includes the expected, actual, and diff images in the HTML report.
 
 1. Run `npm run test:visual` and inspect `playwright-report/` or `test-results/`.
+   Do not accept a mismatch until you inspect the changed images.
 2. If unintended, fix the UI or stabilize the test.
 3. If intentional, run `npm run test:visual:update:linux` and commit the snapshot changes.
 

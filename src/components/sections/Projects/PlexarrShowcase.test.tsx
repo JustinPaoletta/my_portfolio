@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { PlexarrShowcase } from './PlexarrShowcase';
 
 describe('Plexarr screenshot carousel', () => {
-  it('loads only the selected screenshots and wraps through real captures', () => {
+  it('loads only the selected screenshots and wraps through current sample-library captures', () => {
     const { container } = render(<PlexarrShowcase />);
     const next = screen.getByRole('button', {
       name: 'Next Plexarr screenshot',
@@ -13,12 +13,15 @@ describe('Plexarr screenshot carousel', () => {
     });
     expect(screen.getAllByRole('img')).toHaveLength(1);
     expect(screen.getByText('1 of 3')).toBeInTheDocument();
+    expect(
+      screen.getByText('Current interface · sample library')
+    ).toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
     fireEvent.click(previous);
     expect(screen.getByText('3 of 3')).toBeInTheDocument();
-    expect(screen.getAllByRole('img')).toHaveLength(2);
+    expect(screen.getAllByRole('img')).toHaveLength(1);
     expect(
-      screen.getByRole('button', { name: 'Show Title details & ratings' })
+      screen.getByRole('button', { name: 'Show Title details' })
     ).toHaveAttribute('aria-pressed', 'true');
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
     fireEvent.click(next);
@@ -26,10 +29,10 @@ describe('Plexarr screenshot carousel', () => {
     fireEvent.click(next);
     expect(screen.getByRole('img')).toHaveAttribute(
       'src',
-      '/images/projects/plexarr-picks-700.webp'
+      '/images/projects/plexarr-current-picks-878.webp'
     );
     expect(
-      screen.queryByAltText(/Live Plexarr Discover catalog/)
+      screen.queryByAltText(/Current Plexarr Library interface/)
     ).not.toBeInTheDocument();
     expect(screen.queryByRole('link')).not.toBeInTheDocument();
     expect(container.querySelector('video, iframe, source, track')).toBeNull();

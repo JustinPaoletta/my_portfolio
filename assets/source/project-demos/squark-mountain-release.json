@@ -1,0 +1,49 @@
+{
+  "schema": "squark.publication.v1",
+  "observedAt": "2026-11-05T02:04:07.969Z",
+  "source": {
+    "repository": "https://github.com/JustinPaoletta/conure-flight",
+    "pullRequest": "https://github.com/JustinPaoletta/conure-flight/pull/4",
+    "branch": "feat/mango-valley-shoreline",
+    "runtimeSourceCommit": "22588e666468c8ea976ed6d9ca8ed22f0b06cfc4",
+    "pullRequestState": "OPEN",
+    "merged": false
+  },
+  "release": {
+    "id": "84cbd0b974f82efbc046",
+    "testBuild": false,
+    "coreGzipEquivalentBytes": 48198679,
+    "sourceUploadBytes": 88753417,
+    "staticPayloadBytes": 210256566,
+    "commonSourceHashesMatched": 382,
+    "legacyPacksRestored": 3
+  },
+  "remaining": [
+    "Physical iPhone installation and gameplay/audio acceptance",
+    "Phone GPU, memory and thermal measurements",
+    "Actual macOS Safari and advertised mobile-browser acceptance"
+  ],
+  "deployment": {
+    "id": "dpl_5pPrmXW9o7teQPjER3NGtSomrGVk",
+    "target": "production",
+    "state": "READY",
+    "portfolioUrl": "https://squark-demo-justin-paolettas-projects.vercel.app",
+    "readyAt": "2026-11-05T01:58:40.488Z"
+  },
+  "verification": {
+    "providerReadyAndExactPortfolioAlias": true,
+    "uploadedSourceFilesMatched": 23,
+    "browserUniqueCasesPassed": 51,
+    "browserExecutions": 52,
+    "completedBrowserCourses": 3,
+    "verificationScope": "Provider state, aliases, uploaded source identities and build-log legacy verification; browser gameplay was tested locally on the source-identical private QA export, and the exact normal production pack passed isolated resource/startup checks. No hosted HTTP fetch or hosted browser rerun is claimed."
+  },
+  "evidenceSource": "conure-flight/design/conure-river-valley/mountain-ridgelines-20261104/runtime/publication.json",
+  "importedAt": "2026-11-05",
+  "currentPullRequestObservation": {
+    "observed": "2026-11-05",
+    "number": 4,
+    "state": "MERGED",
+    "headRevision": "8386ec3a5ca3fcc6f1e4ef10b578bdc95328c118"
+  }
+}

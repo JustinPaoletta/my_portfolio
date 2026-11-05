@@ -9,7 +9,7 @@ This project resolves browser-visible configuration at build time. `vite.config.
 - `.env.local` - optional machine-specific overrides
 - Vercel project settings - production and preview environment variables for deployed builds
 
-Vite loads `.env` and `.env.local` automatically. The checked-in source of truth for parsing and validation is `src/config/app-config.ts`.
+Vite loads `.env` and `.env.local`, plus `.env.[mode]` and `.env.[mode].local` when present. The checked-in source of truth for parsing and validation is `src/config/app-config.ts`.
 
 ## Quick Start
 
@@ -68,8 +68,8 @@ These variables are used by Vercel functions and must not be prefixed with `VITE
 | Variable            | Used by                                |
 | ------------------- | -------------------------------------- |
 | `GITHUB_TOKEN`      | `/api/github` GraphQL proxy            |
-| `KV_REST_API_URL`   | `/api/pet-dogs` Upstash Redis client   |
-| `KV_REST_API_TOKEN` | `/api/pet-dogs` Upstash Redis client   |
+| `KV_REST_API_URL`   | Pet storage and shared API rate limits |
+| `KV_REST_API_TOKEN` | Pet storage and shared API rate limits |
 | `RESEND_API_KEY`    | `/api/contact` email delivery          |
 | `CONTACT_EMAIL`     | `/api/contact` recipient address       |
 | `RESEND_FROM_EMAIL` | `/api/contact` sender address override |
@@ -133,7 +133,7 @@ npm run test:coverage
 
 - Confirm the feature flag is `true`
 - Confirm the related credentials are present
-- Remember both integrations skip automated clients and CI-style environments
+- Both integrations skip detected automated clients. Umami also skips Vite test mode; CI explicitly disables both feature flags.
 
 ## Source of Truth
 
