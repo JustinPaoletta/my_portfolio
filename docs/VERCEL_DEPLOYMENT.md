@@ -43,7 +43,8 @@ Set these only if you use the related endpoint:
 
 - `GITHUB_TOKEN` for `/api/github`
 - `KV_REST_API_URL` and `KV_REST_API_TOKEN` for shared pet counts and deployment-wide API rate limits
-- `RESEND_API_KEY`, `CONTACT_EMAIL`, and `RESEND_FROM_EMAIL` for `/api/contact`
+- `RESEND_API_KEY` and `CONTACT_EMAIL` for `/api/contact`
+- Optional `RESEND_FROM_EMAIL` overrides the sender; the fallback is `Portfolio Contact <onboarding@resend.dev>`
 
 ## Branch Deployment Rules
 

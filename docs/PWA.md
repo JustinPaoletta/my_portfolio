@@ -32,8 +32,10 @@ The manifest and explicitly included install assets currently reference:
 Hero posters, project images, article images, and Open Graph images are excluded
 from the precache to keep the service worker install small. They are fetched by
 the page as needed and covered by the same-origin image runtime cache after a
-successful online load. The interactive 3D hero scenes are lazy-loaded and use
-the same-origin GLB runtime cache once requested. The astronaut is a rendered WebP; its reusable GLB is not loaded by the hero.
+successful online load. Both interactive 3D scenes are lazy-loaded.
+The cosmic nebula requests `cosmic-scene.glb`, covered by the hero-model cache.
+The engineer room uses procedural geometry and requests no GLB.
+The astronaut is a rendered WebP; the hero does not load its reusable GLB.
 
 Generate the PNG icon set from the SVG source with:
 
@@ -52,7 +54,7 @@ npm run generate:icons
 | Google Fonts URLs              | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
 | Same-origin `/api/*` GET calls | `NetworkFirst`         | 5-minute cache with 10-second timeout; does not queue POST mutations    |
 
-Most local assets are handled by the precache, not those runtime rules.
+Precached files use the precache rather than the runtime rules above.
 
 ## Build and Preview
 

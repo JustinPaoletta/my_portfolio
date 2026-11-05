@@ -48,17 +48,21 @@ KV_REST_API_TOKEN=...
 
 The same credentials enable deployment-wide API rate limits. The API uses `@upstash/redis`, not `@vercel/kv`.
 
-| Condition                                | Behavior                                                               |
-| ---------------------------------------- | ---------------------------------------------------------------------- |
-| Either Redis credential is missing       | GET returns zeroed stats; POST acknowledges without shared persistence |
-| Configured Redis rate limiter fails      | HTTP 503; request does not reach storage                               |
-| Configured Redis storage operation fails | HTTP 500                                                               |
-| Per-client rate limit exceeded           | HTTP 429 with `Retry-After`                                            |
-| Unknown dog or action                    | HTTP 400                                                               |
-| Disallowed browser origin                | HTTP 403                                                               |
-| Mutation body exceeds 16 KiB             | HTTP 413                                                               |
-| Mutation content type is not JSON        | HTTP 415                                                               |
-| Unsupported method                       | HTTP 405                                                               |
+| Condition                                       | Behavior                                                               |
+| ----------------------------------------------- | ---------------------------------------------------------------------- |
+| Either Redis credential is missing              | GET returns zeroed stats; POST acknowledges without shared persistence |
+| Configured Redis rate limiter fails             | HTTP 503; request does not reach storage                               |
+| Configured Redis storage operation fails        | HTTP 500                                                               |
+| Per-client rate limit exceeded                  | HTTP 429 with `Retry-After`                                            |
+| Unknown dog or action                           | HTTP 400                                                               |
+| Disallowed browser origin                       | HTTP 403                                                               |
+| Reserialized mutation body exceeds 16 KiB       | HTTP 413                                                               |
+| Mutation content type is not `application/json` | HTTP 415                                                               |
+| Unsupported method                              | HTTP 405                                                               |
+
+Mutation-body size is the UTF-8 byte length of `JSON.stringify(req.body)` after parsing.
+The check does not measure raw request bytes. Content-type parameters are permitted.
+GET and OPTIONS do not require a JSON body.
 
 GET permits 120 requests per client IP per minute. POST permits 60.
 Without Redis credentials, limits use bounded per-function memory and reset on cold starts.

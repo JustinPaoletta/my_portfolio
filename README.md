@@ -1,6 +1,6 @@
 # My Portfolio
 
-A React 19 portfolio with four presentation modes, prerendered landing content, and static SEO metadata.
+A React 19 portfolio with four presentation modes, browser-prerender support, and static SEO metadata.
 Optional Vercel functions support contact, GitHub data, and shared pet counts.
 
 ## Status
@@ -24,7 +24,8 @@ Optional Vercel functions support contact, GitHub data, and shared pet counts.
 ## What The Project Does
 
 - Ships four presentation modes: `engineer`, `cosmic`, `cli`, and `minimal`.
-- Prerenders the homepage during production builds so crawlers receive meaningful HTML.
+- Attempts homepage browser prerendering during production builds; confirm success in the build log.
+- Shows five main projects, including SideQuest, and a Games group containing SQUARK.
 - Generates SEO artifacts such as `sitemap.xml`, `robots.txt`, and structured metadata.
 - Supports PWA install and offline flows plus optional analytics, GitHub, contact, and pet stats integrations.
 
@@ -67,7 +68,7 @@ Optional Vercel functions support contact, GitHub data, and shared pet counts.
 
 - `npm run start:dev` starts the Vite frontend locally at `http://localhost:5173`.
 - `npm run start:vercel` runs the app through `vercel dev` at `http://localhost:6173`.
-- `npm run build` type-checks, validates contrast, builds the app, and prerenders the homepage.
+- `npm run build` type-checks, validates contrast, builds the app, and attempts homepage browser prerendering.
 - `npm run start:prod` builds and previews the production output at `http://localhost:4173`.
 - `npm run lint` runs the CI lint and Prettier checks.
 - `npm run lint:fix` applies eslint and Prettier fixes where possible.

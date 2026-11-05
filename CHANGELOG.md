@@ -46,6 +46,8 @@ and this project follows [Semantic Versioning](https://semver.org/spec/v2.0.0.ht
 
 ### Documentation
 
+- Recheck final project grouping, manual-test sequencing, prerender evidence, procedural/GLB caching, optional provider settings, and parsed request-body limits. Remove obsolete budget limits from the generated PR size report.
+
 - Audit maintained guides against source, correct API failure behavior and CLI examples, and distinguish dated implementation records from current instructions.
 
 ## [1.2.1] - 2026-07-03

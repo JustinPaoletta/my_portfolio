@@ -14,13 +14,10 @@ From the repository root:
 ```sh
 npx --yes npm@11.6.4 ci
 npx playwright install chromium firefox webkit
-npm run start:prod
 ```
 
-Open `http://localhost:4173/`. Production preview serves static output, not the Vercel API functions.
-Use isolated mocked responses for contact success/error checks. Sending a real message requires explicit authorization.
-
-Run automated gates before manual sign-off:
+Run automated gates before starting a manual preview.
+Close any earlier manual preview on port 4173 before the browser suite:
 
 ```sh
 npm run contrast:check
@@ -28,6 +25,16 @@ npm run test:a11y:unit
 npm run test:a11y:e2e
 npm run lighthouse
 ```
+
+After those checks finish, start the manual preview:
+
+```sh
+npm run start:prod
+```
+
+Leave it running in one terminal. Use another terminal for any further commands.
+Open `http://localhost:4173/`. Production preview serves static output, not the Vercel API functions.
+Use isolated mocked responses for contact success/error checks. Sending a real message requires explicit authorization.
 
 Record the revision, browser/version, operating system, assistive technology, viewport/zoom, and date for every session.
 Use keyboard-only Chrome and Safari with VoiceOver. Add NVDA on Windows when available.

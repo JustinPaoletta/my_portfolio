@@ -57,6 +57,13 @@ Use `help aliases` for the supported list.
 Source, email, professional-profile, and PDF links remain keyboard-accessible.
 Appearance selections persist on reload, including sessions opened with theme/mode URL overrides.
 
+## Project classifications
+
+All project entries remain under `/projects`, including games.
+Main project entries, including SideQuest, report `Type: Featured`.
+SQUARK reports `Type: Game`. Lifecycle and privacy are shown separately.
+The visual portfolio uses the main project layout for SideQuest and a separate Games group for SQUARK.
+
 ## Keyboard and touch
 
 - Enter executes a command. Empty Enter does nothing.

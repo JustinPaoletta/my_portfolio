@@ -49,9 +49,14 @@ Rate-limit keys hash IP addresses and expire automatically. Forwarded IP headers
 are trusted only on Vercel; local servers use the socket address.
 
 Contact and pet requests accept same-origin browsers, `VITE_SITE_URL`, and the
-current Vercel deployment/branch origin. They reject other browser origins and
-require JSON bodies of at most 16 KiB. Requests without an Origin header still
-use the rate limit; CORS alone cannot prevent direct scripted abuse.
+current Vercel deployment/branch origin. They reject other browser origins.
+
+POST mutations require `Content-Type: application/json`; parameters such as charset are permitted.
+The body limit is 16,384 UTF-8 bytes after `JSON.stringify` serializes the parsed body.
+This is not a raw wire-size check. GET and OPTIONS do not use mutation-body validation.
+
+Requests without an Origin header still use rate limits.
+CORS alone cannot prevent direct scripted abuse.
 
 Pet names are restricted to Nala, Rosie, and Tito. Atomic updates preserve the
 existing `pet-dogs:<name>` JSON records and prevent concurrent clicks from losing
@@ -63,7 +68,7 @@ CI and Vercel install the committed lockfile with pinned npm 11.6.4 and `npm ci`
 The npm version is pinned because npm 10 can restore a vulnerable routing package
 when resolving Vercel’s aliased dependency overrides. CI uses Node 22. The deployment runtime is not pinned in the checked-in configuration. GitHub Actions are pinned to commit hashes,
 and manual snapshot inputs enter shell commands through environment variables.
-Quality CI checks lint, browser and server unit tests, and the production audit.
+Quality CI checks lint, frontend and server unit tests, and the production audit.
 
 Dependabot auto-merge is enabled only when enforced branch checks and admin
 protection can be verified. Without those protections, security PRs require

@@ -80,9 +80,13 @@ npm run build:analyze
 npm run lighthouse
 ```
 
-- `npm run build` verifies the build, prerendering, and bundle budgets
+- `npm run build` checks types, contrast, and bundle budgets, then attempts browser prerendering
 - `npm run build:analyze` produces a bundle breakdown for debugging size issues
 - `npm run lighthouse` runs LHCI locally using the checked-in config
+
+A successful build alone does not establish prerendered HTML.
+The prerender script permits an explicit skip or unavailable browser dependencies without failing the build.
+Require the `Prerendered dist/index.html` message before reporting successful browser prerendering.
 
 ## How CI Uses These Gates
 
@@ -94,7 +98,9 @@ The bundle-size workflow:
 2. installs Chromium for build-time prerendering
 3. runs `npm run build`
 4. uploads `dist/**` and bundle artifacts
-5. posts a PR comment summarizing asset sizes
+5. posts a PR comment summarizing top-level `dist/assets` file sizes in KiB
+
+The comment is a size inventory. The build output and `vite.config.ts` define the enforced budgets.
 
 ### Lighthouse workflow
 

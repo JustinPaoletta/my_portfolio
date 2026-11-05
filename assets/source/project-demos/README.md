@@ -180,6 +180,7 @@ Three unmodified native screenshots show discovery, eleven regional guides,
 and the Steel City collection. They were captured on the existing iPhone 15 Pro
 simulator running iOS 27.2, at 1179 × 2556 pixels.
 The gallery mounts only the selected image and offers full-size derivatives.
+SideQuest uses the same main-project information and gallery layout as the other featured entries.
 
 The reviewed source is `a4382f2` on `codex/add-bloomfield-benny`; PR #85 remains
 open. The existing source-project installation receipt identifies `b41a6b6`.
