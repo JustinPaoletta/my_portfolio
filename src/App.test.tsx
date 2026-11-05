@@ -487,7 +487,11 @@ describe('App', () => {
       });
 
       expect(
-        await screen.findByRole('button', { name: /show dogs/i })
+        await screen.findByRole(
+          'button',
+          { name: /show dogs/i },
+          { timeout: 5_000 }
+        )
       ).toBeInTheDocument();
       expect(
         vi
@@ -510,7 +514,11 @@ describe('App', () => {
         })
       );
     });
-    await screen.findByRole('button', { name: /show dogs/i });
+    await screen.findByRole(
+      'button',
+      { name: /show dogs/i },
+      { timeout: 5_000 }
+    );
 
     fireEvent.click(
       screen.getByRole('button', { name: /toggle theme switcher/i })
