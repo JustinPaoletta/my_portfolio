@@ -1074,7 +1074,9 @@ describe('CliTerminal', () => {
     expect(
       terminalTranscript().getByText('[PROJECT] SideQuest: Pittsburgh')
     ).toBeInTheDocument();
-    expect(terminalTranscript().getByText('Type: Other')).toBeInTheDocument();
+    expect(
+      terminalTranscript().getByText('Type: Featured | Status: Testing')
+    ).toBeInTheDocument();
     expect(
       terminalTranscript().getByText('Repository: Private')
     ).toBeInTheDocument();
@@ -1087,6 +1089,9 @@ describe('CliTerminal', () => {
       terminalTranscript().queryByText(/Godot Playground/)
     ).not.toBeInTheDocument();
     runCommand('project squark');
+    expect(
+      terminalTranscript().getByText('Type: Game | Status: Testing')
+    ).toBeInTheDocument();
     expect(
       terminalTranscript().getByText('[PROJECT] SQUARK')
     ).toBeInTheDocument();

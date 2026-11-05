@@ -19,9 +19,21 @@ for (const width of [320, 1280]) {
     await expect(
       projects.getByRole('heading', { name: 'Godot Playground', exact: true })
     ).toHaveCount(0);
-    const card = projects.locator('article').filter({
-      has: page.getByRole('heading', { name: 'SQUARK', exact: true }),
-    });
+    await expect(
+      projects.getByRole('heading', { name: 'More Projects', exact: true })
+    ).toHaveCount(0);
+    await expect(
+      projects.getByRole('heading', { name: 'Games', level: 3, exact: true })
+    ).toBeVisible();
+    const games = projects.getByRole('group', { name: 'Games', exact: true });
+    await expect(games.getByRole('article')).toHaveCount(1);
+    const card = games.getByRole('article');
+    await expect(
+      card.getByRole('heading', { name: 'SQUARK', level: 4, exact: true })
+    ).toBeVisible();
+    await expect(
+      games.getByRole('heading', { name: 'SideQuest: Pittsburgh', exact: true })
+    ).toHaveCount(0);
     const action = card.getByRole('link', {
       name: 'Preview In Browser: SQUARK',
     });

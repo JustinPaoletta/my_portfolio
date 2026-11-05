@@ -1,26 +1,57 @@
-# Project browser captures
+# Project demo sources
 
-Captured on 2026-10-15 in Chrome. These are actual local interfaces, not
-illustrative mockups. The manifest records source revisions, dimensions, and
-asset hashes.
+Updated November 5, 2026. Each project has its own capture date and verification
+scope in `capture-manifest.json`. Public derivatives use responsive WebP images.
+The manifest records source revisions, dimensions, data modes, and hashes.
 
-## Design system
+## Capture prerequisites
 
-The running Storybook at port 4400 displayed four stories with `accent:gold`:
+Install the portfolio's Node dependencies and the relevant source project's
+dependencies before starting its documented local server.
+The capture helpers also require a compatible Playwright CLI launcher.
+They default to the installed Codex wrapper at
+`~/.codex/skills/playwright/scripts/playwright_cli.sh`.
+Set `PLAYWRIGHT_CLI=/absolute/path/to/launcher` when using another compatible
+launcher. These helpers do not install that external tool or source projects.
+
+## Design system — November 5, 2026
+
+Four current Storybook compositions were captured from source revision `61660e5`.
+The local preview used `accent:gold`.
 
 | View      | Story                                         | Viewport   |
 | --------- | --------------------------------------------- | ---------- |
 | Dashboard | `compositions-app-shell-dashboard--dashboard` | 1440 × 960 |
-| Forms     | `compositions-controls-form--default`         | 960 × 640  |
+| Forms     | `compositions-controls-form--default`         | 960 × 900  |
 | Data      | `compositions-data-display--default`          | 960 × 640  |
 | Assistant | `compositions-assistant-system--default`      | 960 × 640  |
 
-The form contains a fictional coach email and notes, with Coach selected. The
-roster shows three sample players. The assistant shows a submitted question and
-the story's fixed response; it makes no model or provider call. These are
-captured states, not interactive Angular components embedded in the portfolio.
-The gallery offers keyboard selection and full-size images. Inactive captures
-are not requested. The library remains pre-release.
+The Game 6 compositions use example archive data and fictional contact details.
+Form Save feedback changes local preview state; it does not persist account data.
+The assistant returns a deterministic local reply without an AI provider call.
+These are screenshots of real components, not an embedded Angular application.
+
+The [public Storybook](https://justinpaoletta.github.io/jp-design-system/)
+loaded anonymously during this review. Its successful Pages deployment matches
+`61660e5`. This does not establish package publication or manual accessibility
+acceptance. The library remains pre-release.
+
+Start Storybook from the sibling design-system checkout:
+
+```sh
+NG_BUILD_CACHE_STORE=sqlite NX_DAEMON=false npm exec -- nx run ui:storybook --ci --port=4400
+```
+
+Then capture from the portfolio root:
+
+```sh
+node scripts/project-demos/capture-design-system.mjs ../jp-design-system http://localhost:4400
+npm run optimize:project-demos
+```
+
+The gallery mounts only the selected capture. Keyboard navigation and full-size
+links support inspecting each view. November URLs include a capture version to
+avoid reusing older screenshots. October provenance remains in the manifest.
 
 ## Wild Apricot exports
 
@@ -83,41 +114,91 @@ Run `npm run optimize:project-demos` to generate the 640/960/1440px WebP posters
 The new media URLs prevent browsers from reusing the previous recording.
 The VTT and HTML transcript describe this workflow. Both video formats remain unloaded until playback is requested.
 
-## Plexarr
+## Plexarr — November 5, 2026
 
-The card uses a three-slide screenshot carousel with arrows, direct slide buttons,
-keyboard navigation, and touch swipes. It does not rotate automatically or load video.
-Only the selected slide's images mount. Full-size links keep small text accessible.
+The carousel shows the current Library, personalized picks, and title details.
+It displays **Current interface · sample library** beside the captures.
+Images come from the actual v3.3.2 React interface in an isolated local checkout.
+API fixtures provide sample account, library, recommendation, and preference data.
+Poster artwork comes from the retained authentic October 15 capture.
 
-The owner approved reuse of the October 15 authenticated live-app captures on
-October 18. No new sign-in, Library capture, or preference mutation is claimed.
-The slides show Discover, personalized picks, and title metadata.
+No fresh passkey sign-in, live provider result, preference write, or media request
+is claimed. All capture API calls are intercepted; unknown and external requests
+are aborted. The source revision is `9c9c0e0`, whose runtime files match `316e20f`.
+Those revisions differ only in five Markdown documents.
 
-| Output PNG             | Source                             | Frame (seconds) | Crop: x, y, width, height |
-| ---------------------- | ---------------------------------- | --------------- | ------------------------- |
-| `plexarr-catalog.png`  | `plexarr-live-discover.png`        | —               | 0, 193, 1440, 592         |
-| `plexarr-picks.png`    | `plexarr-live-catalog-capture.mp4` | 20.3            | 18, 273, 700, 252         |
-| `plexarr-overview.png` | `plexarr-live-catalog-capture.mp4` | 23              | 434, 117, 576, 267        |
-| `plexarr-rating.png`   | `plexarr-live-catalog-capture.mp4` | 23              | 459, 486, 522, 47         |
+Public crops exclude Request navigation, actions, forms, and status messages.
+The carousel supports arrows, direct selection, keyboard navigation, and swipes.
+It does not rotate automatically, offer a Plexarr video, or mount inactive slides.
 
-The third slide stacks two separate metadata excerpts. It does not reproduce a
-complete dialog. Every public crop excludes Request navigation, buttons, forms,
-and the title dialog’s request-status message. No catalog data or displayed rating was changed.
-The manifest records the source crops and output hashes.
+| Source                        | Dimensions |
+| ----------------------------- | ---------- |
+| `plexarr-current-library.png` | 1392 × 783 |
+| `plexarr-current-picks.png`   | 878 × 364  |
+| `plexarr-current-details.png` | 576 × 576  |
 
-To extract a source frame, run this command from the repository root:
+The capture helper requires an isolated current-source server on a non-production
+loopback port. Start that validation checkout using its documented Next.js
+workflow. Do not use the household production port or production credentials.
+From the portfolio root, run:
 
 ```sh
-ffmpeg -ss 20.3 -i assets/source/project-demos/plexarr-live-catalog-capture.mp4 \
-  -frames:v 1 /tmp/plexarr-picks-frame.png
+node scripts/project-demos/capture-plexarr-demo.mjs /path/to/isolated/plex-request-app http://localhost:3183
+npm run optimize:project-demos
 ```
 
-Use Sharp's `extract({ left, top, width, height })` with the table's crop coordinates.
-Save the resulting PNG under `assets/source/project-demos/`.
-Run `npm run optimize:project-demos` to reproduce the responsive WebP variants.
-The optimizer retains small metadata crops at their native maximum width.
+The helper records provenance under ignored `output/playwright/plexarr-current/`.
+Update the maintained manifest after intentionally replacing source images.
+The older live recordings and crops remain historical source evidence.
+They are not the current public demo. October provenance remains in the manifest.
 
-The previous request-focused video, captions, and full-navigation public poster
-were removed on October 18. The two original recordings remain historical source
-evidence. They are not served by the portfolio. Their original provenance remains
-in `plexarrArchivedOctober15` in the capture manifest.
+## SQUARK — mountain scene refreshed November 5, 2026
+
+`squark-mountain-flight.png` is the November 4 source-project gameplay capture.
+It shows the connected mountain ranges in browser release `84cbd0b974f82efbc046`.
+The runtime source revision is `22588e6`; the source record is at `8386ec3`.
+PR #4 was observed merged during this review.
+
+The existing anonymous public URL returned HTTP 200 on November 5.
+Its HTML references that same mountain release. This repeated check covers the
+hosted shell only. The retained source receipt records local browser courses
+and provider deployment checks; it does not claim a hosted gameplay rerun.
+Phone gameplay and GPU acceptance remain separate work.
+
+The portfolio displays a lightweight image and opens the game in another tab.
+It does not download or embed the engine before the visitor follows the action.
+Regenerate its 640/800/1280px derivatives with `npm run optimize:project-demos`.
+
+The original October `squark-gameplay.png`, `squark-browser-gameplay.webm`,
+`squark-public-release.json`, and `squark-portfolio-production-acceptance.json`
+remain archived source evidence. The raw video is not served by the portfolio.
+The newer summarized receipt is `squark-mountain-release.json`.
+
+## SideQuest: Pittsburgh — November 5, 2026
+
+Three unmodified native screenshots show discovery, eleven regional guides,
+and the Steel City collection. They were captured on the existing iPhone 15 Pro
+simulator running iOS 27.2, at 1179 × 2556 pixels.
+The gallery mounts only the selected image and offers full-size derivatives.
+SideQuest uses the same main-project information and gallery layout as the other featured entries.
+
+The reviewed source is `a4382f2` on `codex/add-bloomfield-benny`; PR #85 remains
+open. The existing source-project installation receipt identifies `b41a6b6`.
+This capture pass did not independently reverify the installed JavaScript bundle.
+It demonstrates the observed simulator UI, not physical-device acceptance.
+
+The app uses React Native, native SQLite, MapLibre, Fastify, and Postgres/PostGIS.
+The welcome coin is implemented. Additional coin earning and current device,
+offline recovery, performance, accessibility, and Android acceptance remain open.
+The captures do not establish those gates or publish the app.
+
+To refresh, use the source project's current simulator workflow. Navigate through
+the app normally, preserve the user's guide and saved state, and capture with:
+
+```sh
+xcrun simctl io <booted-simulator-uuid> screenshot /tmp/sidequest-screen.png
+```
+
+Preserve the source PNG under `assets/source/project-demos/`, record the source
+and installation scope, then run `npm run optimize:project-demos`.
+Current derivative filenames include `20261105` to separate capture generations.

@@ -18,13 +18,14 @@ This portfolio targets WCAG 2.2 AA across every supported theme and both explici
 - Custom tabs, pickers, and command UIs expose the expected focus order and selected state.
 - Form errors are field-specific, tied with `aria-describedby`, and focus the first invalid control.
 - Success feedback uses `role="status"` and error feedback uses `role="alert"`.
-- Reduced-motion users get a non-animated fallback for the cosmic hero experience.
+- Reduced-motion users get still hero assets and reduced interface animation.
+- Treat WCAG 2.2 AA as the target. Automated gates do not establish complete conformance or human screen-reader acceptance.
 
 ## Manual Smoke Pass
 
 - Follow the full checklist in [`docs/ACCESSIBILITY_MANUAL_TEST.md`](./ACCESSIBILITY_MANUAL_TEST.md) before sign-off on major UI or theme changes.
 - VoiceOver + Safari: verify skip link, mobile menu, theme switcher, contact form errors, and CLI command input.
-- Keyboard only: tab through the shell, open/close the mobile menu, open/close the theme switcher, switch skills tabs, submit an invalid contact form, and run a CLI command.
+- Keyboard only: inspect shell navigation, mobile menu, theme radios, project demo controls, Articles, contact validation, and CLI commands.
 - Theme matrix: spot-check `engineer`, `cosmic`, `cli`, and `minimal` in both `light` and `dark` mode.
 
 ## Useful Commands

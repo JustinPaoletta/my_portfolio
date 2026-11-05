@@ -27,6 +27,7 @@ export interface ProjectSummary {
   techStack: string[];
   status?: ProjectStatus;
   featured: boolean;
+  category?: 'game';
   githubUrl?: string;
   liveUrl?: string;
   liveLabel?: string;
@@ -36,7 +37,7 @@ export interface ProjectSummary {
 
 const githubProfileUrl = env.social.github.replace(/\/+$/, '');
 
-// Reviewed against source and current-commit CI on 2026-10-07.
+// Source and capture review refreshed on 2026-11-05.
 // Keep capabilities, lifecycle, and provider limits together when updating
 // either presentation. Evidence and remaining release gates: docs/PROJECT_CLAIMS.md.
 export const BITSTOCKERZ_PROJECT: ProjectSummary = {
@@ -57,13 +58,16 @@ export const JP_DESIGN_SYSTEM_PROJECT: ProjectSummary = {
   status: 'prerelease',
   featured: true,
   githubUrl: `${githubProfileUrl}/jp-design-system`,
+  liveUrl: 'https://justinpaoletta.github.io/jp-design-system/',
+  liveLabel: 'Explore Storybook',
 };
 
 /** Stable public game origin; review deployments remain protected. */
 export const SQUARK_PROJECT: ProjectSummary = {
   title: 'SQUARK',
+  category: 'game',
   description:
-    'Fly a conure through a river valley, collect snacks, and reach the tower perch before the two-minute timer runs out. The Godot browser demo shares its flight, collision, audio, and results systems with the native game. The desktop browser demo needs no account; phone testing is in progress.',
+    'Fly a conure through a mountain-lined river valley, collect rings and snacks, and reach the tower perch before the two-minute timer runs out. The Godot browser demo shares its flight, collision, audio, and results systems with the native game. The desktop browser demo needs no account; phone testing is in progress.',
   techStack: ['Godot', 'GDScript', 'WebGL 2', 'WebAssembly'],
   status: 'testing',
   featured: false,
@@ -75,8 +79,26 @@ export const SQUARK_PROJECT: ProjectSummary = {
 export const PLEXARR_PROJECT: ProjectSummary = {
   title: 'Plexarr',
   description:
-    'A private, self-hosted dashboard for browsing a household media library and discovering what to watch next. Built with Next.js and React, Plexarr combines library search and filters, title details, and personalized recommendations shaped by favorites and ratings. Allowlisted users sign in with passkeys; backend integrations and service credentials stay server-side.',
+    'A private, self-hosted dashboard for browsing a household media library and discovering what to watch next. Built with Next.js and React, Plexarr combines library search and filters, title details, and recommendations shaped by favorites and feedback. Allowlisted users sign in with passkeys; service credentials stay server-side. The demo shows the current interface with a sample library.',
   techStack: ['Next.js', 'React', 'TypeScript', 'SQLite', 'WebAuthn'],
+  private: true,
+  featured: true,
+};
+
+/** Private native app; simulator captures do not establish device acceptance. */
+export const SIDEQUEST_PROJECT: ProjectSummary = {
+  title: 'SideQuest: Pittsburgh',
+  description:
+    'A private, offline-first React Native app for exploring restaurants across Pittsburgh and nearby towns. Search and filter a local catalog, save places, browse MapLibre maps, and choose from eleven regional guides. A 3D welcome coin opens the Steel City collection; further coin earning and current-device acceptance remain in progress.',
+  techStack: [
+    'React Native',
+    'TypeScript',
+    'SQLite',
+    'MapLibre',
+    'Fastify',
+    'Postgres/PostGIS',
+  ],
+  status: 'testing',
   private: true,
   featured: true,
 };

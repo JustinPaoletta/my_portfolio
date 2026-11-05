@@ -1,10 +1,14 @@
+# Historical design acceptance record
+
+This record describes the October 2026 review. It does not establish current browser or device acceptance. Approved source references were preserved under `assets/source/` on November 5, 2026. Other capture paths refer to local, ignored review evidence.
+
 # Skills card design review
 
 Date: 2026-10-15. Scope: the three Skills & Technologies cards in PR #298.
 
 ## Source and implementation
 
-- Approved source: `output/playwright/professional-review/skills-approved-mockup.png`
+- Approved source: `assets/source/design/skills-approved-mockup.png`
   (1828 × 860 pixels). This is the owner's selected generated mockup.
 - Implementation: `output/playwright/professional-review/skills-grouped-desktop.jpg`
   (1430 × 589 pixels), captured from the production preview in the Codex in-app
@@ -82,7 +86,7 @@ Date: 2026-10-16. Scope: replace the About section with the owner's supplied ref
 ## Source and captures
 
 - Source: `/tmp/codex-remote-attachments/01a12938-59f9-78b3-89a6-5df2c5e383ed/24F4225F-450E-4795-8D5A-6E6044D21F63/1-Pasted-Image-1.jpg` (740 × 1280).
-- Normalized source: `output/playwright/professional-review/about-source-normalized.png` (370 × 640).
+- Normalized source: `assets/source/design/about-source-normalized.png` (370 × 640).
 - Implementation: `output/playwright/professional-review/about-reference-mobile.png`, captured in the in-app browser with a 380 × 900 CSS viewport; exported image is 370 × 876 pixels. The browser reserves a scrollbar gutter and scales its capture. The reference's device density is unknown; normalization assumes a 2× source for a proportional comparison, not pixel-identical rasterization.
 - Comparison: `output/playwright/professional-review/about-design-comparison.png`. Source and implementation are shown together at 370 pixels wide, cropped below their navigation to compare the complete About content. Different capture heights retain the entire section rather than cutting off the résumé link. Both use Minimal dark with the mobile menu closed and About visible.
 - Desktop: `output/playwright/professional-review/about-reference-desktop.png`, captured at a 1440 × 1000 CSS viewport.

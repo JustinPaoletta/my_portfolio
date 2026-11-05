@@ -1,6 +1,9 @@
 # PR #298 test coverage
 
-This inventory covers the complete PR against `main`, rather than only the most recent About edit. Tests assert behavior and delivered assets; prose and styles are checked through component assertions, browser layout checks, and visual references. Source artwork and captured videos are checked as delivery assets, not presented as executable application code.
+This is the historical coverage record for merged PR #298, reviewed as documentation on 2026-11-05.
+Its test counts and hosted results describe that earlier work, not this checkout’s latest test run.
+Later changes, including PRs #300–#303, supersede some demo and CLI details.
+This inventory covers the complete PR against its then-current `main`, rather than only the most recent About edit. Tests assert behavior and delivered assets; prose and styles are checked through component assertions, browser layout checks, and visual references. Source artwork and captured videos are checked as delivery assets, not presented as executable application code.
 
 ## Coverage by change
 
@@ -40,7 +43,7 @@ The V8 report measures instrumented modules executed by the unit suite. It is no
 
 GitHub/contact APIs use deterministic fixtures or mocked responses in browser tests. Tests do not send real recruiter messages, place real orders, submit Plex requests, or validate third-party uptime. An emulated phone viewport and automated axe checks do not establish physical iPhone or human screen-reader acceptance. Visual/artistic fidelity of the dog cutouts and professional copy remains owner acceptance.
 
-### Latest local results
+### Historical local results
 
 - Unit coverage with SQUARK integration: 97.17% lines, 97.07% statements, 96.20% functions, 91.71% branches; all existing 90% thresholds pass.
 - Frontend: 289 cases pass. Server suite is run by the required pre-push check.
@@ -49,12 +52,12 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 - macOS section visuals: 15 passed, including new About references; updated images visually reviewed before staging.
 - Delivered Blender GLB validator passed (179,410 triangles, finite geometry, valid skinning, five embedded textures, WaveThenRest clip).
 - Firefox/WebKit keyboard regressions: all 10 terminal/calendar cases passed after the final keyboard fallback.
-- Hosted verification at `c8f5c21`: quality/coverage, bundle, Lighthouse, Chromium, mobile Chromium, all 33 Linux visual checks, and Vercel passed. The expanded Firefox/WebKit jobs exposed the environment/media checks below; all 16 focused Firefox/WebKit follow-up cases passed locally. Current hosted results are available in the required PR checks.
+- Hosted verification at `c8f5c21`: quality/coverage, bundle, Lighthouse, Chromium, mobile Chromium, all 33 Linux visual checks, and Vercel passed. The expanded Firefox/WebKit jobs exposed the environment/media checks below; all 16 focused Firefox/WebKit follow-up cases passed locally. Use required checks for the exact revision when assessing a new change.
 
 ### Defects found during this audit
 
-- Fix 320px horizontal overflow in WebKit when its scrollbar reserves layout space: allow the body to fit the available width and size the menu backdrop to its inset bounds.
-- Add keyboard arrow scrolling to the focusable contribution region so browsers with inconsistent native overflow-key handling can reach the full year. Preserve modifier-key navigation and reduced-motion behavior.
+- Fixed WebKit horizontal overflow at 320px when its scrollbar reserves layout space. The body fits the available width; the menu backdrop uses inset bounds.
+- Added arrow-key scrolling to the contribution region. This supports browsers with inconsistent native overflow-key handling. Preserve modifier-key navigation and reduced-motion behavior.
 - Support legacy media-query listeners when updating responsive hero posters, with matched cleanup.
 - Remove the stale Foster label from the CLI dog details.
 - Correct tests that relied on platform-specific Tab focus, scrollend support, or a fixed chunk-delay stopwatch. The chunk test now explicitly holds/releases the response; the scroll test waits for observed stable positions.
@@ -67,4 +70,4 @@ GitHub/contact APIs use deterministic fixtures or mocked responses in browser te
 
 ### SQUARK browser integration
 
-Projects/CLI unit checks share the review URL and disclose preview sign-in. Browser checks at 320/1280px verify the image, 44px action target, no overflow, no game/engine downloads before activation, and the separate-window launch. The game has separate real-course, audio, retry, lifecycle, failure, HTTP/pack, and native-regression evidence in [SQUARK browser demo review](SQUARK_BROWSER_DEMO.md). The protected preview is not yet anonymous public acceptance. Project recordings now play naturally to completion instead of seeking past most of the decoded content.
+At the PR #298 review stage, Projects/CLI checks shared a protected review URL and disclosed preview sign-in. Browser checks at 320/1280px verify the image, 44px action target, no overflow, no game/engine downloads before activation, and the separate-window launch. The game has separate real-course, audio, retry, lifecycle, failure, HTTP/pack, and native-regression evidence in [SQUARK browser demo review](SQUARK_BROWSER_DEMO.md). PR #301 later switched to the anonymous public production origin. See the linked release record for its dated acceptance evidence. Project recordings now play naturally to completion instead of seeking past most of the decoded content.

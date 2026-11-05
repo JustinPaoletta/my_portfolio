@@ -7,7 +7,7 @@ This app uses a static-first SEO model. There is no runtime SEO component or Hel
 1. `index.html` ships the crawler-facing head tags, social metadata, identity links, and JSON-LD.
 2. `src/content/site.ts` and `src/config/seo.ts` hold shared copy and SEO constants that tests can assert against.
 3. `plugins/vite-plugin-sitemap.ts` generates `dist/sitemap.xml` and rewrites `dist/robots.txt` during `npm run build`.
-4. `scripts/prerender.ts` opens the built site in headless Chromium and rewrites `dist/index.html` with prerendered homepage markup.
+4. `scripts/prerender.ts` attempts to open the built site in headless Chromium and write prerendered homepage markup.
 5. `src/static-seo.test.ts` and `src/config/seo.test.ts` protect the static SEO contract from drift.
 
 ## Source Of Truth
@@ -25,10 +25,10 @@ This app uses a static-first SEO model. There is no runtime SEO component or Hel
 For the homepage, the important path is:
 
 1. the raw HTML response already contains the static head tags and JSON-LD from `index.html`
-2. the production build adds prerendered homepage markup into `dist/index.html`
-3. crawlers and social scrapers can read both the head metadata and visible body content without relying on client-side React execution
+2. a successful browser prerender adds homepage markup into `dist/index.html`
+3. crawlers and social scrapers can read the captured body without client-side React execution when prerendering succeeds
 
-That combination matters because social unfurlers often ignore JavaScript entirely, while search engines still benefit from correct first-response HTML even when they can render scripts later.
+Social unfurlers can read metadata without executing JavaScript. A successful prerender also exposes body content in the first HTML response.
 
 ## Signals Shipped Today
 
@@ -42,19 +42,19 @@ The homepage currently ships these signals directly from `index.html`:
 - Open Graph tags
 - Twitter card tags
 - JSON-LD graph entries for `Person`, `WebSite`, `WebPage`, and `ProfilePage`
-- a `noscript` fallback summary
+- a source `noscript` fallback summary, removed when full-page prerendering succeeds
 
 The build also emits:
 
 - `dist/sitemap.xml`
 - `dist/robots.txt`
-- prerendered homepage HTML in `dist/index.html`
+- homepage HTML in `dist/index.html`, with captured body content when browser prerendering succeeds
 
 ## No Runtime Metadata Layer
 
 The repo no longer has `src/components/SEO.tsx`, and metadata is not updated after React mounts. That is intentional for the current single-page homepage build.
 
-If you later add real client-side routes with distinct SEO requirements, you will need to introduce a runtime metadata layer deliberately instead of assuming one already exists.
+If new routes need distinct SEO metadata, design their metadata and rendering strategy explicitly. The current single-page implementation does not provide per-route metadata.
 
 ## Shared SEO Config
 
@@ -86,9 +86,10 @@ After Vite finishes building, `scripts/prerender.ts`:
 1. serves the built `dist/` directory on a temporary local HTTP server
 2. opens the homepage in headless Chromium
 3. waits for deferred sections to reveal
-4. serializes the hydrated document back into `dist/index.html`
+4. serializes the rendered document back into `dist/index.html`
 
 If Chromium cannot launch because the environment is missing browser dependencies, the script logs a warning and keeps the Vite-generated `dist/index.html` instead. You can also skip the step intentionally with `SKIP_PLAYWRIGHT_PRERENDER=1`.
+Require `Prerendered dist/index.html` in the build log before reporting successful browser prerendering.
 
 ## Update Checklist
 

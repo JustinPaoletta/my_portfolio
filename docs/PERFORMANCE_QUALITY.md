@@ -21,11 +21,16 @@ The `bundle-size-limit` plugin in `vite.config.ts` fails `npm run build` if any 
 | CSS files                   | `85 KB`   |
 | Total JS + CSS asset weight | `1550 KB` |
 
-The `vendor-three` chunk holds three.js and `@react-three/fiber`, which power the
-3D hero backgrounds. It is isolated into its own lazy-loaded chunk so it never
-enters the initial critical path.
+The `vendor-three` chunk holds three.js and `@react-three/fiber` for the engineer room and cosmic nebula/starfield.
+It loads through deferred scene imports. The astronaut itself is a separate rendered WebP.
+
+The plugin also limits initial-route JS to 355 KiB, CSS to 55 KiB, and their combined size to 380 KiB.
+It measures emitted file bytes divided by 1024, before transfer compression.
+The table above uses the same KiB units despite the plugin’s historical `KB` log label.
 
 These checks run anywhere `npm run build` runs, including local builds, hooks, CI, and Vercel.
+
+These limits describe configured checks, not a promise that every production visit meets the budgets.
 
 ## Lighthouse CI
 
@@ -75,9 +80,13 @@ npm run build:analyze
 npm run lighthouse
 ```
 
-- `npm run build` verifies the build, prerendering, and bundle budgets
+- `npm run build` checks types, contrast, and bundle budgets, then attempts browser prerendering
 - `npm run build:analyze` produces a bundle breakdown for debugging size issues
 - `npm run lighthouse` runs LHCI locally using the checked-in config
+
+A successful build alone does not establish prerendered HTML.
+The prerender script permits an explicit skip or unavailable browser dependencies without failing the build.
+Require the `Prerendered dist/index.html` message before reporting successful browser prerendering.
 
 ## How CI Uses These Gates
 
@@ -89,7 +98,9 @@ The bundle-size workflow:
 2. installs Chromium for build-time prerendering
 3. runs `npm run build`
 4. uploads `dist/**` and bundle artifacts
-5. posts a PR comment summarizing asset sizes
+5. posts a PR comment summarizing top-level `dist/assets` file sizes in KiB
+
+The comment is a size inventory. The build output and `vite.config.ts` define the enforced budgets.
 
 ### Lighthouse workflow
 

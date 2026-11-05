@@ -34,13 +34,15 @@ Umami initializes only when all of these are true:
 - the visitor is not detected as an automated client
 - the app is not running in the test environment
 
-### Required Variables
+### Example Configuration
 
 ```env
 VITE_ENABLE_ANALYTICS=true
 VITE_UMAMI_WEBSITE_ID=00000000-0000-0000-0000-000000000000
 VITE_UMAMI_SRC=https://cloud.umami.is/script.js
 ```
+
+`VITE_UMAMI_SRC` is optional and defaults to the URL shown above.
 
 If you do not have a valid Umami site ID yet, keep `VITE_ENABLE_ANALYTICS=false`.
 
@@ -73,7 +75,7 @@ New Relic initializes only when all of these are true:
 
 If any of those checks fail, the app skips New Relic cleanly.
 
-### Required Variables
+### Example Configuration
 
 ```env
 VITE_ENABLE_ERROR_MONITORING=true
@@ -84,6 +86,8 @@ VITE_NEWRELIC_LICENSE_KEY=...
 VITE_NEWRELIC_APPLICATION_ID=...
 VITE_NEWRELIC_AJAX_DENY_LIST=/api/internal,/health
 ```
+
+`VITE_NEWRELIC_AJAX_DENY_LIST` is optional and defaults to an empty list.
 
 ### Available Helpers
 
@@ -109,6 +113,7 @@ try {
   }
 }
 
+// Example manual helper call; the UI does not currently emit this event.
 trackPageAction('resume_download', { source: 'hero' });
 ```
 

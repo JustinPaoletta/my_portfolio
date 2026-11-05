@@ -13,7 +13,14 @@ export function DemoTabs({ label, items }: DemoTabsProps): React.ReactElement {
 
   return (
     <div className="project-showcase" role="group" aria-label={label}>
-      <div className="demo-tabs" role="tablist" aria-label={label}>
+      <div
+        className="demo-tabs"
+        style={{
+          gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))`,
+        }}
+        role="tablist"
+        aria-label={label}
+      >
         {items.map((item, index) => (
           <button
             key={item.label}

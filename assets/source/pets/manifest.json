@@ -1,0 +1,35 @@
+{
+  "tool": "built-in image_gen",
+  "transparent_background": true,
+  "outputs": [
+    {
+      "name": "Nala",
+      "full_cutout": "assets/source/pets/nala-cutout.png",
+      "avatar": "public/images/pets/nala-cutout.webp",
+      "prompt": "Use case: background-extraction. Edit target: the attached photograph of Nala. Remove ONLY the entire background and isolate the exact photographed dog on genuine alpha transparency. This is a photographic cutout, not a recreation. Preserve the dog's precise identity, facial expression, eye shapes, markings, fur colors and texture, tongue, ears, pose, visible body, paws, tail and all harness/collar/bow details as photographed. Preserve the original framing and cropped body boundaries; do not invent missing limbs or change the pose. Keep fine fur and whisker edges clean with no colored halo. Remove all floor, walls, furniture, dishes, rugs and background shadows, including between legs. Do not add a white background, shadow, text, border, stylization, accessories, or any other changes. Output one transparent PNG of this same dog.",
+      "original_photo": "1-Photo-1.jpg",
+      "original_photo_available": false,
+      "sha256": "cfdb39353839ecf1b63d8220c9ec4c35d9a6bb80799e281a08071b228b5f4a68"
+    },
+    {
+      "name": "Rosie",
+      "full_cutout": "assets/source/pets/rosie-cutout.png",
+      "avatar": "public/images/pets/rosie-cutout.webp",
+      "prompt": "Use case: background-extraction. Edit target: the attached photograph of Rosie. Remove ONLY the entire background and isolate the exact photographed dog on genuine alpha transparency. This is a photographic cutout, not a recreation. Preserve the dog's precise identity, facial expression, eye shapes, markings, fur colors and texture, tongue, ears, pose, visible body, paws, tail and all harness/collar/bow details as photographed. Preserve the original framing and cropped body boundaries; do not invent missing limbs or change the pose. Keep fine fur and whisker edges clean with no colored halo. Remove all floor, walls, furniture, dishes, rugs and background shadows, including between legs. Do not add a white background, shadow, text, border, stylization, accessories, or any other changes. Output one transparent PNG of this same dog.",
+      "original_photo": "2-Photo-2.jpg",
+      "original_photo_available": false,
+      "sha256": "2da6cbf6a606c2e454243e45b9243d5bb7b5754ff59ac83b0e2a32dc68208a18"
+    },
+    {
+      "name": "Tito",
+      "full_cutout": "assets/source/pets/tito-cutout.png",
+      "avatar": "public/images/pets/tito-cutout.webp",
+      "prompt": "Use case: background-extraction. Edit target: the attached photograph of Tito. Remove ONLY the entire background and isolate the exact photographed dog on genuine alpha transparency. This is a photographic cutout, not a recreation. Preserve the dog's precise identity, facial expression, eye shapes, markings, fur colors and texture, tongue, ears, pose, visible body, paws, tail and all harness/collar/bow details as photographed. Preserve the original framing and cropped body boundaries; do not invent missing limbs or change the pose. Keep fine fur and whisker edges clean with no colored halo. Remove all floor, walls, furniture, dishes, rugs and background shadows, including between legs. Do not add a white background, shadow, text, border, stylization, accessories, or any other changes. Output one transparent PNG of this same dog.",
+      "original_photo": "3-Photo-3.jpg",
+      "original_photo_available": false,
+      "sha256": "5075a18b7114f1bd6caf88fe2db7e325829aae07d39138412ed79e8a5e3f27dc"
+    }
+  ],
+  "preserved": "2026-11-05",
+  "provenance": "Original photographic cutouts generated during the October portfolio review. Original photo attachments are no longer present. Preserve these full-resolution sources; public avatars are reduced derivatives."
+}

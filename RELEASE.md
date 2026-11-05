@@ -1,6 +1,7 @@
 # Release Process
 
-This repository uses a manual changelog + release branch workflow.
+This repository uses a manual changelog and release branches.
+The npm version is application metadata; a merged change does not automatically create a tag or GitHub Release.
 
 ## Standards
 
@@ -47,7 +48,7 @@ npm run lighthouse
    npm version --no-git-tag-version X.Y.Z
    ```
 
-6. Move the release notes from `## [Unreleased]` into a dated section like `## [X.Y.Z] - YYYY-MM-DD`, then leave a fresh empty `Unreleased` section at the top.
+6. Move the release notes from `## [Unreleased]` into a dated section such as `## [X.Y.Z] - YYYY-MM-DD`. Leave an empty `Unreleased` section at the top.
 7. Run the pre-release checks.
 8. Commit the release branch changes:
 

@@ -21,17 +21,21 @@ The app uses `vite-plugin-pwa` with the configuration in `src/pwa-config.ts`.
 
 The manifest and explicitly included install assets currently reference:
 
-- `branding/JP-no-cursor.svg`
+- `favicons/jp-monogram.svg`
 - `favicons/favicon-48x48.png`
 - `favicons/apple-touch-icon.png`
 - `favicons/pwa-192x192.png`
 - `favicons/pwa-512x512.png`
+- `favicons/pwa-maskable-512x512.png`
+- `favicon.ico`
 
 Hero posters, project images, article images, and Open Graph images are excluded
 from the precache to keep the service worker install small. They are fetched by
 the page as needed and covered by the same-origin image runtime cache after a
-successful online load. The interactive 3D hero scenes are lazy-loaded and use
-the same-origin GLB runtime cache once requested.
+successful online load. Both interactive 3D scenes are lazy-loaded.
+The cosmic nebula requests `cosmic-scene.glb`, covered by the hero-model cache.
+The engineer room uses procedural geometry and requests no GLB.
+The astronaut is a rendered WebP; the hero does not load its reusable GLB.
 
 Generate the PNG icon set from the SVG source with:
 
@@ -41,16 +45,16 @@ npm run generate:icons
 
 ## Runtime Caching Rules
 
-| Pattern                     | Strategy               | Notes                                                                   |
-| --------------------------- | ---------------------- | ----------------------------------------------------------------------- |
-| Same-origin images          | `CacheFirst`           | 30-day cache                                                            |
-| Same-origin video           | `CacheFirst`           | 7-day cache                                                             |
-| Same-origin hero GLB models | `CacheFirst`           | 30-day cache for `/models/hero/*.glb`                                   |
-| Same-origin JS and CSS      | `StaleWhileRevalidate` | 7-day cache                                                             |
-| Google Fonts URLs           | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
-| Same-origin `/api/*` calls  | `NetworkFirst`         | 5-minute cache with 10-second timeout                                   |
+| Pattern                        | Strategy               | Notes                                                                   |
+| ------------------------------ | ---------------------- | ----------------------------------------------------------------------- |
+| Same-origin images             | `CacheFirst`           | 30-day cache                                                            |
+| Same-origin video              | `CacheFirst`           | 7-day cache                                                             |
+| Same-origin hero GLB models    | `CacheFirst`           | 30-day cache for `/models/hero/*.glb`                                   |
+| Same-origin JS and CSS         | `StaleWhileRevalidate` | 7-day cache                                                             |
+| Google Fonts URLs              | `CacheFirst`           | Configured, but the current app ships fonts locally from `public/fonts` |
+| Same-origin `/api/*` GET calls | `NetworkFirst`         | 5-minute cache with 10-second timeout; does not queue POST mutations    |
 
-Most local assets are handled by the precache, not those runtime rules.
+Precached files use the precache rather than the runtime rules above.
 
 ## Build and Preview
 
@@ -86,8 +90,8 @@ Use the production preview when testing service workers. Plain `npm run start:de
 
 ### Old content sticks after deploy
 
-- The project uses `registerType: 'autoUpdate'`
-- The prompt component can trigger an immediate reload
+- The project uses `registerType: 'autoUpdate'`, `skipWaiting`, and `clientsClaim`
+- The prompt component can request an immediate reload; test the complete update sequence on a production build
 - If needed, clear site data in DevTools and reload once
 
 ## Deployment Notes

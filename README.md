@@ -1,14 +1,15 @@
 # My Portfolio
 
-A React 19 portfolio site with multiple presentation modes, prerendered landing content, strong SEO defaults, and optional Vercel-backed integrations for contact, GitHub data, and pet stats.
+A React 19 portfolio with four presentation modes, browser-prerender support, and static SEO metadata.
+Optional Vercel functions support contact, GitHub data, and shared pet counts.
 
 ## Status
 
 - Type: public web app
 - Current version: `1.2.1`
 - Hosting model: Vercel-friendly frontend with optional `/api/*` functions
-- Release model: manual changelog + release branch flow documented in [RELEASE.md](./RELEASE.md)
-- Next up: professional presentation and owner-approved case studies in [PROFESSIONAL_PORTFOLIO_PLAN.md](./PROFESSIONAL_PORTFOLIO_PLAN.md) (see [ROADMAP.md](./ROADMAP.md))
+- Release model: manual changelog and release branches, documented in [RELEASE.md](./RELEASE.md)
+- Remaining work: owner-approved case studies, manual acceptance, and optional reliability work in [ROADMAP.md](./ROADMAP.md).
 
 ## Quick Links
 
@@ -23,7 +24,10 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 ## What The Project Does
 
 - Ships four presentation modes: `engineer`, `cosmic`, `cli`, and `minimal`.
-- Prerenders the homepage during production builds so crawlers receive meaningful HTML.
+- Attempts homepage browser prerendering during production builds; confirm success in the build log.
+- Shows JP Design System, BitStockerz, SideQuest: Pittsburgh, Wild Apricot exports, and Plexarr in that order.
+- Keeps SQUARK in a separate Games group with a rounded gameplay image.
+- Shows **Can I pet that Dawg?** in Engineer and Cosmic; Minimal omits it, and CLI keeps its `dogs` commands.
 - Generates SEO artifacts such as `sitemap.xml`, `robots.txt`, and structured metadata.
 - Supports PWA install and offline flows plus optional analytics, GitHub, contact, and pet stats integrations.
 
@@ -32,7 +36,8 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 - React 19
 - TypeScript 5.9
 - rolldown-backed Vite
-- three.js and `@react-three/fiber` for the 3D hero backgrounds (engineer and cosmic themes)
+- three.js and `@react-three/fiber` for the engineer room and cosmic nebula/starfield
+- A Blender-rendered WebP for the cosmic astronaut, with editable source and a reusable GLB
 - Vercel serverless functions for optional `/api/*` routes
 - Vitest, Testing Library, Playwright, and Lighthouse CI
 - `vite-plugin-pwa` and Workbox
@@ -48,26 +53,28 @@ A React 19 portfolio site with multiple presentation modes, prerendered landing 
 
 ## Prerequisites
 
-- Node.js 20 or newer
-- npm
+- Node.js 22.12 or newer within the Node 22 release line, matching the Node 22 CI jobs
+- npm 11.6.4, pinned by `packageManager`
+- Playwright Chromium for prerendering; Chromium, Firefox, and WebKit for the full browser suite
 
 ## Local Setup
 
-1. Install dependencies with `npm install`.
+1. Install the lockfile dependencies with `npx --yes npm@11.6.4 ci`.
 2. Copy `.env.example` to `.env`.
 3. Fill in the `VITE_*` values you need locally.
-4. Run `npm run start:dev` for the frontend-only dev server (`http://localhost:5173`).
-5. Use `npm run start:vercel` instead when you need local `/api/*` functions (`http://localhost:6173`).
+4. Run `npx playwright install chromium firefox webkit` for prerendering and the full browser suite.
+5. Run `npm run start:dev` for the frontend-only dev server (`http://localhost:5173`).
+6. Use `npm run start:vercel` instead when you need local `/api/*` functions (`http://localhost:6173`).
 
 ## Common Commands
 
 - `npm run start:dev` starts the Vite frontend locally at `http://localhost:5173`.
 - `npm run start:vercel` runs the app through `vercel dev` at `http://localhost:6173`.
-- `npm run build` type-checks, validates contrast, builds the app, and prerenders the homepage.
+- `npm run build` type-checks, validates contrast, builds the app, and attempts homepage browser prerendering.
 - `npm run start:prod` builds and previews the production output at `http://localhost:4173`.
 - `npm run lint` runs the CI lint and Prettier checks.
 - `npm run lint:fix` applies eslint and Prettier fixes where possible.
-- `npm run test:unit` runs the Vitest suite once.
+- `npm run test:unit` runs the frontend and server Vitest suites once.
 - `npm run test:e2e` runs the Playwright suite excluding visual snapshots.
 - `npm run test:visual` runs the committed visual regression suite.
 - `npm run test:visual:update:linux` refreshes CI snapshot baselines (requires Docker). See [Design changes](#design-changes).
@@ -106,12 +113,14 @@ Details: [docs/VISUAL_REGRESSION.md](./docs/VISUAL_REGRESSION.md).
 
 ## Release Process
 
-- This repo now uses the same manual release model as the other application repos.
+- Releases follow the manual process in this repository.
 - Keep `CHANGELOG.md` updated under `## [Unreleased]` as work lands.
 - Cut release branches as `release/vX.Y.Z` from the protected default branch.
 - Follow the full checklist in [RELEASE.md](./RELEASE.md).
 
 ## Additional Docs
+
+See the [documentation index](./docs/README.md) for maintained guides, dated records, and verification limits.
 
 - [docs/ACCESSIBILITY.md](./docs/ACCESSIBILITY.md)
 - [docs/PERFORMANCE_QUALITY.md](./docs/PERFORMANCE_QUALITY.md)

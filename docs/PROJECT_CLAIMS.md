@@ -1,5 +1,91 @@
 # Project claim evidence
 
+Source and demo content were refreshed on **November 5, 2026**.
+The project cards and CLI share descriptions, stacks, actions, and lifecycle labels
+from [`src/content/projects.ts`](../src/content/projects.ts).
+
+A source review establishes implemented paths, not complete release acceptance.
+Capture provenance, source hashes, and data modes are in the
+[capture guide](../assets/source/project-demos/README.md) and
+[manifest](../assets/source/project-demos/capture-manifest.json).
+
+## Current project content
+
+The main Projects list contains JP Design System, BitStockerz, SideQuest: Pittsburgh,
+Wild Apricot exports, and Plexarr, in that order. Each uses the shared main-project layout.
+The Games group currently contains only SQUARK.
+The CLI keeps all entries under `/projects`; it labels main entries **Featured** and SQUARK **Game**.
+
+| Project               | Reviewed source                                              | Portfolio presentation and evidence limits                                                                                                                                               |
+| --------------------- | ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JP Design System      | `main` at `61660e5`                                          | Pre-release Angular library. Current Game 6 Storybook compositions use example data, local form state, and deterministic assistant replies. No AI provider call is demonstrated.         |
+| Plexarr               | v3.3.2 at `9c9c0e0`; runtime files match `main` at `316e20f` | Private Next.js/React library dashboard. The current interface uses isolated sample-library fixtures. Fresh authentication, provider operation, and backend writes are not demonstrated. |
+| SQUARK                | source record `8386ec3`; runtime `22588e6`                   | Godot browser game with connected mountain scenery. The current screenshot belongs to release `84cbd0b974f82efbc046`. The portfolio embeds no game engine.                               |
+| SideQuest: Pittsburgh | `codex/add-bloomfield-benny` at `a4382f2`                    | Private native app in testing. Simulator captures show discovery, eleven guides, and the welcome-coin collection. Further coin earning and current-device acceptance remain open.        |
+
+### JP Design System
+
+The public [Storybook](https://justinpaoletta.github.io/jp-design-system/)
+loaded anonymously during this review. The successful GitHub Pages deployment
+matches `61660e5`. The portfolio now offers **Explore Storybook**.
+A working hosted preview does not establish npm publication or complete
+accessibility conformance. Manual assistive-technology and device checks remain
+separate release gates. No npm package action is offered.
+
+Only an existing expansion-plan document was locally modified in the source
+checkout. Captured story source hashes are recorded in the manifest.
+
+### Plexarr
+
+The source uses Next.js, React, TypeScript, SQLite, and WebAuthn.
+Passkey access is allowlisted; service credentials stay server-side.
+The updated carousel displays **Current interface · sample library**.
+Its Library, recommendation, and details images come from actual React rendering.
+Sample API responses are intercepted in an isolated validation checkout.
+Unknown APIs and external browser requests are aborted.
+
+The normal live sign-in required owner passkey authentication.
+This refresh did not complete that ceremony or bypass the production login.
+Poster art was cropped from retained authentic October captures.
+Request navigation, forms, actions, and status messages are excluded from public
+screenshots. Earlier live recordings remain historical source evidence.
+
+### SQUARK
+
+The source project's retained publication receipt records local browser courses,
+pack identity, and the existing public deployment. PR #4 was observed merged
+on November 5. Its runtime source and release are recorded above.
+
+A fresh anonymous HTTP request returned 200 from the portfolio's game URL.
+The HTML references `84cbd0b974f82efbc046`.
+This is a hosted-shell check, not a repeated hosted gameplay session.
+The screenshot is a source-project browser capture from November 4.
+Physical-phone gameplay, GPU, memory, and thermal acceptance remain open.
+See the [browser-demo guide](SQUARK_BROWSER_DEMO.md).
+
+### SideQuest: Pittsburgh
+
+Current source uses React Native, TypeScript, native SQLite, MapLibre,
+Fastify, and Postgres/PostGIS. Earlier Express/MongoDB portfolio badges were stale.
+PR #85 was observed open at `a4382f2` during this review.
+The source describes a published 1,000-restaurant catalog, with a dated
+October 29 publication record. This refresh did not republish or independently
+re-fetch that catalog.
+
+The new full-screen images were captured from the existing iPhone 15 Pro
+simulator on iOS 27.2. The retained installation receipt names `b41a6b6`.
+This capture pass did not independently reverify the installed JavaScript bundle.
+The images establish the observed UI, not current physical-device, Android,
+offline recovery, accessibility, or performance acceptance.
+The welcome coin exists; additional earning paths remain unfinished.
+
+## Historical October 7 review
+
+The record below preserves its original revisions and test scope.
+Its preview-availability observations describe October 7 and are superseded by
+the November Storybook verification above. Its CI results are historical.
+The November pass did not repeat the BitStockerz source or provider audit.
+
 Reviewed on **October 7, 2026** for portfolio audit task 3. The descriptions,
 technology lists, source links, and lifecycle labels for these two projects live
 in [`src/content/projects.ts`](../src/content/projects.ts). Both the standard

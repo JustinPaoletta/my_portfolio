@@ -90,7 +90,7 @@ test.describe('@visual section states', () => {
       const carousel = page.getByRole('region', {
         name: 'Plexarr feature screenshots',
       });
-      for (const name of ['discover', 'picks', 'ratings']) {
+      for (const name of ['library', 'picks', 'details']) {
         await waitForSectionToSettle(page, carousel);
         await expect(carousel).toHaveScreenshot(
           `plexarr-${label}-${name}.png`,
@@ -101,7 +101,7 @@ test.describe('@visual section states', () => {
               .plexarr-carousel, .plexarr-carousel * { visibility: visible !important; }`,
           }
         );
-        if (name !== 'ratings')
+        if (name !== 'details')
           await carousel
             .getByRole('button', { name: 'Next Plexarr screenshot' })
             .click();
@@ -228,7 +228,7 @@ test.describe('@visual section states', () => {
 
   test('captures expanded pet dogs section', async ({ page }) => {
     await gotoVisualState(page, {
-      theme: 'minimal',
+      theme: 'cosmic',
       mode: 'light',
       viewport: DESKTOP_SECTION_VIEWPORT,
     });

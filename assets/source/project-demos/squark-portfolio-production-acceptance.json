@@ -1,0 +1,14 @@
+{
+  "mergeCommit": "e9dd1996fca23e3487c0047aade844b50a9ae837",
+  "portfolioDeploymentId": "dpl_9a7QK9YAQqUF3HPMTZJsxJXXgZYC",
+  "productionReady": true,
+  "modeLegend": "Mode",
+  "oldLegendPresent": false,
+  "publicLinkCheck": {
+    "portfolio": "https://jpengineering.dev/?theme=minimal&mode=dark",
+    "href": "https://squark-demo-justin-paolettas-projects.vercel.app",
+    "popup": "https://squark-demo-justin-paolettas-projects.vercel.app/",
+    "gameTitle": "SQUARK \u00b7 Browser demo",
+    "cookieCount": 0
+  }
+}

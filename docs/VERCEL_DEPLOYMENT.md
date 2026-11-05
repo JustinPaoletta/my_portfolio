@@ -5,6 +5,8 @@ This repo is already configured for Vercel. The source of truth is `vercel.json`
 ## Current Vercel Configuration
 
 - Build command: `npm run build`
+- Install command: `npx --yes npm@11.6.4 ci`
+- CI uses Node 22. Deployment runtime selection is an account setting, not pinned by this repository.
 - Build output lands in `dist/`
 - Root `api/*.ts` files are Vercel Functions
 - Asset rewrites and explicit manifest handling live in `vercel.json`
@@ -40,12 +42,16 @@ Optional client-side integrations:
 Set these only if you use the related endpoint:
 
 - `GITHUB_TOKEN` for `/api/github`
-- `KV_REST_API_URL` and `KV_REST_API_TOKEN` for `/api/pet-dogs`
-- `RESEND_API_KEY`, `CONTACT_EMAIL`, and `RESEND_FROM_EMAIL` for `/api/contact`
+- `KV_REST_API_URL` and `KV_REST_API_TOKEN` for shared pet counts and deployment-wide API rate limits
+- `RESEND_API_KEY` and `CONTACT_EMAIL` for `/api/contact`
+- Optional `RESEND_FROM_EMAIL` overrides the sender; the fallback is `Portfolio Contact <onboarding@resend.dev>`
 
 ## Branch Deployment Rules
 
-`vercel.json` does not override `git.deploymentEnabled`, so Vercel’s default applies: **preview deployments run for all connected Git branches** ([Git configuration](https://vercel.com/docs/project-configuration/git-configuration)).
+`vercel.json` does not override `git.deploymentEnabled`. Connected Git branches use Vercel’s deployment settings.
+The configured production branch targets production; eligible other branches target preview.
+Repository configuration alone does not establish current account linkage, ignored-build rules, or access protection.
+See [Git configuration](https://vercel.com/docs/project-configuration/git-configuration).
 
 To limit deployments to specific branch patterns, add a `git.deploymentEnabled` object to `vercel.json`.
 

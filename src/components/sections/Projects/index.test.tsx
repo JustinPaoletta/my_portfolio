@@ -1,16 +1,31 @@
-import { render, screen, within } from '@/test/test-utils';
+import { fireEvent, render, screen, within } from '@/test/test-utils';
 import { describe, expect, it } from 'vitest';
 import Projects from '.';
 
 describe('Projects section', () => {
-  it('renders featured and other projects with status/private branches', () => {
+  it('renders main projects and games with status/private branches', () => {
     render(<Projects />);
 
     expect(
       screen.getByRole('heading', { name: 'Projects' })
     ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Games' })).toBeInTheDocument();
+    expect(screen.queryByRole('heading', { name: 'More Projects' })).toBeNull();
+    const games = screen.getByRole('group', { name: 'Games' });
+    expect(within(games).getAllByRole('article')).toHaveLength(1);
     expect(
-      screen.getByRole('heading', { name: 'More Projects' })
+      within(games).getByRole('heading', { name: 'SQUARK' })
+    ).toBeInTheDocument();
+    const sideQuest = screen
+      .getByRole('heading', { name: 'SideQuest: Pittsburgh', level: 3 })
+      .closest('article')!;
+    expect(sideQuest).toHaveClass('featured-project');
+    expect(sideQuest.querySelector('.project-content')).toBeInTheDocument();
+    expect(
+      within(sideQuest).getByLabelText('Project testing')
+    ).toBeInTheDocument();
+    expect(
+      within(sideQuest).getByRole('group', { name: 'SideQuest app screens' })
     ).toBeInTheDocument();
 
     expect(screen.getAllByLabelText('Project in development').length).toBe(1);
@@ -79,7 +94,7 @@ describe('Projects section', () => {
       within(card).queryByText('Read the walkthrough')
     ).not.toBeInTheDocument();
     expect(
-      within(card).getByAltText(/Live Plexarr Discover catalog/)
+      within(card).getByAltText(/Current Plexarr Library interface/)
     ).toBeInTheDocument();
   });
 
@@ -120,7 +135,35 @@ describe('Projects section', () => {
     ).toBeInTheDocument();
 
     expect(
-      screen.getByAltText(/Current JP Design System dashboard/)
+      screen.getByAltText(/JP Design System Game 6 dashboard/)
+    ).toBeInTheDocument();
+  });
+
+  it('offers the prerelease Storybook and lazy native SideQuest screens', () => {
+    render(<Projects />);
+    expect(
+      screen.getByRole('link', { name: 'Explore Storybook: @jp-design-system' })
+    ).toHaveAttribute(
+      'href',
+      'https://justinpaoletta.github.io/jp-design-system/'
+    );
+    const card = screen
+      .getByRole('heading', { name: 'SideQuest: Pittsburgh' })
+      .closest('article')!;
+    expect(within(card).getAllByRole('img')).toHaveLength(1);
+    expect(within(card).getByText('SQLite')).toBeInTheDocument();
+    expect(within(card).queryByText('MongoDB')).not.toBeInTheDocument();
+    fireEvent.click(within(card).getByRole('tab', { name: 'Collection' }));
+    expect(
+      within(card).getByAltText(/Steel City Coin Collection/)
+    ).toBeInTheDocument();
+    expect(within(card).getAllByRole('img')).toHaveLength(1);
+    expect(
+      within(card).getByText(/Additional coin earning/)
+    ).toBeInTheDocument();
+    fireEvent.click(within(card).getByRole('tab', { name: 'Guides' }));
+    expect(
+      within(card).getByAltText(/eleven available Pittsburgh guides/)
     ).toBeInTheDocument();
   });
 });

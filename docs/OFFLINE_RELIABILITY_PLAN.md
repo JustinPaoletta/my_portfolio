@@ -1,15 +1,16 @@
 # Offline Reliability Plan
 
-This is the detailed companion plan for Priority 1 in
+This is the detailed companion plan for the optional reliability backlog in
 [`ROADMAP.md`](../ROADMAP.md). Keep [`ROADMAP.md`](../ROADMAP.md) as the
 priority/status source of truth and use this file for the implementation
 details.
 
-**Status (2026-07-03):** Not started. This is Priority 1 in
-[`ROADMAP.md`](../ROADMAP.md) after the `v1.2.1` release. Implement in rollout
-order: Phase 1 (avatar cache, fallback, stale GitHub data) → Phase 2 (contact
-outbox) → Phase 3 (idempotency and timeout hardening) → Phase 4 (optional
-Workbox Background Sync).
+**Status (reviewed 2026-11-05):** Proposed, not implemented. Employer evidence and manual acceptance take priority. Use this rollout order:
+
+1. Avatar cache, fallback, and stale GitHub data.
+2. Contact outbox.
+3. Idempotency and timeout hardening.
+4. Optional Workbox Background Sync.
 
 ## Objective
 
@@ -34,7 +35,8 @@ Create an offline-resilient experience where:
 
 ## Current State Summary
 
-- GitHub stats are cached in localStorage for 1 hour:
+- Successful complete GitHub data is cached in localStorage for 1 hour.
+  Expired, legacy, and contribution-error entries are discarded. Manual refresh clears the cache.
   - `src/hooks/useGitHub.ts`
 - GitHub avatar uses `user.avatar_url` directly:
   - `src/components/sections/GitHub/index.tsx`
@@ -43,8 +45,10 @@ Create an offline-resilient experience where:
   - This misses remote GitHub avatar URLs like `https://avatars.githubusercontent.com/u/123?v=4`.
 - Contact form submits directly to `/api/contact` with no offline queue:
   - `src/components/sections/Contact/index.tsx`
-- Contact API validates and sends via Resend:
+- Contact API validates and sends via Resend, with a ten-second upstream timeout.
+  It already has origin, JSON-body, and rate-limit checks. It has no idempotency-key store.
   - `api/contact.ts`
+  - `server/request-security.ts`
 
 ## Product Behavior Requirements
 
@@ -55,7 +59,7 @@ Create an offline-resilient experience where:
 5. Users should receive explicit status feedback at every stage.
 6. Retries should avoid duplicate emails where possible.
 
-## Architecture Decisions
+## Proposed architecture
 
 ## 1) Read Path (GitHub data + avatar)
 
@@ -158,7 +162,9 @@ In `src/components/sections/Contact/index.tsx`:
   - If offline: queue item immediately and show queued success-style message.
   - If online: attempt immediate send.
   - On network failure (fetch throw or timeout): queue item and show queued message.
-  - On 4xx validation errors: do not queue, show actionable error.
+  - On field validation errors (400): do not queue; show actionable errors.
+  - Treat 429 as a separate retryable rate limit and honor `Retry-After`.
+  - Treat 403, 413, and 415 as configuration or request defects; do not retry blindly.
   - On 5xx: queue with retry.
 
 New UI statuses (replace current `idle/success/error` only model):
@@ -266,7 +272,7 @@ Because PWA is disabled in dev (`devOptions.enabled: false`), test with producti
    - Cached GitHub data renders offline even after cache TTL expiry.
    - Contact submit offline creates queued state.
    - Reconnect triggers automatic send.
-   - 4xx validation errors are not queued.
+   - Field validation and non-retryable request errors are not queued; 429 honors `Retry-After`.
    - Retryable failures are queued.
    - Duplicate retries do not send duplicate emails (after idempotency implementation).
 

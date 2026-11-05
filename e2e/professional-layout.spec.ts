@@ -23,6 +23,7 @@ for (const width of [320, 390, 1280]) {
     await expect(featured.locator('h3')).toHaveText([
       '@jp-design-system',
       'BitStockerz',
+      'SideQuest: Pittsburgh',
       'wild-apricot-exports',
       'Plexarr',
     ]);

@@ -203,10 +203,6 @@
     transform: translateY(-8px);
   }
 
-  &:hover .card-title {
-    color: var(--color-primary-ink);
-  }
-
   /* Title is a wordmark image only: tighter vertical rhythm, clip PNG letterboxing */
   &.project-card--title-logo .card-header {
     margin-bottom: 0.4rem;
@@ -255,18 +251,7 @@
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
-  background:
-    radial-gradient(
-      circle at 20% 50%,
-      rgba(255, 184, 0, 0.22),
-      transparent 45%
-    ),
-    linear-gradient(
-      90deg,
-      rgba(20, 20, 20, 0.92) 0%,
-      rgba(96, 62, 0, 0.85) 42%,
-      rgba(247, 240, 226, 0.96) 100%
-    );
+  background: var(--bg-card);
 }
 
 .card-image-wrapper--contain {
@@ -278,6 +263,8 @@
   width: 100%;
   aspect-ratio: 16 / 7;
   object-fit: cover;
+  /* Clip the thin colored frame baked into the gameplay capture. */
+  transform: scale(1.015);
 }
 
 .card-image--contain {
@@ -634,6 +621,31 @@
   display: block;
   margin-top: 0.5rem;
   font-size: 0.75rem;
+}
+
+.sidequest-capture {
+  margin: 0;
+
+  img {
+    display: block;
+    width: auto;
+    max-width: 100%;
+    height: 420px;
+    margin: 1rem auto;
+    object-fit: contain;
+    border-radius: 1rem;
+  }
+
+  figcaption {
+    padding: 1rem;
+    color: var(--text-secondary);
+    font-size: 0.8125rem;
+    line-height: 1.6;
+  }
+
+  p {
+    margin: 0;
+  }
 }
 
 .export-showcase .project-showcase {

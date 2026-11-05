@@ -1,73 +1,82 @@
 # JP-CLI terminal guide
 
-The top row shows the macOS window dots and Justin Paoletta's name, Software
-Engineer title, and Angular / React / TypeScript stack. Narrow screens retain
-the name. The red dot shows an × on hover or keyboard focus; activating it has
-the same result as `exit`. Yellow and green are decorative and do not respond.
+The terminal presents portfolio content. It does not run operating-system commands or access the visitor's files.
+The title row shows Justin Paoletta, Software Engineer, and Angular / React / TypeScript.
+Narrow screens retain the name. The red dot runs `exit`; yellow and green are decorative.
 
-The terminal opens with `Welcome to JP-CLI`, then displays the command
-instructions 500ms later. Reduced-motion preference shows both immediately.
-The prompt follows the latest output and scrolls with the transcript.
-Submitting or clearing brings it into view; scrolling up lets you read history.
-This is a portfolio command interface, with no access to your filesystem.
+The terminal shows `Welcome to JP-CLI`, then reveals instructions after 500 ms.
+Reduced motion and visual-test mode show both immediately.
+The prompt follows the transcript. New output scrolls into view; visitors can scroll back through history.
 
-## Explore with ls and cd
+## Explore with named directories
 
 ```text
 ls
 cd projects
 ls
-cd 1
+cd bitstockerz
 cd ..
-cd /experience/1
+cd /experience/accesso
 cd ~/contact
 cd /resume
 cd /
 ```
 
-`ls` lists the current directory. `cd <path>` enters a directory and displays
-its content. Projects, skills, experience, and dogs contain numbered directories
-shown by `ls`; entering one displays its details and real links.
+`ls` lists entries. `cd <path>` enters a directory and displays its content.
+Projects, skills, experience, and dogs use named entries shown by `ls`.
+Numbers are not directory names or selection shortcuts.
 
 Paths support `/`, `~`, `.`, and `..`. `cd` without a path returns home.
-`ls <path>` inspects another directory without changing the current location.
-Invalid paths produce guidance and leave the current directory unchanged.
-The prompt and `pwd` show your current location.
+`ls <path>` inspects another directory without changing location.
+Invalid paths show guidance and preserve the current directory.
+The prompt shows `~/…`; `pwd` prints `portfolio:/…`.
 
 ## Commands
 
-| Command                                  | Result                                                           |
-| ---------------------------------------- | ---------------------------------------------------------------- |
-| `ls [path]`                              | List the current or specified directory                          |
-| `cd [path]`                              | Enter a relative or absolute directory; no argument returns home |
-| `pwd`                                    | Show the current directory                                       |
-| `help` / `help <topic>`                  | Command guidance and examples                                    |
-| `theme <minimal\|engineer\|cosmic\|cli>` | Change the portfolio theme                                       |
-| `mode <light\|dark\|system>`             | Change the color preference                                      |
-| `exit` / `quit`                          | Return to the Minimal visual portfolio                           |
-| `history`                                | Show commands from this session                                  |
-| `clear` / `cls`                          | Clear output and restore the welcome at home                     |
-| `dog <n> treat` / `dog <n> scritch`      | Record the corresponding pet interaction                         |
+| Command                                          | Result                                             |
+| ------------------------------------------------ | -------------------------------------------------- |
+| `ls [path]`                                      | List the current or specified directory            |
+| `cd [path]`                                      | Enter a directory; no argument returns home        |
+| `pwd`                                            | Show the current portfolio path                    |
+| `help` / `help <topic>`                          | Show command guidance and examples                 |
+| `project <name>` / `skill <name>` / `exp <name>` | Show a named entry                                 |
+| `dog <name>`                                     | Show a dog profile                                 |
+| `dog <name> treat` / `dog <name> scritch`        | Record a pet interaction                           |
+| `theme <minimal\|engineer\|cosmic\|cli>`         | Change the portfolio theme                         |
+| `mode <light\|dark\|system>`                     | Change the color preference                        |
+| `exit` / `quit`                                  | Return to the Minimal portfolio                    |
+| `history`                                        | Show commands from this session                    |
+| `clear` / `cls`                                  | Clear output and return home; keep command history |
+| `back`                                           | Go to the parent directory                         |
+| `menu`                                           | Show the root directories                          |
 
-Root directories are `about`, `projects`, `experience`, `skills`, `github`,
-`contact`, `resume`, and `dogs`. Source, email, professional profile, and PDF
-links remain keyboard-accessible. `help dogs` explains pet interactions.
+Root directories are `about`, `projects`, `experience`, `skills`, `github`, `contact`, `resume`, and `dogs`.
+Direct commands such as `projects`, `contact`, and `resume` remain available.
+Aliases include `h`, `gh`, `cv`, `education`, `pets`, and `doggos`.
+Use `help aliases` for the supported list.
+Source, email, professional-profile, and PDF links remain keyboard-accessible.
+Appearance selections persist on reload, including sessions opened with theme/mode URL overrides.
 
-Earlier named commands and numeric shortcuts remain compatibility aliases;
-the opening guide and directory output use `ls` and `cd`. Appearance changes
-persist on reload, including sessions opened with theme/mode URL overrides.
+## Project classifications
+
+All project entries remain under `/projects`, including games.
+Main project entries, including SideQuest, report `Type: Featured`.
+SQUARK reports `Type: Game`. Lifecycle and privacy are shown separately.
+The visual portfolio uses the main project layout for SideQuest and a separate Games group for SQUARK.
 
 ## Keyboard and touch
 
 - Enter executes a command. Empty Enter does nothing.
 - Up/Down recall history and restore an unfinished draft after the newest entry.
 - Left/Right edit text normally.
-- Ctrl+Space completes commands and directory paths, or shows matches.
+- Ctrl+Space completes commands and named paths, or lists matches.
 - Ctrl+L clears output. Ctrl+C cancels the draft when no text is selected.
-- Selected text can be copied normally; Tab and Shift+Tab move focus without a trap.
+- Tab and Shift+Tab move among the transcript, links, and prompt.
+- Selected text can be copied normally.
 
-Mobile input does not open the keyboard automatically. Tap the prompt and use
-the keyboard's submit key. Text wraps and the transcript scrolls within the
-viewport. The session retains up to 300 output lines and 100 commands, and is
-not saved across reloads. Screen-reader and physical mobile-keyboard acceptance
-remain separate from automated checks.
+Mobile input does not open the keyboard automatically. Tap the prompt and use the submit key.
+The session retains at most 300 output lines and 100 commands. Reloading resets the session.
+A polite status region announces command completion; the transcript remains separately browsable.
+Human screen-reader and physical mobile-keyboard acceptance require separate sessions.
+
+Source: `src/components/sections/Hero/CliTerminal.tsx`.
